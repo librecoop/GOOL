@@ -1,0 +1,20 @@
+#parse($macros)
+
+\#include <boost/any.hpp>
+\#include <boost/lexical_cast.hpp>
+//using boost::any_cast;
+
+\#include "${class.Name}.h"
+
+#includes ($Helper.printDependencies($class))
+#foreach( $field in $class.Fields )
+#if($field.DefaultValue)$field.Type $class.Name::$field.Name = $field.DefaultValue;
+#end
+#end
+
+#foreach( $method in $class.Methods )
+${method.Header}#if($class.isInterface() || $method.isAbstract() );#else {
+    $method.Block
+}#end
+
+#end

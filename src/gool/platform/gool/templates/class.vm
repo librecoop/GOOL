@@ -1,0 +1,22 @@
+#parse($macros)
+//Platform: $class.Platform
+#if(!$class.PackageName(""))package ${class.Ppackage};#end
+
+import gool.parser.classes.*;
+import gool.parser.classes.annotations.*;
+#includes ($Helper.printDependencies($class))
+
+@ForcePlatform(platform="$class.Platform")
+#join($class.Modifiers " ") class $class.Name #if($class.ParentClass)extends $class.ParentClass#end#interfaces($class.Interfaces) {
+
+#foreach( $field in $class.Fields )
+    $field;
+#end
+#foreach( $method in $class.Methods )
+    #if ($method.isInherited())@Override
+    #end${method.Header} {
+        ${method.Block}
+    }
+
+#end
+}

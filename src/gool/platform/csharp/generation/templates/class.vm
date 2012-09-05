@@ -1,0 +1,21 @@
+#parse($macros)
+
+#if($class.Ppackage)namespace ${class.PackageName}
+{#end
+
+#includes ($Helper.printDependencies($class))
+
+#join($class.Modifiers " ")#if($class.isInterface()) interface#elseif($class.isEnum()) enum#else class#end $class.Name #if($class.ParentClass): $class.ParentClass#if(!$class.Interfaces.isEmpty()), #interfaces($class.Interfaces)#end#else#if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end#end {
+
+#foreach( $field in $class.Fields )
+    #if(!$class.isEnum())$field;#else$field.Name,#end
+#end
+
+#foreach( $method in $class.Methods )
+    ${method.Header}#if($class.isInterface() || $method.isAbstract() );#else {
+	    $method.Block
+    }#end
+
+#end
+}
+#if(!$class.PackageName.equals(""))}#end

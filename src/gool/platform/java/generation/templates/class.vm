@@ -1,0 +1,23 @@
+#parse($macros)
+//Platform: $class.Platform
+#if($class.Ppackage)package ${class.PackageName};#end
+
+#includes ($Helper.printDependencies($class))
+
+#join($class.Modifiers " ") #if($class.isInterface()) interface#else class#end $class.Name #if($class.ParentClass)extends $class.ParentClass#end#interfaces($class.Interfaces) {
+
+#foreach( $field in $class.Fields )
+    $field;
+#end
+#foreach( $method in $class.Methods )
+    ${method.Header}#if($class.isInterface());#else {
+#if($method.isConstructor)
+	#foreach( $parentCall in $method.ParentCalls )
+		vamo
+	#end
+#end        
+        ${method.Block}
+    }#end
+
+#end
+}

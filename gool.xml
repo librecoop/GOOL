@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<project name="gool" default="createJar" basedir=".">
+    <target name="createJar">
+        <fatjar.build output="gool.jar">
+            <fatjar.manifest/>
+            <fatjar.filesource path="./bin" relpath=""/>
+            <fatjar.jarsource file="./lib/commons-lang-2.5.jar" relpath=""/>
+            <fatjar.jarsource file="./lib/velocity-1.6.4-dep.jar" relpath=""/>
+            <fatjar.jarsource file="./lib/log4j-1.2.15.jar" relpath=""/>
+        </fatjar.build>
+    </target>
+</project>

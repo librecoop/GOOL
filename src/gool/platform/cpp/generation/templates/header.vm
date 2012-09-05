@@ -1,0 +1,26 @@
+#parse($macros)
+#ifndef __${class.Name.toUpperCase()}_H
+\#define __${class.Name.toUpperCase()}_H
+
+
+#includes ($Helper.printDependencies($class))
+
+#if ($class.isEnum())
+enum $class.Name {
+#foreach( $field in $class.Fields )
+    $field.Name,
+#end
+};
+#else
+class $class.Name #if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end {
+#foreach( $field in $class.Fields )
+    $field;
+#end
+
+#foreach( $method in $class.Methods )
+    #if(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
+
+#end
+};
+#end
+#endif
