@@ -2,7 +2,7 @@ GOOL
 ====
 
 Description
-===
+==
 
 The most widely used Object-Oriented Programming languages (Java, C++, C#, Android, Objective C) are all roughly the same; so long as one does not enter device-dependent programming (GUI, H/W, ...). In fact, all the core constructs of these languages can be translated into one another.
 
