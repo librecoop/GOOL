@@ -30,7 +30,7 @@ public class CppCompiler extends SpecificCompiler {
 		}
 		System.out.println("--->" + mainFile);
 		String execFileName = mainFile.getName().replace(".cpp",".bin");
-		params.addAll(Arrays.asList("g++", "-I","/home/miguel/lib/boost", "-o", execFileName) );
+		params.addAll(Arrays.asList("g++", "-I","/usr/include", "-o", execFileName) );
 
 		/*
 		 * Add the needed dependencies to be able to compile programs.
