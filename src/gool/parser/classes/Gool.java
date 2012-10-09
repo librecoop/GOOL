@@ -1,4 +1,4 @@
-package gool.parser.stubs;
+package gool.parser.classes;
 
 public final class Gool {
 	private Gool(){}

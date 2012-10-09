@@ -27,6 +27,7 @@ public class GoolTest {
 			Assert.assertEquals(String.format("The platform %s", platform), expected, compileAndRun(platform));
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
+System.out.println(input);
 			String cleanOutput = cleanOutput(Helper.generateCompileRun(
 					platform, input, MAIN_CLASS_NAME));
 			return cleanOutput;
@@ -96,6 +97,7 @@ public class GoolTest {
 				.surroundWithClassMain(
 						"List<Integer> l = new List<Integer>(); l.add(4); Gool.print(l.get(0));",
 						MAIN_CLASS_NAME);
+		System.out.println(input);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}

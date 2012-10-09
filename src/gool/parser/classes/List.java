@@ -1,4 +1,4 @@
-package gool.parser.stubs;
+package gool.parser.classes;
 
 import java.util.Iterator;
 
