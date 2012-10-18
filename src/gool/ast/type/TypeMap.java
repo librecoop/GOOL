@@ -28,14 +28,14 @@ public class TypeMap extends ReferenceType {
 		if (getTypeArguments().size() > 1) {
 			return getTypeArguments().get(1);
 		} 
-		return null;
+		return TypeObject.INSTANCE;
 	}
 	
 	public IType getKeyType() {
 		if (getTypeArguments().size() > 1) {
 			return getTypeArguments().get(0);
 		} 
-		return null;
+		return TypeObject.INSTANCE;
 	}
 	
 	@Override
