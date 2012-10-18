@@ -32,7 +32,7 @@ public final class Helper {
 
 	public static String surroundWithClassMain(String input, String className) {
 		return surroundWithClass("public static void main(String[] args){"
-				+ input + " } ", className);
+				+ input + " } ", className, "");
 	}
 
 	public static Iterable<? extends JavaFileObject> getJavaFileObjects(
@@ -119,8 +119,8 @@ public final class Helper {
 		return result.toString();
 	}
 
-	public static String surroundWithClass(String input, String className) {
-		return "class " + className + " { public " + className+ "(){} " + input + " } ";
+	public static String surroundWithClass(String input, String className, String accessModifier) {
+		return  accessModifier + " class " + className + " { public " + className+ "(){} " + input + " } ";
 	}
 
 	public static String joinParams(List<?> parameters) {

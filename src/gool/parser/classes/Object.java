@@ -1,6 +1,6 @@
 package gool.parser.classes;
 
-public class Object {
+public class Object{
 	@Override
 	@Deprecated
 	public String toString() {

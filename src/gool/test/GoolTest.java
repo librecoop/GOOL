@@ -24,7 +24,9 @@ public class GoolTest {
 			this.expected = expected;
 		}
 		public void compare(Platform platform) throws Exception {
-			Assert.assertEquals(String.format("The platform %s", platform), expected, compileAndRun(platform));
+			String result = compileAndRun(platform);
+			System.out.println(platform + " Result: " + result);
+			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
 System.out.println(input);
@@ -48,10 +50,10 @@ System.out.println(input);
 	public static void init() {
 		Properties properties = new Properties();
 		properties.put("gool_library", "./gool.jar");
-		properties.put("gool_out_dir", "./src/gool/");
-		properties.put("java_out_dir", "./src/java/");
-		properties.put("csharp_out_dir", "./src/csharp/");
-		properties.put("cpp_out_dir", "./src/cpp/");
+		properties.put("gool_out_dir", "./output/gool/");
+		properties.put("java_out_dir", "./output/java/");
+		properties.put("csharp_out_dir", "./output/csharp/");
+		properties.put("cpp_out_dir", "./output/cpp/");
 		gool.util.Settings.getInstance().load(properties);
 	}
 
@@ -120,7 +122,7 @@ System.out.println(input);
 		String input = Helper
 				.surroundWithClass(
 						"public void print(){Gool.print(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.print();}",
-						MAIN_CLASS_NAME);
+						MAIN_CLASS_NAME, "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -129,9 +131,9 @@ System.out.println(input);
 	public void simpleTwoClasses() throws Exception {
 		String input = Helper.surroundWithClassMain(
 				"Printer p = new Printer(); p.print();", MAIN_CLASS_NAME);
-		input += "\npublic "
+		input += "\n"
 				+ Helper.surroundWithClass(
-						"public void print(){Gool.print(2 + 2);}", "Printer");
+						"public void print(){Gool.print(2 + 2);}", "Printer", "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -250,7 +252,7 @@ System.out.println(input);
 	
 	@Test
 	public void classWithAttributes() throws Exception {
-		String input = "public class Test {" +
+		String input = "class Test {" +
 				"public int z; public Test(int i){this.z=i+2;}" +
 				"public static void main(String[] args){" +
 				"Gool.print(new Test(5).z);"+

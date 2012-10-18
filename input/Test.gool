@@ -1,0 +1,13 @@
+import gool.parser.classes.Gool;
+
+class Test {
+	public int z;
+
+	public Test(int i) {
+		this.z = i + 2;
+	}
+
+	public static void main(String[] args) {
+		Gool.print(new Test(5).z);
+	}
+}

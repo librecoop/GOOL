@@ -117,6 +117,7 @@ public final class GoolParser {
 		compilationUnits.add(new MyFileObject(
 				"\nimport gool.parser.classes.*;\n" + input, "Random" 
 						+ ".gool"));
+		System.out.println(input);
 		return parseGool(defaultPlatform, compilationUnits);
 	}
 
