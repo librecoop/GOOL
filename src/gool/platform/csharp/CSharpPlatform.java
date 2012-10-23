@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public final class CSharpPlatform extends Platform {
-	private final String outputDir = Settings.getInstance().get("csharp_out_dir");
+	private final String outputDir = Settings.get("csharp_out_dir");
 	private CSharpPlatform() {
 		super("CSHARP");
 	}

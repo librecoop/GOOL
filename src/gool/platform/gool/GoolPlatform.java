@@ -9,7 +9,7 @@ import java.io.File;
 
 public final class GoolPlatform extends Platform {
 	private static GoolPlatform instance = new GoolPlatform();
-	private String outputDir = Settings.getInstance().get("gool_out_dir");
+	private String outputDir = Settings.get("gool_out_dir");
 
 	private GoolPlatform() {
 		super("GOOL");

@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class CppPlatform extends Platform {
-	private final String outputDir = Settings.getInstance().get("cpp_out_dir");
+	private final String outputDir = Settings.get("cpp_out_dir");
 
 	public CppPlatform() {
 		super("CPP");

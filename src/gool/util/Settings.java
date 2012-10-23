@@ -11,21 +11,14 @@ public final class Settings {
 	 * Logger.
 	 */
 	private static final Logger LOG = Logger.getLogger(Settings.class);
-	private final static Settings INSTANCE = new Settings();
-	private Properties properties;
+	private static Properties properties;
 
-	private Settings() {
+	static {
+		load("gool.properties");
 	}
 
-	public static synchronized Settings getInstance() {
-		return INSTANCE;
-	}
 
-	public void load(Properties properties) {
-		this.properties = properties;
-	}
-
-	public void load(String propertyFile) {
+	public static void load(String propertyFile) {
 		try {
 			properties = new Properties();
 			InputStream stream = ClassLoader.getSystemResourceAsStream(propertyFile);
@@ -38,13 +31,13 @@ public final class Settings {
 
 	}
 
-	public <T> T get(String property) {
+	public static String get(String property) {
 		if (properties == null) {
 			throw new IllegalStateException(
 					"The configuration settings are not properly initiliazed.");
 		}
 		@SuppressWarnings("unchecked")
-		T value = (T) properties.get(property);
+		String value = (String) properties.get(property);
 		if (value == null) {
 			throw new IllegalStateException(String.format(
 					"The property '%s' does not exist.", property));

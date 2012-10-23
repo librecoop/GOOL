@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public final class JavaPlatform extends Platform {
 
-	private final String outputDir = Settings.getInstance().get("java_out_dir");
+	private final String outputDir = Settings.get("java_out_dir");
 
 	private JavaPlatform() {
 		super("JAVA");

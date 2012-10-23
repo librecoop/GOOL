@@ -25,13 +25,6 @@ public class GOOLCompiler {
 
 	public static void main(String[] args) {
 		try {
-			Properties properties = new Properties();
-			properties.put("gool_library", "./gool.jar");
-			properties.put("gool_out_dir", "./output/gool/");
-			properties.put("java_out_dir", "./output/java/");
-			properties.put("csharp_out_dir", "./output/csharp/");
-			properties.put("cpp_out_dir", "./output/cpp/");
-			gool.util.Settings.getInstance().load(properties);
 			File folder = new File("./input");
 			Collection<File> files = Arrays.asList(folder.listFiles());
 			GOOLCompiler gc = new GOOLCompiler();

@@ -1,8 +1,8 @@
 package gool.platform.cpp.compilation;
 
 import gool.platform.common.SpecificCompiler;
+import gool.util.Settings;
 import gool.util.compiler.Command;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class CppCompiler extends SpecificCompiler {
 		}
 		System.out.println("--->" + mainFile);
 		String execFileName = mainFile.getName().replace(".cpp",".bin");
-		params.addAll(Arrays.asList("g++", "-I","/usr/include", "-o", execFileName) );
+		params.addAll(Arrays.asList(Settings.get("cpp_compiler_cmd"), "-I", Settings.get("boost_lib_dir"), "-o", execFileName) );
 
 		/*
 		 * Add the needed dependencies to be able to compile programs.

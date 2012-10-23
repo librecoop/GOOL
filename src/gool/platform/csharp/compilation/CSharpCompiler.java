@@ -1,6 +1,7 @@
 package gool.platform.csharp.compilation;
 
 import gool.platform.common.SpecificCompiler;
+import gool.util.Settings;
 import gool.util.compiler.Command;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class CSharpCompiler extends SpecificCompiler {
 		}
 
 			String execFileName = mainFile.getName().replace(".cs", ".exe");
-			params.addAll(Arrays.asList(compiler, "-debug+", "/t:exe",
+			params.addAll(Arrays.asList(Settings.get("csharp_compiler_cmd"), "-debug+", "/t:exe",
 					"/out:" + execFileName));
 		
 		/*
@@ -59,8 +60,6 @@ public class CSharpCompiler extends SpecificCompiler {
 	}
 	
 	
-	private final String compiler = IS_WINDOWS ? "csc" : "gmcs";
-	
 	@Override
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
@@ -75,7 +74,7 @@ public class CSharpCompiler extends SpecificCompiler {
 		String execFileName = mainFile.getName().replace(".cs", ".dll");
 
 		List<String> params = new ArrayList<String>();
-		params.addAll(Arrays.asList(compiler, "-debug+", "/t:library"));
+		params.addAll(Arrays.asList(Settings.get("csharp_compiler_cmd"), "-debug+", "/t:library"));
 		
 
 		/*

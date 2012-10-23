@@ -58,7 +58,7 @@ public final class GoolParser {
 //		for (File d : GoolPlatform.getInstance().getCompiler().getDependencies()) {
 //			stringDependencies.add(d.getAbsolutePath());
 //		}
-		stringDependencies.add(Settings.getInstance().get("gool_library")
+		stringDependencies.add(Settings.get("gool_library")
 				.toString());
 		options = Arrays.asList("-classpath", StringUtils.join(
 				stringDependencies, File.pathSeparator));

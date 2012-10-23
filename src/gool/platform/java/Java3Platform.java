@@ -15,7 +15,7 @@ public final class Java3Platform extends Platform {
 	
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		String outputDir = Settings.getInstance().get("java3_out_dir");
+		String outputDir = Settings.get("java3_out_dir");
 		return new JavaCodePrinter(new File(outputDir));
 	}
 	

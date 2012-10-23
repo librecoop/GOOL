@@ -25,7 +25,7 @@ public final class Java2Platform extends Platform {
 		return new JavaCompiler(new File(outputDir), new ArrayList<File>());
 	}
 	private static Java2Platform instance = new Java2Platform();
-	private String outputDir = Settings.getInstance().get("java2_out_dir");
+	private String outputDir = Settings.get("java2_out_dir");
 
 
 	public static Java2Platform getInstance() {
