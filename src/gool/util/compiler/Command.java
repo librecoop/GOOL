@@ -51,13 +51,12 @@ public final class Command {
 
 			ProcessBuilder pb = new ProcessBuilder(params);
 			pb.directory(workingDir);
+
 			for (Entry<String, String> e : env.entrySet()) {
 				pb.environment().put(e.getKey(), e.getValue());
 			}
 			
-			Process p;
-
-			p = pb.redirectErrorStream(true).start();
+			Process p = pb.redirectErrorStream(true).start();
 
 			p.getOutputStream().close();
 			BufferedReader in = new BufferedReader(new InputStreamReader(p

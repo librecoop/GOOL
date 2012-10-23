@@ -55,7 +55,6 @@ public class CSharpCompiler extends SpecificCompiler {
 			params.add(file.toString());
 		}
 		Command.exec(getOutputDir(), params);
-		
 		return new File(getOutputDir(), execFileName);
 	}
 	
