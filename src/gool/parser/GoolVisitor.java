@@ -904,15 +904,6 @@ public class GoolVisitor extends TreePathScanner<Object, Context> {
 					return new MapEntryGetValueCall(target);
 				}
 			}
-			if (type.getName().equals("Gool")) {
-				if (identifier.equals("print")) {
-					context.getClassDef().addDependency(
-							new SystemOutDependency());
-					return new SystemOutPrintCall();
-				}
-				throw new IllegalStateException(error("Gool statement: "
-						+ identifier + " not supported"));
-			}
 		}
 		IType goolType = goolType(n, context);
 		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
@@ -1028,22 +1019,27 @@ public class GoolVisitor extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
-		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());
-
-		Expression target = (Expression) n.getMethodSelect().accept(this,
-				context);
-		if (n.getMethodSelect().toString().equals("super")) {
-			target = new ParentCall(goolType(((MethodSymbol) method)
-					.getReturnType(), context));
-		} else if (n.getMethodSelect().toString().equals("this")) {
-			target = new ThisCall(goolType(((MethodSymbol) method)
-					.getReturnType(), context));
+		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());	
+		Expression target;
+		if (n.getMethodSelect().toString().equals("System.out.println")) {
+			context.getClassDef().addDependency(new SystemOutDependency());
+			target = new SystemOutPrintCall();
 		}
-
-		if (!(target instanceof Parameterizable)) {
-			System.out.println("Target: " + target + " " + method);
-			target = new MethCall(goolType(((MethodSymbol) method)
-					.getReturnType(), context), target);
+		else {
+			target = (Expression) n.getMethodSelect().accept(this,
+						context);
+			if (n.getMethodSelect().toString().equals("super")) {
+				target = new ParentCall(goolType(((MethodSymbol) method)
+						.getReturnType(), context));
+			} else if (n.getMethodSelect().toString().equals("this")) {
+				target = new ThisCall(goolType(((MethodSymbol) method)
+						.getReturnType(), context));
+			}
+	
+			if (!(target instanceof Parameterizable)) {
+				target = new MethCall(goolType(((MethodSymbol) method)
+						.getReturnType(), context), target);
+			}
 		}
 		addParameters(n.getArguments(), (Parameterizable) target, context);
 		return target;

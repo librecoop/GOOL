@@ -101,7 +101,7 @@ public class GoolGenerator extends JavaGenerator {
 	
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("Gool.print(%s)", StringUtils.join(
+		return String.format("System.out.println(%s)", StringUtils.join(
 				systemOutPrintCall.getParameters(), ","));
 	}
 

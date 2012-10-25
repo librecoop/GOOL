@@ -115,7 +115,8 @@ public final class GoolParser {
 			String input) throws Exception {
 		ArrayList<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
 		compilationUnits.add(new MyFileObject(
-				"\nimport gool.parser.classes.*;\n" + input, "Random" 
+				//"\nimport gool.parser.classes.*;\n" +
+		 input, "Random" 
 						+ ".gool"));
 		System.out.println(input);
 		return parseGool(defaultPlatform, compilationUnits);
