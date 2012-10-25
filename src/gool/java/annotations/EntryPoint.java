@@ -1,4 +1,4 @@
-package gool.parser.annotations;
+package gool.java.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
@@ -7,3 +7,4 @@ import java.lang.annotation.Target;
 public @interface EntryPoint {
 
 }
+ 

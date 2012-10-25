@@ -1,6 +1,5 @@
 package gool.ast;
 
-import gool.parser.classes.Language;
 
 import java.util.ArrayList;
 import java.util.List;

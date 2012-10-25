@@ -1,8 +1,9 @@
-package gool.parser.classes;
+package gool.java.util;
+
 
 import java.util.Iterator;
 
-public class List<T> implements Iterable<T> {
+public class ArrayList<T> implements Iterable<T> {
 	public void add(T element) {
 	};
 
@@ -17,7 +18,7 @@ public class List<T> implements Iterable<T> {
 	public boolean isEmpty() {
 		return false;
 	}
-
+ 
 	public int size() {
 		return 0;
 	}

@@ -1,4 +1,5 @@
-package gool.parser.classes;
+package gool.java.util;
+
 
 
 public class MapIterator<K,T> {
@@ -7,7 +8,7 @@ public class MapIterator<K,T> {
 		return false;
 	}
 
-	public Map.Entry<K,T> next() {
+	public HashMap.Entry<K,T> next() {
 		return null;
 	}
 
@@ -16,3 +17,4 @@ public class MapIterator<K,T> {
 
 	
 }
+ 

@@ -3,8 +3,11 @@ package gool;
 import gool.ast.ClassDef;
 import gool.parser.GoolParser;
 import gool.platform.Platform;
+import gool.platform.cpp.CppPlatform;
+import gool.platform.csharp.CSharpPlatform;
 import gool.platform.java.JavaPlatform;
 import gool.util.Helper;
+import gool.util.Settings;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,10 +28,14 @@ public class GOOLCompiler {
 
 	public static void main(String[] args) {
 		try {
-			File folder = new File("./input");
+			File folder = new File(Settings.get("java_input_dir"));
 			Collection<File> files = Arrays.asList(folder.listFiles());
 			GOOLCompiler gc = new GOOLCompiler();
 			gc.concreteGoolToConcretePlatform(JavaPlatform.getInstance(),
+					files);
+			gc.concreteGoolToConcretePlatform(CSharpPlatform.getInstance(),
+					files);
+			gc.concreteGoolToConcretePlatform(CppPlatform.getInstance(),
 					files);
 		} catch (Exception e) {
 			e.printStackTrace();

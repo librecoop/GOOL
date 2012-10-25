@@ -1,4 +1,4 @@
-package gool.parser.classes;
+package gool.java.util;
 
 public class ListIterator<T> {
 
@@ -11,3 +11,4 @@ public class ListIterator<T> {
 	}
 
 }
+ 
