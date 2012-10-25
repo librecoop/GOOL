@@ -5,3 +5,4 @@ public final class System {
 	public static void println(Object input) {
 	}
 }
+ 

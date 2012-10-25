@@ -18,7 +18,7 @@ public class ArrayList<T> implements Iterable<T> {
 	public boolean isEmpty() {
 		return false;
 	}
-
+ 
 	public int size() {
 		return 0;
 	}
