@@ -1,8 +1,9 @@
-package gool.parser.classes;
+package gool.java.util;
+
 
 import java.util.Iterator;
 
-public class Map<K, T> implements Iterable<Map.Entry<K, T>> {
+public class HashMap<K, T> implements Iterable<HashMap.Entry<K, T>> {
 
 	public static class Entry<K, T> {
 
@@ -16,7 +17,7 @@ public class Map<K, T> implements Iterable<Map.Entry<K, T>> {
 
 	}	
 
-	public Map() {
+	public HashMap() {
 		super();
 	}
 
@@ -39,7 +40,7 @@ public class Map<K, T> implements Iterable<Map.Entry<K, T>> {
 		return false;
 	}
 
-	public void putAll(Map<K, T> substitutionMap) {
+	public void putAll(HashMap<K, T> substitutionMap) {
 	}
 
 	public void remove(Object key) {

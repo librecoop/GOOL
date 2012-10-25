@@ -1,6 +1,6 @@
-package gool.parser.classes;
+package gool.java.lang;
 
-public class OldObject{
+public class Object{
 	@Override
 	@Deprecated
 	public String toString() {

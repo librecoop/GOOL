@@ -1,4 +1,4 @@
-package gool.parser.classes;
+package gool.ast;
 
 public enum Language {
 	CSHARP, JAVA, CPP;

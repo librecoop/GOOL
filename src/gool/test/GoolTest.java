@@ -53,14 +53,14 @@ System.out.println(input);
 	@Test
 	public void helloWorld() throws Exception {
 		String input = Helper.surroundWithClassMain(
-				"Gool.print(\"Hello World\");", MAIN_CLASS_NAME);
+				"System.out.println(\"Hello World\");", MAIN_CLASS_NAME);
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	@Test
 	public void simpleAddition() throws Exception {
-		String input = Helper.surroundWithClassMain("Gool.print(2 + 2);",
+		String input = Helper.surroundWithClassMain("System.out.println(2 + 2);",
 				MAIN_CLASS_NAME);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -70,7 +70,7 @@ System.out.println(input);
 	public void simpleIf() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"boolean b = true; if (b) { Gool.print(2 + 2);} else { Gool.print(2 + 5); }",
+						"boolean b = true; if (b) { System.out.println(2 + 2);} else { System.out.println(2 + 5); }",
 						MAIN_CLASS_NAME);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -80,7 +80,7 @@ System.out.println(input);
 	public void simpleFor() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"int total = 0; for(int i = 0; i < 4; i++){ total ++;} Gool.print(total);",
+						"int total = 0; for(int i = 0; i < 4; i++){ total ++;} System.out.println(total);",
 						MAIN_CLASS_NAME);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -90,7 +90,7 @@ System.out.println(input);
 	public void listAddGet() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"List<Integer> l = new List<Integer>(); l.add(4); Gool.print(l.get(0));",
+						"ArrayList<Integer> l = new ArrayList<Integer>(); l.add(4); System.out.println(l.get(0));",
 						MAIN_CLASS_NAME);
 		System.out.println(input);
 		String expected = "4";
@@ -100,11 +100,11 @@ System.out.println(input);
 	@Test
 	public void mapAddGet() throws Exception {
 		// String input =
-		// Helper.surroundWithClassMain("Map<String, Integer > m = new Map<String, Integer>();",
+		// Helper.surroundWithClassMain("HashMap<String, Integer > m = new HashMap<String, Integer>();",
 		// "Test");
 		String input = Helper
 				.surroundWithClassMain(
-						"String four = \"four\"; Map<String, Integer > m = new Map<String, Integer>(); m.put(four,4); Gool.print(m.get(four));",
+						"String four = \"four\"; HashMap<String, Integer > m = new HashMap<String, Integer>(); m.put(four,4); System.out.println(m.get(four));",
 						MAIN_CLASS_NAME);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -114,7 +114,7 @@ System.out.println(input);
 	public void simpleNew() throws Exception {
 		String input = Helper
 				.surroundWithClass(
-						"public void print(){Gool.print(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.print();}",
+						"public void print(){System.out.println(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.print();}",
 						MAIN_CLASS_NAME, "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -126,7 +126,7 @@ System.out.println(input);
 				"Printer p = new Printer(); p.print();", MAIN_CLASS_NAME);
 		input += "\n"
 				+ Helper.surroundWithClass(
-						"public void print(){Gool.print(2 + 2);}", "Printer", "");
+						"public void print(){System.out.println(2 + 2);}", "Printer", "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -136,10 +136,10 @@ System.out.println(input);
 		String input = Helper
 				.surroundWithClassMain(
 						"Integer total = 0;"
-								+ " List<Integer> l = new List<Integer>();"
+								+ " ArrayList<Integer> l = new ArrayList<Integer>();"
 								+ " l.add(-2); l.add(-1);l.add(0); l.add(1); l.add(2);l.add(4);"
 								+ " for(Integer i : l){" + "total = total + i;"
-								+ "}" + "Gool.print(total);", MAIN_CLASS_NAME);
+								+ "}" + "System.out.println(total);", MAIN_CLASS_NAME);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -147,12 +147,12 @@ System.out.println(input);
 	@Test
 	public void mapForEach() throws Exception {
 		String input = Helper.surroundWithClassMain("Integer total = 0;"
-				+ " Map<Integer, Integer> m = new Map<Integer, Integer>();"
+				+ " HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();"
 				+ " m.put(0, 1); m.put(2, 3);"
-				+ " for(Map.Entry<Integer, Integer> entry : m){"
+				+ " for(HashMap.Entry<Integer, Integer> entry : m){"
 				+ "total = total + entry.getKey();"
 				+ "total = total + entry.getValue();" + "}"
-				+ "Gool.print(total);", MAIN_CLASS_NAME);
+				+ "System.out.println(total);", MAIN_CLASS_NAME);
 		String expected = "6";
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -161,7 +161,7 @@ System.out.println(input);
 	public void listWithDifferentTypeElement() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"List l = new List();l.add(1);l.add(\"hola\");Gool.print(l.size());",
+						"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
 						MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "2");
 	}
@@ -171,7 +171,7 @@ System.out.println(input);
 		try {
 			String input = Helper
 					.surroundWithClassMain(
-							"Map m = new Map();m.put(0, 1);m.put(\"hola\", 2);Gool.print(m.size());",
+							"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
 							MAIN_CLASS_NAME);
 			compareResultsDifferentPlatforms(input, "2");
 		} 
@@ -188,7 +188,7 @@ System.out.println(input);
 	public void removeElementsFromUntypedList() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"List l = new List();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");Gool.print(l.size());",
+						"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
 						MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "1");
 	}
@@ -197,7 +197,7 @@ System.out.println(input);
 	public void removeElementsFromIntegerList() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"List<Integer> l = new List<Integer>();l.add(1);l.add(4);l.removeAt(1);Gool.print(l.size());",
+						"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.removeAt(1);System.out.println(l.size());",
 						MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "1");
 	}
@@ -206,7 +206,7 @@ System.out.println(input);
 	public void removeElementsFromMap() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"Map<Integer, Integer> m = new Map<Integer, Integer>();m.put(1, 2);m.put(2, 3);m.remove(2);Gool.print(m.size());",
+						"HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();m.put(1, 2);m.put(2, 3);m.remove(2);System.out.println(m.size());",
 						MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "1");
 	}
@@ -215,7 +215,7 @@ System.out.println(input);
 	public void isEmptyList() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"List l = new List();l.add(\"hola\");l.remove(\"hola\");Gool.print(l.isEmpty());",
+						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");System.out.println(l.isEmpty());",
 						MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, "true"){
 			@Override
@@ -238,7 +238,7 @@ System.out.println(input);
 	public void listContainsElement() throws Exception {
 		String input = Helper
 				.surroundWithClassMain(
-						"List l = new List();l.add(\"hola\");l.remove(\"hola\");l.add(\"hola\");Gool.print(l.contains(\"hola\"));",
+						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");l.add(\"hola\");System.out.println(l.contains(\"hola\"));",
 						MAIN_CLASS_NAME);
 		Assert.fail("Not implemented");
 	}
@@ -248,7 +248,7 @@ System.out.println(input);
 		String input = "class Test {" +
 				"public int z; public Test(int i){this.z=i+2;}" +
 				"public static void main(String[] args){" +
-				"Gool.print(new Test(5).z);"+
+				"System.out.println(new Test(5).z);"+
 				"}}";
 		compareResultsDifferentPlatforms(input, "7");
 	}
