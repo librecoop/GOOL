@@ -120,7 +120,9 @@ public final class Helper {
 	}
 
 	public static String surroundWithClass(String input, String className, String accessModifier) {
-		return  accessModifier + " class " + className + " { public " + className+ "(){} " + input + " } ";
+		return 				"\nimport gool.java.lang.*;\n" +
+				"\nimport gool.java.util.*;\n" +
+				accessModifier + " class " + className + " { public " + className+ "(){} " + input + " } ";
 	}
 
 	public static String joinParams(List<?> parameters) {

@@ -29,7 +29,6 @@ public class GoolTest {
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
-System.out.println(input);
 			String cleanOutput = cleanOutput(Helper.generateCompileRun(
 					platform, input, MAIN_CLASS_NAME));
 			return cleanOutput;
