@@ -87,7 +87,9 @@ public class GoolTest {
 
 	@Test
 	public void listAddGet() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.ArrayList;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"ArrayList<Integer> l = new ArrayList<Integer>(); l.add(4); System.out.println(l.get(0));",
 						MAIN_CLASS_NAME);
@@ -101,7 +103,10 @@ public class GoolTest {
 		// String input =
 		// Helper.surroundWithClassMain("HashMap<String, Integer > m = new HashMap<String, Integer>();",
 		// "Test");
-		String input = Helper
+		String input = 
+				"import gool.java.util.HashMap;\n" + 
+
+				Helper
 				.surroundWithClassMain(
 						"String four = \"four\"; HashMap<String, Integer > m = new HashMap<String, Integer>(); m.put(four,4); System.out.println(m.get(four));",
 						MAIN_CLASS_NAME);
@@ -132,7 +137,9 @@ public class GoolTest {
 
 	@Test
 	public void simpleForEach() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.ArrayList;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"Integer total = 0;"
 								+ " ArrayList<Integer> l = new ArrayList<Integer>();"
@@ -145,7 +152,9 @@ public class GoolTest {
 
 	@Test
 	public void mapForEach() throws Exception {
-		String input = Helper.surroundWithClassMain("Integer total = 0;"
+		String input = 
+				"import gool.java.util.HashMap;\n" + 
+				Helper.surroundWithClassMain("Integer total = 0;"
 				+ " HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();"
 				+ " m.put(0, 1); m.put(2, 3);"
 				+ " for(HashMap.Entry<Integer, Integer> entry : m){"
@@ -158,7 +167,9 @@ public class GoolTest {
 
 	@Test
 	public void listWithDifferentTypeElement() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.ArrayList;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
 						MAIN_CLASS_NAME);
@@ -168,7 +179,9 @@ public class GoolTest {
 	@Test
 	public void mapWithoutTypes() throws Exception {
 		try {
-			String input = Helper
+			String input = 
+					"import gool.java.util.HashMap;\n" + 
+					Helper
 					.surroundWithClassMain(
 							"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
 							MAIN_CLASS_NAME);
@@ -185,7 +198,9 @@ public class GoolTest {
 
 	@Test
 	public void removeElementsFromUntypedList() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.ArrayList;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
 						MAIN_CLASS_NAME);
@@ -194,7 +209,9 @@ public class GoolTest {
 
 	@Test
 	public void removeElementsFromIntegerList() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.ArrayList;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.removeAt(1);System.out.println(l.size());",
 						MAIN_CLASS_NAME);
@@ -203,7 +220,9 @@ public class GoolTest {
 
 	@Test
 	public void removeElementsFromMap() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.HashMap;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();m.put(1, 2);m.put(2, 3);m.remove(2);System.out.println(m.size());",
 						MAIN_CLASS_NAME);
@@ -212,7 +231,9 @@ public class GoolTest {
 	
 	@Test
 	public void isEmptyList() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.ArrayList;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");System.out.println(l.isEmpty());",
 						MAIN_CLASS_NAME);
@@ -235,7 +256,9 @@ public class GoolTest {
 	
 	@Test
 	public void listContainsElement() throws Exception {
-		String input = Helper
+		String input = 
+				"import gool.java.util.ArrayList;\n" + 
+				Helper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");l.add(\"hola\");System.out.println(l.contains(\"hola\"));",
 						MAIN_CLASS_NAME);
