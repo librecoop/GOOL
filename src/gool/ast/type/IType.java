@@ -1,6 +1,6 @@
 package gool.ast.type;
 
-import gool.ast.INode;
+import gool.ast.constructs.INode;
 
 import java.util.ArrayList;
 import java.util.List;

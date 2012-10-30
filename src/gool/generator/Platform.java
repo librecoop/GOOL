@@ -1,6 +1,6 @@
 package gool.generator;
 
-import gool.ast.Dependency;
+import gool.ast.constructs.Dependency;
 import gool.ast.type.PrimitiveType;
 import gool.executor.SpecificCompiler;
 import gool.generator.common.CodePrinter;

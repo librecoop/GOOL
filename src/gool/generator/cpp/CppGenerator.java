@@ -1,28 +1,26 @@
 package gool.generator.cpp;
 
-import gool.ast.BinaryOperation;
-import gool.ast.CastExpression;
-import gool.ast.ClassNew;
-import gool.ast.Constant;
-import gool.ast.Dependency;
-import gool.ast.EnhancedForLoop;
-import gool.ast.EqualsCall;
-import gool.ast.Expression;
-import gool.ast.Field;
-import gool.ast.MainMeth;
-import gool.ast.MemberSelect;
-import gool.ast.Meth;
-import gool.ast.MethCall;
-import gool.ast.Modifier;
-import gool.ast.Operator;
-import gool.ast.ParentCall;
-import gool.ast.ThisCall;
-import gool.ast.ToStringCall;
-import gool.ast.VarDeclaration;
-import gool.ast.gool.CustomDependency;
-import gool.ast.gool.SystemOutDependency;
-import gool.ast.gool.SystemOutPrintCall;
-import gool.ast.gool.TypeDependency;
+import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.ClassNew;
+import gool.ast.constructs.Constant;
+import gool.ast.constructs.CustomDependency;
+import gool.ast.constructs.Dependency;
+import gool.ast.constructs.EnhancedForLoop;
+import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.Expression;
+import gool.ast.constructs.Field;
+import gool.ast.constructs.MainMeth;
+import gool.ast.constructs.MemberSelect;
+import gool.ast.constructs.Meth;
+import gool.ast.constructs.MethCall;
+import gool.ast.constructs.Modifier;
+import gool.ast.constructs.Operator;
+import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.TypeDependency;
+import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -40,6 +38,8 @@ import gool.ast.map.MapIsEmptyCall;
 import gool.ast.map.MapPutCall;
 import gool.ast.map.MapRemoveCall;
 import gool.ast.map.MapSizeCall;
+import gool.ast.system.SystemOutDependency;
+import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeClass;
@@ -51,13 +51,10 @@ import gool.ast.type.TypeMap;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
-import gool.executor.Helper;
+import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -227,11 +224,11 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
-			return String.format("std::cout << (%s)->data() << std::endl", Helper
+			return String.format("std::cout << (%s)->data() << std::endl", GeneratorHelper
 				.joinParams(systemOutPrintCall.getParameters()));
 		}
 		else {
-			return String.format("std::cout << (%s) << std::endl", Helper
+			return String.format("std::cout << (%s) << std::endl", GeneratorHelper
 					.joinParams(systemOutPrintCall.getParameters()));
 		}
 	}
@@ -283,7 +280,7 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
 		return String.format("%s -> erase(%s)", mapRemoveCall.getExpression(),
-				Helper.joinParams(mapRemoveCall.getParameters()));
+				GeneratorHelper.joinParams(mapRemoveCall.getParameters()));
 	}
 
 	@Override
@@ -330,14 +327,14 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(MapGetCall mapGetCall) {
 		return String
 				.format("%s -> find( %s ) -> second", mapGetCall
-						.getExpression(), Helper.joinParams(mapGetCall
+						.getExpression(), GeneratorHelper.joinParams(mapGetCall
 						.getParameters()));
 	}
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
 		String expr = mapContainsKeyCall.getExpression().toString();
-		return String.format("(%s) -> find(%s) != (%s) -> end()", expr, Helper.joinParams(mapContainsKeyCall
+		return String.format("(%s) -> find(%s) != (%s) -> end()", expr, GeneratorHelper.joinParams(mapContainsKeyCall
 				.getParameters()), expr);
 	}
 
@@ -441,7 +438,7 @@ public class CppGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s->%s(%s)", lgc.getExpression(), "at", Helper
+		return String.format("%s->%s(%s)", lgc.getExpression(), "at", GeneratorHelper
 				.joinParams(lgc.getParameters()));
 	}
 
@@ -459,7 +456,7 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
 		return String.format("%s -> erase(%s -> begin()+%s)", lrc
-				.getExpression(), lrc.getExpression(), Helper.joinParams(lrc
+				.getExpression(), lrc.getExpression(), GeneratorHelper.joinParams(lrc
 				.getParameters()));
 	}
 
@@ -486,7 +483,7 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ListAddCall lac) {
 		return String.format("%s->%s(%s)", lac.getExpression(), "push_back",
-				Helper.joinParams(lac.getParameters()));
+				GeneratorHelper.joinParams(lac.getParameters()));
 	}
 
 	/**

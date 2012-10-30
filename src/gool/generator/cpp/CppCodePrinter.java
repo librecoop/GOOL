@@ -1,9 +1,9 @@
 package gool.generator.cpp;
 
-import gool.ast.ClassDef;
-import gool.ast.ClassMain;
-import gool.ast.MainMeth;
-import gool.ast.Meth;
+import gool.ast.constructs.ClassDef;
+import gool.ast.constructs.ClassMain;
+import gool.ast.constructs.MainMeth;
+import gool.ast.constructs.Meth;
 import gool.generator.common.CodePrinter;
 
 import java.io.File;

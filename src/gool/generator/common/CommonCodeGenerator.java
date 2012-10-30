@@ -1,39 +1,39 @@
 package gool.generator.common;
 
-import gool.ast.ArrayAccess;
-import gool.ast.ArrayNew;
-import gool.ast.Assign;
-import gool.ast.BinaryOperation;
-import gool.ast.Block;
-import gool.ast.CastExpression;
-import gool.ast.ClassNew;
-import gool.ast.Comment;
-import gool.ast.Constant;
-import gool.ast.Constructor;
-import gool.ast.Dependency;
-import gool.ast.Field;
-import gool.ast.FieldAccess;
-import gool.ast.For;
-import gool.ast.GoolCall;
-import gool.ast.Identifier;
-import gool.ast.If;
-import gool.ast.ListMethCall;
-import gool.ast.MapEntryMethCall;
-import gool.ast.MapMethCall;
-import gool.ast.MemberSelect;
-import gool.ast.Meth;
-import gool.ast.MethCall;
-import gool.ast.Modifier;
-import gool.ast.NewInstance;
-import gool.ast.Package;
-import gool.ast.Return;
-import gool.ast.Statement;
-import gool.ast.This;
-import gool.ast.ThisCall;
-import gool.ast.UnaryOperation;
-import gool.ast.VarDeclaration;
-import gool.ast.While;
-import gool.ast.gool.TypeDependency;
+import gool.ast.constructs.ArrayAccess;
+import gool.ast.constructs.ArrayNew;
+import gool.ast.constructs.Assign;
+import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Block;
+import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.ClassNew;
+import gool.ast.constructs.Comment;
+import gool.ast.constructs.Constant;
+import gool.ast.constructs.Constructor;
+import gool.ast.constructs.Dependency;
+import gool.ast.constructs.Field;
+import gool.ast.constructs.FieldAccess;
+import gool.ast.constructs.For;
+import gool.ast.constructs.GoolCall;
+import gool.ast.constructs.Identifier;
+import gool.ast.constructs.If;
+import gool.ast.constructs.ListMethCall;
+import gool.ast.constructs.MapEntryMethCall;
+import gool.ast.constructs.MapMethCall;
+import gool.ast.constructs.MemberSelect;
+import gool.ast.constructs.Meth;
+import gool.ast.constructs.MethCall;
+import gool.ast.constructs.Modifier;
+import gool.ast.constructs.NewInstance;
+import gool.ast.constructs.Package;
+import gool.ast.constructs.Return;
+import gool.ast.constructs.Statement;
+import gool.ast.constructs.This;
+import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.TypeDependency;
+import gool.ast.constructs.UnaryOperation;
+import gool.ast.constructs.VarDeclaration;
+import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
@@ -41,7 +41,7 @@ import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeVoid;
-import gool.executor.Helper;
+import gool.generator.GeneratorHelper;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -429,7 +429,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return String.format("this( %s )", Helper.joinParams(thisCall.getParameters()));
+		return String.format("this( %s )", GeneratorHelper.joinParams(thisCall.getParameters()));
 	}
 
 	@Override

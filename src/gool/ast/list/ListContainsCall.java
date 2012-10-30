@@ -1,7 +1,7 @@
 package gool.ast.list;
 
-import gool.ast.Expression;
-import gool.ast.ListMethCall;
+import gool.ast.constructs.Expression;
+import gool.ast.constructs.ListMethCall;
 import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeVoid;
 

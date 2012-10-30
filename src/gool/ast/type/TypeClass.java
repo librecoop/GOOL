@@ -1,8 +1,8 @@
 package gool.ast.type;
 
-import gool.ast.ClassDef;
-import gool.ast.Constant;
-import gool.ast.Expression;
+import gool.ast.constructs.ClassDef;
+import gool.ast.constructs.Constant;
+import gool.ast.constructs.Expression;
 import gool.ast.printer.GoolGeneratorController;
 
 /**

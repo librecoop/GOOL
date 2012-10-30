@@ -1,7 +1,7 @@
 package gool.ast.map;
 
-import gool.ast.Expression;
-import gool.ast.MapMethCall;
+import gool.ast.constructs.Expression;
+import gool.ast.constructs.MapMethCall;
 import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeVoid;
 

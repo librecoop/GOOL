@@ -1,9 +1,8 @@
 package gool.ast.printer;
 
-import gool.ast.Dependency;
-import gool.ast.gool.CustomDependency;
-import gool.ast.gool.SystemOutPrintCall;
-import gool.ast.gool.TypeDependency;
+import gool.ast.constructs.CustomDependency;
+import gool.ast.constructs.Dependency;
+import gool.ast.constructs.TypeDependency;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.map.MapContainsKeyCall;
 import gool.ast.map.MapEntryGetKeyCall;
@@ -14,6 +13,7 @@ import gool.ast.map.MapIsEmptyCall;
 import gool.ast.map.MapPutCall;
 import gool.ast.map.MapRemoveCall;
 import gool.ast.map.MapSizeCall;
+import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;

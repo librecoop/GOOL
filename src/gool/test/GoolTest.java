@@ -1,6 +1,5 @@
 package gool.test;
 
-import gool.executor.Helper;
 import gool.generator.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
@@ -29,7 +28,7 @@ public class GoolTest {
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
-			String cleanOutput = cleanOutput(Helper.generateCompileRun(
+			String cleanOutput = cleanOutput(TestHelper.generateCompileRun(
 					platform, input, MAIN_CLASS_NAME));
 			return cleanOutput;
 		}
@@ -51,7 +50,7 @@ public class GoolTest {
 
 	@Test
 	public void helloWorld() throws Exception {
-		String input = Helper.surroundWithClassMain(
+		String input = TestHelper.surroundWithClassMain(
 				"System.out.println(\"Hello World\");", MAIN_CLASS_NAME);
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
@@ -59,7 +58,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleAddition() throws Exception {
-		String input = Helper.surroundWithClassMain("System.out.println(2 + 2);",
+		String input = TestHelper.surroundWithClassMain("System.out.println(2 + 2);",
 				MAIN_CLASS_NAME);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -67,7 +66,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleIf() throws Exception {
-		String input = Helper
+		String input = TestHelper
 				.surroundWithClassMain(
 						"boolean b = true; if (b) { System.out.println(2 + 2);} else { System.out.println(2 + 5); }",
 						MAIN_CLASS_NAME);
@@ -77,7 +76,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleFor() throws Exception {
-		String input = Helper
+		String input = TestHelper
 				.surroundWithClassMain(
 						"int total = 0; for(int i = 0; i < 4; i++){ total ++;} System.out.println(total);",
 						MAIN_CLASS_NAME);
@@ -89,7 +88,7 @@ public class GoolTest {
 	public void listAddGet() throws Exception {
 		String input = 
 				"import gool.java.util.ArrayList;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"ArrayList<Integer> l = new ArrayList<Integer>(); l.add(4); System.out.println(l.get(0));",
 						MAIN_CLASS_NAME);
@@ -101,12 +100,12 @@ public class GoolTest {
 	@Test
 	public void mapAddGet() throws Exception {
 		// String input =
-		// Helper.surroundWithClassMain("HashMap<String, Integer > m = new HashMap<String, Integer>();",
+		// TestHelper.surroundWithClassMain("HashMap<String, Integer > m = new HashMap<String, Integer>();",
 		// "Test");
 		String input = 
 				"import gool.java.util.HashMap;\n" + 
 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"String four = \"four\"; HashMap<String, Integer > m = new HashMap<String, Integer>(); m.put(four,4); System.out.println(m.get(four));",
 						MAIN_CLASS_NAME);
@@ -116,7 +115,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleNew() throws Exception {
-		String input = Helper
+		String input = TestHelper
 				.surroundWithClass(
 						"public void print(){System.out.println(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.print();}",
 						MAIN_CLASS_NAME, "");
@@ -126,10 +125,10 @@ public class GoolTest {
 
 	@Test
 	public void simpleTwoClasses() throws Exception {
-		String input = Helper.surroundWithClassMain(
+		String input = TestHelper.surroundWithClassMain(
 				"Printer p = new Printer(); p.print();", MAIN_CLASS_NAME);
 		input += "\n"
-				+ Helper.surroundWithClass(
+				+ TestHelper.surroundWithClass(
 						"public void print(){System.out.println(2 + 2);}", "Printer", "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -139,7 +138,7 @@ public class GoolTest {
 	public void simpleForEach() throws Exception {
 		String input = 
 				"import gool.java.util.ArrayList;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"Integer total = 0;"
 								+ " ArrayList<Integer> l = new ArrayList<Integer>();"
@@ -154,7 +153,7 @@ public class GoolTest {
 	public void mapForEach() throws Exception {
 		String input = 
 				"import gool.java.util.HashMap;\n" + 
-				Helper.surroundWithClassMain("Integer total = 0;"
+				TestHelper.surroundWithClassMain("Integer total = 0;"
 				+ " HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();"
 				+ " m.put(0, 1); m.put(2, 3);"
 				+ " for(HashMap.Entry<Integer, Integer> entry : m){"
@@ -169,7 +168,7 @@ public class GoolTest {
 	public void listWithDifferentTypeElement() throws Exception {
 		String input = 
 				"import gool.java.util.ArrayList;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
 						MAIN_CLASS_NAME);
@@ -181,7 +180,7 @@ public class GoolTest {
 		try {
 			String input = 
 					"import gool.java.util.HashMap;\n" + 
-					Helper
+					TestHelper
 					.surroundWithClassMain(
 							"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
 							MAIN_CLASS_NAME);
@@ -200,7 +199,7 @@ public class GoolTest {
 	public void removeElementsFromUntypedList() throws Exception {
 		String input = 
 				"import gool.java.util.ArrayList;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
 						MAIN_CLASS_NAME);
@@ -211,7 +210,7 @@ public class GoolTest {
 	public void removeElementsFromIntegerList() throws Exception {
 		String input = 
 				"import gool.java.util.ArrayList;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.removeAt(1);System.out.println(l.size());",
 						MAIN_CLASS_NAME);
@@ -222,7 +221,7 @@ public class GoolTest {
 	public void removeElementsFromMap() throws Exception {
 		String input = 
 				"import gool.java.util.HashMap;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();m.put(1, 2);m.put(2, 3);m.remove(2);System.out.println(m.size());",
 						MAIN_CLASS_NAME);
@@ -233,7 +232,7 @@ public class GoolTest {
 	public void isEmptyList() throws Exception {
 		String input = 
 				"import gool.java.util.ArrayList;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");System.out.println(l.isEmpty());",
 						MAIN_CLASS_NAME);
@@ -258,7 +257,7 @@ public class GoolTest {
 	public void listContainsElement() throws Exception {
 		String input = 
 				"import gool.java.util.ArrayList;\n" + 
-				Helper
+				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");l.add(\"hola\");System.out.println(l.contains(\"hola\"));",
 						MAIN_CLASS_NAME);

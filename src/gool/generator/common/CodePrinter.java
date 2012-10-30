@@ -1,11 +1,11 @@
 package gool.generator.common;
 
-import gool.ast.ClassDef;
-import gool.ast.Dependency;
-import gool.ast.INode;
+import gool.ast.constructs.ClassDef;
+import gool.ast.constructs.Dependency;
+import gool.ast.constructs.INode;
 import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
-import gool.executor.Helper;
+import gool.generator.GeneratorHelper;
 import gool.generator.Platform;
 import gool.generator.common.exception.VelocityException;
 
@@ -141,7 +141,7 @@ public abstract class CodePrinter {
 			VelocityContext context = new VelocityContext();
 			context.put("class", classDef);
 			context.put("macros", getTemplateDir() + "macros.vm");
-			context.put("Helper", Helper.class);
+			context.put("Helper", GeneratorHelper.class);
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
 

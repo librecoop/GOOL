@@ -1,23 +1,21 @@
 package gool.generator.csharp;
 
-import gool.ast.BinaryOperation;
-import gool.ast.ClassDef;
-import gool.ast.ClassNew;
-import gool.ast.Constant;
-import gool.ast.Constructor;
-import gool.ast.Dependency;
-import gool.ast.EnhancedForLoop;
-import gool.ast.EqualsCall;
-import gool.ast.MainMeth;
-import gool.ast.Meth;
-import gool.ast.Modifier;
-import gool.ast.Operator;
-import gool.ast.ParentCall;
-import gool.ast.ToStringCall;
-import gool.ast.gool.CustomDependency;
-import gool.ast.gool.SystemOutDependency;
-import gool.ast.gool.SystemOutPrintCall;
-import gool.ast.gool.TypeDependency;
+import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.ClassDef;
+import gool.ast.constructs.ClassNew;
+import gool.ast.constructs.Constant;
+import gool.ast.constructs.Constructor;
+import gool.ast.constructs.CustomDependency;
+import gool.ast.constructs.Dependency;
+import gool.ast.constructs.EnhancedForLoop;
+import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.MainMeth;
+import gool.ast.constructs.Meth;
+import gool.ast.constructs.Modifier;
+import gool.ast.constructs.Operator;
+import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.TypeDependency;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -35,6 +33,8 @@ import gool.ast.map.MapIsEmptyCall;
 import gool.ast.map.MapPutCall;
 import gool.ast.map.MapRemoveCall;
 import gool.ast.map.MapSizeCall;
+import gool.ast.system.SystemOutDependency;
+import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeDecimal;
@@ -45,7 +45,7 @@ import gool.ast.type.TypeMap;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeVoid;
-import gool.executor.Helper;
+import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.HashMap;
@@ -90,7 +90,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	 * @return the formatted object instantiation.
 	 */
 	public String getCode(ClassNew classNew) {
-		return String.format("new %s( %s )", classNew.getName(), Helper
+		return String.format("new %s( %s )", classNew.getName(), GeneratorHelper
 				.joinParams(classNew.getParameters()));
 	}
 
@@ -107,31 +107,31 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ListAddCall lac) {
 		String method = lac.getParameters().size() > 1 ? "Insert" : "Add";
-		return String.format("%s.%s(%s)", lac.getExpression(), method, Helper
+		return String.format("%s.%s(%s)", lac.getExpression(), method, GeneratorHelper
 				.joinParams(lac.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		return String.format("%s.Remove(%s)", lrc.getExpression(), Helper
+		return String.format("%s.Remove(%s)", lrc.getExpression(), GeneratorHelper
 				.joinParams(lrc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("%s.RemoveAt(%s)", lrc.getExpression(), Helper
+		return String.format("%s.RemoveAt(%s)", lrc.getExpression(), GeneratorHelper
 				.joinParams(lrc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s.Contains(%s)", lcc.getExpression(), Helper
+		return String.format("%s.Contains(%s)", lcc.getExpression(), GeneratorHelper
 				.joinParams(lcc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s[%s]", lgc.getExpression(), Helper
+		return String.format("%s[%s]", lgc.getExpression(), GeneratorHelper
 				.joinParams(lgc.getParameters()));
 	}
 
@@ -212,7 +212,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("Console.WriteLine(%s)", Helper
+		return String.format("Console.WriteLine(%s)", GeneratorHelper
 				.joinParams(systemOutPrintCall.getParameters()));
 	}
 
@@ -220,7 +220,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(ParentCall parentCall) {
 		String out = "base(";
 		if (parentCall.getParameters() != null) {
-			out += Helper.joinParams(parentCall.getParameters());
+			out += GeneratorHelper.joinParams(parentCall.getParameters());
 		}
 		out += ")";
 		return out;
@@ -242,7 +242,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		customizeModifiers(meth);
 
 		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()), meth
-				.getType(), name, Helper.joinParams(meth.getParams()));
+				.getType(), name, GeneratorHelper.joinParams(meth.getParams()));
 	}
 
 	private void customizeModifiers(Meth meth) {
@@ -308,7 +308,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
 		return String.format("%s.Remove(%s)", mapRemoveCall.getExpression(),
-				Helper.joinParams(mapRemoveCall.getParameters()));
+				GeneratorHelper.joinParams(mapRemoveCall.getParameters()));
 	}
 
 	@Override
@@ -329,14 +329,14 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String.format("%s[%s]", mapGetCall.getExpression(), Helper
+		return String.format("%s[%s]", mapGetCall.getExpression(), GeneratorHelper
 				.joinParams(mapGetCall.getParameters()));
 	}
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
 		return String.format("%s.ContainsKey(%s)", mapContainsKeyCall
-				.getExpression(), Helper.joinParams(mapContainsKeyCall
+				.getExpression(), GeneratorHelper.joinParams(mapContainsKeyCall
 				.getParameters()));
 	}
 
@@ -397,7 +397,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		return String.format("%s.Equals(%s)", equalsCall.getTarget(), Helper
+		return String.format("%s.Equals(%s)", equalsCall.getTarget(), GeneratorHelper
 				.joinParams(equalsCall.getParameters()));
 	}
 
