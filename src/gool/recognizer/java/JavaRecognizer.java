@@ -74,7 +74,7 @@ import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeVoid;
-import gool.generator.Platform;
+import gool.generator.common.Platform;
 
 import java.io.BufferedReader;
 import java.io.File;

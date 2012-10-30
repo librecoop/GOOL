@@ -1,7 +1,7 @@
 package gool.executor.java;
 
 import gool.executor.Command;
-import gool.executor.SpecificCompiler;
+import gool.executor.common.SpecificCompiler;
 
 import java.io.File;
 import java.io.FileNotFoundException;

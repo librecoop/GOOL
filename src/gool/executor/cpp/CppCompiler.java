@@ -2,7 +2,8 @@ package gool.executor.cpp;
 
 import gool.Settings;
 import gool.executor.Command;
-import gool.executor.SpecificCompiler;
+import gool.executor.common.SpecificCompiler;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

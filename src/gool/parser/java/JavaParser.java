@@ -3,7 +3,7 @@ package gool.parser.java;
 import gool.Settings;
 import gool.ast.constructs.ClassDef;
 import gool.ast.printer.GoolGeneratorController;
-import gool.generator.Platform;
+import gool.generator.common.Platform;
 import gool.recognizer.java.JavaRecognizer;
 
 import java.io.File;

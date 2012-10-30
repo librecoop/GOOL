@@ -1,6 +1,6 @@
 package gool.test;
 
-import gool.generator.Platform;
+import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;

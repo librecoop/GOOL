@@ -1,10 +1,10 @@
 package gool.generator.java;
 
 import gool.Settings;
-import gool.executor.SpecificCompiler;
+import gool.executor.common.SpecificCompiler;
 import gool.executor.java.JavaCompiler;
-import gool.generator.Platform;
 import gool.generator.common.CodePrinter;
+import gool.generator.common.Platform;
 
 import java.io.File;
 import java.util.ArrayList;

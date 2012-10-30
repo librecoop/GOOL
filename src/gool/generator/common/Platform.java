@@ -1,9 +1,8 @@
-package gool.generator;
+package gool.generator.common;
 
 import gool.ast.constructs.Dependency;
 import gool.ast.type.PrimitiveType;
-import gool.executor.SpecificCompiler;
-import gool.generator.common.CodePrinter;
+import gool.executor.common.SpecificCompiler;
 
 import java.util.HashMap;
 import java.util.Map;

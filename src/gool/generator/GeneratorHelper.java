@@ -3,6 +3,7 @@ package gool.generator;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
 import gool.generator.common.CodePrinter;
+import gool.generator.common.Platform;
 
 import java.io.File;
 import java.io.FileNotFoundException;

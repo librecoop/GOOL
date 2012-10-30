@@ -3,7 +3,7 @@ package gool.test;
 import gool.GOOLCompiler;
 import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
-import gool.generator.Platform;
+import gool.generator.common.Platform;
 
 import java.io.File;
 import java.io.FileNotFoundException;

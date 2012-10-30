@@ -6,7 +6,6 @@ import gool.ast.constructs.INode;
 import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
 import gool.generator.GeneratorHelper;
-import gool.generator.Platform;
 import gool.generator.common.exception.VelocityException;
 
 import java.io.File;

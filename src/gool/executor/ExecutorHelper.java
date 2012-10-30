@@ -1,7 +1,8 @@
 package gool.executor;
 
 import gool.ast.constructs.ClassDef;
-import gool.generator.Platform;
+import gool.executor.common.SpecificCompiler;
+import gool.generator.common.Platform;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -2,7 +2,7 @@ package gool.ast.constructs;
 
 import gool.ast.type.IType;
 import gool.ast.type.TypeClass;
-import gool.generator.Platform;
+import gool.generator.common.Platform;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.generator.Platform;
 import gool.generator.common.CodePrinter;
+import gool.generator.common.Platform;
 
 public class ClassMain extends ClassDef {
 

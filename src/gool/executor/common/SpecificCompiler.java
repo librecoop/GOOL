@@ -1,4 +1,4 @@
-package gool.executor;
+package gool.executor.common;
 
 import gool.ast.constructs.ClassMain;
 
