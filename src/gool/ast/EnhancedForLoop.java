@@ -1,6 +1,6 @@
 package gool.ast;
 
-import gool.GoolGeneratorController;
+import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeNone;
 
 public class EnhancedForLoop extends Expression {

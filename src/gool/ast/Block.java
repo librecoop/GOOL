@@ -1,6 +1,6 @@
 package gool.ast;
 
-import gool.GoolGeneratorController;
+import gool.ast.printer.GoolGeneratorController;
 
 import java.util.ArrayList;
 import java.util.List;

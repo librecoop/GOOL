@@ -1,6 +1,6 @@
 package gool.ast;
 
-import gool.platform.Platform;
+import gool.generator.Platform;
 
 public class StaticClass extends ClassDef {
 

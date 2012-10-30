@@ -1,6 +1,6 @@
 package gool.ast.type;
 
-import gool.GoolGeneratorController;
+import gool.ast.printer.GoolGeneratorController;
 
 /**
  * This is the basic type Void of the intermediate language.

@@ -3,7 +3,7 @@ package gool.ast;
 import gool.ast.gool.TypeDependency;
 import gool.ast.type.IType;
 import gool.ast.type.TypeClass;
-import gool.platform.Platform;
+import gool.generator.Platform;
 
 import java.util.ArrayList;
 import java.util.Collection;

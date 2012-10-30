@@ -1,10 +1,10 @@
 package gool.test;
 
-import gool.platform.Platform;
-import gool.platform.cpp.CppPlatform;
-import gool.platform.csharp.CSharpPlatform;
-import gool.platform.java.JavaPlatform;
-import gool.util.Helper;
+import gool.executor.Helper;
+import gool.generator.Platform;
+import gool.generator.cpp.CppPlatform;
+import gool.generator.csharp.CSharpPlatform;
+import gool.generator.java.JavaPlatform;
 
 import java.util.Arrays;
 import java.util.List;

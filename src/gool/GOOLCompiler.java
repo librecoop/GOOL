@@ -1,13 +1,12 @@
 package gool;
 
 import gool.ast.ClassDef;
-import gool.parser.GoolParser;
-import gool.platform.Platform;
-import gool.platform.cpp.CppPlatform;
-import gool.platform.csharp.CSharpPlatform;
-import gool.platform.java.JavaPlatform;
-import gool.util.Helper;
-import gool.util.Settings;
+import gool.executor.Helper;
+import gool.generator.Platform;
+import gool.generator.cpp.CppPlatform;
+import gool.generator.csharp.CSharpPlatform;
+import gool.generator.java.JavaPlatform;
+import gool.parser.java.JavaParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,7 +51,7 @@ public class GOOLCompiler {
 
 	private Collection<ClassDef> concreteGoolToAbstractGool(Platform destPlatform, String input)
 			throws Exception {
-		return GoolParser.parseGool(destPlatform, input);
+		return JavaParser.parseGool(destPlatform, input);
 	}
 
 
@@ -70,7 +69,7 @@ public class GOOLCompiler {
 
 	private Collection<ClassDef> concreteGoolToAbstractGool(Platform destPlatform,
 			Collection<? extends File> inputFiles) throws Exception {
-		return GoolParser.parseGool(destPlatform,
+		return JavaParser.parseGool(destPlatform,
 				Helper.getJavaFileObjects(inputFiles));
 	}
 	

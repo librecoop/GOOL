@@ -1,7 +1,7 @@
 package gool.ast.gool;
 
-import gool.GoolGeneratorController;
 import gool.ast.Dependency;
+import gool.ast.printer.GoolGeneratorController;
 
 public class SystemOutDependency extends Dependency {
 

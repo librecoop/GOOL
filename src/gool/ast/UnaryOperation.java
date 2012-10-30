@@ -1,6 +1,6 @@
 package gool.ast;
 
-import gool.GoolGeneratorController;
+import gool.ast.printer.GoolGeneratorController;
 
 /**
  * Allows to compute the value of an unary operation. It may be used on boolean or

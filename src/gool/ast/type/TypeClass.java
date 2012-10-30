@@ -1,9 +1,9 @@
 package gool.ast.type;
 
-import gool.GoolGeneratorController;
 import gool.ast.ClassDef;
 import gool.ast.Constant;
 import gool.ast.Expression;
+import gool.ast.printer.GoolGeneratorController;
 
 /**
  * This is the basic type for classes defined in the intermediate language.

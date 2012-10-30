@@ -1,8 +1,8 @@
 package gool.ast.map;
 
-import gool.GoolGeneratorController;
 import gool.ast.Expression;
 import gool.ast.MapEntryMethCall;
+import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeVoid;
 
 public class MapEntryGetValueCall extends MapEntryMethCall {

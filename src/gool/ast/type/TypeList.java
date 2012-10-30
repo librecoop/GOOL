@@ -1,7 +1,7 @@
 package gool.ast.type;
 
-import gool.GoolGeneratorController;
 import gool.ast.ClassDef;
+import gool.ast.printer.GoolGeneratorController;
 
 
 /**
