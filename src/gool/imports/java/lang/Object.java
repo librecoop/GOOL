@@ -1,4 +1,4 @@
-package gool.java.lang;
+package gool.imports.java.lang;
 
 public class Object{
 	@Override

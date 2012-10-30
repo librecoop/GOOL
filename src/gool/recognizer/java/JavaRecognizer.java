@@ -435,7 +435,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("List", tmpOtd);
 		string2otdMap.put("ArrayList", tmpOtd);
 		string2otdMap.put("java.util.ArrayList", tmpOtd);
-		string2otdMap.put("gool.java.util.ArrayList", tmpOtd);
+		string2otdMap.put("gool.imports.java.util.ArrayList", tmpOtd);
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeMap();
@@ -444,14 +444,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("Map", tmpOtd);
 		string2otdMap.put("HashMap", tmpOtd);
 		string2otdMap.put("java.util.HashMap", tmpOtd);
-		string2otdMap.put("gool.java.util.HashMap", tmpOtd);
+		string2otdMap.put("gool.imports.java.util.HashMap", tmpOtd);
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeEntry();
 			}
 		};
 		string2otdMap.put("Entry", tmpOtd);
-		string2otdMap.put("gool.java.util.Map.Entry", tmpOtd);
+		string2otdMap.put("gool.imports.java.util.Map.Entry", tmpOtd);
 	}
 
 	private IType string2IType(String typeName, Context context) {
@@ -661,9 +661,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
-			if (!dependencyString.contains("gool.java")
+			if (!dependencyString.contains("gool.imports.java")
 					&& !dependencyString
-							.contains("gool.java.annotations")) {
+							.contains("gool.imports.java.annotations")) {
 				dependencies.add(new CustomDependency(dependencyString));
 			}
 		}

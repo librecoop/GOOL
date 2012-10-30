@@ -87,7 +87,7 @@ public class GoolTest {
 	@Test
 	public void listAddGet() throws Exception {
 		String input = 
-				"import gool.java.util.ArrayList;\n" + 
+				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"ArrayList<Integer> l = new ArrayList<Integer>(); l.add(4); System.out.println(l.get(0));",
@@ -103,7 +103,7 @@ public class GoolTest {
 		// TestHelper.surroundWithClassMain("HashMap<String, Integer > m = new HashMap<String, Integer>();",
 		// "Test");
 		String input = 
-				"import gool.java.util.HashMap;\n" + 
+				"import gool.imports.java.util.HashMap;\n" + 
 
 				TestHelper
 				.surroundWithClassMain(
@@ -137,7 +137,7 @@ public class GoolTest {
 	@Test
 	public void simpleForEach() throws Exception {
 		String input = 
-				"import gool.java.util.ArrayList;\n" + 
+				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"Integer total = 0;"
@@ -152,7 +152,7 @@ public class GoolTest {
 	@Test
 	public void mapForEach() throws Exception {
 		String input = 
-				"import gool.java.util.HashMap;\n" + 
+				"import gool.imports.java.util.HashMap;\n" + 
 				TestHelper.surroundWithClassMain("Integer total = 0;"
 				+ " HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();"
 				+ " m.put(0, 1); m.put(2, 3);"
@@ -167,7 +167,7 @@ public class GoolTest {
 	@Test
 	public void listWithDifferentTypeElement() throws Exception {
 		String input = 
-				"import gool.java.util.ArrayList;\n" + 
+				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
@@ -179,7 +179,7 @@ public class GoolTest {
 	public void mapWithoutTypes() throws Exception {
 		try {
 			String input = 
-					"import gool.java.util.HashMap;\n" + 
+					"import gool.imports.java.util.HashMap;\n" + 
 					TestHelper
 					.surroundWithClassMain(
 							"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
@@ -198,7 +198,7 @@ public class GoolTest {
 	@Test
 	public void removeElementsFromUntypedList() throws Exception {
 		String input = 
-				"import gool.java.util.ArrayList;\n" + 
+				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
@@ -209,7 +209,7 @@ public class GoolTest {
 	@Test
 	public void removeElementsFromIntegerList() throws Exception {
 		String input = 
-				"import gool.java.util.ArrayList;\n" + 
+				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.removeAt(1);System.out.println(l.size());",
@@ -220,7 +220,7 @@ public class GoolTest {
 	@Test
 	public void removeElementsFromMap() throws Exception {
 		String input = 
-				"import gool.java.util.HashMap;\n" + 
+				"import gool.imports.java.util.HashMap;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();m.put(1, 2);m.put(2, 3);m.remove(2);System.out.println(m.size());",
@@ -231,7 +231,7 @@ public class GoolTest {
 	@Test
 	public void isEmptyList() throws Exception {
 		String input = 
-				"import gool.java.util.ArrayList;\n" + 
+				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");System.out.println(l.isEmpty());",
@@ -256,7 +256,7 @@ public class GoolTest {
 	@Test
 	public void listContainsElement() throws Exception {
 		String input = 
-				"import gool.java.util.ArrayList;\n" + 
+				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");l.add(\"hola\");System.out.println(l.contains(\"hola\"));",

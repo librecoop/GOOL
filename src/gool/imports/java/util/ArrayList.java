@@ -1,4 +1,4 @@
-package gool.java.util;
+package gool.imports.java.util;
 
 
 import java.util.Iterator;
