@@ -1,6 +1,7 @@
 package gool.ast.constructs;
 
 import gool.ast.printer.GoolGeneratorController;
+import gool.ast.type.IType;
 import gool.ast.type.TypeString;
 
 /**
@@ -27,8 +28,8 @@ public class BinaryOperation extends Operation {
 	 * @param right
 	 *            the right operand.
 	 */
-	public BinaryOperation(Operator operator, Expression left, Expression right) {
-		super(operator);
+	public BinaryOperation(Operator operator, Expression left, Expression right, IType type, String symbol) {
+		super(operator,type,symbol);
 		/*
 		 * If both expressions have different types and the '+' operator is
 		 * used, we assume that it is a string concatenation. Thus, we force the

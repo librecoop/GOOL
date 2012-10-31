@@ -1,6 +1,7 @@
 package gool.ast.constructs;
 
 import gool.ast.printer.GoolGeneratorController;
+import gool.ast.type.IType;
 
 /**
  * Allows to compute the value of an unary operation. It may be used on boolean or
@@ -10,8 +11,8 @@ public class UnaryOperation extends Operation {
 
 	private Expression expression;
 
-	public UnaryOperation(Operator operator, Expression expr) {
-		super(operator);
+	public UnaryOperation(Operator operator, Expression expr, IType type, String symbol) {
+		super(operator,type,symbol);
 		this.expression = expr;
 	}
 

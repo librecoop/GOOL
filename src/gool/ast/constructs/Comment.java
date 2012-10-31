@@ -42,9 +42,4 @@ public class Comment extends Expression {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 	
-	@Override
-	public Boolean getSemiColon() {
-		return false;
-	}
-	
 }

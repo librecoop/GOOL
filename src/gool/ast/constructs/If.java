@@ -31,7 +31,6 @@ public class If extends Statement {
 		this.condition=condition;
 		this.thenStatement = thenStatement;
 		this.elseStatement = elseStatement;
-		setSemiColon(false);
 	}
 	
 	public Expression getCondition() {

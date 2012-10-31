@@ -23,6 +23,7 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
+import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
 import gool.ast.constructs.INode;
@@ -79,6 +80,7 @@ import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
+import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
 
@@ -339,8 +341,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		case BYTE:
 			return TypeByte.INSTANCE;
 		default:
-			throw new IllegalStateException(error(
-					"%s PrimitiveType not supported.", typeKind));
+			return new TypeUnknown(typeKind.toString());
 		}
 	}
 
@@ -397,9 +398,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		case NULL:
 			return TypeNull.INSTANCE;
 		default:
-			throw new IllegalStateException(error(
-					"%s type of kind %s not supported", typeMirror, typeMirror
-							.getKind()));
+			return new TypeUnknown(typeMirror.getKind().toString());
 		}
 	}
 
@@ -503,8 +502,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitAssert(AssertTree n, Context context) {
-		throw new IllegalStateException(
-				error("Assert statement is not supported"));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
@@ -517,13 +515,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitBinary(BinaryTree n, Context context) {
+		
 		Expression leftExp = (Expression) n.getLeftOperand().accept(this,
 				context);
 		Expression rightExp = (Expression) n.getRightOperand().accept(this,
 				context);
 		Operator operator = getOperator(n.getKind());
-
-		return new BinaryOperation(operator, leftExp, rightExp);
+		IType type=goolType(n,context);
+		String textualoperator= n.toString().replace(n.getLeftOperand().toString(), "").replace(n.getRightOperand().toString(), "");
+		return new BinaryOperation(operator, leftExp, rightExp, type, textualoperator);
 	}
 
 	@Override
@@ -540,20 +540,17 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitBreak(BreakTree n, Context context) {
-		throw new IllegalStateException(
-				error("The 'break' statement is not supported"));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
 	public Object visitCase(CaseTree n, Context context) {
-		throw new IllegalStateException(
-				error("The 'case' instruction is not supported"));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
 	public Object visitCatch(CatchTree n, Context context) {
-		throw new IllegalStateException(
-				error("The 'catch' instruction is not supported"));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
@@ -695,33 +692,28 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitCompoundAssignment(CompoundAssignmentTree n,
 			Context context) {
-		throw new IllegalStateException(error(
-				"Compound assignments (%s) are not supported.", n));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
 	public Object visitConditionalExpression(ConditionalExpressionTree n,
 			Context context) {
-		throw new IllegalStateException(
-				error("The conditional expression is not currently supported"));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
 	public Object visitContinue(ContinueTree n, Context context) {
-		throw new IllegalStateException(
-				error("The 'continue' instruction is not supported"));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
 	public Object visitDoWhileLoop(DoWhileLoopTree n, Context context) {
-		throw new IllegalStateException(error(
-				"The 'do/while' instruction is not supported.", n));
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
 	public Object visitEmptyStatement(EmptyStatementTree n, Context context) {
-		// TODO What is the equivalent in GOOL?
-		return null;
+		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
 
 	@Override
@@ -750,13 +742,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitForLoop(ForLoopTree node, Context p) {
 		List<? extends StatementTree> initializers = node.getInitializer();
 		if (initializers.size() > 1) {
-			throw new IllegalStateException(
-					error("More than one initializer is not supported"));
+			return new ExpressionUnknown(goolType(node,p),node.toString());
 		}
 		List<? extends StatementTree> updaters = node.getUpdate();
 		if (updaters.size() > 1) {
-			throw new IllegalStateException(
-					error("More than one updater is not supported"));
+			return new ExpressionUnknown(goolType(node,p),node.toString());
 		}
 		Statement initializer = (Statement) initializers.get(0).accept(this, p);
 		Expression condition = (Expression) node.getCondition().accept(this, p);
@@ -810,13 +800,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitInstanceOf(InstanceOfTree node, Context p) {
-		throw new IllegalStateException(error("InstanceOf is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
 
 	@Override
 	public Object visitLabeledStatement(LabeledStatementTree node, Context p) {
-		throw new IllegalStateException(
-				error("LabeledStatement is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
 
 	@Override
@@ -1074,11 +1063,22 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			case FINAL:
 				result.add(Modifier.FINAL);
 				break;
-			default:
-				throw new IllegalStateException(error(
-						"%s modifier not supported.", modifier));
-			}
-		}
+			case VOLATILE:
+				result.add(Modifier.VOLATILE);
+				break;
+			case TRANSIENT:
+				result.add(Modifier.TRANSIENT);
+				break;
+			case NATIVE:
+				result.add(Modifier.NATIVE);
+				break;
+			case STRICTFP:
+				result.add(Modifier.STRICTFP);
+				break;
+			case SYNCHRONIZED:
+				result.add(Modifier.SYNCHRONIZED);
+				break;
+		}}
 
 		return result;
 	}
@@ -1114,7 +1114,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitOther(Tree node, Context p) {
-		throw new IllegalStateException(error("Other is not supported."));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 
 	}
 
@@ -1141,22 +1141,22 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitSwitch(SwitchTree node, Context p) {
-		throw new IllegalStateException(error("Switch is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
 
 	@Override
 	public Object visitSynchronized(SynchronizedTree node, Context p) {
-		throw new IllegalStateException(error("Synchronized is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
 
 	@Override
 	public Object visitThrow(ThrowTree node, Context p) {
-		throw new IllegalStateException(error("THROW is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
 
 	@Override
 	public Object visitTry(TryTree node, Context p) {
-		throw new IllegalStateException(error("TRY is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
 
 	@Override
@@ -1167,7 +1167,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitTypeParameter(TypeParameterTree node, Context p) {
-		throw new IllegalStateException(error("Generics is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
 
 	@Override
@@ -1175,8 +1175,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
 		Operator operator = getOperator(n.getKind());
-
-		return new UnaryOperation(operator, expression);
+		IType type=goolType(n,context);
+		String textualoperator=  n.toString().replace(n.getExpression().toString(), "");
+		return new UnaryOperation(operator, expression, type, textualoperator);
 	}
 
 	@Override
@@ -1207,6 +1208,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitWildcard(WildcardTree node, Context p) {
-		throw new IllegalStateException(error("Wildcard is not supported"));
+		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}	
 }

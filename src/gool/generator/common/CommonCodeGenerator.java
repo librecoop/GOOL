@@ -40,6 +40,7 @@ import gool.ast.type.TypeClass;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeString;
+import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
 
@@ -92,8 +93,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		return String.format("(%s %s %s)", binaryOp.getLeft(), binaryOp
-				.getOperator(), binaryOp.getRight());
+		return String.format("(%s %s %s)", binaryOp.getLeft(), binaryOp.getTextualoperator() , binaryOp.getRight());
 	}
 
 	/**
@@ -392,9 +392,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		case POSTFIX_DECREMENT:
 		case POSTFIX_INCREMENT:
 			return String.format("(%s)%s", unaryOperation.getExpression(),
-					unaryOperation.getOperator());
+					unaryOperation.getTextualoperator());
 		default:
-			return String.format("%s(%s)", unaryOperation.getOperator(),
+			return String.format("%s(%s)", unaryOperation.getTextualoperator(),
 					unaryOperation.getExpression());
 		}
 	}
@@ -439,4 +439,10 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		}
 		return String.format("%s.%s", dependency.getPackageName(), dependency.toString());
 	}
+	
+	public String getCode(TypeUnknown typeUnknown) {
+		return String.format("TypeUnknown %s", typeUnknown.getTextualtype());
+	}
+	
+	
 }

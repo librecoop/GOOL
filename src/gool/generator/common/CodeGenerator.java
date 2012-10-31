@@ -70,6 +70,7 @@ import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
+import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
 
 import java.util.Collection;
@@ -362,4 +363,6 @@ public interface CodeGenerator {
 	String getCode(Dependency dependency);
 
 	String getCode(Identifier identifier);
+
+	String getCode(TypeUnknown typeUnknown);
 }

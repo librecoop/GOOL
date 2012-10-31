@@ -23,7 +23,6 @@ public class While extends Statement{
 	public While(Expression condition, Statement whileStatement){
 		this.condition=condition;
 		this.whileStatement = whileStatement;
-		setSemiColon(false);
 	}
 	
 	public Expression getCondition() {
