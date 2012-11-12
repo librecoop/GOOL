@@ -95,7 +95,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		return String.format("(%s %s%s %s)", binaryOp.getLeft() , binaryOp.getRight(), binaryOp.getOperator().equals(Operator.UNKNOWN)?"/* passsed on by GOOL */":"", binaryOp.getTextualoperator());
+		return String.format("(%s %s%s %s)", binaryOp.getLeft(), binaryOp.getTextualoperator(), binaryOp.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"", binaryOp.getRight());
 	}
 
 	/**
@@ -444,12 +444,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		return String.format("%s /* passed on by gool */", typeUnknown.getTextualtype());
+		return String.format("%s /* Unrecognized by GOOL, passed on */", typeUnknown.getTextualtype());
 	}
 	
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
-		return String.format("%s /* passed on by gool */", unknownExpression.getTextual());
+		return String.format("%s /* Unrecognized by GOOL, passed on */", unknownExpression.getTextual());
 	}
 	
 }

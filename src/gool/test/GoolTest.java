@@ -274,6 +274,16 @@ public class GoolTest {
 		compareResultsDifferentPlatforms(input, "7");
 	}
 
+	@Test
+	public void unknownOperator() throws Exception {
+		String input = TestHelper
+				.surroundWithClassMain(
+						"int total = 1 ^ 0; System.out.println(i);",
+						MAIN_CLASS_NAME);
+		String expected = "";
+		compareResultsDifferentPlatforms(input, "expected");
+	}
+
 	private void compareResultsDifferentPlatforms(String input,
 			String expected) throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected));

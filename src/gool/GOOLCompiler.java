@@ -26,10 +26,12 @@ public class GOOLCompiler {
 
 	public static void main(String[] args) {
 		try {
-			File folder = new File(Settings.get("java_input_dir"));
+			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = Arrays.asList(folder.listFiles());
+			System.out.println(files);
 			GOOLCompiler gc = new GOOLCompiler();
-			gc.concreteGoolToConcretePlatform(JavaPlatform.getInstance(), files);
+			Map<Platform, List<File>> f = gc.concreteGoolToConcretePlatform(JavaPlatform.getInstance(), files);
+			System.out.println(f);
 			gc.concreteGoolToConcretePlatform(CSharpPlatform.getInstance(),
 					files);
 			gc.concreteGoolToConcretePlatform(CppPlatform.getInstance(), files);
