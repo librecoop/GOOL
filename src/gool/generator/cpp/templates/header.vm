@@ -1,3 +1,4 @@
+## Velocity template for writing out classes .h in C++
 #parse($macros)
 #ifndef __${class.Name.toUpperCase()}_H
 \#define __${class.Name.toUpperCase()}_H

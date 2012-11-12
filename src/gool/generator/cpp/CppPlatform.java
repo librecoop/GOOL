@@ -1,3 +1,8 @@
+/**
+ * Once can have several C++ platforms, i.e. with different compilers etc.
+ */
+
+
 package gool.generator.cpp;
 
 import gool.Settings;
