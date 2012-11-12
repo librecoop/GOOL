@@ -14,6 +14,7 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
@@ -365,4 +366,7 @@ public interface CodeGenerator {
 	String getCode(Identifier identifier);
 
 	String getCode(TypeUnknown typeUnknown);
+	
+	String getCode(ExpressionUnknown unknownExpression);
+	
 }

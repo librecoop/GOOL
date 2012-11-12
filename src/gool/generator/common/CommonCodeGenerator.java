@@ -11,6 +11,7 @@ import gool.ast.constructs.Comment;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.Dependency;
+import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
@@ -25,6 +26,7 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
+import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
@@ -93,7 +95,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		return String.format("(%s %s %s)", binaryOp.getLeft(), binaryOp.getTextualoperator() , binaryOp.getRight());
+		return String.format("(%s %s%s %s)", binaryOp.getLeft() , binaryOp.getRight(), binaryOp.getOperator().equals(Operator.UNKNOWN)?"/* passsed on by GOOL */":"", binaryOp.getTextualoperator());
 	}
 
 	/**
@@ -440,9 +442,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return String.format("%s.%s", dependency.getPackageName(), dependency.toString());
 	}
 	
+	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		return String.format("TypeUnknown %s", typeUnknown.getTextualtype());
+		return String.format("%s /* passed on by gool */", typeUnknown.getTextualtype());
 	}
 	
+	@Override
+	public String getCode(ExpressionUnknown unknownExpression) {
+		return String.format("%s /* passed on by gool */", unknownExpression.getTextual());
+	}
 	
 }
