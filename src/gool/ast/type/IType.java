@@ -1,6 +1,6 @@
 package gool.ast.type;
 
-import gool.ast.constructs.INode;
+import gool.ast.constructs.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * This interface accounts for all types in the intermediate language.
  */
-public abstract class IType implements INode {
+public abstract class IType extends Node {
 	
 	/**
 	 * The type arguments. It is used to store 'internal' types for List, Maps, etc.

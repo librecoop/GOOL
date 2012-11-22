@@ -1,5 +1,6 @@
 package gool.ast.constructs;
 
+import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
 
 /**
