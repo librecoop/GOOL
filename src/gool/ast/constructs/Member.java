@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-public interface Member extends INode {
+public abstract class Member extends Node {
 
-	String getName();
+	abstract String getName();
 
 }

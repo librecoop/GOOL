@@ -11,7 +11,7 @@ public class SystemOutPrintCall extends GoolCall {
 	}
 	
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);		
 	}
 

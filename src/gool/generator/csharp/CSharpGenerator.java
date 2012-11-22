@@ -2,6 +2,7 @@ package gool.generator.csharp;
 
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.ClassDef;
+import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.Constructor;
@@ -405,4 +406,5 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(ToStringCall tsc) {
 		return String.format("%s.ToString()", tsc.getTarget());
 	}
+
 }

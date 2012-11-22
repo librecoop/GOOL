@@ -12,7 +12,7 @@ public final class TypeInt extends PrimitiveType {
 	private TypeInt(){}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

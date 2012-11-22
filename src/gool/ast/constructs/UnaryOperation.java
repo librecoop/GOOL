@@ -21,7 +21,7 @@ public class UnaryOperation extends Operation {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 

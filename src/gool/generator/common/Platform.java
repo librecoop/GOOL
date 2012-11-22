@@ -27,6 +27,12 @@ public abstract class Platform extends PrimitiveType {
 	}
 	
 	@Override
+	public String callGetCode() {
+		return toString();
+	}
+
+	
+	@Override
 	public boolean equals(Object obj) {
 		return name.equalsIgnoreCase(((Platform)obj).name);
 	}

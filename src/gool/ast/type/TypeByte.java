@@ -13,7 +13,7 @@ public final class TypeByte extends PrimitiveType {
 	private TypeByte() {}
 	
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

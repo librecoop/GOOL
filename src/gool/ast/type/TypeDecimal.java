@@ -9,7 +9,7 @@ public final class TypeDecimal extends PrimitiveType {
 	private TypeDecimal(){}
 	
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

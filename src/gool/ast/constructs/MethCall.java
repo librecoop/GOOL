@@ -61,7 +61,7 @@ public class MethCall extends Parameterizable {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);		
 	}
 

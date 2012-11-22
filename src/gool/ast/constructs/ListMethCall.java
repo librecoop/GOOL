@@ -18,7 +18,7 @@ public class ListMethCall extends Parameterizable {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);		
 	}
 	

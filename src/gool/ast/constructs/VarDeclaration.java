@@ -27,7 +27,7 @@ public class VarDeclaration extends Dec {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 }

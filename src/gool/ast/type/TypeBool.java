@@ -13,7 +13,7 @@ public final class TypeBool extends PrimitiveType {
 	private TypeBool() {}
 	
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

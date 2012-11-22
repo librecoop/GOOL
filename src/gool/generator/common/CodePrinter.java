@@ -2,7 +2,7 @@ package gool.generator.common;
 
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
-import gool.ast.constructs.INode;
+import gool.ast.constructs.Node;
 import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
 import gool.generator.GeneratorHelper;
@@ -129,7 +129,7 @@ public abstract class CodePrinter {
 	 * @throws Exception
 	 *             when Velocity is unable to parse the template.
 	 */
-	public String processTemplate(String templateFilename, INode classDef) {
+	public String processTemplate(String templateFilename, Node classDef) {
 
 		try {
 			String templateFile = getTemplateDir() + templateFilename;

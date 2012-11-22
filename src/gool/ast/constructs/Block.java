@@ -52,7 +52,7 @@ public class Block extends Statement {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 

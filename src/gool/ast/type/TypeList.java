@@ -31,7 +31,7 @@ public class TypeList extends ReferenceType {
 	}
 	
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 	
@@ -55,7 +55,7 @@ public class TypeList extends ReferenceType {
 
 	@Override
 	public String getName() {
-		return this.toString();
+		return this.callGetCode();
 	}
 
 }

@@ -1,5 +1,7 @@
 package gool.ast.type;
 
+import gool.ast.printer.GoolGeneratorController;
+
 
 
 /**
@@ -17,7 +19,12 @@ public final class TypeUnknown extends PrimitiveType {
 
 	@Override
 	public String getName() {
-		return toString();
+		return callGetCode();
+	}
+	
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 	
 }

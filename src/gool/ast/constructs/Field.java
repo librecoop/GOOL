@@ -55,7 +55,7 @@ public final class Field extends Dec {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 

@@ -19,7 +19,7 @@ public class Assign extends Statement {
 	/**
 	 * The expression located on the left of the assignment.
 	 */
-	private INode var;
+	private Node var;
 	/**
 	 * The value to be assigned.
 	 */
@@ -30,7 +30,7 @@ public class Assign extends Statement {
 	 *            is a pointer to a previously declared variable
 	 * @param value
 	 */
-	public Assign(INode var, Expression value) {
+	public Assign(Node var, Expression value) {
 		this.var = var;
 		this.value = value;
 	}
@@ -40,7 +40,7 @@ public class Assign extends Statement {
 	 * 
 	 * @return the left expression node of the assign operator
 	 */
-	public INode getLValue() {
+	public Node getLValue() {
 		return var;
 	}
 
@@ -53,10 +53,10 @@ public class Assign extends Statement {
 		return value;
 	}
 
-//	@Override
-//	public String toString() {
-//		return GoolGeneratorController.generator().getCode(this);
-//	}
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 	public void setExpression(Expression expression) {
 		this.value = expression;

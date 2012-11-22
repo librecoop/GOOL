@@ -6,6 +6,7 @@ import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
 import gool.ast.constructs.Constant;
@@ -30,7 +31,6 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.Node;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
@@ -370,6 +370,7 @@ public interface CodeGenerator {
 	
 	String getCode(ExpressionUnknown unknownExpression);
 
-	String getCode(Node node);
+	String getCode(ClassFree classFree);
+
 	
 }

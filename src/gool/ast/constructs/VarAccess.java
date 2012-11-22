@@ -24,7 +24,7 @@ public class VarAccess extends Expression {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return var.getName();
 	}
 
