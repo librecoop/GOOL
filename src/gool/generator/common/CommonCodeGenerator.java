@@ -53,7 +53,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Basic code generator. It generalizes the code generation for object oriented
+ * Basic code generator. It does what is common to the code generation of all output object oriented
  * languages.
  */
 public abstract class CommonCodeGenerator implements CodeGenerator {

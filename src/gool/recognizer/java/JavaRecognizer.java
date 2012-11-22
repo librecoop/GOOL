@@ -398,7 +398,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		case NULL:
 			return TypeNull.INSTANCE;
 		default:
-			return new TypeUnknown(typeMirror.getKind().toString());
+			return new TypeUnknown(typeMirror.toString());
 		}
 	}
 
