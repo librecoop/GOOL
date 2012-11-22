@@ -39,7 +39,7 @@ public final class CastExpression extends Expression {
 	 * Generates the code in the target language.
 	 */
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 

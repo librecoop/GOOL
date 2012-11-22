@@ -19,4 +19,9 @@ public class ExpressionUnknown extends Expression {
 		this.textual = textual;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

@@ -7,7 +7,7 @@ public class TypeNull extends PrimitiveType {
 	public static final IType INSTANCE = new TypeNull();
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

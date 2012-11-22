@@ -14,7 +14,7 @@ public class ParentCall extends InitCall {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);		
 	}
 

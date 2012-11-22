@@ -14,7 +14,7 @@ import java.util.List;
  * ClassDef the compiler will have to generate a separate file containing the
  * code of the class in the target language.
  */
-public class ClassDef extends Dependency implements INode {
+public class ClassDef extends Dependency {
 
 	/**
 	 * Class' dependencies (imports).
@@ -316,7 +316,7 @@ public class ClassDef extends Dependency implements INode {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return name;
 	}
 

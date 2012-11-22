@@ -12,7 +12,7 @@ public final class TypeVoid extends PrimitiveType {
 	private TypeVoid() {
 	}
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

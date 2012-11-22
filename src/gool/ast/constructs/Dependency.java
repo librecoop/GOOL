@@ -2,7 +2,7 @@ package gool.ast.constructs;
 
 import gool.ast.printer.GoolGeneratorController;
 
-public abstract class Dependency {
+public abstract class Dependency extends Node{
 	private Package ppackage;
 
 	public void setPpackage(Package ppackage) {

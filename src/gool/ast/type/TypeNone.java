@@ -17,7 +17,7 @@ public final class TypeNone extends PrimitiveType {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 }

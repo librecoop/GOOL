@@ -25,7 +25,7 @@ public final class Print extends Statement {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return "System.out.println(" + expr + ")";
 	}
 	

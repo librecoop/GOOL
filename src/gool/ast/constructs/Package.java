@@ -30,7 +30,7 @@ public class Package extends Dependency {
 	}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return name;
 	}
 }

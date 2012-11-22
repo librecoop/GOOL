@@ -10,7 +10,7 @@ public class TypeString extends PrimitiveType {
 	public static final TypeString INSTANCE = new TypeString();
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

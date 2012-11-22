@@ -106,4 +106,9 @@ public class Meth extends Dec {
 	public String getHeader() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

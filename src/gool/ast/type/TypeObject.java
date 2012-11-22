@@ -15,7 +15,7 @@ public final class TypeObject extends ReferenceType {
 	private TypeObject(){}
 
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 	

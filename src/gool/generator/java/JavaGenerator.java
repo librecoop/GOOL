@@ -9,7 +9,6 @@ import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
-import gool.ast.constructs.Node;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;

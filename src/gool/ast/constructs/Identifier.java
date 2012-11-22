@@ -26,7 +26,7 @@ public final class Identifier extends Expression {
 	}
 	
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 	

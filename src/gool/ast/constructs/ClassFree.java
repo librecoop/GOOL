@@ -1,5 +1,7 @@
 package gool.ast.constructs;
 
+import gool.ast.printer.GoolGeneratorController;
+
 /**
  * This class captures the "free" of the intermediate language, i.e freeing an
  * unused object.
@@ -36,5 +38,10 @@ public final class ClassFree extends Statement {
 	 */
 	public final ClassNew getClassNew() {
 		return classnew;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 }

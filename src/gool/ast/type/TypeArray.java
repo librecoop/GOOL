@@ -28,7 +28,7 @@ public class TypeArray extends ReferenceType {
 	}
 	
 	@Override
-	public String toString() {
+	public String callGetCode() {
 		return getName();
 	}
 

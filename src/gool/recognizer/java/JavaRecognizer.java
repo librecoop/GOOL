@@ -26,7 +26,7 @@ import gool.ast.constructs.Expression;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
-import gool.ast.constructs.INode;
+import gool.ast.constructs.Node;
 import gool.ast.constructs.If;
 import gool.ast.constructs.InitCall;
 import gool.ast.constructs.MainMeth;
@@ -507,7 +507,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitAssignment(AssignmentTree n, Context context) {
-		INode variable = (INode) n.getVariable().accept(this, context);
+		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
 		return new Assign(variable, expression);
@@ -582,7 +582,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			if (annotationTree.getAnnotationType().toString().equals(
 					"ForcePlatform")) {
 				if (annotationTree.getArguments().size() > 0) {
-					INode an = (INode) annotationTree.getArguments().get(0)
+					Node an = (Node) annotationTree.getArguments().get(0)
 							.accept(this, newContext);
 
 					if (an instanceof Assign) {
@@ -640,7 +640,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 
 		for (Tree tree : n.getMembers()) {
-			INode member = (INode) tree.accept(this, newContext);
+			Node member = (Node) tree.accept(this, newContext);
 			if (member instanceof Meth) {
 				classDef.addMethod((Meth) member);
 			} else if (member instanceof Field) {
