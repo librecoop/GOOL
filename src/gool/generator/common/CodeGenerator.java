@@ -30,6 +30,7 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
+import gool.ast.constructs.Node;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
@@ -368,5 +369,7 @@ public interface CodeGenerator {
 	String getCode(TypeUnknown typeUnknown);
 	
 	String getCode(ExpressionUnknown unknownExpression);
+
+	String getCode(Node node);
 	
 }

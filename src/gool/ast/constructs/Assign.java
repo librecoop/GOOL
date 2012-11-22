@@ -53,10 +53,10 @@ public class Assign extends Statement {
 		return value;
 	}
 
-	@Override
-	public String toString() {
-		return GoolGeneratorController.generator().getCode(this);
-	}
+//	@Override
+//	public String toString() {
+//		return GoolGeneratorController.generator().getCode(this);
+//	}
 
 	public void setExpression(Expression expression) {
 		this.value = expression;

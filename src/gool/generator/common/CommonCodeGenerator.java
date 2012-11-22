@@ -26,6 +26,7 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
+import gool.ast.constructs.Node;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.Return;
@@ -448,6 +449,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
 		return String.format("%s /* Unrecognized by GOOL, passed on */", unknownExpression.getTextual());
+	}
+	
+	@Override
+	public String getCode(Node node) {
+		return null;
 	}
 	
 }
