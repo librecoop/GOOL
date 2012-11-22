@@ -1,3 +1,9 @@
+/**
+ * Creates C++ files during the C++ generation process
+ */
+
+
+
 package gool.generator.cpp;
 
 import gool.ast.constructs.ClassDef;

@@ -1,3 +1,4 @@
+## Velocity templates for writing out diverse things C++
 #macro ( includes $dependencies )
 #foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))\#include "${dep}"
 #end#end#end

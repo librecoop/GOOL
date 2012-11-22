@@ -1,3 +1,8 @@
+/**
+ * Visits the abstract GOOL tree to generate concrete C++
+ */
+
+
 package gool.generator.cpp;
 
 import gool.ast.constructs.BinaryOperation;
@@ -512,4 +517,9 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(MainMeth mainMeth) {
 		return "int main()";
 	}
+
+
+
+
+
 }
