@@ -13,7 +13,7 @@
     ${method.Header}#if($class.isInterface());#else {
 #if($method.isConstructor)
 	#foreach( $parentCall in $method.ParentCalls )
-		vamo
+		$parentCall
 	#end
 #end        
         ${method.Block}
