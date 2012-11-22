@@ -325,7 +325,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return goolType(getTypeMirror(n), context);
 	}
 
-	private IType goolType(TypeKind typeKind) {
+	private IType goolType(TypeKind typeKind, String textualType) {
 		switch (typeKind) {
 		case BOOLEAN:
 			return TypeBool.INSTANCE;
@@ -341,7 +341,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		case BYTE:
 			return TypeByte.INSTANCE;
 		default:
-			return new TypeUnknown(typeKind.toString());
+			return new TypeUnknown(textualType);
 		}
 	}
 
@@ -349,7 +349,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (typeMirror == null) {
 			return TypeNone.INSTANCE;
 		} else if (typeMirror.getKind().isPrimitive()) {
-			return goolType(typeMirror.getKind());
+			return goolType(typeMirror.getKind(), typeMirror.toString());
 		}
 
 		switch (typeMirror.getKind()) {
@@ -1131,7 +1131,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitPrimitiveType(PrimitiveTypeTree n, Context context) {
-		return goolType(n.getPrimitiveTypeKind());
+		return goolType(n.getPrimitiveTypeKind(), n.toString());
 	}
 
 	@Override
