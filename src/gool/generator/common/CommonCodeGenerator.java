@@ -393,11 +393,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		switch (unaryOperation.getOperator()) {
 		case POSTFIX_DECREMENT:
 		case POSTFIX_INCREMENT:
-			return String.format("(%s)%s", unaryOperation.getExpression(),
-					unaryOperation.getTextualoperator());
+			return String.format("(%s)%s%s", unaryOperation.getExpression(), unaryOperation.getTextualoperator(), unaryOperation.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"");
 		default:
-			return String.format("%s(%s)", unaryOperation.getTextualoperator(),
-					unaryOperation.getExpression());
+			return String.format("%s%s(%s)", unaryOperation.getTextualoperator(), unaryOperation.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"", unaryOperation.getExpression());
 		}
 	}
 
