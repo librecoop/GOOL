@@ -318,8 +318,7 @@ public class CppGenerator extends CommonCodeGenerator {
 			return String.format("new std::string(%s -> append(* (%s)))", left, right);
 		}
 		
-		return String.format("(%s %s %s)", left, binaryOp
-				.getOperator(), right);
+		return super.getCode(binaryOp);
 	}
 
 	@Override
