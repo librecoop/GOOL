@@ -31,7 +31,7 @@ public final class TestHelper {
 	public static String generateCompileRun(Platform platform, String input,
 			String mainClassName) throws Exception, FileNotFoundException {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteGoolToConcretePlatform(platform, input); 
+		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, input); 
 		System.out.println("--2-->"+files);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
@@ -39,14 +39,14 @@ public final class TestHelper {
 	public static List<File> generateCompile(Platform platform,
 			Collection<File> inputFiles, ClassDef classDef) throws Exception {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteGoolToConcretePlatform(platform, inputFiles);
+		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, inputFiles);
 		return ExecutorHelper.compile(files);
 	}
 
 	public static String generateCompileRun(Platform platform,
 			Collection<File> inputFiles, File file) throws Exception {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteGoolToConcretePlatform(platform,
+		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform,
 				inputFiles);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
