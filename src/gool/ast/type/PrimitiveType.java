@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class is for primitive types such as Int, Bool, etc.
+ * They do not have TypeArguments, hence they return, instead of them, the empty unmodifiable list.
+ * @author parrighi
+ */
 public abstract class PrimitiveType extends IType {
 
 	@Override
@@ -12,13 +17,4 @@ public abstract class PrimitiveType extends IType {
 		return Collections.unmodifiableList(new ArrayList<IType>());
 	}
 
-	@Override
-	public boolean isReferenceType() {
-		return !isValueType();
-	}
-	
-	@Override
-	public boolean isValueType() {
-		return true;
-	}
 }

@@ -6,7 +6,7 @@ import java.io.File;
 
 /**
  * Provides the basic functionality to generate Java code from a list of GOOL
- * classes.
+ * classes. XXXXXXXXXXXXXXXXXXXX What the heck, shouldn't this just be a GOOL pretty printer? XXXXXXXXXXXXXXXXXXXXx
  */
 public class GoolCodePrinter extends CodePrinter {
 	private static final String TEMPLATE_DIR = "gool/ast/printer/templates/";

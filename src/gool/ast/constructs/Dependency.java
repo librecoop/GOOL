@@ -2,6 +2,11 @@ package gool.ast.constructs;
 
 import gool.ast.printer.GoolGeneratorController;
 
+
+/**
+ * A dependency is just something that has some parent package.
+ * @author parrighi
+ */
 public abstract class Dependency extends Node{
 	private Package ppackage;
 

@@ -3,15 +3,6 @@ package gool.ast.type;
 
 
 public abstract class ReferenceType extends IType {
-	@Override
-	public boolean isReferenceType() {
-		return true;
-	}
-	
-	@Override
-	public boolean isValueType() {
-		return !isReferenceType();
-	}
 	
 	@Override
 	public boolean equals(Object obj) {

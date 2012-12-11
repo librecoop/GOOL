@@ -50,6 +50,9 @@ public class GOOLCompiler {
 	 * Taking concrete Java into concrete Target is done in two steps:
 	 * - we parse the concrete Java into abstract GOOL;
 	 * - we flatten the abstract GOOL into concrete Target.
+	 * Notice that the Target is specified at this stage already: it will be carried kept in the abstract GOOL.
+	 * This choice is justified if we want to do multi-platform compilation, 
+	 * i.e. have some pieces of the abstract GOOL to compile in some Target, and another piece is some other Target.
 	 * @param destPlatform
 	 * @param input
 	 * @return
@@ -93,7 +96,6 @@ public class GOOLCompiler {
 	
 	/**
 	 * Flattening the abstract GOOL into concrete Target is done by GeneratorHelper.
-	 * XXXXXXXXXX How does it know which platform?
 	 * @param classDefs
 	 * @return
 	 * @throws FileNotFoundException
@@ -103,13 +105,5 @@ public class GOOLCompiler {
 		return GeneratorHelper.printClassDefs(classDefs);
 	}
 
-	/**
-	 * XXXXXX
-	 * @author root
-	 */
-	class result {
-		Map<Platform, List<File>> files;
-		File mainfile;
-	}
 
 }

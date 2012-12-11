@@ -26,6 +26,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * This is the GOOL pretty printer.
+ * It is based on how we generate code for Java.
+ * XXXXXXXXXXXXXXXXXXX Why is there any difference at all? XXXXXXXXXXXXXXXXXXXX
+ * @author parrighi
+ *
+ */
 public class GoolGenerator extends JavaGenerator {
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 

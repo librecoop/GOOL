@@ -455,6 +455,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(ClassFree classFree) {
 		return "free /* Not Implemented, passed on by GOOL */";
 	}
-
+	
+	public String getCode(Platform platform) {
+		return platform.getName();
+	}
 	
 }

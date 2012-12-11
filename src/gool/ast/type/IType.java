@@ -45,7 +45,4 @@ public abstract class IType extends Node {
 		getTypeArguments().addAll(params);
 	}
 	
-	public abstract boolean isReferenceType();
-	
-	public abstract boolean isValueType();
 }

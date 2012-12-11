@@ -372,5 +372,7 @@ public interface CodeGenerator {
 
 	String getCode(ClassFree classFree);
 
+	String getCode(Platform platform);
+
 	
 }

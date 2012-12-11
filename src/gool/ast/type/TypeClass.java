@@ -89,13 +89,4 @@ public class TypeClass extends ReferenceType {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
-	@Override
-	public boolean isValueType() {
-		return !isReferenceType();
-	}
-	
-	@Override
-	public boolean isReferenceType() {
-		return !isEnum();
-	}
 }

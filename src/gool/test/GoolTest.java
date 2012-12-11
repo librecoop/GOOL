@@ -278,7 +278,7 @@ public class GoolTest {
 	public void unknownOperator() throws Exception {
 		String input = TestHelper
 				.surroundWithClassMain(
-						"int total = 1 ^ 0; System.out.println(i);",
+						"int total = 1 ^ 0; System.out.println(total);",
 						MAIN_CLASS_NAME);
 		String expected = "";
 		compareResultsDifferentPlatforms(input, "expected");
