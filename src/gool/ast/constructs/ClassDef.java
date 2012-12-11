@@ -56,6 +56,8 @@ public class ClassDef extends Dependency {
 	private boolean isInterface;
 
 	private boolean isMainClass;
+	
+	private Package ppackage;
 
 	public ClassDef(Modifier modifier, String name, Platform platform) {
 		this(name, platform);
@@ -142,6 +144,18 @@ public class ClassDef extends Dependency {
 			addField(new Field(Modifier.PRIVATE, freeVar.getName(),
 					freeVar.getType()));
 		}
+	}
+	
+	public void setPpackage(Package ppackage) {
+		this.ppackage = ppackage;
+	}
+
+	public Package getPpackage() {
+		return ppackage;
+	}
+
+	public String getPackageName() {
+		return ppackage == null ? "" : ppackage.getName();
 	}
 
 	/**

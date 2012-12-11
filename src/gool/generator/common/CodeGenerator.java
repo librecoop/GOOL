@@ -6,6 +6,7 @@ import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
@@ -32,6 +33,7 @@ import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Package;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
@@ -57,6 +59,7 @@ import gool.ast.map.MapIsEmptyCall;
 import gool.ast.map.MapPutCall;
 import gool.ast.map.MapRemoveCall;
 import gool.ast.map.MapSizeCall;
+import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
@@ -362,8 +365,6 @@ public interface CodeGenerator {
 
 	String getCode(CustomDependency customDependency);
 
-	String getCode(Dependency dependency);
-
 	String getCode(Identifier identifier);
 
 	String getCode(TypeUnknown typeUnknown);
@@ -374,5 +375,10 @@ public interface CodeGenerator {
 
 	String getCode(Platform platform);
 
+	String getCode(ClassDef classDef);
+
+	String getCode(Package _package);
+
+	String getCode(SystemCommandDependency systemCommandDependency);
 	
 }

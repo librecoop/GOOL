@@ -1,6 +1,7 @@
 package gool.generator.java;
 
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.CustomDependency;
@@ -10,6 +11,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
+import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
@@ -30,6 +32,7 @@ import gool.ast.map.MapIsEmptyCall;
 import gool.ast.map.MapPutCall;
 import gool.ast.map.MapRemoveCall;
 import gool.ast.map.MapSizeCall;
+import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
@@ -76,7 +79,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 			System.out.println(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Java for the GOOL type '%s'.", customDependency.getName()));
 		}
-		return customDependencies.get(customDependency.getName()).getFullName();
+		return customDependencies.get(customDependency.getName()).toString();
 	}
 
 	@Override
@@ -279,5 +282,11 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 		return modifier.name().toLowerCase();
 
+	}
+
+	@Override
+	public String getCode(SystemCommandDependency systemCommandDependency) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

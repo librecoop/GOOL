@@ -6,6 +6,7 @@ import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
@@ -434,14 +435,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 
 	@Override
-	public String getCode(Dependency dependency) {
-		if (dependency instanceof Package || dependency.getPpackage() == null) {
-			return dependency.toString(); 
-		}
-		return String.format("%s.%s", dependency.getPackageName(), dependency.toString());
-	}
-	
-	@Override
 	public String getCode(TypeUnknown typeUnknown) {
 		return String.format("%s /* Unrecognized by GOOL, passed on */", typeUnknown.getTextualtype());
 	}
@@ -456,8 +449,20 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return "free /* Not Implemented, passed on by GOOL */";
 	}
 	
+	@Override
 	public String getCode(Platform platform) {
 		return platform.getName();
 	}
+	
+	@Override
+	public String getCode(ClassDef classDef) {
+		return String.format("%s.%s", classDef.getPackageName(),classDef.getName());
+	}
+
+	@Override
+	public String getCode(Package _package) {
+		return _package.getName();
+	}
+
 	
 }

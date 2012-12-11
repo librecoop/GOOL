@@ -14,6 +14,7 @@ import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
+import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
@@ -34,10 +35,13 @@ import gool.ast.map.MapIsEmptyCall;
 import gool.ast.map.MapPutCall;
 import gool.ast.map.MapRemoveCall;
 import gool.ast.map.MapSizeCall;
+import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
+import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
@@ -174,23 +178,18 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeInt) {
 			return "noprint";
 		}
-		if (typeDependency.getPackageName().equals("")) {
+		if (typeDependency.getType() instanceof TypeClass ) {
 			return "noprint";
 		}
-
 		return super.getCode(typeDependency);
 	}
 	
 	@Override
-	public String getCode(Dependency dependency) {
-		if (dependency instanceof ClassDef) {
-			if (dependency.getPpackage() == null) {
-				return "noprint";
-			}
-			return dependency.getPackageName();
+	public String getCode(ClassDef classDef) {
+		if (classDef.getPpackage() == null) {
+			return "noprint";
 		}
-		
-		return super.getCode(dependency);
+		return classDef.getPackageName();
 	}
 
 	@Override
@@ -367,13 +366,15 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 		Dependency dependency = customDependencies.get(customDependency
 				.getName());
-
-		if (dependency.getPpackage() == null) { // It is already a package.
-			return dependency.getFullName();
+		
+		if (dependency instanceof ClassDef) { // It is already a package.
+			// Return only the package. C# does not support individual class
+			// importation.
+			return ((ClassDef) dependency).getPackageName();
 		}
-		// Return only the package. C# does not support individual class
-		// importation.
-		return dependency.getPackageName();
+
+		return dependency.toString();
+
 	}
 
 	public void addCustomDependency(String key, Dependency value) {
@@ -405,6 +406,17 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ToStringCall tsc) {
 		return String.format("%s.ToString()", tsc.getTarget());
+	}
+
+	@Override
+	public String getCode(Package _package) {
+		return _package.getName();
+	}
+
+	@Override
+	public String getCode(SystemCommandDependency systemCommandDependency) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

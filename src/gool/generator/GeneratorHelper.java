@@ -30,8 +30,8 @@ public final class GeneratorHelper {
 	public static Set<String> printDependencies(ClassDef classDef) {
 		Set<String> result = new HashSet<String>();
 		for (Dependency dep : classDef.getDependencies()) {
-			if (!dep.getFullName().equals(classDef.getFullName())){
-				result.add(dep.getFullName());
+			if (!dep.toString().equals(classDef.toString())){
+				result.add(dep.toString());
 			}
 		}
 		return result;
