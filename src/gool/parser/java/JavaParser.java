@@ -25,10 +25,22 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Trees;
 
-public final class JavaParser {
+/**
+ * This class parses concrete Java into abstract GOOL.
+ * For this purpose it relies on Sun's Java parser.
+ * @author parrighi
+ */
+public class JavaParser {
 
-	private JavaParser() {
-	}
+	/**
+	 * 
+	 * @param defaultPlatform: specifies the Target language of the code generation that will later be applied to the abstract GOOL, once this Java parsing is performed.
+	 * @param compilationUnits: this is Sun's java parser's representation of the files to be parsed.
+	 * @param dependencies: ???????
+	 * @param visitor: this is the class that knows how to transform Sun's abstract java, into abstract GOOL
+	 * @return a list of classdefs, i.e. of abstract GOOL classes.
+	 * @throws Exception
+	 */
 	public static Collection<ClassDef> parseGool(Platform defaultPlatform,
 			Iterable<? extends JavaFileObject> compilationUnits,
 			List<File> dependencies, JavaRecognizer visitor) throws Exception {
@@ -106,15 +118,33 @@ public final class JavaParser {
 		return visitor.getGoolClasses();
 	}
 
+
+
+
+	/**
+	 * Initially, call the parser with no dependency yet, and with the JavaRecognizer.
+	 */
 	public static Collection<ClassDef> parseGool(Platform defaultPlatform,
+			Iterable<? extends JavaFileObject> compilationUnits)
+			throws Exception {
+		return parseGool(defaultPlatform, compilationUnits, null, new JavaRecognizer());
+	}
+	
+	/**
+	 * If the parser is called on an input string, wrap it into a compilation unit, and call the parser on that file.
+	 */
+	public static Collection<ClassDef> parseGool(Platform defaultPlatform,   // 
 			String input) throws Exception {
 		ArrayList<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
 		compilationUnits.add(new MyFileObject(
-		 input, "Random.gool"));
+		 input, "Random.java"));
 		System.out.println(input);
 		return parseGool(defaultPlatform, compilationUnits);
 	}
-
+	
+	/**
+	 * if the parser is called on a directory, wrap it into a compilation unit, and call the parser on that file.
+	 */
 	public static Collection<ClassDef> parseGoolFiles(Platform defaultPlatform,
 			List<File> dirs) throws Exception {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -124,6 +154,10 @@ public final class JavaParser {
 				.getJavaFileObjectsFromFiles(dirs);
 		return parseGool(defaultPlatform, compilationUnits);
 	}
+	
+	
+	
+	
 
 	static class MyFileObject extends SimpleJavaFileObject {
 
@@ -139,10 +173,6 @@ public final class JavaParser {
 		}
 	}
 
-	public static Collection<ClassDef> parseGool(Platform defaultPlatform,
-			Iterable<? extends JavaFileObject> compilationUnits)
-			throws Exception {
-		return parseGool(defaultPlatform, compilationUnits, null, new JavaRecognizer());
-	}
+
 
 }
