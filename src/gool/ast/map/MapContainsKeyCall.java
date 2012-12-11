@@ -2,8 +2,8 @@ package gool.ast.map;
 
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.MapMethCall;
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 public class MapContainsKeyCall extends MapMethCall {
 

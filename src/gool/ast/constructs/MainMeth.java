@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class accounts for method declarations in the intermediate language.

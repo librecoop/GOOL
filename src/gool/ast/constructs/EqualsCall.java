@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeBool;
+import gool.generator.GoolGeneratorController;
 
 public class EqualsCall extends Parameterizable {
 

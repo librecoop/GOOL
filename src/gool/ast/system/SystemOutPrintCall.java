@@ -1,8 +1,8 @@
 package gool.ast.system;
 
 import gool.ast.constructs.GoolCall;
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 public class SystemOutPrintCall extends GoolCall {
 

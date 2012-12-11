@@ -1,6 +1,6 @@
 package gool.ast.type;
 
-import gool.ast.printer.GoolGeneratorController;
+import gool.generator.GoolGeneratorController;
 
 /**
  * Represents a generic object in the target language.

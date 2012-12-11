@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * Represents member invocation over class members. For example, in Java they are known as static methods or attributes.

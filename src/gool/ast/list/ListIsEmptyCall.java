@@ -2,8 +2,8 @@ package gool.ast.list;
 
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.ListMethCall;
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 public class ListIsEmptyCall extends ListMethCall {
 

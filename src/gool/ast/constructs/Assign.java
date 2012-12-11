@@ -1,6 +1,6 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class accounts for assignments in the intermediate language. Hence it is

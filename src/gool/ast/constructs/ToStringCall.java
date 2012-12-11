@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeString;
+import gool.generator.GoolGeneratorController;
 
 public class ToStringCall extends MethCall {
 

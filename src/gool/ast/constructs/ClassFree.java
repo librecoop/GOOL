@@ -1,6 +1,6 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the "free" of the intermediate language, i.e freeing an

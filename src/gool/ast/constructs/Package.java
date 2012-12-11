@@ -1,5 +1,5 @@
 package gool.ast.constructs;
-import gool.ast.printer.GoolGeneratorController;
+import gool.generator.GoolGeneratorController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +33,6 @@ public class Package extends Dependency {
 
 	@Override
 	public String callGetCode() {
-		//return name;  XXXXXXXXXXXXXXXXXXXXXXXXXXX
-		//Normally this should be performed by a codegenerator.getCode(this), 
-		//but since Platforms are specified on a per class basis, be do not know which is our codegenerator for now.
-		//Unless we go for:
 		return GoolGeneratorController.generator().getCode(this);
 	}
 }

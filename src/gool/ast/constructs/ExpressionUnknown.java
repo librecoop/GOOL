@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This interface accounts for all statements of the intermediate language.

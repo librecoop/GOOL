@@ -1,6 +1,6 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
+import gool.generator.GoolGeneratorController;
 
 /**
  * A while statement.

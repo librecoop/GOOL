@@ -1,8 +1,8 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
 import gool.ast.type.TypeString;
+import gool.generator.GoolGeneratorController;
 
 /**
  * Allows to compute the value of a boolean or integer operation with two operands.

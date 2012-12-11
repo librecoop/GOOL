@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures a variable declaration in the intermediate language.

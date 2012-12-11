@@ -1,9 +1,9 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
+import gool.generator.GoolGeneratorController;
 
 
 /**

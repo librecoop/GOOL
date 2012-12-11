@@ -3,9 +3,9 @@ package gool.generator.common;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.Node;
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.IType;
 import gool.generator.GeneratorHelper;
+import gool.generator.GoolGeneratorController;
 import gool.generator.common.exception.VelocityException;
 
 import java.io.File;

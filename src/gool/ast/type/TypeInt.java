@@ -1,6 +1,6 @@
 package gool.ast.type;
 
-import gool.ast.printer.GoolGeneratorController;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This is the basic type Int of the intermediate language.

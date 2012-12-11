@@ -1,7 +1,7 @@
 package gool.ast.constructs;
 
-import gool.ast.printer.GoolGeneratorController;
 import gool.ast.type.TypeNone;
+import gool.generator.GoolGeneratorController;
 
 import java.util.ArrayList;
 import java.util.List;
