@@ -19,4 +19,5 @@ public class TypeDependency extends Dependency {
 	public IType getType() {
 		return type;
 	}
+
 }

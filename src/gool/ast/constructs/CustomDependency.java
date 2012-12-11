@@ -12,11 +12,6 @@ public class CustomDependency extends Dependency {
 
 	@Override
 	public String callGetCode() {
-		return name;
-	}
-	
-	@Override
-	public String getFullName() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 	

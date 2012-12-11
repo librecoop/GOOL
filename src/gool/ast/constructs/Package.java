@@ -35,4 +35,5 @@ public class Package extends Dependency {
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
+
 }

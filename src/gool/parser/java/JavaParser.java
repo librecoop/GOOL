@@ -100,7 +100,7 @@ public final class JavaParser {
 		// TODO It is okay to add custom dependencies only in the default
 		// platform?
 		for (ClassDef classDef : visitor.getGoolClasses()) {
-			classDef.getPlatform().registerCustomDependency(classDef.getFullName(),
+			classDef.getPlatform().registerCustomDependency(classDef.toString(),
 					classDef);
 		}
 		return visitor.getGoolClasses();

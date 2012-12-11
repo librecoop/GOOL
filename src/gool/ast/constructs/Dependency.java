@@ -8,15 +8,6 @@ import gool.generator.GoolGeneratorController;
  * @author parrighi
  */
 public abstract class Dependency extends Node{
-	private Package ppackage;
-
-	public void setPpackage(Package ppackage) {
-		this.ppackage = ppackage;
-	}
-
-	public Package getPpackage() {
-		return ppackage;
-	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -31,13 +22,5 @@ public abstract class Dependency extends Node{
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
-	}
-
-	public String getFullName() {
-		return GoolGeneratorController.generator().getCode(this);
-	}
-
-	public String getPackageName() {
-		return ppackage == null ? "" : ppackage.getName();
 	}
 }
