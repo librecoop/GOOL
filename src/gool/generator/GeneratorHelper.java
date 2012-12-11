@@ -16,13 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 public final class GeneratorHelper {
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOG = Logger.getLogger(GeneratorHelper.class);
 
 	public static String joinParams(List<?> parameters) {
 		if (parameters == null) {
@@ -61,7 +56,7 @@ public final class GeneratorHelper {
 			}
 
 			if (!currentPrinter.getOutputDir().exists()) {
-				LOG.debug("Creating the output directory "
+				System.out.println("Creating the output directory "
 						+ currentPrinter.getOutputDir());
 				currentPrinter.getOutputDir().mkdirs();
 			}

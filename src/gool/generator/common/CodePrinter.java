@@ -22,7 +22,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -37,10 +36,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
  * Note: Only one {@link CodeGenerator} at a time is supported.
  */
 public abstract class CodePrinter {
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOG = Logger.getLogger(CodePrinter.class);
 	/**
 	 * The directory where the generated code will be written.
 	 */
@@ -133,7 +128,7 @@ public abstract class CodePrinter {
 
 		try {
 			String templateFile = getTemplateDir() + templateFilename;
-			LOG.debug(String.format("Loading template: %s", templateFile));
+			System.out.println(String.format("Loading template: %s", templateFile));
 
 			Template template = engine.getTemplate(templateFile);
 
@@ -176,7 +171,7 @@ public abstract class CodePrinter {
 		dir.mkdirs();
 		File classFile = new File(dir, getFileName(pclass.getName()));
 
-		LOG.debug(String.format("Writing to file %s", classFile));
+		System.out.println(String.format("Writing to file %s", classFile));
 		writer = new PrintWriter(classFile);
 		writer.println(code);
 		writer.close();

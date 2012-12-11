@@ -11,13 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 public final class TestHelper {
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOG = Logger.getLogger(TestHelper.class);
+
 
 	public static String surroundWithClassMain(String input, String className) {
 		return surroundWithClass("public static void main(String[] args){"

@@ -101,8 +101,6 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import org.apache.log4j.Logger;
-
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.ArrayTypeTree;
@@ -186,10 +184,6 @@ class Context {
 }
 
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOG = Logger.getLogger(JavaRecognizer.class);
 	/**
 	 * The list of keywords that may cause problems when generating target code
 	 * from concrete or abstract GOOL.
@@ -561,7 +555,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		classDef.setIsEnum((c.mods.flags & Flags.ENUM) != 0);
 
-		LOG.debug(String.format("Parsing class %s", n.getSimpleName()));
+		System.out.println(String.format("Parsing class %s", n.getSimpleName()));
 
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, newContext);
@@ -649,7 +643,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				classDef.addField(new Field(Arrays.asList(Modifier.PRIVATE),
 						(VarDeclaration) member));
 			} else if (member != null) {
-				LOG.debug(String.format(
+				System.out.println(String.format(
 						"Unrecognized member for class %s: %s ", classDef
 								.getName(), member));
 			}

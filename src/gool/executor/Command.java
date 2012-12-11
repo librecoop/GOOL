@@ -9,18 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Operating System command execution helper.
  */
 public final class Command {
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOG = Logger.getLogger(Command.class);
 	
 	private Command() {
 	}
@@ -46,7 +40,7 @@ public final class Command {
 	 */
 	public static String exec(File workingDir, List<String> params, Map<String, String> env) {
 		try {
-			LOG.info(StringUtils.join(params.toArray(), " "));
+			System.out.println(StringUtils.join(params.toArray(), " "));
 			StringBuffer buffer = new StringBuffer();
 
 			ProcessBuilder pb = new ProcessBuilder(params);

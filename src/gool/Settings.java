@@ -4,13 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 
 public final class Settings {
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOG = Logger.getLogger(Settings.class);
+
 	private static Properties properties;
 
 	static {
@@ -26,7 +22,7 @@ public final class Settings {
 				properties.load(stream);
 			}
 		} catch (IOException e) {
-			LOG.error(String.format("Failed to load the property file %s", propertyFile), e);
+			System.out.println(String.format("Failed to load the property file %s", propertyFile)+e);
 		}
 
 	}

@@ -21,15 +21,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 public class GOOLCompiler {
-	/**
-	 * Logger. XXXXXXXXX
-	 */
-	private static final Logger LOG = Logger.getLogger(GOOLCompiler.class);
 
-	
 	/**
 	 * The main
 	 * - gets the folder to open from Settings

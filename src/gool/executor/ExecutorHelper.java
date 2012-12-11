@@ -16,13 +16,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 public final class ExecutorHelper {
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOG = Logger.getLogger(ExecutorHelper.class);
 
 
 	public static Iterable<? extends JavaFileObject> getJavaFileObjects(
@@ -51,7 +46,7 @@ public final class ExecutorHelper {
 		StringBuilder result = new StringBuilder();
 
 		List<File> compiledFiles = ExecutorHelper.compile(files);
-		LOG.info(compiledFiles);
+		System.out.println(compiledFiles);
 		result.append(platform.getCompiler().run(compiledFiles.get(0)));
 		return result.toString();
 	}
