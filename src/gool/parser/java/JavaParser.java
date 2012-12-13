@@ -39,7 +39,7 @@ public class JavaParser {
 	 * 
 	 * @param defaultPlatform: specifies the Target language of the code generation that will later be applied to the abstract GOOL, once this Java parsing is performed.
 	 * @param compilationUnits: An Iterable of JavaFileObject, which are Sun's java parser's representation of the files to be parsed.
-	 * @param dependencies: ???????
+	 * @param dependencies: specifies imported libraries
 	 * @param visitor: this is the class that transforms Sun's abstract java, 
 	 * into abstract GOOL, i.e. the JavaRecognizer.
 	 * @return a list of classdefs, i.e. of abstract GOOL classes.
@@ -57,8 +57,6 @@ public class JavaParser {
 		 * We will now setup the options to Sun's java compiler
 		 * This requires working out the dependencies
 		 */
-		List<String> options = null; 
-		
 		// convert dependencies into a list of file paths to reach them
 		List<String> stringDependencies = new ArrayList<String>();
 		if (dependencies != null && !dependencies.isEmpty()) {
@@ -66,27 +64,14 @@ public class JavaParser {
 				stringDependencies.add(file.getAbsolutePath());
 			}
 		}
-		// further, add the GOOL library as a dependency XXXXXXXXXXXXXXXX
+		// further, add the GOOL library as a dependency
+		// so that the program can use gool.imports.java
 		stringDependencies.add(Settings.get("gool_library")
 				.toString());
 		
 		// with the dependencies all set, we can make up the options
-		options = Arrays.asList("-classpath", StringUtils.join(
+		List<String> options =  Arrays.asList("-classpath", StringUtils.join(
 				stringDependencies, File.pathSeparator));
-		
-		/**
-		 * We now setup the list of files for Sun's java compiler
-		 */
-		//XXXXXXX Before
-		//List<MyFileObject> files = new ArrayList<MyFileObject>();
-		//for (JavaFileObject file : compilationUnits) {
-		//	files
-		//			.add(new MyFileObject(file.getCharContent(true).toString(),
-		//					file.getName().replaceAll("\\.(gool|java)$", "")
-		//							+ ".java"));
-		//}
-		//task = (JavacTask) compiler.getTask(null, null, null, options, null, files);
-		//XXXXXXXX After, see JavacTask task = ...
 		
 		/**
 		 * We now parse using Sun's java compiler
@@ -94,40 +79,39 @@ public class JavaParser {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		JavacTask task = (JavacTask) compiler.getTask(null, null, null, options, null, compilationUnits);
 		Iterable<? extends CompilationUnitTree> asts = task.parse();
-		task.analyze(); //XXXXXXX what is analyse for????
-		Trees trees = Trees.instance(task); // XXXXXXX what is the difference between trees and asts?
+		
+		/**
+		 * We now analyse using Sun's java compiler so as to benefit from its type information
+		 */
+		task.analyze(); 
+		Trees typetrees = Trees.instance(task); 
 
 		
 		/**
-		 * We now prepare the JavaRecognizer for conversion  of abstract Java to abstract GOOL.
+		 * We now prepare the JavaRecognizer for conversion of abstract Java to abstract GOOL.
 		 */
-		// XXXXXX What is this doing here, I thought we were just parsing? XXXXXX
-		// Sets the JavaGenerator as the default generator
-		GoolGeneratorController.reset();
 
 		//The visitor needs to know what the Target language is
 		//Because it will annotate the abstract GOOL with this information.
 		visitor.setDefaultPlatform(defaultPlatform);
+		GoolGeneratorController.setCodeGenerator(defaultPlatform.getCodePrinter().getCodeGenerator());
 		
-		// XXXXXXXXXX What is this?
-		visitor.setTrees(trees);
+		//The visitor might need Sun's java compiler type information
+		visitor.setTrees(typetrees);
 		
 		/**
 		 * We launch the JavaRecognizer against each abstract Java ast
 		 */
 		for (CompilationUnitTree ast : asts) {
 			visitor.setCurrentCompilationUnit(ast);
-			visitor.scan(ast, null);
+			visitor.scan();
 		}
 		
 		/**
-		 * XXXXXXXX No idea what this is.
+		 * Register each abstract GOOL class, so that they can see each other and therefore represent valid types
 		 */
-		// TODO It is okay to add custom dependencies only in the default
-		// platform?
 		for (ClassDef classDef : visitor.getGoolClasses()) {
-			classDef.getPlatform().registerCustomDependency(classDef.toString(),
-					classDef);
+			classDef.getPlatform().registerCustomDependency(classDef.toString(),classDef);
 		}
 		
 		return visitor.getGoolClasses();

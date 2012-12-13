@@ -9,7 +9,6 @@ import java.util.List;
  * For each object member of Package the compiler will
  * have to generate a separate folder containing classes and packages
  * in the target language.
- * The root of the abstract GOOL tree is a Package.
  */
 public class Package extends Dependency {
 

@@ -4,8 +4,7 @@ import gool.generator.GoolGeneratorController;
 
 
 /**
- * A dependency is the path to a class.
- * @author parrighi
+ * A dependency is an external class/type or an external package.
  */
 public abstract class Dependency extends Node{
 

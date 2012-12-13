@@ -227,6 +227,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		FORBIDDEN_KEYWORDS.add("string");
 	}
 
+	public void scan() {
+		super.scan(currentCompilationUnit,null);
+	}
+	
+	
+	
 	public static void addForbiddenKeyword(String keyword) {
 		FORBIDDEN_KEYWORDS.add(keyword);
 	}
