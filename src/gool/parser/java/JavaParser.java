@@ -81,7 +81,7 @@ public class JavaParser {
 		Iterable<? extends CompilationUnitTree> asts = task.parse();
 		
 		/**
-		 * We now analyse using Sun's java compiler so as to benefit from its type information
+		 * We now analyze using Sun's java compiler so as to get a Java abstract type tree.
 		 */
 		task.analyze(); 
 		Trees typetrees = Trees.instance(task); 
@@ -96,11 +96,11 @@ public class JavaParser {
 		visitor.setDefaultPlatform(defaultPlatform);
 		GoolGeneratorController.setCodeGenerator(defaultPlatform.getCodePrinter().getCodeGenerator());
 		
-		//The visitor might need Sun's java compiler type information
+		//The visitor might need Sun's analyzed Java abstract type tree.
 		visitor.setTrees(typetrees);
 		
 		/**
-		 * We launch the JavaRecognizer against each abstract Java ast
+		 * We launch the JavaRecognizer against each abstract Java AST
 		 */
 		for (CompilationUnitTree ast : asts) {
 			visitor.setCurrentCompilationUnit(ast);

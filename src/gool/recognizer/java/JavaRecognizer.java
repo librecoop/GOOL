@@ -164,36 +164,24 @@ import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
 
-class Context {
-	/**
-	 * When we hit an "import MyCustomClass" in Java, we make an "import MyCustomClass" in GOOL: it must be passed on. 
-	 * Later as we visit the Java tree downwards (from root to leafs), we propagate this context information.
-	 * This is because a primitive which has been redefined in such a MyCustomClass.java must be treated differently 
-	 * from the primitive of the same name without this context: it must be passed on.
-	 */
-	private ClassDef classDef;
-
-	public Context(ClassDef currentClass, Block currentBlock) {
-		this.classDef = currentClass;
-	}
-
-	public ClassDef getClassDef() {
-		return classDef;
-	}
-
-}
 
 
 /**
  * The JavaRecognizer does the work of converting Sun's abstract Java to abstract GOOL.
+ * The class Context is necessary for that and is declared at the bottom of this file.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
+	
 	/**
-	 * The list of keywords that may cause problems when generating target code
-	 * from concrete or abstract GOOL.
+	 * The Sun's abstract Java AST that we will now convert to abstract GOOL.
 	 */
-	private static final Set<String> FORBIDDEN_KEYWORDS = new HashSet<String>();
-
+	private CompilationUnitTree ast;
+	
+	/**
+	 * The type information that was obtained from Sun's java parser analysis of the AST.
+	 */
+	private Trees typetrees;
+	
 	/**
 	 * The default platform used to specify the Target Language,
 	 * which will be annotated in the newly created classes.
@@ -201,21 +189,16 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	private Platform defaultPlatform;
 	
 	/**
-	 * The compilation unit that is currently analyzed.
-	 */
-	private CompilationUnitTree currentCompilationUnit;
-	
-	/**
-	 * The abstract syntax trees that hold the abstract Java XXXXXXX.
-	 */
-	private Trees trees;
-	
-	/**
-	 * The list of abstract GOOL classes that are generated.
+	 * The list of abstract GOOL classes and packages that will be generated.
 	 */
 	private Map<IType, ClassDef> goolClasses = new HashMap<IType, ClassDef>();
 	private Map<String, Package> packagesCache = new HashMap<String, Package>();
-
+	
+	/**
+	 * The list of keywords that may cause problems when generating target code
+	 * from concrete or abstract GOOL.
+	 */
+	private static final Set<String> FORBIDDEN_KEYWORDS = new HashSet<String>();
 	static {
 		// C#
 		FORBIDDEN_KEYWORDS.add("out");
@@ -226,67 +209,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		FORBIDDEN_KEYWORDS.add("object");
 		FORBIDDEN_KEYWORDS.add("string");
 	}
-
-	public void scan() {
-		super.scan(currentCompilationUnit,null);
-	}
 	
-	
-	
-	public static void addForbiddenKeyword(String keyword) {
-		FORBIDDEN_KEYWORDS.add(keyword);
-	}
-
-	public static void addForbiddenKeyword(File keywordsFile)
-			throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(keywordsFile));
-
-		String keyword;
-		while ((keyword = reader.readLine()) != null) {
-			addForbiddenKeyword(keyword);
-		}
-	}
-	
-	private void addParameters(List<? extends ExpressionTree> list,
-			Parameterizable expr, Context context) {
-		if (list != null) {
-			for (ExpressionTree p : list) {
-				Expression arg = (Expression) p.accept(this, context);
-				if (arg != null) {
-					expr.addParameter(arg);
-				}
-			}
-		}
-	}
-
-	private String error(String format, Object... message) {
-		return String.format("%s [File %s]", String.format(format, message),
-				currentCompilationUnit.getSourceFile().getName());
-	}
-
-	public final void setCurrentCompilationUnit(
-			CompilationUnitTree currentCompilationUnit) {
-		this.currentCompilationUnit = currentCompilationUnit;
-	}
-
-	public final void setDefaultPlatform(Platform defaultPlatform) {
-		this.defaultPlatform = defaultPlatform;
-	}
-
-	public final void setTrees(Trees trees) {
-		this.trees = trees;
-	}
-
-	public final Collection<ClassDef> getGoolClasses() {
-		return goolClasses.values();
-	}
-
+	/**
+	 * The map between Java operators and GOOL operators.
+	 * Left are the Java abstract operators.
+	 * Right are the GOOL abstract operators.
+	 */
 	static final private Map<Kind, Operator> operatorMap = new HashMap<Kind, Operator>();
 	static {
-		/**
-		 * Left are the Java abstract operators.
-		 * Right are the GOOL abstract operators.
-		 */
 		operatorMap.put(Kind.PLUS, Operator.PLUS);
 		operatorMap.put(Kind.MINUS, Operator.MINUS);
 		operatorMap.put(Kind.UNARY_MINUS, Operator.MINUS);
@@ -307,6 +237,113 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		operatorMap.put(Kind.POSTFIX_INCREMENT, Operator.POSTFIX_INCREMENT);
 	}
 
+	/**
+	 * Even though this is now our turn to take Sun's abstract Java and make it into abstract GOOL,
+	 * It turns out that Sun's Java parser has already got a notion of TreePathScanner for traveling
+	 * through its ASTs, which we here extend.
+	 * Scan() is what launches the whole process.
+	 */
+	public void scan() {
+		super.scan(ast,null);
+	}
+	
+	/**
+	 * Setters and getters
+	 */
+	public static void addForbiddenKeyword(String keyword) {
+		FORBIDDEN_KEYWORDS.add(keyword);
+	}
+
+	public static void addForbiddenKeyword(File keywordsFile)
+			throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(keywordsFile));
+
+		String keyword;
+		while ((keyword = reader.readLine()) != null) {
+			addForbiddenKeyword(keyword);
+		}
+	}
+	
+	public final void setCurrentCompilationUnit(
+			CompilationUnitTree currentCompilationUnit) {
+		this.ast = currentCompilationUnit;
+	}
+
+	public final void setDefaultPlatform(Platform defaultPlatform) {
+		this.defaultPlatform = defaultPlatform;
+	}
+
+	public final void setTrees(Trees typetrees) {
+		this.typetrees = typetrees;
+	}
+
+	public final Collection<ClassDef> getGoolClasses() {
+		return goolClasses.values();
+	}
+	
+	private void addDependencyToContext(Context context, Dependency newDep) {
+		if (newDep != null && context != null && context.getClassDef() != null) {
+			context.getClassDef().addDependency(newDep);
+		}
+	}
+	
+	/**
+	 * THIS PART IS ABOUT XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	 */
+	
+	/**
+	 * XXXXXXXXXXXXXXXXX
+	 * @param list
+	 * @param expr
+	 * @param context
+	 */
+	private void addParameters(List<? extends ExpressionTree> list,
+			Parameterizable expr, Context context) {
+		if (list != null) {
+			for (ExpressionTree p : list) {
+				Expression arg = (Expression) p.accept(this, context);
+				if (arg != null) {
+					expr.addParameter(arg);
+				}
+			}
+		}
+	}
+
+	
+	/**
+	 * XXXXXXXXXXXXXXXXXXX
+	 * @param format
+	 * @param message
+	 * @return
+	 */
+	private String error(String format, Object... message) {
+		return String.format("%s [File %s]", String.format(format, message),
+				ast.getSourceFile().getName());
+	}
+
+	
+	/**
+	 * XXXXXXXXXXXXXXXXXXX
+	 * @param list
+	 * @param annotation
+	 * @return
+	 */
+	public boolean findAnnotation(List<? extends AnnotationTree> list,
+			String annotation) {
+		for (AnnotationTree n : list) {
+			if (n.getAnnotationType().toString().equals(annotation)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * THIS PART IS ABOUT TYPE CONVERSION
+	 */
+	
+	/**
+	 * Converts Java abstract operator kinds to GOOL abstract operators.
+	 */
 	private Operator getOperator(Kind kind) {
 		Operator result = operatorMap.get(kind);
 		if (result == null) {
@@ -315,23 +352,32 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return result;
 	}
 
+	/**
+	 * Get a Java abstract type from a sub-branch of Java abstract type tree.
+	 */
 	private TypeMirror getTypeMirror(Tree n) {
-		TreePath path = TreePath.getPath(currentCompilationUnit, n);
-		TypeMirror typeMirror = trees.getTypeMirror(path);
+		TreePath path = TreePath.getPath(ast, n);
+		TypeMirror typeMirror = typetrees.getTypeMirror(path);
 
 		return typeMirror;
 	}
 
+	/**
+	 * Get a GOOL Type from a sub-branch of Java abstract type tree,
+	 * and a context.
+	 */
 	private IType goolType(Tree n, Context context) {
-		/*
-		 * A null tree usually means that we are dealing with a constructor.
-		 */
+		// A null abstract Java usually means that we are dealing with a constructor.
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
 		return goolType(getTypeMirror(n), context);
 	}
 
+	/**
+	 * For primitive types.
+	 * Converts Java abstract type kinds to GOOL types.
+	 */
 	private IType goolType(TypeKind typeKind, String textualType) {
 		switch (typeKind) {
 		case BOOLEAN:
@@ -352,38 +398,52 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 	}
 
+	/**
+	 * Get a GOOL Type from a Java abstract type,
+	 * and a context.
+	 */
 	private IType goolType(TypeMirror typeMirror, Context context) {
+		
+		//Dealing with primitive types.
 		if (typeMirror == null) {
+			// A null abstract Java usually means that we are dealing with a constructor.
 			return TypeNone.INSTANCE;
 		} else if (typeMirror.getKind().isPrimitive()) {
 			return goolType(typeMirror.getKind(), typeMirror.toString());
 		}
 
+		//Dealing with non-primitive types.
 		switch (typeMirror.getKind()) {
 		case PACKAGE:
+			//XXXXXXXXXXXXX Why are packages handled the same as classes?
 		case DECLARED:
-
+			//XXXXXXXXXXXXX Retrieve the full name of the Java abstract type.
 			Type type = (Type) typeMirror;
-
 			Symbol classSymbol = (Symbol) type.asElement();
-
 			String typeName = classSymbol.getSimpleName().toString();
 
+			//Create a GOOL type of a type that matches the full name of the Java abstract type.
 			IType goolType = string2IType(typeName, context);
+			
+			//Whether in abstract Java or in GOOL, enums are codes as classes with some flag.
+			//We deal with this case.
 			boolean isEnum = ((classSymbol.flags() & Flags.ENUM) != 0);
-
 			if (isEnum && goolType instanceof TypeClass) {
 				((TypeClass) goolType).setIsEnum(isEnum);
 			}
 
+			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
+			//We convert them recursively, and add them up to the GOOL type.
 			for (Type t : type.getTypeArguments()) {
 				goolType.addArgument(goolType(t, context));
 			}
 
+			//XXXXXXXXXXXX Don't we know how to handle Iterables? Can we not at least pass them on?
 			if (goolType.getName().equals("Iterable")) {
 				throw new RuntimeException(goolType.toString());
 			}
 
+			//XXXXXXXXXXXX Recognizing a primitive type...????
 			if (!type.toString().startsWith("java.lang")) {
 				if (!goolType.toString().equalsIgnoreCase("gool")
 						&& !context.getClassDef().getType().equals(goolType)) {
@@ -391,37 +451,41 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 							new TypeDependency(goolType));
 				}
 			}
-
 			return goolType;
 		case EXECUTABLE:
+			//XXXXXXXXXXXX What is it?
 		case TYPEVAR:
+			//XXXXXXXXXXXX What is it?
 			return TypeObject.INSTANCE;
 		case VOID:
 			return TypeVoid.INSTANCE;
 		case ARRAY:
+			//XXXXXXXXXXXX Recognized an Array. Sure it deals only with java.lang arrays this way? Or gool.imports.java.lang arrays?
+			//Convert the type of the elements of the Array.
+			//Then create a GOOL array type containing that elements of that converted type.
 			ArrayType arrayType = (ArrayType) typeMirror;
 			return new TypeArray(
 					goolType(arrayType.getComponentType(), context));
 		case NULL:
 			return TypeNull.INSTANCE;
 		default:
+			//We met a type that we do not know how to handle.
+			//Instead of throwing an error, we will just pass it on as such.
 			return new TypeUnknown(typeMirror.toString());
 		}
 	}
 
-	private void addDependencyToContext(Context context, Dependency newDep) {
-		if (newDep != null && context != null && context.getClassDef() != null) {
-			context.getClassDef().addDependency(newDep);
-		}
-	}
-
+	//XXXXXXXXXXXX Why not put an IType instead of Otd?
+	//XXXXXXXXXXXX This really seems unjustified.
 	private static abstract class Otd {
 		abstract public IType getType();
 	};
 
 	private static final Map<String, Otd> string2otdMap = new HashMap<String, Otd>();
 	static {
+		
 		Otd tmpOtd = new Otd() {
+			//XXXXXXXXXXX Wow. I did'nt even know that you could do that!
 			public IType getType() {
 				return TypeString.INSTANCE;
 			}
@@ -433,6 +497,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				return TypeDecimal.INSTANCE;
 			}
 		};
+		
+		//XXXXXXXXXXX Why an Int and not a Decimal of a List?
+		//XXXXXXXXXXX Why are we dealing with Primitive types again?
 		string2otdMap.put("Double", tmpOtd);
 		string2otdMap.put("java.lang.Double", tmpOtd);
 		tmpOtd = new Otd() {
@@ -440,6 +507,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				return TypeInt.INSTANCE;
 			}
 		};
+		
+		//XXXXXXXXXXX Is this a boxed Int? Why not return a List of ints, then?
 		string2otdMap.put("Integer", tmpOtd);
 		string2otdMap.put("java.lang.Integer", tmpOtd);
 		tmpOtd = new Otd() {
@@ -447,6 +516,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				return new TypeList();
 			}
 		};
+		
+		//XXXXXXXXXXX Never that sure about when to pass on and so on...
 		string2otdMap.put("List", tmpOtd);
 		string2otdMap.put("ArrayList", tmpOtd);
 		string2otdMap.put("java.util.ArrayList", tmpOtd);
@@ -486,15 +557,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 	}
 
-	public boolean findAnnotation(List<? extends AnnotationTree> list,
-			String annotation) {
-		for (AnnotationTree n : list) {
-			if (n.getAnnotationType().toString().equals(annotation)) {
-				return true;
-			}
-		}
-		return false;
-	}
+	/**
+	 * THIS PART IS ABOUT VISITING XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	 */
 
 	@Override
 	public Object visitArrayAccess(ArrayAccessTree n, Context context) {
@@ -1218,3 +1283,24 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}	
 }
+
+class Context {
+	/**
+	 * When we hit an "import MyCustomClass" in Java, we make an "import MyCustomClass" in GOOL: it must be passed on. 
+	 * Later as we visit the Java tree downwards (from root to leafs), we propagate this context information.
+	 * This is because if something has been redefined in such a MyCustomClass.java, it must be treated differently 
+	 * from something of the same name without this context. 
+	 * For instance mycustom.List will be passed on, whereas List might have been translated.
+	 */
+	private ClassDef classDef;
+
+	public Context(ClassDef currentClass, Block currentBlock) {
+		this.classDef = currentClass;
+	}
+
+	public ClassDef getClassDef() {
+		return classDef;
+	}
+
+}
+
