@@ -183,6 +183,10 @@ class Context {
 
 }
 
+
+/**
+ * The JavaRecognizer does the work of converting Sun's abstract Java to abstract GOOL.
+ */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	/**
 	 * The list of keywords that may cause problems when generating target code
@@ -191,18 +195,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	private static final Set<String> FORBIDDEN_KEYWORDS = new HashSet<String>();
 
 	/**
-	 * The default platform used to specify the platform of newly created
-	 * classes.
+	 * The default platform used to specify the Target Language,
+	 * which will be annotated in the newly created classes.
 	 */
 	private Platform defaultPlatform;
+	
 	/**
 	 * The compilation unit that is currently analyzed.
 	 */
 	private CompilationUnitTree currentCompilationUnit;
+	
 	/**
-	 * The abstract syntax tree.
+	 * The abstract syntax trees that hold the abstract Java XXXXXXX.
 	 */
 	private Trees trees;
+	
 	/**
 	 * The list of abstract GOOL classes that are generated.
 	 */

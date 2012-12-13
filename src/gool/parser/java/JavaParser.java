@@ -28,16 +28,20 @@ import com.sun.source.util.Trees;
 /**
  * This class parses concrete Java into abstract GOOL.
  * For this purpose it relies on Sun's Java parser.
- * @author parrighi
  */
 public class JavaParser {
 
 	/**
+	 * Parsing concrete Java into abstract GOOL is done in three steps.
+	 * - We call Sun's java parser to produce abstract Java;
+	 * - We visit abstract Java with the JavaRecognizer to produce abstract GOOL;
+	 * - We annotate the abstract GOOL so that it carries the Target language.
 	 * 
 	 * @param defaultPlatform: specifies the Target language of the code generation that will later be applied to the abstract GOOL, once this Java parsing is performed.
-	 * @param compilationUnits: this is Sun's java parser's representation of the files to be parsed.
+	 * @param compilationUnits: An Iterable of JavaFileObject, which are Sun's java parser's representation of the files to be parsed.
 	 * @param dependencies: ???????
-	 * @param visitor: this is the class that knows how to transform Sun's abstract java, into abstract GOOL
+	 * @param visitor: this is the class that transforms Sun's abstract java, 
+	 * into abstract GOOL, i.e. the JavaRecognizer.
 	 * @return a list of classdefs, i.e. of abstract GOOL classes.
 	 * @throws Exception
 	 */
@@ -48,73 +52,84 @@ public class JavaParser {
 			throw new IllegalArgumentException("The gool visitor is null.");
 		}
 		
-		JavacTask task = null;
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		List<String> options = null;
-
+		
+		/**
+		 * We will now setup the options to Sun's java compiler
+		 * This requires working out the dependencies
+		 */
+		List<String> options = null; 
+		
+		// convert dependencies into a list of file paths to reach them
 		List<String> stringDependencies = new ArrayList<String>();
 		if (dependencies != null && !dependencies.isEmpty()) {
 			for (File file : dependencies) {
 				stringDependencies.add(file.getAbsolutePath());
 			}
 		}
-		/*
-		 * Add the GOOL library to allow the use of classes and annotations
-		 * like Gool.Map, Gool.List.
-		 */
-//		for (File d : GoolPlatform.getInstance().getCompiler().getDependencies()) {
-//			stringDependencies.add(d.getAbsolutePath());
-//		}
+		// further, add the GOOL library as a dependency XXXXXXXXXXXXXXXX
 		stringDependencies.add(Settings.get("gool_library")
 				.toString());
+		
+		// with the dependencies all set, we can make up the options
 		options = Arrays.asList("-classpath", StringUtils.join(
 				stringDependencies, File.pathSeparator));
 		
-		List<MyFileObject> files = new ArrayList<MyFileObject>();
-		for (JavaFileObject file : compilationUnits) {
-			files
-					.add(new MyFileObject(file.getCharContent(true).toString(),
-							file.getName().replaceAll("\\.(gool|java)$", "")
-									+ ".java"));
-		}
-		task = (JavacTask) compiler.getTask(null, null, null, options, null,
-				files);
+		/**
+		 * We now setup the list of files for Sun's java compiler
+		 */
+		//XXXXXXX Before
+		//List<MyFileObject> files = new ArrayList<MyFileObject>();
+		//for (JavaFileObject file : compilationUnits) {
+		//	files
+		//			.add(new MyFileObject(file.getCharContent(true).toString(),
+		//					file.getName().replaceAll("\\.(gool|java)$", "")
+		//							+ ".java"));
+		//}
+		//task = (JavacTask) compiler.getTask(null, null, null, options, null, files);
+		//XXXXXXXX After, see JavacTask task = ...
+		
+		/**
+		 * We now parse using Sun's java compiler
+		 */
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		JavacTask task = (JavacTask) compiler.getTask(null, null, null, options, null, compilationUnits);
 		Iterable<? extends CompilationUnitTree> asts = task.parse();
+		task.analyze(); //XXXXXXX what is analyse for????
+		Trees trees = Trees.instance(task); // XXXXXXX what is the difference between trees and asts?
 
-		task.analyze();
-//		Iterable<? extends JavaFileObject> compiledClasses = task.generate();
-//		GoolClassLoader loader = new GoolClassLoader();
-//		
-//		for (JavaFileObject f : compiledClasses) {
-//			InputStream is = f.openInputStream();
-//			
-//			byte[] bytes = new byte[is.available()];
-//			
-//			is.read(bytes);
-//			is.close();
-//			
-//			loader.loadClass(f.getName(), bytes);
-//		}
-		Trees trees = Trees.instance(task);
-
-		// Sets gool generator as the default generator
+		
+		/**
+		 * We now prepare the JavaRecognizer for conversion  of abstract Java to abstract GOOL.
+		 */
+		// XXXXXX What is this doing here, I thought we were just parsing? XXXXXX
+		// Sets the JavaGenerator as the default generator
 		GoolGeneratorController.reset();
 
+		//The visitor needs to know what the Target language is
+		//Because it will annotate the abstract GOOL with this information.
 		visitor.setDefaultPlatform(defaultPlatform);
-		visitor.setTrees(trees);
-		//visitor.setClassLoader(loader);
 		
+		// XXXXXXXXXX What is this?
+		visitor.setTrees(trees);
+		
+		/**
+		 * We launch the JavaRecognizer against each abstract Java ast
+		 */
 		for (CompilationUnitTree ast : asts) {
 			visitor.setCurrentCompilationUnit(ast);
 			visitor.scan(ast, null);
 		}
 		
+		/**
+		 * XXXXXXXX No idea what this is.
+		 */
 		// TODO It is okay to add custom dependencies only in the default
 		// platform?
 		for (ClassDef classDef : visitor.getGoolClasses()) {
 			classDef.getPlatform().registerCustomDependency(classDef.toString(),
 					classDef);
 		}
+		
 		return visitor.getGoolClasses();
 	}
 
@@ -130,17 +145,6 @@ public class JavaParser {
 		return parseGool(defaultPlatform, compilationUnits, null, new JavaRecognizer());
 	}
 	
-	/**
-	 * If the parser is called on an input string, wrap it into a compilation unit, and call the parser on that file.
-	 */
-	public static Collection<ClassDef> parseGool(Platform defaultPlatform,   // 
-			String input) throws Exception {
-		ArrayList<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
-		compilationUnits.add(new MyFileObject(
-		 input, "Random.java"));
-		System.out.println(input);
-		return parseGool(defaultPlatform, compilationUnits);
-	}
 	
 	/**
 	 * if the parser is called on a directory, wrap it into a compilation unit, and call the parser on that file.
@@ -156,9 +160,31 @@ public class JavaParser {
 	}
 	
 	
+	/**
+	 * If the parser is called on an input string, wrap it into a compilation unit, and call the parser on that file.
+	 */
+	public static Collection<ClassDef> parseGool(Platform defaultPlatform,   // 
+			String input) throws Exception {
+		ArrayList<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
+		compilationUnits.add(new MyFileObject(
+		 input, "Random.java"));
+		System.out.println(input);
+		return parseGool(defaultPlatform, compilationUnits);
+	}
 	
 	
 
+	/**
+	 * Sun's java parser takes his inputs as compilation units, 
+	 * which themselves are the source files loaded
+	 * into objects called SimpleJavaFileObject
+	 * Those objects have a name and: 
+	 * - a kind to say that they are source files,
+	 * - a content, retrieved by getCharContent.
+	 * When we wrap a string input into a file, 
+	 * we create directly such a SimpleJavaFileObject;
+	 * with getCharContent overriden to yield that input.
+	 */
 	static class MyFileObject extends SimpleJavaFileObject {
 
 		private String input;
@@ -167,7 +193,8 @@ public class JavaParser {
 			super(URI.create(name), JavaFileObject.Kind.SOURCE);
 			this.input = input;
 		}
-
+		
+		@Override
 		public CharSequence getCharContent(boolean ignoreEncodingErrors) {
 			return input;
 		}

@@ -1,6 +1,8 @@
 /**
  * The class that launches the other ones, thereby controlling the workflow.
  * TODO: further parameterize concreteJavaToConcretePlatform() to have an input platform. 
+ * TODO: do the wrapping of the different input formats at this stage rather than in JavaParser.
+ * TODO: return packages instead of ClassDefs.
  */
 
 package gool;
@@ -53,9 +55,9 @@ public class GOOLCompiler {
 	 * Notice that the Target is specified at this stage already: it will be carried kept in the abstract GOOL.
 	 * This choice is justified if we want to do multi-platform compilation, 
 	 * i.e. have some pieces of the abstract GOOL to compile in some Target, and another piece is some other Target.
-	 * @param destPlatform
-	 * @param input
-	 * @return
+	 * @param destPlatform: the Target language
+	 * @param input: the concrete Java, as a string
+	 * @return a map of the compiled files for the different platforms
 	 * @throws Exception
 	 */
 	public Map<Platform, List<File>> concreteJavaToConcretePlatform(
@@ -76,9 +78,9 @@ public class GOOLCompiler {
 		
 	/**
 	 * Parsing the concrete Java into abstract GOOL is done by JavaParser.
-	 * @param destPlatform
-	 * @param input
-	 * @return
+	 * @param destPlatform: the Target language
+	 * @param input: the concrete Java, as a string
+	 * @return abstract GOOL classes
 	 * @throws Exception
 	 */
 	private Collection<ClassDef> concreteJavaToAbstractGool(
@@ -97,7 +99,7 @@ public class GOOLCompiler {
 	/**
 	 * Flattening the abstract GOOL into concrete Target is done by GeneratorHelper.
 	 * @param classDefs
-	 * @return
+	 * @return a map of the compiled files for the different platforms
 	 * @throws FileNotFoundException
 	 */
 	private Map<Platform, List<File>> abstractGool2Target(
