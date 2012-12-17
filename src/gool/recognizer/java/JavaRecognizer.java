@@ -287,56 +287,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 	}
 	
-	/**
-	 * THIS PART IS ABOUT XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	 */
-	
-	/**
-	 * XXXXXXXXXXXXXXXXX
-	 * @param list
-	 * @param expr
-	 * @param context
-	 */
-	private void addParameters(List<? extends ExpressionTree> list,
-			Parameterizable expr, Context context) {
-		if (list != null) {
-			for (ExpressionTree p : list) {
-				Expression arg = (Expression) p.accept(this, context);
-				if (arg != null) {
-					expr.addParameter(arg);
-				}
-			}
-		}
-	}
 
-	
-	/**
-	 * XXXXXXXXXXXXXXXXXXX
-	 * @param format
-	 * @param message
-	 * @return
-	 */
-	private String error(String format, Object... message) {
-		return String.format("%s [File %s]", String.format(format, message),
-				ast.getSourceFile().getName());
-	}
-
-	
-	/**
-	 * XXXXXXXXXXXXXXXXXXX
-	 * @param list
-	 * @param annotation
-	 * @return
-	 */
-	public boolean findAnnotation(List<? extends AnnotationTree> list,
-			String annotation) {
-		for (AnnotationTree n : list) {
-			if (n.getAnnotationType().toString().equals(annotation)) {
-				return true;
-			}
-		}
-		return false;
-	}
 	/**
 	 * THIS PART IS ABOUT TYPE CONVERSION
 	 */
@@ -557,45 +508,213 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 	}
 
+	
 	/**
-	 * THIS PART IS ABOUT VISITING XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	 * THIS PART IS ABOUT ANCILLARY METHODS THAT HELP VISITING
 	 */
-
-	@Override
-	public Object visitArrayAccess(ArrayAccessTree n, Context context) {
-		return new ArrayAccess((Expression) n.getExpression().accept(this,
-				context), (Expression) n.getIndex().accept(this, context));
+	
+	/**
+	 * When visiting a method or a constructor, one needs to go through the list of its arguments, 
+	 * Visiting each of them recursively in turn, thereby generation an expression that gets added to the method or constructor.
+	 * @param list
+	 * @param expr
+	 * @param context
+	 */
+	private void addParameters(List<? extends ExpressionTree> list,
+			Parameterizable expr, Context context) {
+		if (list != null) {
+			for (ExpressionTree p : list) {
+				Expression arg = (Expression) p.accept(this, context);
+				if (arg != null) {
+					expr.addParameter(arg);
+				}
+			}
+		}
 	}
 
-	@Override
-	public Object visitArrayType(ArrayTypeTree n, Context context) {
-		return goolType(n, context);
+	
+	/**
+	 * A subroutine to generate error messages, with the name of the file that caused the error.
+	 * Notice that String.format(...) has the same sort of syntax to the old C printf.
+	 * @param format: a string with holes
+	 * @param message: data to fill in those holes
+	 * @return a string: a filled in string, plus name of file concerned.
+	 */
+	private String error(String format, Object... message) {
+		return String.format("%s [File %s]", String.format(format, message),
+				ast.getSourceFile().getName());
 	}
 
+	
+	/**
+	 * Lets you check for a certain annotation; e.g.
+	 * - "Override": used to XXXXXXXXXXXX
+	 * - "CustomCode": used to pass on code that should not be looked at by the GOOL system.
+	 * @param list
+	 * @param annotation
+	 * @return
+	 */
+	public boolean findAnnotation(List<? extends AnnotationTree> list,
+			String annotation) {
+		for (AnnotationTree n : list) {
+			if (n.getAnnotationType().toString().equals(annotation)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * THIS PART IS ABOUT VISITING UNRECOGNIZED STUFF
+	 *
+	 * The following java abstract expressions are not recognized.
+	 * This does not necessarily mean that they will not be handled correctly by the GOOL system.
+	 * It means that there is no dedicated representation for them in abstract GOOL, other than ExpressionUnknown.
+	 * Still, this ExpressionUnknown carries:
+	 * - the type of the unrecognized expression;
+	 * - the concrete Java string of characters that represents it.
+	 */
+	
 	@Override
 	public Object visitAssert(AssertTree n, Context context) {
 		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
+	
+	
+	@Override
+	public Object visitBreak(BreakTree n, Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
 
+	@Override
+	public Object visitCase(CaseTree n, Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
+
+	@Override
+	public Object visitCatch(CatchTree n, Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
+	
+	@Override
+	public Object visitCompoundAssignment(CompoundAssignmentTree n,
+			Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
+
+	@Override
+	public Object visitConditionalExpression(ConditionalExpressionTree n,
+			Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
+
+	@Override
+	public Object visitContinue(ContinueTree n, Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
+
+	@Override
+	public Object visitDoWhileLoop(DoWhileLoopTree n, Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
+
+	@Override
+	public Object visitEmptyStatement(EmptyStatementTree n, Context context) {
+		return new ExpressionUnknown(goolType(n,context),n.toString());
+	}
+	
+	@Override
+	public Object visitInstanceOf(InstanceOfTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+
+	@Override
+	public Object visitLabeledStatement(LabeledStatementTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+
+	@Override
+	public Object visitOther(Tree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+
+	}
+	
+	@Override
+	public Object visitSwitch(SwitchTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+
+	@Override
+	public Object visitSynchronized(SynchronizedTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+
+	@Override
+	public Object visitThrow(ThrowTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+
+	@Override
+	public Object visitTry(TryTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+
+	@Override
+	public Object visitTypeParameter(TypeParameterTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+	
+	@Override
+	public Object visitWildcard(WildcardTree node, Context p) {
+		return new ExpressionUnknown(goolType(node,p),node.toString());
+	}
+	
+	
+	/**
+	 * THIS PART IS ABOUT VISITING RECOGNIZED STUFF : TYPES
+	 * 
+	 * Whenever we hit an abstract java type, we convert it to a goolType with goolType().
+	 */
+	@Override
+	public Object visitArrayType(ArrayTypeTree n, Context context) {
+		return goolType(n, context);
+	}
+	
+	@Override
+	public Object visitParameterizedType(ParameterizedTypeTree node,
+			Context context) {
+		return goolType(node, context);
+	}
+
+	@Override
+	public Object visitPrimitiveType(PrimitiveTypeTree n, Context context) {
+		return goolType(n.getPrimitiveTypeKind(), n.toString());
+	}
+	
+	/**
+	 * THIS PART IS ABOUT VISITING EASY RECURSIVE CASES
+	 * 
+	 * Whenever abstract java and abstract GOOL closely match, not much work is required: we just need to propagate the visit recursively,
+	 * and make up the abstract GOOL from what is returned.
+	 * 
+	 * For example when visit some abstract java corresponding to a "t[i]" node, we visit t, visit i, and simply make up an
+	 * ArrayAccess(visited t, visited i)
+	 * abstract GOOL node.
+	 * The following cases are akin.
+	 */
+	@Override
+	public Object visitArrayAccess(ArrayAccessTree n, Context context) {
+		return new ArrayAccess((Expression) n.getExpression().accept(this, context), (Expression) n.getIndex().accept(this, context));
+	}
+	
 	@Override
 	public Object visitAssignment(AssignmentTree n, Context context) {
 		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
 		return new Assign(variable, expression);
-	}
-
-	@Override
-	public Object visitBinary(BinaryTree n, Context context) {
-		
-		Expression leftExp = (Expression) n.getLeftOperand().accept(this,
-				context);
-		Expression rightExp = (Expression) n.getRightOperand().accept(this,
-				context);
-		Operator operator = getOperator(n.getKind());
-		IType type=goolType(n,context);
-		String textualoperator= n.toString().replace(n.getLeftOperand().toString(), "").replace(n.getRightOperand().toString(), "");
-		return new BinaryOperation(operator, leftExp, rightExp, type, textualoperator);
 	}
 
 	@Override
@@ -611,20 +730,328 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	@Override
-	public Object visitBreak(BreakTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+	public Object visitWhileLoop(WhileLoopTree n, Context context) {
+		return new While((Expression) n.getCondition().accept(this, context),
+				(Statement) n.getStatement().accept(this, context));
+	}
+	
+	@Override
+	public Object visitForLoop(ForLoopTree node, Context p) {
+		List<? extends StatementTree> initializers = node.getInitializer();
+		if (initializers.size() > 1) {
+			return new ExpressionUnknown(goolType(node,p),node.toString());
+		}
+		List<? extends StatementTree> updaters = node.getUpdate();
+		if (updaters.size() > 1) {
+			return new ExpressionUnknown(goolType(node,p),node.toString());
+		}
+		Statement initializer = (Statement) initializers.get(0).accept(this, p);
+		Expression condition = (Expression) node.getCondition().accept(this, p);
+		Statement updater = (Statement) updaters.get(0).accept(this, p);
+		return new For(initializer, condition, updater, (Statement) node
+				.getStatement().accept(this, p));
+	}
+	
+	@Override
+	public Object visitEnhancedForLoop(EnhancedForLoopTree n, Context context) {
+		VarDeclaration varDec = (VarDeclaration) n.getVariable().accept(this,
+				context);
+		Expression expr = (Expression) n.getExpression().accept(this, context);
+
+		Statement statements = (Statement) n.getStatement().accept(this,
+				context);
+		return new EnhancedForLoop(varDec, expr, statements);
 	}
 
 	@Override
-	public Object visitCase(CaseTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+	public Object visitIf(IfTree n, Context context) {
+		Expression condition = (Expression) n.getCondition().accept(this,
+				context);
+		Statement thenStmt = (Statement) n.getThenStatement().accept(this,
+				context);
+		Statement elseStmt = null;
+		if (n.getElseStatement() != null) {
+			elseStmt = (Statement) n.getElseStatement().accept(this, context);
+		}
+
+		return new If(condition, thenStmt, elseStmt);
 	}
 
 	@Override
-	public Object visitCatch(CatchTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+	public Object visitNewClass(NewClassTree n, Context context) {
+		IType type = goolType(n.getIdentifier(), context);
+		ClassNew c = new ClassNew(type);
+
+		addParameters(n.getArguments(), c, context);
+
+		return c;
+	}
+	
+	@Override
+	public Object visitParenthesized(ParenthesizedTree n, Context context) {
+		return n.getExpression().accept(this, context);
 	}
 
+	@Override
+	public Object visitReturn(ReturnTree node, Context p) {
+		return new Return((Expression) node.getExpression().accept(this, p));
+	}
+
+
+	@Override
+	public Object visitTypeCast(TypeCastTree node, Context context) {
+		return new CastExpression(goolType(node.getType(), context),
+				(Expression) node.getExpression().accept(this, context));
+	}
+
+	/**
+	 * When visit some "op v" node, we visit v, translate op, work out the entire type...
+	 * and make up a
+	 * UnaryOperation(translated op, visited v, type, concrete java for op)
+	 * abstract GOOL node.	
+	 */
+	@Override
+	public Object visitUnary(UnaryTree n, Context context) {
+		Expression expression = (Expression) n.getExpression().accept(this,
+				context);
+		Operator operator = getOperator(n.getKind());
+		IType type=goolType(n,context);
+		String textualoperator=  n.toString().replace(n.getExpression().toString(), "");
+		return new UnaryOperation(operator, expression, type, textualoperator);
+	}
+	
+
+	@Override
+	public Object visitBinary(BinaryTree n, Context context) {
+		
+		Expression leftExp = (Expression) n.getLeftOperand().accept(this,
+				context);
+		Expression rightExp = (Expression) n.getRightOperand().accept(this,
+				context);
+		Operator operator = getOperator(n.getKind());
+		IType type=goolType(n,context);
+		String textualoperator= n.toString().replace(n.getLeftOperand().toString(), "").replace(n.getRightOperand().toString(), "");
+		return new BinaryOperation(operator, leftExp, rightExp, type, textualoperator);
+	}
+
+
+	/**
+	 * THIS PART IS ABOUT VISITING THE ODD CASES
+	 * XXXXXXXXXXXXXXXXXX
+	 */ 
+
+	
+	@Override
+	public Object visitErroneous(ErroneousTree n, Context context) {
+		throw new IllegalStateException();
+	}
+
+	@Override
+	public Object visitExpressionStatement(ExpressionStatementTree n,
+			Context context) {
+		return n.getExpression().accept(this, context);
+	}
+
+	/**
+	 * THIS PART IS ABOUT VISITING THE DELICATE CASES
+	 */ 
+	
+	/**
+	 * Literals, Variables, Declarations
+	 */
+	
+	/**
+	 * Literals are simple values such as "3".
+	 * Abstract GOOL represents them pretty much the same as abstract java.
+	 */
+	@Override
+	public Object visitLiteral(LiteralTree n, Context context) {
+		String value = n.getValue() != null ? n.getValue().toString() : "null";
+		return new Constant(goolType(n, context), value);
+	}
+
+	/**
+	 * XXXXXXXXXXXXXXX NEXT TWO:
+	 * XXXXXXXXXXXXXXX Who does variable declarations?
+	 * XXXXXXXXXXXXXXX modifiers?
+	 * XXXXXXXXXXXXXXX identifies?
+	 */
+	
+	@Override
+	public Object visitVariable(VariableTree n, Context context) {
+		IType type = goolType(n.getType(), context);
+
+		VarDeclaration variable = new VarDeclaration(type, n.getName()
+				.toString());
+
+		if (n.getInitializer() != null) {
+			Expression initializer = (Expression) n.getInitializer().accept(
+					this, context);
+			variable.setInitialValue(initializer);
+		}
+		
+		//XXXXXXXXXXXXXXXXXXXXXX What is this for ??????
+		Collection<Modifier> modifiers = (Collection<Modifier>) n
+				.getModifiers().accept(this, context);
+		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
+			return new Field(modifiers, variable);
+		}
+		
+		return variable;
+	}
+
+	@Override
+	public Object visitIdentifier(IdentifierTree n, Context context) {
+		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
+			throw new IllegalArgumentException(error(
+					"The variable named '%s' uses reserved keyword.", n
+							.getName()));
+		}
+
+		IType type = goolType(n, context);
+
+		/*
+		 * TODO identifiers. Create a specific node to access to class literals
+		 * (i.e. when calling static members).
+		 */
+		if (type.getName().equals(n.getName().toString())) {
+			return new Constant(type, n.getName().toString());
+		}
+		
+		//XXXXXXXXXX I thought variable declaration was the above case...
+		VarDeclaration varDec = new VarDeclaration(goolType(n, context), n
+				.getName().toString());
+		return new VarAccess(varDec);
+	}
+	
+
+	
+	/**
+	 * Lists, maps
+	 */
+
+
+	/**
+	 * List declarations are not passed on, but represented as such in abstract GOOL.
+	 * We need to work out the type, the dimensions, and the initialization of the list before in order to build up the 
+	 * ArrayNew(type, dimensions,initialization)
+	 * abstract GOOL node that represents it.
+	 */
+	@Override
+	public Object visitNewArray(NewArrayTree node, Context p) {
+		List<Expression> initialiList = new ArrayList<Expression>();
+		if (node.getInitializers() != null) {
+			for (ExpressionTree expression : node.getInitializers()) {
+				initialiList.add((Expression) expression.accept(this, p));
+			}
+		}
+		List<Expression> dimesExpressions = new ArrayList<Expression>();
+		if (node.getDimensions() != null) {
+
+			for (ExpressionTree expression : node.getDimensions()) {
+				dimesExpressions.add((Expression) expression.accept(this, p));
+			}
+		}
+		return new ArrayNew(goolType(node.getType(), p), dimesExpressions,
+				initialiList);
+	}
+	
+	/**
+	 * XXXXXXXXXXXXXXXXXX What is this ??????????????????
+	 */
+	@Override
+	public Object visitMemberSelect(MemberSelectTree n, Context context) {
+		Expression target = (Expression) n.getExpression()
+				.accept(this, context);
+		String identifier = n.getIdentifier().toString();
+
+		if (identifier.equalsIgnoreCase("equals")) {
+			return new EqualsCall(target);
+		}
+
+		IType type = target.getType();
+		
+//		loader.ensureMethodExists(type, identifier);
+
+		if (type != null) {
+			/*
+			 * TODO Do not assume that these methods are the same to the methods
+			 * "toString" and "equals" belonging to the Object class.
+			 */
+			if (identifier.equals("toString")) {
+				return new ToStringCall(target);
+			}
+			if (type instanceof TypeList) {
+				if (identifier.equals("add")) {
+					return new ListAddCall(target);
+				}
+				if (identifier.equals("remove")) {
+					return new ListRemoveCall(target);
+				}
+				if (identifier.equals("removeAt")) {
+					return new ListRemoveAtCall(target);
+				}
+				if (identifier.equals("get")) {
+					return new ListGetCall(target);
+				}
+				if (identifier.equals("size")) {
+					return new ListSizeCall(target);
+				}
+				if (identifier.equals("isEmpty")) {
+					return new ListIsEmptyCall(target);
+				}
+				if (identifier.equals("getIterator")) {
+					return new ListGetIteratorCall(target);
+				}
+				if (identifier.equals("contains")) {
+					return new ListContainsCall(target);
+				}
+			}
+			if (type instanceof TypeMap) {
+				if (identifier.equals("put")) {
+					return new MapPutCall(target);
+				}
+				if (identifier.equals("remove")) {
+					return new MapRemoveCall(target);
+				}
+				if (identifier.equals("get")) {
+					return new MapGetCall(target);
+				}
+				if (identifier.equals("size")) {
+					return new MapSizeCall(target);
+				}
+				if (identifier.equals("isEmpty")) {
+					return new MapIsEmptyCall(target);
+				}
+				if (identifier.equals("getIterator")) {
+					return new MapGetIteratorCall(target);
+				}
+				if (identifier.equals("containsKey")) {
+					return new MapContainsKeyCall(target);
+				}
+				if (identifier.equals("entrySet")) {
+					return target;
+				}
+			}
+			if (type instanceof TypeEntry) {
+				if (identifier.equals("getKey")) {
+					return new MapEntryGetKeyCall(target);
+				}
+				if (identifier.equals("getValue")) {
+					return new MapEntryGetValueCall(target);
+				}
+			}
+		}
+		IType goolType = goolType(n, context);
+		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
+				.toString());
+		return f;
+	}
+
+	/**
+	 * Classes, packages, imports...
+	 */
+	
 	@Override
 	public Object visitClass(ClassTree n, Context context) {
 		JCClassDecl c = (JCClassDecl) n;
@@ -762,219 +1189,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	@Override
-	public Object visitCompoundAssignment(CompoundAssignmentTree n,
-			Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
-	}
-
-	@Override
-	public Object visitConditionalExpression(ConditionalExpressionTree n,
-			Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
-	}
-
-	@Override
-	public Object visitContinue(ContinueTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
-	}
-
-	@Override
-	public Object visitDoWhileLoop(DoWhileLoopTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
-	}
-
-	@Override
-	public Object visitEmptyStatement(EmptyStatementTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
-	}
-
-	@Override
-	public Object visitEnhancedForLoop(EnhancedForLoopTree n, Context context) {
-		VarDeclaration varDec = (VarDeclaration) n.getVariable().accept(this,
-				context);
-		Expression expr = (Expression) n.getExpression().accept(this, context);
-
-		Statement statements = (Statement) n.getStatement().accept(this,
-				context);
-		return new EnhancedForLoop(varDec, expr, statements);
-	}
-
-	@Override
-	public Object visitErroneous(ErroneousTree n, Context context) {
-		throw new IllegalStateException();
-	}
-
-	@Override
-	public Object visitExpressionStatement(ExpressionStatementTree n,
-			Context context) {
-		return n.getExpression().accept(this, context);
-	}
-
-	@Override
-	public Object visitForLoop(ForLoopTree node, Context p) {
-		List<? extends StatementTree> initializers = node.getInitializer();
-		if (initializers.size() > 1) {
-			return new ExpressionUnknown(goolType(node,p),node.toString());
-		}
-		List<? extends StatementTree> updaters = node.getUpdate();
-		if (updaters.size() > 1) {
-			return new ExpressionUnknown(goolType(node,p),node.toString());
-		}
-		Statement initializer = (Statement) initializers.get(0).accept(this, p);
-		Expression condition = (Expression) node.getCondition().accept(this, p);
-		Statement updater = (Statement) updaters.get(0).accept(this, p);
-		return new For(initializer, condition, updater, (Statement) node
-				.getStatement().accept(this, p));
-	}
-
-	@Override
-	public Object visitIdentifier(IdentifierTree n, Context context) {
-		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
-			throw new IllegalArgumentException(error(
-					"The variable named '%s' uses reserved keyword.", n
-							.getName()));
-		}
-
-		IType type = goolType(n, context);
-
-		/*
-		 * TODO identifiers. Create a specific node to access to class literals
-		 * (i.e. when calling static members).
-		 */
-		if (type.getName().equals(n.getName().toString())) {
-			return new Constant(type, n.getName().toString());
-		}
-
-		VarDeclaration varDec = new VarDeclaration(goolType(n, context), n
-				.getName().toString());
-		return new VarAccess(varDec);
-	}
-
-	@Override
-	public Object visitIf(IfTree n, Context context) {
-		Expression condition = (Expression) n.getCondition().accept(this,
-				context);
-		Statement thenStmt = (Statement) n.getThenStatement().accept(this,
-				context);
-		Statement elseStmt = null;
-		if (n.getElseStatement() != null) {
-			elseStmt = (Statement) n.getElseStatement().accept(this, context);
-		}
-
-		return new If(condition, thenStmt, elseStmt);
-	}
-
-	@Override
 	public Object visitImport(ImportTree n, Context context) {
 		throw new IllegalStateException(
 				"return TypeDependency(TypeClass(n.getQualifiedIdentifier().accept(this, context).toString()))");
 	}
 
-	@Override
-	public Object visitInstanceOf(InstanceOfTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}
-
-	@Override
-	public Object visitLabeledStatement(LabeledStatementTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}
-
-	@Override
-	public Object visitLiteral(LiteralTree n, Context context) {
-		String value = n.getValue() != null ? n.getValue().toString() : "null";
-		return new Constant(goolType(n, context), value);
-	}
-
-	@Override
-	public Object visitMemberSelect(MemberSelectTree n, Context context) {
-		Expression target = (Expression) n.getExpression()
-				.accept(this, context);
-		String identifier = n.getIdentifier().toString();
-
-		if (identifier.equalsIgnoreCase("equals")) {
-			return new EqualsCall(target);
-		}
-
-		IType type = target.getType();
-		
-//		loader.ensureMethodExists(type, identifier);
-
-		if (type != null) {
-			/*
-			 * TODO Do not assume that these methods are the same to the methods
-			 * "toString" and "equals" belonging to the Object class.
-			 */
-			if (identifier.equals("toString")) {
-				return new ToStringCall(target);
-			}
-			if (type instanceof TypeList) {
-				if (identifier.equals("add")) {
-					return new ListAddCall(target);
-				}
-				if (identifier.equals("remove")) {
-					return new ListRemoveCall(target);
-				}
-				if (identifier.equals("removeAt")) {
-					return new ListRemoveAtCall(target);
-				}
-				if (identifier.equals("get")) {
-					return new ListGetCall(target);
-				}
-				if (identifier.equals("size")) {
-					return new ListSizeCall(target);
-				}
-				if (identifier.equals("isEmpty")) {
-					return new ListIsEmptyCall(target);
-				}
-				if (identifier.equals("getIterator")) {
-					return new ListGetIteratorCall(target);
-				}
-				if (identifier.equals("contains")) {
-					return new ListContainsCall(target);
-				}
-			}
-			if (type instanceof TypeMap) {
-				if (identifier.equals("put")) {
-					return new MapPutCall(target);
-				}
-				if (identifier.equals("remove")) {
-					return new MapRemoveCall(target);
-				}
-				if (identifier.equals("get")) {
-					return new MapGetCall(target);
-				}
-				if (identifier.equals("size")) {
-					return new MapSizeCall(target);
-				}
-				if (identifier.equals("isEmpty")) {
-					return new MapIsEmptyCall(target);
-				}
-				if (identifier.equals("getIterator")) {
-					return new MapGetIteratorCall(target);
-				}
-				if (identifier.equals("containsKey")) {
-					return new MapContainsKeyCall(target);
-				}
-				if (identifier.equals("entrySet")) {
-					return target;
-				}
-			}
-			if (type instanceof TypeEntry) {
-				if (identifier.equals("getKey")) {
-					return new MapEntryGetKeyCall(target);
-				}
-				if (identifier.equals("getValue")) {
-					return new MapEntryGetValueCall(target);
-				}
-			}
-		}
-		IType goolType = goolType(n, context);
-		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
-				.toString());
-		return f;
-	}
-
+	/**
+	 * Methods
+	 */
+	
 	@Override
 	public Object visitMethod(MethodTree n, Context context) {
 		boolean customCode = findAnnotation(n.getModifiers().getAnnotations(),
@@ -1155,133 +1378,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return result;
 	}
 
-	@Override
-	public Object visitNewArray(NewArrayTree node, Context p) {
-		List<Expression> initialiList = new ArrayList<Expression>();
-		if (node.getInitializers() != null) {
-			for (ExpressionTree expression : node.getInitializers()) {
-				initialiList.add((Expression) expression.accept(this, p));
-			}
-		}
-		List<Expression> dimesExpressions = new ArrayList<Expression>();
-		if (node.getDimensions() != null) {
-
-			for (ExpressionTree expression : node.getDimensions()) {
-				dimesExpressions.add((Expression) expression.accept(this, p));
-			}
-		}
-		return new ArrayNew(goolType(node.getType(), p), dimesExpressions,
-				initialiList);
-	}
-
-	@Override
-	public Object visitNewClass(NewClassTree n, Context context) {
-		IType type = goolType(n.getIdentifier(), context);
-		ClassNew c = new ClassNew(type);
-
-		addParameters(n.getArguments(), c, context);
-
-		return c;
-	}
-
-	@Override
-	public Object visitOther(Tree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-
-	}
-
-	@Override
-	public Object visitParameterizedType(ParameterizedTypeTree node,
-			Context context) {
-		return goolType(node, context);
-	}
-
-	@Override
-	public Object visitParenthesized(ParenthesizedTree n, Context context) {
-		return n.getExpression().accept(this, context);
-	}
-
-	@Override
-	public Object visitPrimitiveType(PrimitiveTypeTree n, Context context) {
-		return goolType(n.getPrimitiveTypeKind(), n.toString());
-	}
-
-	@Override
-	public Object visitReturn(ReturnTree node, Context p) {
-		return new Return((Expression) node.getExpression().accept(this, p));
-	}
-
-	@Override
-	public Object visitSwitch(SwitchTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}
-
-	@Override
-	public Object visitSynchronized(SynchronizedTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}
-
-	@Override
-	public Object visitThrow(ThrowTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}
-
-	@Override
-	public Object visitTry(TryTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}
-
-	@Override
-	public Object visitTypeCast(TypeCastTree node, Context context) {
-		return new CastExpression(goolType(node.getType(), context),
-				(Expression) node.getExpression().accept(this, context));
-	}
-
-	@Override
-	public Object visitTypeParameter(TypeParameterTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}
-
-	@Override
-	public Object visitUnary(UnaryTree n, Context context) {
-		Expression expression = (Expression) n.getExpression().accept(this,
-				context);
-		Operator operator = getOperator(n.getKind());
-		IType type=goolType(n,context);
-		String textualoperator=  n.toString().replace(n.getExpression().toString(), "");
-		return new UnaryOperation(operator, expression, type, textualoperator);
-	}
-
-	@Override
-	public Object visitVariable(VariableTree n, Context context) {
-		IType type = goolType(n.getType(), context);
-
-		VarDeclaration variable = new VarDeclaration(type, n.getName()
-				.toString());
-
-		if (n.getInitializer() != null) {
-			Expression initializer = (Expression) n.getInitializer().accept(
-					this, context);
-			variable.setInitialValue(initializer);
-		}
-		Collection<Modifier> modifiers = (Collection<Modifier>) n
-				.getModifiers().accept(this, context);
-		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
-			return new Field(modifiers, variable);
-		}
-		return variable;
-	}
-
-	@Override
-	public Object visitWhileLoop(WhileLoopTree n, Context context) {
-		return new While((Expression) n.getCondition().accept(this, context),
-				(Statement) n.getStatement().accept(this, context));
-	}
-
-	@Override
-	public Object visitWildcard(WildcardTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
-	}	
 }
 
 class Context {
