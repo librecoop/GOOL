@@ -367,8 +367,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		switch (typeMirror.getKind()) {
 		case PACKAGE:
 			//XXXXXXXXXXXXX Why are packages handled the same as classes?
+			//MMMMMMMMMMMMM Indeed. Thanks to the last commit we can now return packages.
 		case DECLARED:
 			//XXXXXXXXXXXXX Retrieve the full name of the Java abstract type.
+			//MMMMMMMMMMMMM abstract?
 			Type type = (Type) typeMirror;
 			Symbol classSymbol = (Symbol) type.asElement();
 			String typeName = classSymbol.getSimpleName().toString();
@@ -390,11 +392,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 
 			//XXXXXXXXXXXX Don't we know how to handle Iterables? Can we not at least pass them on?
+			//MMMMMMMMMMMM YES WE CAN
 			if (goolType.getName().equals("Iterable")) {
 				throw new RuntimeException(goolType.toString());
 			}
 
 			//XXXXXXXXXXXX Recognizing a primitive type...????
+			//MMMMMMMMMMMM No idea, it seams it adds the DECLARED type as a dependency.
+			//MMMMMMMMMMMM It would be better if the addDependecy method in ClassDef deals with incomp
 			if (!type.toString().startsWith("java.lang")) {
 				if (!goolType.toString().equalsIgnoreCase("gool")
 						&& !context.getClassDef().getType().equals(goolType)) {
@@ -405,8 +410,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return goolType;
 		case EXECUTABLE:
 			//XXXXXXXXXXXX What is it?
+			//MMMMMMMMMMMM http://docs.oracle.com/javase/7/docs/api/javax/lang/model/type/TypeKind.html#EXECUTABLE
+			//MMMMMMMMMMMM No Idea why we return TypeObject
 		case TYPEVAR:
 			//XXXXXXXXXXXX What is it?
+			//MMMMMMMMMMMM A type variable. Not compatible with all OO Languages. 
+			//MMMMMMMMMMMM Maybe we should have a GOOL type for EXECUTABLE and TYPEVAR, and let the generators handle them.   
 			return TypeObject.INSTANCE;
 		case VOID:
 			return TypeVoid.INSTANCE;
@@ -414,6 +423,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			//XXXXXXXXXXXX Recognized an Array. Sure it deals only with java.lang arrays this way? Or gool.imports.java.lang arrays?
 			//Convert the type of the elements of the Array.
 			//Then create a GOOL array type containing that elements of that converted type.
+			//MMMMMMMMMMMM We find this type when we find an Array declaration like the following: int[ ] intarray = new int[6];
+			//MMMMMMMMMMMM Other kind of arrays like ArrayList should follow under the DECLARED case. 
 			ArrayType arrayType = (ArrayType) typeMirror;
 			return new TypeArray(
 					goolType(arrayType.getComponentType(), context));
@@ -428,6 +439,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	//XXXXXXXXXXXX Why not put an IType instead of Otd?
 	//XXXXXXXXXXXX This really seems unjustified.
+	//MMMMMMMMMMMM We ensure that we return new objects/instances each time we ask for a type that maybe has type arguments like Lists.
+	//MMMMMMMMMMMM We dont want to mess with other/previous type instances arguments.
+	//MMMMMMMMMMMM public IType getType() { return new TypeList(); }
 	private static abstract class Otd {
 		abstract public IType getType();
 	};
@@ -437,6 +451,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		
 		Otd tmpOtd = new Otd() {
 			//XXXXXXXXXXX Wow. I did'nt even know that you could do that!
+			//MMMMMMMMMMM :)
 			public IType getType() {
 				return TypeString.INSTANCE;
 			}
@@ -450,7 +465,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		
 		//XXXXXXXXXXX Why an Int and not a Decimal of a List?
+		//MMMMMMMMMMM "a Decimal of a List"?
 		//XXXXXXXXXXX Why are we dealing with Primitive types again?
+		//MMMMMMMMMMM No idea, we should do some tests. I remember having some difficulties finding the JavaTree Type.
+		//MMMMMMMMMMM maybe sometimes we call this function without passing throw the JavaTree. 
 		string2otdMap.put("Double", tmpOtd);
 		string2otdMap.put("java.lang.Double", tmpOtd);
 		tmpOtd = new Otd() {
@@ -460,6 +478,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		
 		//XXXXXXXXXXX Is this a boxed Int? Why not return a List of ints, then?
+		//MMMMMMMMMMM We are putting into the map the Otd previous created, the Int one. 
 		string2otdMap.put("Integer", tmpOtd);
 		string2otdMap.put("java.lang.Integer", tmpOtd);
 		tmpOtd = new Otd() {
@@ -469,6 +488,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		
 		//XXXXXXXXXXX Never that sure about when to pass on and so on...
+		//MMMMMMMMMMM Neither do I
 		string2otdMap.put("List", tmpOtd);
 		string2otdMap.put("ArrayList", tmpOtd);
 		string2otdMap.put("java.util.ArrayList", tmpOtd);
@@ -548,7 +568,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	
 	/**
 	 * Lets you check for a certain annotation; e.g.
-	 * - "Override": used to XXXXXXXXXXXX
+	 * - "Override": used to XXXXXXXXXXXX             MMMMMMMMMMMM not a GOOL annotation.
 	 * - "CustomCode": used to pass on code that should not be looked at by the GOOL system.
 	 * @param list
 	 * @param annotation
@@ -891,6 +911,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		//XXXXXXXXXXXXXXXXXXXXXX What is this for ??????
+		//MMMMMMMMMMMMMMMMM Variables declared inside a class (not inside methods) have modifiers like public, protected 
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
@@ -919,6 +940,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		//XXXXXXXXXX I thought variable declaration was the above case...
+		//MMMMMMMMMM this method returns a VarAccess, the idea is to have a pointer to the declaration.
+		//MMMMMMMMMM Maybe in another recognizer it is possible. It could be helpful for garbage collection?
 		VarDeclaration varDec = new VarDeclaration(goolType(n, context), n
 				.getName().toString());
 		return new VarAccess(varDec);
@@ -958,6 +981,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	
 	/**
 	 * XXXXXXXXXXXXXXXXXX What is this ??????????????????
+	 * MMMMMMMMMMMMMMMMMM some expression like "object.member", something dot something
 	 */
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
