@@ -41,8 +41,10 @@ import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
+import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
+import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
@@ -463,6 +465,17 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(Package _package) {
 		return _package.getName();
 	}
+	
+	@Override
+	public String getCode(TypePackage typePackage){
+		return typePackage.getTextualtype();
+	}
+	
+	@Override
+	public String getCode(TypeMethod typeMethod){
+		return typeMethod.getTextualtype();
+	}
+
 
 	
 }

@@ -80,6 +80,7 @@ import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
+import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
@@ -374,7 +375,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			Symbol classSymbol0 = (Symbol) type0.asElement();
 			String typeName0 = classSymbol0.getSimpleName().toString();
 			//Create a GOOL type of a type that matches the full name of the Java type.
-			TypePackage goolType0 = new TypeMethod(typeName0);
+			TypePackage goolType0 = new TypePackage(typeName0);
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
 			for (Type t : type0.getTypeArguments()) {
@@ -412,7 +413,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 							new TypeDependency(goolType1));
 				}
 			}
-			return goolType;
+			return goolType1;
 		case EXECUTABLE:
 			//Dealing with methods
 			Type type2 = (Type) typeMirror;
