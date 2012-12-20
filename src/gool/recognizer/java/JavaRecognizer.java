@@ -168,6 +168,7 @@ import com.sun.tools.javac.tree.JCTree.JCModifiers;
 
 /**
  * The JavaRecognizer does the work of converting Sun's abstract Java to abstract GOOL.
+ * The documentation of abstract Java is at http://docs.oracle.com/javase/7/docs/api/javax/lang/model/package-summary.html
  * The class Context is necessary for that and is declared at the bottom of this file.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
@@ -304,7 +305,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	/**
-	 * Get a Java abstract type from a sub-branch of Java abstract type tree.
+	 * Get a Java type from a sub-branch of Java type tree.
 	 */
 	private TypeMirror getTypeMirror(Tree n) {
 		TreePath path = TreePath.getPath(ast, n);
@@ -314,7 +315,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	/**
-	 * Get a GOOL Type from a sub-branch of Java abstract type tree,
+	 * Get a GOOL Type from a sub-branch of Java type tree,
 	 * and a context.
 	 */
 	private IType goolType(Tree n, Context context) {
@@ -327,7 +328,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	/**
 	 * For primitive types.
-	 * Converts Java abstract type kinds to GOOL types.
+	 * Converts Java type kinds to GOOL types.
 	 */
 	private IType goolType(TypeKind typeKind, String textualType) {
 		switch (typeKind) {
@@ -350,7 +351,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	/**
-	 * Get a GOOL Type from a Java abstract type,
+	 * Get a GOOL Type from a Java type,
 	 * and a context.
 	 */
 	private IType goolType(TypeMirror typeMirror, Context context) {
@@ -366,16 +367,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//Dealing with non-primitive types.
 		switch (typeMirror.getKind()) {
 		case PACKAGE:
-			//XXXXXXXXXXXXX Why are packages handled the same as classes?
-			//MMMMMMMMMMMMM Indeed. Thanks to the last commit we can now return packages.
+			//Java has types "packages". 
+			//For now they are handled just like other declared types
 		case DECLARED:
-			//XXXXXXXXXXXXX Retrieve the full name of the Java abstract type.
-			//MMMMMMMMMMMMM abstract?
+			//Retrieve the full name of the Java type.
 			Type type = (Type) typeMirror;
 			Symbol classSymbol = (Symbol) type.asElement();
 			String typeName = classSymbol.getSimpleName().toString();
 
-			//Create a GOOL type of a type that matches the full name of the Java abstract type.
+			//Create a GOOL type of a type that matches the full name of the Java type.
 			IType goolType = string2IType(typeName, context);
 			
 			//Whether in abstract Java or in GOOL, enums are codes as classes with some flag.
@@ -391,15 +391,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				goolType.addArgument(goolType(t, context));
 			}
 
-			//XXXXXXXXXXXX Don't we know how to handle Iterables? Can we not at least pass them on?
-			//MMMMMMMMMMMM YES WE CAN
-			if (goolType.getName().equals("Iterable")) {
-				throw new RuntimeException(goolType.toString());
-			}
-
-			//XXXXXXXXXXXX Recognizing a primitive type...????
-			//MMMMMMMMMMMM No idea, it seams it adds the DECLARED type as a dependency.
-			//MMMMMMMMMMMM It would be better if the addDependecy method in ClassDef deals with incomp
+			//TODO: sort out imports
+			//Add the encountered type as a dependency of the current class, which is context.getClassDef().
 			if (!type.toString().startsWith("java.lang")) {
 				if (!goolType.toString().equalsIgnoreCase("gool")
 						&& !context.getClassDef().getType().equals(goolType)) {
