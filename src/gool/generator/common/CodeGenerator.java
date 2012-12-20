@@ -71,9 +71,11 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
+import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
@@ -380,5 +382,9 @@ public interface CodeGenerator {
 	String getCode(Package _package);
 
 	String getCode(SystemCommandDependency systemCommandDependency);
+
+	String getCode(TypePackage typePackage);
+	
+	String getCode(TypeMethod typePackage);
 	
 }

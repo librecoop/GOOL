@@ -76,6 +76,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
@@ -367,44 +368,64 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//Dealing with non-primitive types.
 		switch (typeMirror.getKind()) {
 		case PACKAGE:
-			//Java has types "packages". 
-			//For now they are handled just like other declared types
+			//Dealing with Packages
+			//Retrieve the full name of the Java type.
+			Type type0 = (Type) typeMirror;
+			Symbol classSymbol0 = (Symbol) type0.asElement();
+			String typeName0 = classSymbol0.getSimpleName().toString();
+			//Create a GOOL type of a type that matches the full name of the Java type.
+			TypePackage goolType0 = new TypeMethod(typeName0);
+			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
+			//We convert them recursively, and add them up to the GOOL type.
+			for (Type t : type0.getTypeArguments()) {
+				goolType0.addArgument(goolType(t, context));
+			}
+			return goolType0;
 		case DECLARED:
 			//Retrieve the full name of the Java type.
-			Type type = (Type) typeMirror;
-			Symbol classSymbol = (Symbol) type.asElement();
-			String typeName = classSymbol.getSimpleName().toString();
+			Type type1 = (Type) typeMirror;
+			Symbol classSymbol1 = (Symbol) type1.asElement();
+			String typeName1 = classSymbol1.getSimpleName().toString();
 
 			//Create a GOOL type of a type that matches the full name of the Java type.
-			IType goolType = string2IType(typeName, context);
+			IType goolType1 = string2IType(typeName1, context);
 			
 			//Whether in abstract Java or in GOOL, enums are codes as classes with some flag.
 			//We deal with this case.
-			boolean isEnum = ((classSymbol.flags() & Flags.ENUM) != 0);
-			if (isEnum && goolType instanceof TypeClass) {
-				((TypeClass) goolType).setIsEnum(isEnum);
+			boolean isEnum = ((classSymbol1.flags() & Flags.ENUM) != 0);
+			if (isEnum && goolType1 instanceof TypeClass) {
+				((TypeClass) goolType1).setIsEnum(isEnum);
 			}
 
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
-			for (Type t : type.getTypeArguments()) {
-				goolType.addArgument(goolType(t, context));
+			for (Type t : type1.getTypeArguments()) {
+				goolType1.addArgument(goolType(t, context));
 			}
 
 			//TODO: sort out imports
 			//Add the encountered type as a dependency of the current class, which is context.getClassDef().
-			if (!type.toString().startsWith("java.lang")) {
-				if (!goolType.toString().equalsIgnoreCase("gool")
-						&& !context.getClassDef().getType().equals(goolType)) {
+			if (!type1.toString().startsWith("java.lang")) {
+				if (!goolType1.toString().equalsIgnoreCase("gool")
+						&& !context.getClassDef().getType().equals(goolType1)) {
 					context.getClassDef().addDependency(
-							new TypeDependency(goolType));
+							new TypeDependency(goolType1));
 				}
 			}
 			return goolType;
 		case EXECUTABLE:
-			//XXXXXXXXXXXX What is it?
-			//MMMMMMMMMMMM http://docs.oracle.com/javase/7/docs/api/javax/lang/model/type/TypeKind.html#EXECUTABLE
-			//MMMMMMMMMMMM No Idea why we return TypeObject
+			//Dealing with methods
+			Type type2 = (Type) typeMirror;
+			Symbol classSymbol2 = (Symbol) type2.asElement();
+			String typeName2 = classSymbol2.getSimpleName().toString();
+			//Create a GOOL type of a type that matches the full name of the Java type.
+			TypeMethod goolType2 = new TypeMethod(typeName2);
+			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
+			//We convert them recursively, and add them up to the GOOL type.
+			for (Type t : type2.getTypeArguments()) {
+				goolType2.addArgument(goolType(t, context));
+			}
+			return goolType2;
 		case TYPEVAR:
 			//XXXXXXXXXXXX What is it?
 			//MMMMMMMMMMMM A type variable. Not compatible with all OO Languages. 
