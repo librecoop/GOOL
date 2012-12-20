@@ -78,6 +78,7 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
+import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 
 import java.util.Collection;
@@ -385,6 +386,8 @@ public interface CodeGenerator {
 
 	String getCode(TypePackage typePackage);
 	
-	String getCode(TypeMethod typePackage);
+	String getCode(TypeMethod typeMethod);
+	
+	String getCode(TypeVar typeVar);
 	
 }

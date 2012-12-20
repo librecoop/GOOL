@@ -83,6 +83,7 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
+import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
 
@@ -389,6 +390,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			String typeName1 = classSymbol1.getSimpleName().toString();
 
 			//Create a GOOL type of a type that matches the full name of the Java type.
+			//Usually, this is a TypeClass, i.e. we assume that the type is some generic declared class.
+			//However some classes receive a particular treatment like Lists, Maps etc.
 			IType goolType1 = string2IType(typeName1, context);
 			
 			//Whether in abstract Java or in GOOL, enums are codes as classes with some flag.
@@ -428,18 +431,25 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			return goolType2;
 		case TYPEVAR:
-			//XXXXXXXXXXXX What is it?
-			//MMMMMMMMMMMM A type variable. Not compatible with all OO Languages. 
-			//MMMMMMMMMMMM Maybe we should have a GOOL type for EXECUTABLE and TYPEVAR, and let the generators handle them.   
-			return TypeObject.INSTANCE;
+			//Dealing with methods
+			Type type3 = (Type) typeMirror;
+			Symbol classSymbol3 = (Symbol) type3.asElement();
+			String typeName3 = classSymbol3.getSimpleName().toString();
+			//Create a GOOL type of a type that matches the full name of the Java type.
+			TypeVar goolType3 = new TypeVar(typeName3);
+			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
+			//We convert them recursively, and add them up to the GOOL type.
+			for (Type t : type3.getTypeArguments()) {
+				goolType3.addArgument(goolType(t, context));
+			}
+			return goolType3;
 		case VOID:
 			return TypeVoid.INSTANCE;
 		case ARRAY:
-			//XXXXXXXXXXXX Recognized an Array. Sure it deals only with java.lang arrays this way? Or gool.imports.java.lang arrays?
+			//Recognized a fixed length Array: int[ ] intarray = new int[6]. Not to be confused with java.util arrays.
 			//Convert the type of the elements of the Array.
 			//Then create a GOOL array type containing that elements of that converted type.
-			//MMMMMMMMMMMM We find this type when we find an Array declaration like the following: int[ ] intarray = new int[6];
-			//MMMMMMMMMMMM Other kind of arrays like ArrayList should follow under the DECLARED case. 
+			//As for other kind of arrays like ArrayList etc., they fall under the DECLARED case. 
 			ArrayType arrayType = (ArrayType) typeMirror;
 			return new TypeArray(
 					goolType(arrayType.getComponentType(), context));
@@ -451,12 +461,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return new TypeUnknown(typeMirror.toString());
 		}
 	}
-
-	//XXXXXXXXXXXX Why not put an IType instead of Otd?
-	//XXXXXXXXXXXX This really seems unjustified.
-	//MMMMMMMMMMMM We ensure that we return new objects/instances each time we ask for a type that maybe has type arguments like Lists.
-	//MMMMMMMMMMMM We dont want to mess with other/previous type instances arguments.
-	//MMMMMMMMMMMM public IType getType() { return new TypeList(); }
+	
+	//These Otd are classes that return classes like TypeList, TypeMap,... 
+	//why go through this intermediate step, and not replace the instantiations new Otd() by new TypeList(), new TypeMap... 
+	//This is because these instances of Otd get placed in a map, 
+	//which gets called with a string like List and replies with what should be, every time it gets called, a fresh instance of TypeList. 
+	//Thus, returning and Otd wrapper and doing a getType() upon it does the job. It could have been handled through a case, though.
 	private static abstract class Otd {
 		abstract public IType getType();
 	};
@@ -465,49 +475,46 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	static {
 		
 		Otd tmpOtd = new Otd() {
-			//XXXXXXXXXXX Wow. I did'nt even know that you could do that!
-			//MMMMMMMMMMM :)
 			public IType getType() {
 				return TypeString.INSTANCE;
 			}
 		};
 		string2otdMap.put("String", tmpOtd);
 		string2otdMap.put("java.lang.String", tmpOtd);
+		
+		//We found a Java boxed Double.
+		//As far as type goes, we unbox it and just say it is a GOOL Decimal.
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return TypeDecimal.INSTANCE;
 			}
 		};
-		
-		//XXXXXXXXXXX Why an Int and not a Decimal of a List?
-		//MMMMMMMMMMM "a Decimal of a List"?
-		//XXXXXXXXXXX Why are we dealing with Primitive types again?
-		//MMMMMMMMMMM No idea, we should do some tests. I remember having some difficulties finding the JavaTree Type.
-		//MMMMMMMMMMM maybe sometimes we call this function without passing throw the JavaTree. 
-		string2otdMap.put("Double", tmpOtd);
 		string2otdMap.put("java.lang.Double", tmpOtd);
+		
+		//We found a Java boxed Integer.
+		//As far as type goes, we unbox it and just say it is a GOOL Int.
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return TypeInt.INSTANCE;
 			}
 		};
-		
-		//XXXXXXXXXXX Is this a boxed Int? Why not return a List of ints, then?
-		//MMMMMMMMMMM We are putting into the map the Otd previous created, the Int one. 
 		string2otdMap.put("Integer", tmpOtd);
 		string2otdMap.put("java.lang.Integer", tmpOtd);
+		
+		//NEXT We recognize that the abstact Java was using some well-known class
+		//Which we want to treat in a particular manner
+		//I.e. for which we have a specific representation in the abstract GOOL.
+		
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeList();
 			}
 		};
-		
-		//XXXXXXXXXXX Never that sure about when to pass on and so on...
-		//MMMMMMMMMMM Neither do I
-		string2otdMap.put("List", tmpOtd);
+				string2otdMap.put("List", tmpOtd);
 		string2otdMap.put("ArrayList", tmpOtd);
 		string2otdMap.put("java.util.ArrayList", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.ArrayList", tmpOtd);
+		
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeMap();
@@ -517,6 +524,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("HashMap", tmpOtd);
 		string2otdMap.put("java.util.HashMap", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.HashMap", tmpOtd);
+		
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeEntry();
@@ -583,7 +591,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	
 	/**
 	 * Lets you check for a certain annotation; e.g.
-	 * - "Override": used to XXXXXXXXXXXX             MMMMMMMMMMMM not a GOOL annotation.
+	 * - "Override": used to set a inherited flag and that way be able to generate annotation.
 	 * - "CustomCode": used to pass on code that should not be looked at by the GOOL system.
 	 * @param list
 	 * @param annotation
@@ -872,15 +880,16 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	/**
 	 * THIS PART IS ABOUT VISITING THE ODD CASES
-	 * XXXXXXXXXXXXXXXXXX
 	 */ 
 
-	
+	//This is when Sun's java parser failed.
 	@Override
 	public Object visitErroneous(ErroneousTree n, Context context) {
-		throw new IllegalStateException();
+		throw new IllegalArgumentException(error(
+				"The sun java parser failed at %s.", n.toString()));
 	}
 
+	//ExpressionStatements are just Expressions followed by semicolons.
 	@Override
 	public Object visitExpressionStatement(ExpressionStatementTree n,
 			Context context) {
@@ -906,27 +915,30 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	/**
-	 * XXXXXXXXXXXXXXX NEXT TWO:
-	 * XXXXXXXXXXXXXXX Who does variable declarations?
-	 * XXXXXXXXXXXXXXX modifiers?
-	 * XXXXXXXXXXXXXXX identifies?
+	 * Deals with variable declarations.
 	 */
-	
 	@Override
 	public Object visitVariable(VariableTree n, Context context) {
+		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
+			throw new IllegalArgumentException(error(
+					"The variable named '%s' uses reserved keyword.", n
+							.getName()));
+		}
+		//work out the GOOL type of the variable
 		IType type = goolType(n.getType(), context);
-
+		//work out the name, and make an abstract GOOL variable declaration
 		VarDeclaration variable = new VarDeclaration(type, n.getName()
 				.toString());
-
+		//find whether there is an initializing expression and if so, visit it, and add the result to the GOOL variable declaration
 		if (n.getInitializer() != null) {
 			Expression initializer = (Expression) n.getInitializer().accept(
 					this, context);
 			variable.setInitialValue(initializer);
 		}
 		
-		//XXXXXXXXXXXXXXXXXXXXXX What is this for ??????
-		//MMMMMMMMMMMMMMMMM Variables declared inside a class (not inside methods) have modifiers like public, protected 
+		//a variable declaration may be an attribute declaration (a field), in which case it carries modifiers 
+		//and gets represented differently in GOOL, i.e. wrapped up with a Field().
+		// TODO: actually, any variable declaration could have modifiers.
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
@@ -946,17 +958,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		IType type = goolType(n, context);
 
-		/*
-		 * TODO identifiers. Create a specific node to access to class literals
-		 * (i.e. when calling static members).
-		 */
+
+		// TODO identifiers. Create a specific node to access to class literal (i.e. when calling static members).
 		if (type.getName().equals(n.getName().toString())) {
 			return new Constant(type, n.getName().toString());
 		}
 		
-		//XXXXXXXXXX I thought variable declaration was the above case...
-		//MMMMMMMMMM this method returns a VarAccess, the idea is to have a pointer to the declaration.
-		//MMMMMMMMMM Maybe in another recognizer it is possible. It could be helpful for garbage collection?
+		//This method returns a VarAccess, accessing a previously declared variable, i.e. a VarDeclaration.
+		//TODO: The link to the suitable VarDeclaration should be done by name analysis.
+		//For not we just create a dummy VarDeclaration for that purpose.
 		VarDeclaration varDec = new VarDeclaration(goolType(n, context), n
 				.getName().toString());
 		return new VarAccess(varDec);
@@ -995,8 +1005,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 	
 	/**
-	 * XXXXXXXXXXXXXXXXXX What is this ??????????????????
-	 * MMMMMMMMMMMMMMMMMM some expression like "object.member", something dot something
+	 * Deals with expressions like "object.member", i.e. something dot something.
 	 */
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
@@ -1004,22 +1013,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
 
+		/*
+		 * TODO Currently we are assuming that the following methods are always the same as the methods
+		 * "toString" and "equals" belonging to the Object class.
+		 */
 		if (identifier.equalsIgnoreCase("equals")) {
 			return new EqualsCall(target);
 		}
-
-		IType type = target.getType();
+		if (identifier.equals("toString")) {
+			return new ToStringCall(target);
+		}
 		
-//		loader.ensureMethodExists(type, identifier);
+		IType type = target.getType();
 
 		if (type != null) {
-			/*
-			 * TODO Do not assume that these methods are the same to the methods
-			 * "toString" and "equals" belonging to the Object class.
-			 */
-			if (identifier.equals("toString")) {
-				return new ToStringCall(target);
-			}
+
 			if (type instanceof TypeList) {
 				if (identifier.equals("add")) {
 					return new ListAddCall(target);
@@ -1081,6 +1089,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				}
 			}
 		}
+		//sometimes a member is just a member.
+		//i.e. one for which no particular treatment is required.
 		IType goolType = goolType(n, context);
 		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
 				.toString());

@@ -47,6 +47,7 @@ import gool.ast.type.TypeNull;
 import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
+import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
 
@@ -472,7 +473,16 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 	
 	@Override
+	public String getCode(TypeVar typeVar){
+		//For now if one wants to print the type of a Method, this returns just the name of the method.
+		return typeVar.getTextualtype();
+	}
+
+
+	
+	@Override
 	public String getCode(TypeMethod typeMethod){
+		//For now if one wants to print the type of a Method, this returns just the name of the method.
 		return typeMethod.getTextualtype();
 	}
 
