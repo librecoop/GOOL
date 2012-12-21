@@ -1006,6 +1006,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	
 	/**
 	 * Deals with expressions like "object.member", i.e. something dot something.
+	 * XXXXXXXXX when do we get the case when it's a method invokation?
+	 * XXXXXXXXX when do we get the case when it's a field?
+	 * XXXXXXXXX this seems wrong...
 	 */
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
@@ -1103,29 +1106,38 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	
 	@Override
 	public Object visitClass(ClassTree n, Context context) {
+		
+		//Get the name of the class
 		JCClassDecl c = (JCClassDecl) n;
 		ClassDef classDef = new ClassDef(n.getSimpleName().toString());
+		System.out.println(String.format("Parsing class %s", n.getSimpleName()));
+		
+		//The new class will provide the context for the things parsed inside of it.
 		Context newContext = new Context(classDef, null);
-
+		
+		//Enums are just classes with a particular flag, which we set up if necessary
+		//XXXXXXXXXX We did that before, in DECLARED, didn't we?
 		classDef.setIsEnum((c.mods.flags & Flags.ENUM) != 0);
 
-		System.out.println(String.format("Parsing class %s", n.getSimpleName()));
 
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, newContext);
-
 		/*
-		 * Do not allow 'static' modifier for classes, it means different things
+		 * For now do not allow 'static' modifier for classes, as it means very different things
 		 * in the target languages.
+		 * TODO: static class support.
 		 */
 		modifiers.remove(Modifier.STATIC);
 
 		/*
-		 * classes must be 'public' in order to solve accessibility in the
+		 * For now classes must be 'public' in order to solve accessibility in the
 		 * target languages.
+		 * TODO: more visibility support.
 		 */
 		modifiers.add(Modifier.PUBLIC);
 
+		//XXXXXXXXXXXXXXXXXXX What is this force platform thing?
+		//XXXXXXXXXXXXXXXXXXX How does it work?
 		for (AnnotationTree annotationTree : n.getModifiers().getAnnotations()) {
 			if (annotationTree.getAnnotationType().toString().equals(
 					"ForcePlatform")) {
@@ -1148,25 +1160,28 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 
+		//Let us deal with modifiers
 		classDef.setModifiers(modifiers);
 
 		JCModifiers mtree = (JCModifiers) n.getModifiers();
 		classDef.setIsInterface((mtree.flags & Flags.INTERFACE) != 0);
 
-		// Assign a default platform
+		// Make sure some Target language is specified for this class.
 		if (classDef.getPlatform() == null) {
 			classDef.setPlatform(defaultPlatform);
 		}
 
+		// Register the class as one of the outputs
 		goolClasses.put(classDef.getType(), classDef);
 
 		/*
 		 * If the class has the CustomCode attribute, we only generate an empty
 		 * class.
+		 * XXXXXXXXXXXXX Why can it sometimes be useful?
+		 * XXXXXXXXXXXXX with its methods? Or stubs of them?
 		 */
 		boolean customCode = findAnnotation(n.getModifiers().getAnnotations(),
 				"CustomCode");
-
 		if (customCode) {
 			for (Tree tree : n.getMembers()) {
 				if (tree instanceof MethodTree) {
@@ -1178,15 +1193,16 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return classDef;
 		}
 
+		//Setup Inheritance information
 		if (n.getExtendsClause() != null) {
 			IType parentType = goolType(n.getExtendsClause(), newContext);
 			classDef.setParentClass(parentType);
 		}
-
 		for (Tree iface : n.getImplementsClause()) {
 			classDef.addInterface(goolType(iface, newContext));
 		}
 
+		//Recursively go through each member and add it to the abstract GOOL class
 		for (Tree tree : n.getMembers()) {
 			Node member = (Node) tree.accept(this, newContext);
 			if (member instanceof Meth) {
@@ -1206,12 +1222,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return classDef;
 	}
 
+	/**
+	 * XXXXXXX This is to visit a Package ??????????
+	 * XXXXXXX I thought it was just a bunch of files
+	 * XXXXXXX But then the way to handle ppackage suggests that there has to be only one.
+	 */
+	
 	@Override
 	public Object visitCompilationUnit(CompilationUnitTree n, Context context) {
+		//The destination package is either null or that specified by the visited package
 		String ppackage = null;
 		if (n.getPackageName() != null) {
 			ppackage = n.getPackageName().accept(this, context).toString();
 		}
+		//XXXXXXXXXXXXXXXX What is this for?
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
@@ -1221,6 +1245,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				dependencies.add(new CustomDependency(dependencyString));
 			}
 		}
+		//Visit each member class in turn
+		//And add it to the package
+		//XXXXXXXXXXXXX What is packagesCache?
 		for (Tree unit : n.getTypeDecls()) {
 			ClassDef classDef = (ClassDef) unit.accept(this, context);
 			if (ppackage != null) {
@@ -1237,6 +1264,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return null;
 	}
 
+	//XXXXXXXXXXXXXXXXXX What is this, don't we need be able to deal with imports?
 	@Override
 	public Object visitImport(ImportTree n, Context context) {
 		throw new IllegalStateException(
@@ -1264,9 +1292,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			boolean createOnlySignature, boolean commentOriginalCode) {
 		Meth method;
 
+		//recover modifiers
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, context);
 
+		//deal with the case of constructors....
+		//XXXXXXXXXXXXXXXX why is there no argument to the contructor???
 		if (n.getReturnType() == null) {
 			method = new Constructor();
 		} else {
@@ -1274,8 +1305,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			/*
 			 * The hard way to determine if the current method is the entry
 			 * point.
-			 * 
 			 * It may be better if we implement this as an annotation.
+			 * XXXXXXXXXXXXX All this to see if it is a Main?
+			 * XXXXXXXXXXXXX what is the logic of it?
+			 * XXXXXXXXXXXXX Why not see if it is called main?
 			 */
 			boolean isMainMethod = type.equals(TypeVoid.INSTANCE)
 					&& modifiers.contains(Modifier.PUBLIC)
@@ -1301,6 +1334,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 
+		//go through each parameter and add it.
 		if (n.getParameters() != null) {
 			for (VariableTree p : n.getParameters()) {
 				method.addParameter(new VarDeclaration((Dec) p.accept(this,
@@ -1308,8 +1342,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 
+		//Can we safely move it to L1298?
 		method.setModifiers(modifiers);
 
+		//XXXXXXXXXXXXXX What is this entire if for?
 		if (n.getBody() != null) {
 			if (createOnlySignature) {
 				if (commentOriginalCode) {
@@ -1353,6 +1389,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return method;
 	}
 
+	/**
+	 * XXXXXXXXXXXXX I struggle to understand this method.
+	 * XXXXXXXXXXXXX Could you explain what the main steps are?
+	 * XXXXXXXXXXXXX I find it strange that now is the time to deal with particular cases such as System.out.println
+	 * XXXXXXXXXXXXX I still don't see how this interacts with MemberSelect, where other particular cases are dealt with.
+	 */
 	@Override
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
 		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());	
@@ -1381,6 +1423,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return target;
 	}
 
+	/**
+	 * Translates abstract Java modifiers into abstract GOOL modifiers
+	 */
 	@Override
 	public Object visitModifiers(ModifiersTree n, Context context) {
 		Collection<Modifier> result = new HashSet<Modifier>();
