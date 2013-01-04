@@ -1005,10 +1005,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 	
 	/**
-	 * Deals with expressions like "object.member", i.e. something dot something.
-	 * XXXXXXXXX when do we get the case when it's a method invokation?
-	 * XXXXXXXXX when do we get the case when it's a field?
-	 * XXXXXXXXX this seems wrong...
+	 * Deals with expressions like "object.member()".
+	 * It gets called by visitMethodInvokation().
 	 */
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
@@ -1116,7 +1114,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Context newContext = new Context(classDef, null);
 		
 		//Enums are just classes with a particular flag, which we set up if necessary
-		//XXXXXXXXXX We did that before, in DECLARED, didn't we?
+		//We said that before, with DECLARED types
+		//Here this is for the class itself
 		classDef.setIsEnum((c.mods.flags & Flags.ENUM) != 0);
 
 
@@ -1136,8 +1135,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		 */
 		modifiers.add(Modifier.PUBLIC);
 
-		//XXXXXXXXXXXXXXXXXXX What is this force platform thing?
-		//XXXXXXXXXXXXXXXXXXX How does it work?
+		//The forceplatform annotation is unused for now
+		//The idea is to be able to specify the target platform
+		//As an annotation of the concrete input language
 		for (AnnotationTree annotationTree : n.getModifiers().getAnnotations()) {
 			if (annotationTree.getAnnotationType().toString().equals(
 					"ForcePlatform")) {
@@ -1175,10 +1175,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		goolClasses.put(classDef.getType(), classDef);
 
 		/*
-		 * If the class has the CustomCode attribute, we only generate an empty
-		 * class.
-		 * XXXXXXXXXXXXX Why can it sometimes be useful?
-		 * XXXXXXXXXXXXX with its methods? Or stubs of them?
+		 * If the class has the CustomCode annotation, we enerate a class 
+		 * without processing the code inside
+		 * but just commenting it 
+		 * Indeed, notice that
+		 * createMethod(MethodTree n, Context context, boolean createOnlySignature, boolean commentOriginalCode)
 		 */
 		boolean customCode = findAnnotation(n.getModifiers().getAnnotations(),
 				"CustomCode");
@@ -1223,11 +1224,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	/**
-	 * XXXXXXX This is to visit a Package ??????????
-	 * XXXXXXX I thought it was just a bunch of files
-	 * XXXXXXX But then the way to handle ppackage suggests that there has to be only one.
+	 * This is the beginning of the visit. 
+	 * But it gets called several times, once per compilation unit.
+	 * A CompilationUnit is a Java file
+	 * But a java file can have various classes inside.
 	 */
-	
 	@Override
 	public Object visitCompilationUnit(CompilationUnitTree n, Context context) {
 		//The destination package is either null or that specified by the visited package
@@ -1235,7 +1236,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n.getPackageName() != null) {
 			ppackage = n.getPackageName().accept(this, context).toString();
 		}
-		//XXXXXXXXXXXXXXXX What is this for?
+		//Dealing with the imports
+		//Each class that is imported is registered as a dependency
+		//TODO: We don't automatically go and compile dependencies.
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
@@ -1246,8 +1249,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 		//Visit each member class in turn
-		//And add it to the package
-		//XXXXXXXXXXXXX What is packagesCache?
+		//And add it to the Dependencies too
+		//Each class may have a package.
+		//In order not to create two different GOOL packages
+		//when the JAVA packages names were in fact the same
+		//we remember the package name in the packagesCache.
 		for (Tree unit : n.getTypeDecls()) {
 			ClassDef classDef = (ClassDef) unit.accept(this, context);
 			if (ppackage != null) {
@@ -1264,7 +1270,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return null;
 	}
 
-	//XXXXXXXXXXXXXXXXXX What is this, don't we need be able to deal with imports?
+	//This was handled already with the getImports of visitCompilationUnit
 	@Override
 	public Object visitImport(ImportTree n, Context context) {
 		throw new IllegalStateException(
@@ -1390,10 +1396,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	/**
-	 * XXXXXXXXXXXXX I struggle to understand this method.
 	 * XXXXXXXXXXXXX Could you explain what the main steps are?
-	 * XXXXXXXXXXXXX I find it strange that now is the time to deal with particular cases such as System.out.println
-	 * XXXXXXXXXXXXX I still don't see how this interacts with MemberSelect, where other particular cases are dealt with.
+	 * This is the time to deal with recognition of certain library calls such as System.out.println
+	 * Indeed, System.out.println is imbricated:
+	 * MethodInvocation(<Target:MemberSelect<Target:MemberSelect<Target:"System", Identifier:"out">,<Identifier:"println">>>)
+	 * So it is easier to identify at this stage
 	 */
 	@Override
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
@@ -1406,6 +1413,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		else {
 			target = (Expression) n.getMethodSelect().accept(this,
 						context);
+			// This is when we possibly visitMemberSelect.
 			if (n.getMethodSelect().toString().equals("super")) {
 				target = new ParentCall(goolType(((MethodSymbol) method)
 						.getReturnType(), context));
