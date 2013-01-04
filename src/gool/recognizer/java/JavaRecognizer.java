@@ -322,10 +322,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 * and a context.
 	 */
 	private IType goolType(Tree n, Context context) {
-		// A null abstract Java usually means that we are dealing with a constructor.
+		// A null abstract Java type usually means that we are dealing with a constructor.
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
+		System.out.println("XX");
+		System.out.println(n);
+		System.out.println("XX");
 		return goolType(getTypeMirror(n), context);
 	}
 
@@ -359,90 +362,82 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	private IType goolType(TypeMirror typeMirror, Context context) {
 		
-		//Dealing with primitive types.
 		if (typeMirror == null) {
-			// A null abstract Java usually means that we are dealing with a constructor.
+			//A null abstract Java type usually means that we are dealing with a constructor.
 			return TypeNone.INSTANCE;
 		} else if (typeMirror.getKind().isPrimitive()) {
+			//Dealing with primitive types.
+			//The overloaded goolType method will map Java abstract "kinds" to GOOL primitive types
+			//The textualtype is for passing on unrecognized primitive types
 			return goolType(typeMirror.getKind(), typeMirror.toString());
 		}
 
 		//Dealing with non-primitive types.
+		//First, retrieve the full name of the Java type.
+		Type type = (Type) typeMirror;
+		Symbol classSymbol = (Symbol) type.asElement();
+		System.out.println("XXX");
+		System.out.println(type);
+		System.out.println("XXX");
+		String typeName = classSymbol.getSimpleName().toString();
+		IType goolType;
 		switch (typeMirror.getKind()) {
-		case PACKAGE:
-			//Dealing with Packages
-			//Retrieve the full name of the Java type.
-			Type type0 = (Type) typeMirror;
-			Symbol classSymbol0 = (Symbol) type0.asElement();
-			String typeName0 = classSymbol0.getSimpleName().toString();
+		case PACKAGE: // -- Dealing with Packages
 			//Create a GOOL type of a type that matches the full name of the Java type.
-			TypePackage goolType0 = new TypePackage(typeName0);
+			goolType = new TypePackage(typeName);
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
-			for (Type t : type0.getTypeArguments()) {
-				goolType0.addArgument(goolType(t, context));
+			for (Type t : type.getTypeArguments()) {
+				goolType.addArgument(goolType(t, context));
 			}
-			return goolType0;
-		case DECLARED:
-			//Retrieve the full name of the Java type.
-			Type type1 = (Type) typeMirror;
-			Symbol classSymbol1 = (Symbol) type1.asElement();
-			String typeName1 = classSymbol1.getSimpleName().toString();
-
+			return goolType;
+		case DECLARED: // -- Dealing with classes
 			//Create a GOOL type of a type that matches the full name of the Java type.
 			//Usually, this is a TypeClass, i.e. we assume that the type is some generic declared class.
 			//However some classes receive a particular treatment like Lists, Maps etc.
-			IType goolType1 = string2IType(typeName1, context);
+			goolType = string2IType(typeName, context);
 			
 			//Whether in abstract Java or in GOOL, enums are codes as classes with some flag.
 			//We deal with this case.
-			boolean isEnum = ((classSymbol1.flags() & Flags.ENUM) != 0);
-			if (isEnum && goolType1 instanceof TypeClass) {
-				((TypeClass) goolType1).setIsEnum(isEnum);
+			boolean isEnum = ((classSymbol.flags() & Flags.ENUM) != 0);
+			if (isEnum && goolType instanceof TypeClass) {
+				((TypeClass) goolType).setIsEnum(isEnum);
 			}
 
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
-			for (Type t : type1.getTypeArguments()) {
-				goolType1.addArgument(goolType(t, context));
+			for (Type t : type.getTypeArguments()) {
+				goolType.addArgument(goolType(t, context));
 			}
 
 			//TODO: sort out imports
 			//Add the encountered type as a dependency of the current class, which is context.getClassDef().
-			if (!type1.toString().startsWith("java.lang")) {
-				if (!goolType1.toString().equalsIgnoreCase("gool")
-						&& !context.getClassDef().getType().equals(goolType1)) {
+			if (!type.toString().startsWith("java.lang")) {
+				if (!goolType.toString().equalsIgnoreCase("gool")
+						&& !context.getClassDef().getType().equals(goolType)) {
 					context.getClassDef().addDependency(
-							new TypeDependency(goolType1));
+							new TypeDependency(goolType));
 				}
 			}
-			return goolType1;
-		case EXECUTABLE:
-			//Dealing with methods
-			Type type2 = (Type) typeMirror;
-			Symbol classSymbol2 = (Symbol) type2.asElement();
-			String typeName2 = classSymbol2.getSimpleName().toString();
+			return goolType;
+		case EXECUTABLE: // -- Dealing with methods
 			//Create a GOOL type of a type that matches the full name of the Java type.
-			TypeMethod goolType2 = new TypeMethod(typeName2);
+			goolType = new TypeMethod(typeName);
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
-			for (Type t : type2.getTypeArguments()) {
-				goolType2.addArgument(goolType(t, context));
+			for (Type t : type.getTypeArguments()) {
+				goolType.addArgument(goolType(t, context));
 			}
-			return goolType2;
-		case TYPEVAR:
-			//Dealing with methods
-			Type type3 = (Type) typeMirror;
-			Symbol classSymbol3 = (Symbol) type3.asElement();
-			String typeName3 = classSymbol3.getSimpleName().toString();
+			return goolType;
+		case TYPEVAR: // -- Dealing type variables
 			//Create a GOOL type of a type that matches the full name of the Java type.
-			TypeVar goolType3 = new TypeVar(typeName3);
+			goolType = new TypeVar(typeName);
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
-			for (Type t : type3.getTypeArguments()) {
-				goolType3.addArgument(goolType(t, context));
+			for (Type t : type.getTypeArguments()) {
+				goolType.addArgument(goolType(t, context));
 			}
-			return goolType3;
+			return goolType;
 		case VOID:
 			return TypeVoid.INSTANCE;
 		case ARRAY:
@@ -1411,6 +1406,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			target = new SystemOutPrintCall();
 		}
 		else {
+			System.out.println("X");
+			System.out.println(n.getMethodSelect().toString());
+			System.out.println("X");
 			target = (Expression) n.getMethodSelect().accept(this,
 						context);
 			// This is when we possibly visitMemberSelect.
