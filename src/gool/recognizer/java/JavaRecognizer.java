@@ -326,9 +326,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-		System.out.println("XX");
-		System.out.println(n);
-		System.out.println("XX");
+		System.out.println("X");
+		System.out.println(getTypeMirror(n));
 		return goolType(getTypeMirror(n), context);
 	}
 
@@ -365,7 +364,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (typeMirror == null) {
 			//A null abstract Java type usually means that we are dealing with a constructor.
 			return TypeNone.INSTANCE;
-		} else if (typeMirror.getKind().isPrimitive()) {
+		} 
+		else if (typeMirror.getKind().isPrimitive()) {
 			//Dealing with primitive types.
 			//The overloaded goolType method will map Java abstract "kinds" to GOOL primitive types
 			//The textualtype is for passing on unrecognized primitive types
@@ -376,14 +376,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
 		Symbol classSymbol = (Symbol) type.asElement();
-		System.out.println("XXX");
+		System.out.println("XXX just before claiming a typeName from classsymbol XXX");
+		System.out.println("XXX type, classSymbol, kind XXX");
 		System.out.println(type);
+		System.out.println(classSymbol);
+		System.out.println(typeMirror.getKind());		
 		System.out.println("XXX");
-		String typeName = classSymbol.getSimpleName().toString();
+		String typeName;
 		IType goolType;
 		switch (typeMirror.getKind()) {
 		case PACKAGE: // -- Dealing with Packages
 			//Create a GOOL type of a type that matches the full name of the Java type.
+			typeName = classSymbol.getSimpleName().toString();
 			goolType = new TypePackage(typeName);
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
@@ -395,6 +399,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			//Create a GOOL type of a type that matches the full name of the Java type.
 			//Usually, this is a TypeClass, i.e. we assume that the type is some generic declared class.
 			//However some classes receive a particular treatment like Lists, Maps etc.
+			typeName = classSymbol.getSimpleName().toString();
 			goolType = string2IType(typeName, context);
 			
 			//Whether in abstract Java or in GOOL, enums are codes as classes with some flag.
@@ -421,7 +426,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			return goolType;
 		case EXECUTABLE: // -- Dealing with methods
-			//Create a GOOL type of a type that matches the full name of the Java type.
+			//Create a GOOL type of a type that matches the Java type.
+			typeName = "MethodType";
 			goolType = new TypeMethod(typeName);
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
@@ -430,7 +436,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			return goolType;
 		case TYPEVAR: // -- Dealing type variables
-			//Create a GOOL type of a type that matches the full name of the Java type.
+			//Create a GOOL type of a type that matches the Java type.
+			typeName = "TypeVarType";
 			goolType = new TypeVar(typeName);
 			//Whether in abstract Java of in GOOL, non-primitive types may have arguments. 
 			//We convert them recursively, and add them up to the GOOL type.
@@ -1000,7 +1007,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 	
 	/**
-	 * Deals with expressions like "object.member()".
+	 * Deals with expressions like "target.identifier()".
 	 * It gets called by visitMethodInvokation().
 	 */
 	@Override
@@ -1008,7 +1015,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Expression target = (Expression) n.getExpression()
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
-
+		System.out.println("XX Entering MemberSelect with target-identifier XX");
+		System.out.println(target);
+		System.out.println(identifier);
+		System.out.println("XX");
 		/*
 		 * TODO Currently we are assuming that the following methods are always the same as the methods
 		 * "toString" and "equals" belonging to the Object class.
@@ -1019,8 +1029,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (identifier.equals("toString")) {
 			return new ToStringCall(target);
 		}
-		
+
 		IType type = target.getType();
+		System.out.println("X Target type X");
+		System.out.println(type);
+		System.out.println("X");
 
 		if (type != null) {
 
@@ -1085,9 +1098,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				}
 			}
 		}
-		//sometimes a member is just a member.
-		//i.e. one for which no particular treatment is required.
+		//the type of the target
+		//or the identifier
+		//were not recognized
+		//i.e. it is not a library that requires a particular treatment
+		//it gets the standard treatment.
+		System.out.println("X Standard method call for X");
+		System.out.println(n);
 		IType goolType = goolType(n, context);
+		System.out.println("X");
 		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
 				.toString());
 		return f;
@@ -1405,26 +1424,29 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			context.getClassDef().addDependency(new SystemOutDependency());
 			target = new SystemOutPrintCall();
 		}
-		else {
-			System.out.println("X");
-			System.out.println(n.getMethodSelect().toString());
-			System.out.println("X");
-			target = (Expression) n.getMethodSelect().accept(this,
-						context);
-			// This is when we possibly visitMemberSelect.
-			if (n.getMethodSelect().toString().equals("super")) {
+		else if (n.getMethodSelect().toString().equals("super")) {
 				target = new ParentCall(goolType(((MethodSymbol) method)
 						.getReturnType(), context));
-			} else if (n.getMethodSelect().toString().equals("this")) {
+		}
+		else if (n.getMethodSelect().toString().equals("this")) {
 				target = new ThisCall(goolType(((MethodSymbol) method)
 						.getReturnType(), context));
-			}
+		} 
+		else {
+				System.out.println("YYYY from method to member select YYYY");
+				System.out.println(n.getMethodSelect().toString());
+				System.out.println("YYYYYYYYYYYYY");
+			// The target is the xxxx part of some method invocation xxxx().
+			// Here is when we possibly visitMemberSelect().
+			target = (Expression) n.getMethodSelect().accept(this,
+					context);
+		}
 	
-			if (!(target instanceof Parameterizable)) {
+		if (!(target instanceof Parameterizable)) {
 				target = new MethCall(goolType(((MethodSymbol) method)
 						.getReturnType(), context), target);
-			}
 		}
+		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
 		return target;
 	}

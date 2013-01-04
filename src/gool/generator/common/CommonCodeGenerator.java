@@ -474,7 +474,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(TypeVar typeVar){
-		//For now if one wants to print the type of a Method, this returns just the name of the method.
+		//For now if one wants to print the type of a TypeVar, this returns just the name of the TypeVar.
 		return typeVar.getTextualtype();
 	}
 
