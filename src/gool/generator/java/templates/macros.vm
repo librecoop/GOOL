@@ -1,26 +1,29 @@
+##-----
 #macro( params $params )
 #set( $paramsNb = $params.size() )
 #foreach( $p in $params )$p.Type $p.Name#if($velocityCount != $paramsNb), #end#end
 #end
-
+##-----
 #macro ( block $block )
 #foreach( $stmt in $block.Statements )$stmt#if ($stmt.SemiColon);
 #end
 #end
- 
-#end
 
+#end
+##-----
 #macro (interfaces $interfaces)
 #set( $size = $interfaces.size() )
 #if ($size > 0) implements #foreach( $interface in $interfaces )$interface#if($velocityCount != $size), #end#end#end
 #end
-
+##-----
 #macro (join $collection $separator)
 #set( $size = $collection.size() )
+## (Velocity Note: velocityCount is the default loop counter variable)
 #foreach( $item in $collection )$item#if($velocityCount != $size)$separator #end#end
 #end
-
+##-----
 #macro ( includes $dependencies )
 #foreach( $dep in $dependencies )#if(!$dep.equals("noprint")&&$dep.contains("."))import ${dep};#end
 #end
 #end
+##-----

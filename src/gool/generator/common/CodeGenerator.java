@@ -83,6 +83,11 @@ import gool.ast.type.TypeVoid;
 
 import java.util.Collection;
 
+/**
+ * Generates the concrete target from the abstract GOOL.
+ * Many things are common to various target languages,
+ * those are dealt with by CommonCodeGenerator.
+ */
 public interface CodeGenerator {
 
 	void addCustomDependency(String key, Dependency value);

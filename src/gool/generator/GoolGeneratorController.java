@@ -9,6 +9,7 @@ import gool.generator.java.JavaGenerator;
  * translated from abstract GOOL to concrete Target.
  * In order to remember which one this is, as we travel this class, we keep it here.
  * By default, the CodeGenerator is GoolGenerator, i.e. just the GOOL pretty printer.
+ * TODO: Maybe this file should be merged the GeneratorHelper
  * @author parrighi
  */
 public class GoolGeneratorController {

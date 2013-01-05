@@ -2,9 +2,12 @@ package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
 
-
 /**
- * A dependency is an external class/type or an external package.
+ * A dependency is the abstract GOOL representation 
+ * of the existence of an external class
+ * which is used in the code of some abstract GOOL class
+ * Gets implemented by CustomDependency
+ * TODO: Maybe the two could be merged
  */
 public abstract class Dependency extends Node{
 

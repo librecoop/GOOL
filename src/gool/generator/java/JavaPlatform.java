@@ -11,13 +11,12 @@ import java.util.ArrayList;
 
 /**
  * This is the default Java Platform.
- * It uses the folders specified in Settings.
+ * It uses the output folders specified in Settings.
  * It uses JavaCodePrinter for concrete Java generation.
  * It uses JavaCompiler for compiling and executing the generated concrete Java.
  * Since it is fully specified, and since there should only ever be one instance of it, this could almost have been a static class.
  * But since platforms in general are objects, this is not the case.
  * Still, we make sure that there is always only one instance of this object.
- * @author parrighi
  */
 public final class JavaPlatform extends Platform {
 

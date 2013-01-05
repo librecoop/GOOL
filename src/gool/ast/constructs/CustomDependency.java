@@ -2,6 +2,9 @@ package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ * See Dependency for comments.
+ */
 public class CustomDependency extends Dependency {
 
 	private String name;

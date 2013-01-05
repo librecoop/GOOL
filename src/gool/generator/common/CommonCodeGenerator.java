@@ -188,17 +188,21 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 
 	/**
-	 * Produces code for a class attribute declaration.
+	 * Produces code for a field, i.e. a class attribute declaration.
 	 * 
 	 * @param field
-	 *            the declared class attribute
-	 * @return the formatted class attribute.
+	 *            the abstract GOOL field
+	 * @return the string corresponding to such a declaration in the concrete target language
 	 */
 	@Override
 	public String getCode(Field field) {
 		String out = String.format("%s %s %s", getCode(field.getModifiers()),
 				field.getType(), field.getName());
 		if (field.getDefaultValue() != null) {
+			//Notice that this will call a toString() on the field.defaultValue
+			//Which will become a JavaGenerator.getCode(defaultValue)
+			//Hence this seemingly simple statement
+			//Is in fact a recursive descent on the abstract GOOL tree.
 			out = String.format("%s = %s", out, field.getDefaultValue());
 		}
 		return out;

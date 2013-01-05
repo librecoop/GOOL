@@ -282,13 +282,12 @@ public class ClassDef extends Dependency {
 	}
 
 	/**
-	 * Generates the target code using the specific code printer related to the class' platform.
+	 * Generates the target code using the specific CodePrinter 
+	 * related to the class' platform.
 	 * 
 	 * Instead of concatenating strings, the code generation is implemented
 	 * using velocity templates.
 	 * 
-	 * @param codePrinter
-	 *            the specific code printer.
 	 * @return the generated target code.
 	 * @throws Exception
 	 *             when velocity fails to render or find the relevant template.

@@ -86,7 +86,9 @@ public abstract class Platform extends PrimitiveType {
 	 * Getters and Setters
 	 */
 	
-	
+	/**
+	 * @return the CodePrinter associated to a given Platform
+	 */
 	public CodePrinter getCodePrinter() {
 		if (codePrinter == null) {
 			codePrinter = initializeCodeWriter();
