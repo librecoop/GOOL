@@ -13,4 +13,4 @@ However, everything is done so that, in the future, the GOOL program takes other
 Still, the final objective is not to reach a comprehensive translator. The aim is to provide a tool that lets you write device-independent pieces of programs for many output languages, in one go. The device-dependent pieces of program do not prevent you from using GOOL; although they will not be implemented into the output language, they will still be translated in a generic, syntactic manner.
 
 
-Read More at the project Wiki: https://github.com/librecoop/GOOL/wikibvvbvkj
+Read More at the project Wiki: https://github.com/librecoop/GOOL/wiki
