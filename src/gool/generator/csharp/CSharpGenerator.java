@@ -2,7 +2,6 @@ package gool.generator.csharp;
 
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.Constructor;
@@ -38,7 +37,6 @@ import gool.ast.map.MapSizeCall;
 import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
-import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
