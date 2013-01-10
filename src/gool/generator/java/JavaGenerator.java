@@ -37,6 +37,7 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
@@ -244,7 +245,10 @@ public class JavaGenerator extends CommonCodeGenerator {
 	public String getCode(TypeInt typeInt) {
 		return "Integer";
 	}
-	
+	@Override
+	public String getCode(TypeChar typeChar) {
+		return "char";
+	}
 	@Override
 	public String getCode(TypeList typeList) {
 		

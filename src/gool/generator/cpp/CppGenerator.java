@@ -50,6 +50,7 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -143,7 +144,10 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
-
+	@Override
+	public String getCode(TypeChar typechar) {
+		return "char";
+	}
 	@Override
 	public String getCode(TypeString typeString) {
 		return "std::string*";

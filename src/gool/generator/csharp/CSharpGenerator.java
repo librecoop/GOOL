@@ -41,6 +41,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -81,7 +82,10 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
-
+	@Override
+	public String getCode(TypeChar typechar) {
+		return "char";
+	}
 	@Override
 	public String getCode(TypeByte t) {
 		return "byte";

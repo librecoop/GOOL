@@ -65,6 +65,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -93,7 +94,7 @@ public interface CodeGenerator {
 	void addCustomDependency(String key, Dependency value);
 
 	String getCode(ArrayAccess arrayAccess);
-
+	
 	String getCode(ArrayNew arrayNew);
 
 	String getCode(Assign assign);
@@ -394,5 +395,7 @@ public interface CodeGenerator {
 	String getCode(TypeMethod typeMethod);
 	
 	String getCode(TypeVar typeVar);
+
+	String getCode(TypeChar typeChar);
 	
 }
