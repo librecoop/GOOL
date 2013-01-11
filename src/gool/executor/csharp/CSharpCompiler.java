@@ -3,6 +3,7 @@ package gool.executor.csharp;
 import gool.Settings;
 import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
+import gool.executor.cpp.CppCompiler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,9 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class CSharpCompiler extends SpecificCompiler {
-
+	private static Logger logger = Logger.getLogger(CSharpCompiler.class.getName());
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
 
@@ -66,7 +68,7 @@ public class CSharpCompiler extends SpecificCompiler {
 		// TODO Duplicate code in compile and compileAll
 		
 		if (mainFile == null) {
-			System.out.println(files);
+			logger.info(files);
 			mainFile = files.get(0);
 		}
 		
