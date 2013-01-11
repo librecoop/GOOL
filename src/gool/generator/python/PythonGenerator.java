@@ -2,6 +2,8 @@ package gool.generator.python;
 
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
+
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
@@ -34,6 +36,7 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
+import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
@@ -82,10 +85,10 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
-import gool.generator.common.CodeGenerator;
+import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.Platform;
 
-public class PythonGenerator implements CodeGenerator {
+public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public void addCustomDependency(String key, Dependency value) {
@@ -94,57 +97,31 @@ public class PythonGenerator implements CodeGenerator {
 	}
 
 	@Override
-	public String getCode(ArrayAccess arrayAccess) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getCode(ArrayNew arrayNew) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(Assign assign) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(BinaryOperation binaryOp) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(Block block) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s[%s]", arrayNew.getType(), StringUtils
+				.join(arrayNew.getDimesExpressions(), ", "));
 	}
 
 	@Override
 	public String getCode(CastExpression cast) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s(%s)", cast.getType(), cast
+				.getExpression());
 	}
 
 	@Override
 	public String getCode(ClassNew classNew) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s(%s)", classNew.getType(), StringUtils
+				.join(classNew.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(Comment comment) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("\"\"\"\n%s\n\"\"\"", comment.getValue());
 	}
 
 	@Override
 	public String getCode(Constant constant) {
-		// TODO Auto-generated method stub
-		return null;
+		return constant.getValue().toString();
 	}
 
 	@Override
