@@ -1,13 +1,18 @@
 package gool;
 
+import gool.test.GoolTest;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 
 public final class Settings {
 
 	private static Properties properties;
+	private static Logger logger = Logger.getLogger(GoolTest.class);
 
 	static {
 		load("gool.properties");
@@ -22,7 +27,7 @@ public final class Settings {
 				properties.load(stream);
 			}
 		} catch (IOException e) {
-			System.out.println(String.format("Failed to load the property file %s", propertyFile)+e);
+			logger.error(String.format("Failed to load the property file %s", propertyFile)+e);
 		}
 
 	}

@@ -15,6 +15,7 @@ import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.parser.java.JavaParser;
+import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +24,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class GOOLCompiler {
+	
+	private static Logger logger = Logger.getLogger(GOOLCompiler.class);
 
 	/**
 	 * The main
@@ -36,10 +41,10 @@ public class GOOLCompiler {
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = Arrays.asList(folder.listFiles());
-			System.out.println(files);
+			logger.info(files);
 			GOOLCompiler gc = new GOOLCompiler();
 			Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
-			System.out.println(f);
+			logger.info(f);
 			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
 					files);
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);

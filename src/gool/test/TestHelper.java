@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 
 public final class TestHelper {
 	
-	static Logger logger = Logger.getLogger(TestHelper.class);
+	private static Logger logger = Logger.getLogger(TestHelper.class);
 
 
 	public static String surroundWithClassMain(String input, String className) {

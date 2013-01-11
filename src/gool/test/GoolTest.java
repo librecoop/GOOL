@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GoolTest {
-	static Logger logger = Logger.getLogger(GoolTest.class);
+	private static Logger logger = Logger.getLogger(GoolTest.class);
 	
 	private static class GoolTestExecutor {
 		private static final String CLEAN_UP_REGEX = "Note:.*?[\r\n]|(\\w+>\\s)|[\\r\\n]+";
