@@ -89,7 +89,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(Assign assign) {
 		if(assign.getValue().getType() instanceof TypeChar)
 			return assign.getLValue() + " = '" + assign.getValue()+"'";
-		return assign.getLValue() + " = azeaze" + assign.getValue();
+		return assign.getLValue() + " = " + assign.getValue();
 	}
 
 	/**
