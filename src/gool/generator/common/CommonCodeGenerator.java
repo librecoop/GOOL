@@ -463,7 +463,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(ClassDef classDef) {
-		return String.format("%s.%s", classDef.getPackageName(),classDef.getName());
+		return String.format("%s", classDef.getName());
 	}
 
 	@Override
