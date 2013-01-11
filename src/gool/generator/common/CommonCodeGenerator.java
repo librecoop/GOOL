@@ -89,7 +89,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(Assign assign) {
 		if(assign.getValue().getType() instanceof TypeChar)
 			return assign.getLValue() + " = '" + assign.getValue()+"'";
-		return assign.getLValue() + " = azezae " + assign.getValue();
+		return assign.getLValue() + " = azeaze" + assign.getValue();
 	}
 
 	/**
@@ -415,7 +415,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 * @param varDec
 	 *            the variable to be declared.
 	 * @return the formatted variable declaration.
-	 */
+	 */	
 	@Override
 	public String getCode(VarDeclaration varDec) {
 		String initialValue = "";
