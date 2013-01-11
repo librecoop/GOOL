@@ -31,7 +31,6 @@ public final class TestHelper {
 			String mainClassName) throws Exception, FileNotFoundException {
 		GOOLCompiler gc = new GOOLCompiler();
 		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, input); 
-		//System.out.println("--2-->"+files);
 		logger.info("--2-->"+files);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
