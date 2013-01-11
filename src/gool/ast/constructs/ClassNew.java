@@ -59,6 +59,7 @@ public class ClassNew extends Parameterizable {
 		addParameters(params);
 	}
 
+	@SuppressWarnings("unused")
 	private ClassNew(IType type,
 			List<Expression> params) {
 		this(type);

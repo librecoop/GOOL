@@ -3,9 +3,6 @@ package gool.ast.constructs;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 
 /**
  * This class captures a variable declaration in the intermediate language.

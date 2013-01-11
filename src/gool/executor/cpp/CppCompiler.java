@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class CppCompiler extends SpecificCompiler {
 
+	@SuppressWarnings("unused")
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
 

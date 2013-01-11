@@ -1,7 +1,6 @@
 package gool.generator.java;
 
 import gool.ast.constructs.BinaryOperation;
-import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.CustomDependency;
@@ -11,7 +10,6 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
-import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;

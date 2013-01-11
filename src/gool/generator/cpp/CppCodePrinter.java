@@ -7,16 +7,12 @@
 package gool.generator.cpp;
 
 import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.ClassMain;
-import gool.ast.constructs.MainMeth;
-import gool.ast.constructs.Meth;
 import gool.generator.common.CodePrinter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;

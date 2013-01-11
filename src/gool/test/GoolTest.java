@@ -7,7 +7,6 @@ import gool.generator.java.JavaPlatform;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -281,7 +280,7 @@ public class GoolTest {
 						"int total = 1 ^ 0; System.out.println(total);",
 						MAIN_CLASS_NAME);
 		String expected = "";
-		compareResultsDifferentPlatforms(input, "expected");
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	private void compareResultsDifferentPlatforms(String input,

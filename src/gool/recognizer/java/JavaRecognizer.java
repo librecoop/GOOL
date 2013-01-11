@@ -26,7 +26,6 @@ import gool.ast.constructs.Expression;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
-import gool.ast.constructs.Node;
 import gool.ast.constructs.If;
 import gool.ast.constructs.InitCall;
 import gool.ast.constructs.MainMeth;
@@ -34,6 +33,7 @@ import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
+import gool.ast.constructs.Node;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.Parameterizable;
@@ -147,6 +147,7 @@ import com.sun.source.tree.SwitchTree;
 import com.sun.source.tree.SynchronizedTree;
 import com.sun.source.tree.ThrowTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.TryTree;
 import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.TypeParameterTree;
@@ -154,18 +155,17 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.WildcardTree;
-import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
+import com.sun.tools.javac.tree.TreeInfo;
 
 
 
@@ -260,6 +260,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	public static void addForbiddenKeyword(File keywordsFile)
 			throws IOException {
+		@SuppressWarnings("resource")
 		BufferedReader reader = new BufferedReader(new FileReader(keywordsFile));
 
 		String keyword;
@@ -941,6 +942,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//a variable declaration may be an attribute declaration (a field), in which case it carries modifiers 
 		//and gets represented differently in GOOL, i.e. wrapped up with a Field().
 		// TODO: actually, any variable declaration could have modifiers.
+		@SuppressWarnings("unchecked")
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
@@ -1133,6 +1135,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		classDef.setIsEnum((c.mods.flags & Flags.ENUM) != 0);
 
 
+		@SuppressWarnings("unchecked")
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, newContext);
 		/*
@@ -1313,6 +1316,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Meth method;
 
 		//recover modifiers
+		@SuppressWarnings("unchecked")
 		Collection<Modifier> modifiers = (Collection<Modifier>) n
 				.getModifiers().accept(this, context);
 

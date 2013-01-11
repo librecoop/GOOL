@@ -1,6 +1,5 @@
 package gool.ast.constructs;
 
-import gool.generator.GoolGeneratorController;
 
 /**
  * A dependency is the abstract GOOL representation 
