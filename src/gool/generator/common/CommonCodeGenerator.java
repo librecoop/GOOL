@@ -38,6 +38,7 @@ import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
@@ -86,7 +87,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Assign assign) {
-		return assign.getLValue() + " = " + assign.getValue();
+		if(assign.getValue().getType() instanceof TypeChar)
+			return assign.getLValue() + " = '" + assign.getValue()+"'";
+		return assign.getLValue() + " = azezae " + assign.getValue();
 	}
 
 	/**
@@ -417,7 +420,10 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(VarDeclaration varDec) {
 		String initialValue = "";
 		if (varDec.getInitialValue() != null) {
-			initialValue = " = " + varDec.getInitialValue();
+			if(varDec.getType() instanceof TypeChar)
+				initialValue = " = '" + varDec.getInitialValue()+"'";
+			else
+				initialValue = " = " + varDec.getInitialValue();
 		}
 		return String.format("%s %s%s", varDec.getType(), varDec.getName(),
 				initialValue);

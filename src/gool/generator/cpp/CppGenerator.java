@@ -69,6 +69,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 public class CppGenerator extends CommonCodeGenerator {
+	
+	public CppGenerator() {
+	}
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
