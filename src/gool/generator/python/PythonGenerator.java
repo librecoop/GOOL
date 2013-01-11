@@ -1,6 +1,7 @@
 package gool.generator.python;
 
 import gool.ast.constructs.ArrayNew;
+import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
@@ -31,6 +32,7 @@ import gool.ast.constructs.NewInstance;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
+import gool.ast.constructs.Statement;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
@@ -96,6 +98,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
+	public String getCode(Block block) {
+		StringBuilder result = new StringBuilder();
+		for (Statement statement : block.getStatements()) {
+			result.append(statement);
+		}
+		return result.toString();
+	}
+	
+	@Override
 	public String getCode(CastExpression cast) {
 		return String.format("%s(%s)", cast.getType(), cast
 				.getExpression());
@@ -137,8 +148,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Field field) {
-		// TODO Auto-generated method stub
-		return "";
+		String value;
+		if (field.getDefaultValue() != null) {
+			value =  field.getDefaultValue().toString();
+		}
+		else {
+			value = "None";
+		}
+		
+		return String.format("%s = %s\n", field.getName(), value);
 	}
 
 	@Override
@@ -305,8 +323,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		// TODO Auto-generated method stub
-		return "";
+		String out = String.format("def %s():\n", meth.getName(),StringUtils.join(meth.getParams(),", "));
+		out = out + meth.getBlock();
+		return out;
 	}
 
 	@Override
@@ -454,8 +473,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(VarDeclaration varDec) {
-		// TODO Auto-generated method stub
-		return "";
+		String value;
+		if(varDec.getInitialValue() != null) {
+			value = varDec.getInitialValue().toString();
+		}
+		else {
+			value = "None";
+		}
+		
+		return String.format("%s = %s\n", varDec.getName(), value);
 	}
 
 	@Override
@@ -508,7 +534,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassDef classDef) {
-		return String.format("%s:", classDef.getName());
+		String code = String.format("%s:\n", classDef.getName());
+		for(Field f : classDef.getFields()) {
+			code = code + "\t" + f;
+		}
+		
+		for(Meth method : classDef.getMethods()) {
+			code = code + method;
+		}
+		
+		return code;
 	}
 
 	@Override
@@ -540,5 +575,4 @@ public class PythonGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return "";
 	}
-
 }
