@@ -18,7 +18,12 @@ public class PrinterTerminal extends Printer {
 				message = "[" + lv + "] " + message;
 			}
 			
-			System.out.println(message);
+			if(lv.ordinal() >= Level.ERROR.ordinal()) {
+				System.err.println(message);
+			}
+			else {
+				System.out.println(message);
+			}
 		}
 	}
 

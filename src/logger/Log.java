@@ -93,6 +93,11 @@ public class Log {
 		print(Level.ERROR, Color.RED, message);
 	}
 	
+	//Print an error message
+	public static void e(Exception e) {
+		print(Level.ERROR, Color.RED, e.getMessage());
+	}
+		
 	//Print a fatal message
 	public static void f(String message) {
 		print(Level.FATAL, Color.MAGENTA, message);
