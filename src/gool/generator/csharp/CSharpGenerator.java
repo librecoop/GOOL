@@ -84,6 +84,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(TypeChar typechar) {
 		return "char";
 	}
+	/*test de push*/
 	@Override
 	public String getCode(TypeByte t) {
 		return "byte";
