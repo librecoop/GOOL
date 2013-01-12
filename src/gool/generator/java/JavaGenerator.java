@@ -8,7 +8,9 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.Field;
 import gool.ast.constructs.MainMeth;
+import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
@@ -289,5 +291,33 @@ public class JavaGenerator extends CommonCodeGenerator {
 	public String getCode(SystemCommandDependency systemCommandDependency) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public String getCode(ClassDef classDef) {
+		String ret = String.format("// Platform: %s\n\n", classDef.getPlatform());
+		if (classDef.getPpackage() != null)
+			ret += String.format("package %s;\n\n", classDef.getPackageName());
+		// TODO: add imports
+		ret += String.format("%s %s %s", 
+				StringUtils.join(classDef.getModifiers(), ' '),
+				classDef.isInterface()?"interface":"class",
+				classDef.getName());
+		if (classDef.getParentClass() != null)
+			ret += String.format(" extends %s",classDef.getParentClass());
+		// BUG: "interfaces" always printed 
+		if (classDef.getInterfaces() != null)
+			ret += String.format(" interfaces %s",StringUtils.join(classDef.getInterfaces(),", "));
+		ret += " {\n\n";
+		for (Field field : classDef.getFields())
+			ret += formatIndented("%-1%0;\n\n", field);
+		for (Meth meth : classDef.getMethods()){
+			// TODO: deal with constructors ?
+			if (classDef.isInterface())
+				ret += formatIndented("%-1%0;", meth.getHeader());
+			else
+				ret += formatIndented("%-1%0 {%2%-1}\n\n", meth.getHeader(), meth.getBlock());
+		}
+		return ret + "}";
 	}
 }

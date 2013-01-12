@@ -109,7 +109,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				pos +=2;
 			}
 			int posOld = pos;
-			pos = format.indexOf('%', pos+1);
+			pos = format.indexOf('%', pos);
 			if (pos == -1)
 				ret += format.substring(posOld);
 			else
@@ -525,7 +525,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(ClassDef classDef) {
-		return String.format("%s.%s", classDef.getPackageName(),classDef.getName());
+		return String.format("%s.%s", classDef.getPackageName(),classDef.getName());		
 	}
 
 	@Override
