@@ -84,7 +84,8 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return String.format("for(%s : %s){%s}",
+//		return String.format("for(%s : %s){%s}",
+		return formatIndented("for (%0 : %0){%1}",
 				enhancedForLoop.getVarDec(), 
 				(enhancedForLoop.getExpression().getType() instanceof TypeMap)?String.format("%s.entrySet()",enhancedForLoop.getExpression()):enhancedForLoop.getExpression(), 
 				enhancedForLoop.getStatements());
@@ -168,7 +169,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		return String.format("(%s.isEmpty()", mapIsEmptyCall.getExpression());
+		return String.format("%s.isEmpty()", mapIsEmptyCall.getExpression());
 	}
 
 	@Override

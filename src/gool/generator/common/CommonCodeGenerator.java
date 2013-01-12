@@ -63,6 +63,61 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class CommonCodeGenerator implements CodeGenerator {
 	
+	/**
+	 * String used to produce one level of indentation
+	 */
+	protected String indentation = "\t";
+	
+	/**<pre>
+	 * Produce indented code in a manner similar to printf but with custom conversions.
+	 * %%  a single "%"
+	 * %<i>n</i>  (where <i>n</i> is a digit)
+	 *     Print an object as a bloc indented n times from the current indentation level.
+	 *     If <i>n</i> is non null, the object is represented as a bloc : newlines are inserted before and after.
+	 * %-<i>n</i> (where <i>n</i> is a digit)
+	 *     <i>n</i> times the indentation string, does not consumes a argument.
+	 *     %-0 becomes a empty string (it does nothing but is still parsed)
+	 * 
+	 * @param format
+	 *            the format string
+	 * @param arguments
+	 *            the objects to format
+	 * @return the formated string
+	 */
+	protected String formatIndented(String format, Object... arguments){
+		int pos = format.indexOf('%');
+		int arg = 0;
+		String ret = format.substring(0, pos);
+		while (pos != -1){
+			pos ++;
+			if (format.charAt(pos) == '%'){
+				ret += "%";
+			} else if (Character.isDigit(format.charAt(pos))){
+				String argument = arguments[arg].toString();
+				int nbIndent = Character.digit(format.charAt(pos), 10);
+				argument = argument.replaceFirst("\\s\\z", "");
+				if (nbIndent == 0)
+					ret += argument;
+				else
+					ret += ("\n" + argument).replace("\n", "\n"+StringUtils.repeat(indentation, nbIndent)) + "\n";
+				arg ++;
+				pos ++;
+			} else if (format.charAt(pos) == '-' && Character.isDigit(format.charAt(pos+1))){
+				int nbIndent = Character.digit(format.charAt(pos +1), 10);
+				if (nbIndent != 0)
+					ret += StringUtils.repeat(indentation, nbIndent);
+				pos +=2;
+			}
+			int posOld = pos;
+			pos = format.indexOf('%', pos+1);
+			if (pos == -1)
+				ret += format.substring(posOld);
+			else
+				ret += format.substring(posOld, pos);
+		}
+		return ret;
+	}
+	
 	
 	@Override
 	public String getCode(Identifier identifier) {
@@ -215,7 +270,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(For forInstruction) {
-		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
+//		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
+//				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
+		return formatIndented("for (%0 ; %0 ; %0) {%1}", forInstruction.getInitializer(), forInstruction
 				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
 	}
 
@@ -235,12 +292,15 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(If pif) {
-		String out = String.format("if ( %s ) {\n%s;\n}\n", pif.getCondition(),
-				pif.getThenStatement());
-		if (pif.getElseStatement() != null) {
-			out = String.format("%s else {\n%s\n}\n", out, pif
-					.getElseStatement());
-		}
+//		String out = String.format("if ( %s ) {\n%s;\n}\n", pif.getCondition(),
+//				pif.getThenStatement());
+//		if (pif.getElseStatement() != null) {
+//			out = String.format("%s else {\n%s\n}\n", out, pif
+//					.getElseStatement());
+//		}
+		String out = formatIndented ("if (%0) {%1}", pif.getCondition(), pif.getThenStatement());
+		if (pif.getElseStatement() != null)
+			out += formatIndented (" else {%1}", pif.getElseStatement());
 		return out;
 	}
 
@@ -279,7 +339,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()), meth
+		return String.format("%s %s %s (%s)", getCode(meth.getModifiers()), meth
 				.getType(), meth.getName(), StringUtils.join(meth.getParams(),
 				", "));
 	}
@@ -293,7 +353,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(MethCall methodCall) {
-		return String.format("%s( %s )", methodCall.getTarget(), StringUtils
+		return String.format("%s (%s)", methodCall.getTarget(), StringUtils
 				.join(methodCall.getParameters(), ", "));
 	}
 
@@ -427,7 +487,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(While whilee) {
-		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
+//		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
+//				.getWhileStatement());
+		return formatIndented("while (%0) {%1}", whilee.getCondition(), whilee
 				.getWhileStatement());
 	}
 	
@@ -438,7 +500,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return String.format("this( %s )", GeneratorHelper.joinParams(thisCall.getParameters()));
+		return String.format("this (%s)", GeneratorHelper.joinParams(thisCall.getParameters()));
 	}
 
 	@Override
