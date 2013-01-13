@@ -58,6 +58,15 @@ public class GoolTest {
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
 	}
+	
+	@Test
+	public void simpleChar() throws Exception {
+		String input = TestHelper.surroundWithClassMain(
+				"char testChar = 'A'; System.out.println(testChar);", MAIN_CLASS_NAME);
+		String expected = "A";
+		compareResultsDifferentPlatforms(input, expected);
+	}
+	
 
 	@Test
 	public void simpleAddition() throws Exception {

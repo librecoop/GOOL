@@ -70,6 +70,7 @@ import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -350,6 +351,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return TypeVoid.INSTANCE;
 		case BYTE:
 			return TypeByte.INSTANCE;
+		case CHAR: 
+			return TypeChar.INSTANCE;
 		default:
 			return new TypeUnknown(textualType);
 		}

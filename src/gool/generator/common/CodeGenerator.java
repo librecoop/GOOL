@@ -65,6 +65,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -346,6 +347,16 @@ public interface CodeGenerator {
 	 * @return the formatted string type.
 	 */
 	String getCode(TypeString typeString);
+	
+	/**
+	 * Produces code for a char type in the target language.
+	 * 
+	 * @param typeString
+	 *            the string type.
+	 * @return the formatted string type.
+	 */
+	String getCode(TypeChar typeChar);
+
 
 	/**
 	 * Produces code for a type that does not return anything.
