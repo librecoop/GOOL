@@ -87,7 +87,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
 //		return String.format("for(%s : %s){%s}",
-		return formatIndented("for (%0 : %0){%1}",
+		return formatIndented("for (%s : %s){%1}",
 				enhancedForLoop.getVarDec(), 
 				(enhancedForLoop.getExpression().getType() instanceof TypeMap)?String.format("%s.entrySet()",enhancedForLoop.getExpression()):enhancedForLoop.getExpression(), 
 				enhancedForLoop.getStatements());
@@ -295,29 +295,29 @@ public class JavaGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(ClassDef classDef) {
-		String ret = String.format("// Platform: %s\n\n", classDef.getPlatform());
+		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
 		if (classDef.getPpackage() != null)
-			ret += String.format("package %s;\n\n", classDef.getPackageName());
+			sb = sb.append(String.format("package %s;\n\n", classDef.getPackageName()));
 		// TODO: add imports
-		ret += String.format("%s %s %s", 
+		sb = sb.append(String.format("%s %s %s", 
 				StringUtils.join(classDef.getModifiers(), ' '),
 				classDef.isInterface()?"interface":"class",
-				classDef.getName());
+				classDef.getName()));
 		if (classDef.getParentClass() != null)
-			ret += String.format(" extends %s",classDef.getParentClass());
+			sb = sb.append(String.format(" extends %s",classDef.getParentClass()));
 		// BUG: "interfaces" always printed 
-		if (classDef.getInterfaces() != null)
-			ret += String.format(" interfaces %s",StringUtils.join(classDef.getInterfaces(),", "));
-		ret += " {\n\n";
+		if (! classDef.getInterfaces().isEmpty())
+			sb = sb.append(String.format(" interfaces %s",StringUtils.join(classDef.getInterfaces(),", ")));
+		sb = sb.append(" {\n\n");
 		for (Field field : classDef.getFields())
-			ret += formatIndented("%-1%0;\n\n", field);
+			sb = sb.append(formatIndented("%-1%s;\n\n", field));
 		for (Meth meth : classDef.getMethods()){
 			// TODO: deal with constructors ?
 			if (classDef.isInterface())
-				ret += formatIndented("%-1%0;", meth.getHeader());
+				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
 			else
-				ret += formatIndented("%-1%0 {%2%-1}\n\n", meth.getHeader(), meth.getBlock());
+				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));
 		}
-		return ret + "}";
+		return sb.toString() + "}";
 	}
 }

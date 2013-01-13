@@ -71,9 +71,10 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	/**<pre>
 	 * Produce indented code in a manner similar to printf but with custom conversions.
 	 * %%  a single "%"
+	 * %s  Print an argument as a string, without indentation or newlines added. 
 	 * %<i>n</i>  (where <i>n</i> is a digit)
-	 *     Print an object as a bloc indented n times from the current indentation level.
-	 *     If <i>n</i> is non null, the object is represented as a bloc : newlines are inserted before and after.
+	 *     Print an argument as a bloc indented <i>n</i> times from the current indentation level.
+	 *     Newlines are inserted before and after the bloc.
 	 * %-<i>n</i> (where <i>n</i> is a digit)
 	 *     <i>n</i> times the indentation string, does not consumes a argument.
 	 *     %-0 becomes a empty string (it does nothing but is still parsed)
@@ -81,41 +82,34 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 * @param format
 	 *            the format string
 	 * @param arguments
-	 *            the objects to format
+	 *            the objects to format, each one corresponding to a % code
 	 * @return the formated string
 	 */
 	protected String formatIndented(String format, Object... arguments){
-		int pos = format.indexOf('%');
+		StringBuilder sb = new StringBuilder(format);
+		int pos = sb.indexOf("%");
 		int arg = 0;
-		String ret = format.substring(0, pos);
 		while (pos != -1){
-			pos ++;
-			if (format.charAt(pos) == '%'){
-				ret += "%";
-			} else if (Character.isDigit(format.charAt(pos))){
-				String argument = arguments[arg].toString();
-				int nbIndent = Character.digit(format.charAt(pos), 10);
-				argument = argument.replaceFirst("\\s\\z", "");
-				if (nbIndent == 0)
-					ret += argument;
-				else
-					ret += ("\n" + argument).replace("\n", "\n"+StringUtils.repeat(indentation, nbIndent)) + "\n";
-				arg ++;
-				pos ++;
-			} else if (format.charAt(pos) == '-' && Character.isDigit(format.charAt(pos+1))){
-				int nbIndent = Character.digit(format.charAt(pos +1), 10);
-				if (nbIndent != 0)
-					ret += StringUtils.repeat(indentation, nbIndent);
-				pos +=2;
+			if (sb.charAt(pos +1) == '%'){
+				sb = sb.replace(pos, pos +2, "%");
+			} else if (sb.charAt(pos +1) == 's') {
+				sb = sb.replace(pos, pos +2, arguments[arg].toString());
+				pos += arguments[arg].toString().length() -1;
+				arg++;
+			} else if (Character.isDigit(sb.charAt(pos +1))) {
+				String replacement = ("\n" + arguments[arg].toString().replaceFirst("\\s\\z", "")).replace("\n",
+						"\n"+StringUtils.repeat(indentation, Character.digit(sb.charAt(pos +1), 10))) + "\n";
+				sb = sb.replace(pos, pos +2, replacement);
+				pos += replacement.length() -1;
+				arg++;
+			} else if (sb.charAt(pos +1) == '-' && Character.isDigit(sb.charAt(pos +2))) {
+				String replacement = StringUtils.repeat(indentation, Character.digit(sb.charAt(pos +2), 10));
+				sb = sb.replace(pos, pos +3, replacement);
+				pos += replacement.length();
 			}
-			int posOld = pos;
-			pos = format.indexOf('%', pos);
-			if (pos == -1)
-				ret += format.substring(posOld);
-			else
-				ret += format.substring(posOld, pos);
+			pos = sb.indexOf("%", pos);
 		}
-		return ret;
+		return sb.toString();
 	}
 	
 	
@@ -272,7 +266,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(For forInstruction) {
 //		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
 //				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
-		return formatIndented("for (%0 ; %0 ; %0) {%1}", forInstruction.getInitializer(), forInstruction
+		return formatIndented("for (%s ; %s ; %s) {%1}", forInstruction.getInitializer(), forInstruction
 				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
 	}
 
@@ -298,9 +292,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 //			out = String.format("%s else {\n%s\n}\n", out, pif
 //					.getElseStatement());
 //		}
-		String out = formatIndented ("if (%0) {%1}", pif.getCondition(), pif.getThenStatement());
-		if (pif.getElseStatement() != null)
-			out += formatIndented (" else {%1}", pif.getElseStatement());
+		String out = formatIndented ("if (%s) {%1}", pif.getCondition(), pif.getThenStatement());
+		if (pif.getElseStatement() != null){
+			if (pif.getElseStatement() instanceof If)
+				out += formatIndented (" else %s", pif.getElseStatement());
+			else
+				out += formatIndented (" else {%1}", pif.getElseStatement());
+		}
 		return out;
 	}
 
@@ -489,7 +487,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(While whilee) {
 //		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
 //				.getWhileStatement());
-		return formatIndented("while (%0) {%1}", whilee.getCondition(), whilee
+		return formatIndented("while (%s) {%1}", whilee.getCondition(), whilee
 				.getWhileStatement());
 	}
 	
