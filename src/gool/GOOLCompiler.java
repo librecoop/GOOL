@@ -14,6 +14,7 @@ import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
+import gool.generator.python.PythonPlatform;
 import gool.parser.java.JavaParser;
 
 import java.io.File;
@@ -43,6 +44,7 @@ public class GOOLCompiler {
 			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
 					files);
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
