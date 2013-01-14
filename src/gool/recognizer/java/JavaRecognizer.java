@@ -101,6 +101,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -965,6 +966,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 
 		// TODO identifiers. Create a specific node to access to class literal (i.e. when calling static members).
+		String test1 = n.getName().toString();
+		String t2 = type.getName();
+		System.out.println("testN : "+test1+"\n");
+		System.out.println("testType : "+t2+"\n");
+		System.out.println("test cntext : "+context.getClassDef().getName().toString());
 		if (type.getName().equals(n.getName().toString())) {
 			return new Constant(type, n.getName().toString());
 		}

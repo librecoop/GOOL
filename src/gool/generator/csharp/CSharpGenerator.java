@@ -10,6 +10,7 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.Field;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
@@ -56,6 +57,7 @@ import gool.generator.common.CommonCodeGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -428,7 +430,44 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String printClass(ClassDef classDef) {
-		return "Not implemented";
+		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
+		
+
+		// BUG: yield a stack overflow
+		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
+		if (! dependencies.isEmpty()) {
+			for (String dependency : dependencies)
+				sb = sb.append(String.format("using %s;\n", dependency));
+			sb = sb.append("\n");
+		}
+
+		if (classDef.getPpackage() != null)
+			sb = sb.append(String.format("namespace %s;\n\n", classDef.getPackageName()));
+		
+		
+		// print the class prototype
+		sb = sb.append(String.format("%s %s %s",
+				StringUtils.join(classDef.getModifiers(), ' '),
+				classDef.isInterface()?"interface":"class",
+				classDef.getName()));
+		if (classDef.getParentClass() != null)
+			sb = sb.append(String.format(" : %s",classDef.getParentClass()));
+		if (! classDef.getInterfaces().isEmpty())
+			sb = sb.append(String.format(" : %s",StringUtils.join(classDef.getInterfaces(),", ")));
+		sb = sb.append(" {\n\n");
+		// print the fields
+		for (Field field : classDef.getFields())
+			sb = sb.append(formatIndented("%-1%s;\n\n", field));
+		// print the methods
+		for (Meth meth : classDef.getMethods()){
+			// TODO: deal with constructors ?
+			if (classDef.isInterface())
+				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
+			else
+				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));
+		}
+		
+		return sb.toString() + "}";
 	}
 
 }
