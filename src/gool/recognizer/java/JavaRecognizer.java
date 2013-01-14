@@ -380,6 +380,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
 		Symbol classSymbol = (Symbol) type.asElement();
+		
+		
 		System.out.println("XXX just before claiming a typeName from classsymbol XXX");
 		System.out.println("XXX type, classSymbol, kind XXX");
 		System.out.println(type);

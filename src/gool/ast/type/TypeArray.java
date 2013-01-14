@@ -2,7 +2,6 @@ package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
-class A <T> {}
 public class TypeArray extends ReferenceType {
 
 	/**

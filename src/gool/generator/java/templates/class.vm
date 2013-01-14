@@ -42,7 +42,7 @@
 		$parentCall
 	#end
 #end        
-        ${method.Block}
+${method.Block}
     }#end
 
 #end

@@ -62,6 +62,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class CommonCodeGenerator implements CodeGenerator {
 	
+	protected int tabulation = 0;
+	
 	
 	@Override
 	public String getCode(Identifier identifier) {
@@ -91,7 +93,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			return assign.getLValue() + " = '" + assign.getValue()+"'";
 		return assign.getLValue() + " = " + assign.getValue();
 	}
-
 	/**
 	 * Produces code for a binary operation.
 	 * 
@@ -113,8 +114,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Block block) {
+		String tab = new String();
+		for(int i=0;i<this.tabulation+1;i++)
+			tab += "\t";
+		
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
+			result.append(tab);
 			result.append(statement);
 			
 			if (!(statement instanceof Block)) {
@@ -216,8 +222,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(For forInstruction) {
-		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
-				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
+		String tab = new String();
+		for(int i=0;i<this.tabulation;i++)
+			tab += "\t";
+		this.tabulation++;
+		String out = String.format("for(%s;%s;%s){\n%s\n%s\t}", forInstruction.getInitializer(), forInstruction
+				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement(),tab);
+		this.tabulation--;
+		return out;
 	}
 
 	@Override
@@ -236,12 +248,17 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(If pif) {
-		String out = String.format("if ( %s ) {\n%s;\n}\n", pif.getCondition(),
-				pif.getThenStatement());
+		String tab = new String();
+		for(int i=0;i<this.tabulation;i++)
+			tab += "\t";
+		this.tabulation++;
+		String out = String.format("%sif ( %s ) {\n%s\n%s\t}\n", tab, pif.getCondition(),
+				pif.getThenStatement(),tab);
 		if (pif.getElseStatement() != null) {
-			out = String.format("%s else {\n%s\n}\n", out, pif
-					.getElseStatement());
+			out = String.format("%s %s\telse {\n%s\n%s\t}", out, tab, pif
+					.getElseStatement(),tab);
 		}
+		this.tabulation--;
 		return out;
 	}
 
@@ -431,8 +448,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(While whilee) {
-		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
-				.getWhileStatement());
+		String tab = new String();
+		for(int i=0;i<this.tabulation;i++)
+			tab += "\t";
+		this.tabulation++;
+		String out = String.format("while(%s){\n%s\n%s\t}", whilee.getCondition(), whilee
+				.getWhileStatement(),tab);
+		this.tabulation--;
+		return out;
 	}
 	
 	@Override

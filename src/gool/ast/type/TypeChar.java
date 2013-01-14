@@ -4,7 +4,7 @@ import gool.generator.GoolGeneratorController;
 
 
 /**
- * This is the basic type Bool of the intermediate language.
+ * This is the basic type Char of the intermediate language.
  */
 public final class TypeChar extends PrimitiveType {
 	
