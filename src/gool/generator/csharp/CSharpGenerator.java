@@ -419,4 +419,8 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		return null;
 	}
 
+	@Override
+	public String printClass(ClassDef classDef) {
+		return "Not implemented";
+	}
 }
