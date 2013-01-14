@@ -246,7 +246,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
-		return formatIndented("%", mainMeth) + "\n" + mainMeth.getName();
+		return formatIndented("%1", mainMeth) + "\n" +  mainMeth.getName();
 	}
 
 	@Override
@@ -535,6 +535,22 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Platform platform) {
 		// TODO Auto-generated method stub
 		return "";
+	}
+
+	@Override
+	public String getCode(ClassDef classDef) {
+		String code = String.format("%s%s:\n", classDef.getName(),
+				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
+		
+		for(Field f : classDef.getFields()) {
+			code = code + formatIndented("%1", f);
+		}
+
+		for(Meth method : classDef.getMethods()) {
+			code = code + formatIndented("%1", method);
+		}
+		
+		return code;
 	}
 
 	@Override

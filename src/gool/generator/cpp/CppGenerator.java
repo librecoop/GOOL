@@ -67,6 +67,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -536,7 +537,29 @@ public class CppGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		return "Not implemented";
+		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
+		// print the package containing the class
+		if (classDef.getPpackage() != null)
+			sb = sb.append(String.format("namespace %s {", classDef.getPackageName()));
+		sb = sb.append("#include <boost/any.hpp>\n");
+		sb = sb.append("#include <boost/lexical_cast.hpp>\n\n");
+		sb = sb.append(String.format("#include \"%s\"\n\n", classDef.getName()));
+		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
+		if (! dependencies.isEmpty()) {
+			for (String dependency : dependencies)
+				sb = sb.append(String.format("#include \"%s\";\n", dependency));
+			sb = sb.append("\n");
+		}
+		for (Meth meth : classDef.getMethods()){
+			// TODO: deal with constructors ?
+			if (classDef.isInterface())
+				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
+			else
+				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));
+		}
+		if (classDef.getPpackage() != null)
+			sb = sb.append("}");
+		return sb.toString();
 	}
 
 }
