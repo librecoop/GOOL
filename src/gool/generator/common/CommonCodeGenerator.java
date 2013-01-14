@@ -58,27 +58,28 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Basic code generator. It does what is common to the code generation of all output object oriented
- * languages.
+ * Basic code generator. It does what is common to the code generation of all
+ * output object oriented languages.
  */
 public abstract class CommonCodeGenerator implements CodeGenerator {
-	
+
 	protected int tabulation = 0;
-	
-	
+
 	@Override
 	public String getCode(Identifier identifier) {
 		return identifier.getName();
 	}
+
 	@Override
 	public String getCode(ArrayAccess arrayAccess) {
-		return String.format("%s[%s]", arrayAccess.getExpression(), arrayAccess.getIndex());
+		return String.format("%s[%s]", arrayAccess.getExpression(),
+				arrayAccess.getIndex());
 	}
 
 	@Override
 	public String getCode(ArrayNew arrayNew) {
-		return String.format("new %s[%s]", arrayNew.getType(), StringUtils
-				.join(arrayNew.getDimesExpressions(), ", "));
+		return String.format("new %s[%s]", arrayNew.getType(),
+				StringUtils.join(arrayNew.getDimesExpressions(), ", "));
 	}
 
 	/**
@@ -90,10 +91,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Assign assign) {
-		if(assign.getValue().getType() instanceof TypeChar)
-			return assign.getLValue() + " = '" + assign.getValue()+"'";
+		if (assign.getValue().getType() instanceof TypeChar)
+			return assign.getLValue() + " = '" + assign.getValue() + "'";
 		return assign.getLValue() + " = " + assign.getValue();
 	}
+
 	/**
 	 * Produces code for a binary operation.
 	 * 
@@ -103,7 +105,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		return String.format("(%s %s%s %s)", binaryOp.getLeft(), binaryOp.getTextualoperator(), binaryOp.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"", binaryOp.getRight());
+		return String
+				.format("(%s %s%s %s)",
+						binaryOp.getLeft(),
+						binaryOp.getTextualoperator(),
+						binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+								: "", binaryOp.getRight());
 	}
 
 	/**
@@ -116,14 +123,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(Block block) {
 		String tab = new String();
-		for(int i=0;i<this.tabulation+1;i++)
+		for (int i = 0; i < this.tabulation + 1; i++)
 			tab += "\t";
-		
+
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
 			result.append(tab);
 			result.append(statement);
-			
+
 			if (!(statement instanceof Block)) {
 				result.append(";").append("\n");
 			}
@@ -140,8 +147,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(CastExpression cast) {
-		return String.format("((%s) (%s))", cast.getType(), cast
-				.getExpression());
+		return String.format("((%s) (%s))", cast.getType(),
+				cast.getExpression());
 	}
 
 	/**
@@ -166,15 +173,16 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(Constant constant) {
 		if (constant.getType() instanceof TypeArray) {
 			StringBuffer sb = new StringBuffer();
-			
+
 			int size = Array.getLength(constant.getValue());
-			boolean escape = ((TypeArray)constant.getType()).getElementType() instanceof TypeString;
-			
+			boolean escape = ((TypeArray) constant.getType()).getElementType() instanceof TypeString;
+
 			sb.append("{");
-			for (int i=0; i<size; i++) {
+			for (int i = 0; i < size; i++) {
 				if (escape) {
-					return "\"" + StringEscapeUtils.escapeJava(Array.get(constant.getValue(), i).toString())
-					+ "\"";
+					return "\""
+							+ StringEscapeUtils.escapeJava(Array.get(
+									constant.getValue(), i).toString()) + "\"";
 				} else {
 					sb.append(Array.get(constant.getValue(), i));
 				}
@@ -182,10 +190,10 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			}
 			sb.append("}");
 			return sb.toString();
-		}
-		else if (constant.getType() == TypeString.INSTANCE) {
-			return "\"" + StringEscapeUtils.escapeJava(constant.getValue().toString())
-					+ "\"";
+		} else if (constant.getType() == TypeString.INSTANCE) {
+			return "\""
+					+ StringEscapeUtils.escapeJava(constant.getValue()
+							.toString()) + "\"";
 		}
 		return constant.getValue().toString();
 	}
@@ -200,17 +208,18 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 * 
 	 * @param field
 	 *            the abstract GOOL field
-	 * @return the string corresponding to such a declaration in the concrete target language
+	 * @return the string corresponding to such a declaration in the concrete
+	 *         target language
 	 */
 	@Override
 	public String getCode(Field field) {
 		String out = String.format("%s %s %s", getCode(field.getModifiers()),
 				field.getType(), field.getName());
 		if (field.getDefaultValue() != null) {
-			//Notice that this will call a toString() on the field.defaultValue
-			//Which will become a JavaGenerator.getCode(defaultValue)
-			//Hence this seemingly simple statement
-			//Is in fact a recursive descent on the abstract GOOL tree.
+			// Notice that this will call a toString() on the field.defaultValue
+			// Which will become a JavaGenerator.getCode(defaultValue)
+			// Hence this seemingly simple statement
+			// Is in fact a recursive descent on the abstract GOOL tree.
 			out = String.format("%s = %s", out, field.getDefaultValue());
 		}
 		return out;
@@ -224,11 +233,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(For forInstruction) {
 		String tab = new String();
-		for(int i=0;i<this.tabulation;i++)
+		for (int i = 0; i < this.tabulation; i++)
 			tab += "\t";
 		this.tabulation++;
-		String out = String.format("for(%s;%s;%s){\n%s\n%s\t}", forInstruction.getInitializer(), forInstruction
-				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement(),tab);
+		String out = String.format("for(%s;%s;%s){\n%s\n%s\t}",
+				forInstruction.getInitializer(), forInstruction.getCondition(),
+				forInstruction.getUpdater(),
+				forInstruction.getWhileStatement(), tab);
 		this.tabulation--;
 		return out;
 	}
@@ -236,8 +247,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(GoolCall goolCall) {
 		throw new IllegalStateException(String.format(
-				"Invalid unimplemented Gool Method: (%s).", goolCall
-						.getMethod()));
+				"Invalid unimplemented Gool Method: (%s).",
+				goolCall.getMethod()));
 	}
 
 	/**
@@ -250,14 +261,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(If pif) {
 		String tab = new String();
-		for(int i=0;i<this.tabulation;i++)
+		for (int i = 0; i < this.tabulation; i++)
 			tab += "\t";
 		this.tabulation++;
-		String out = String.format("%sif ( %s ) {\n%s\n%s\t}\n", tab, pif.getCondition(),
-				pif.getThenStatement(),tab);
+		String out = String.format("%sif ( %s ) {\n%s\n%s\t}\n", tab,
+				pif.getCondition(), pif.getThenStatement(), tab);
 		if (pif.getElseStatement() != null) {
-			out = String.format("%s %s\telse {\n%s\n%s\t}", out, tab, pif
-					.getElseStatement(),tab);
+			out = String.format("%s %s\telse {\n%s\n%s\t}", out, tab,
+					pif.getElseStatement(), tab);
 		}
 		this.tabulation--;
 		return out;
@@ -286,21 +297,21 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(MapMethCall mapMethCall) {
 		throw new IllegalStateException(String.format(
-				"Invalid method call over maps (%s).", mapMethCall
-						.getExpression()));
+				"Invalid method call over maps (%s).",
+				mapMethCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
-		return String.format("%s.%s", memberSelect.getTarget(), memberSelect
-				.getIdentifier());
+		return String.format("%s.%s", memberSelect.getTarget(),
+				memberSelect.getIdentifier());
 	}
 
 	@Override
 	public String getCode(Meth meth) {
-		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()), meth
-				.getType(), meth.getName(), StringUtils.join(meth.getParams(),
-				", "));
+		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()),
+				meth.getType(), meth.getName(),
+				StringUtils.join(meth.getParams(), ", "));
 	}
 
 	/**
@@ -312,8 +323,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(MethCall methodCall) {
-		return String.format("%s( %s )", methodCall.getTarget(), StringUtils
-				.join(methodCall.getParameters(), ", "));
+		return String.format("%s( %s )", methodCall.getTarget(),
+				StringUtils.join(methodCall.getParameters(), ", "));
 	}
 
 	@Override
@@ -332,10 +343,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(NewInstance newInstance) {
-		return String.format("%s = new %s( %s )", newInstance.getVariable(),
-				newInstance.getVariable().getType().toString().replaceAll(
-						"\\*$", ""), StringUtils.join(newInstance
-						.getParameters(), ", "));
+		return String.format(
+				"%s = new %s( %s )",
+				newInstance.getVariable(),
+				newInstance.getVariable().getType().toString()
+						.replaceAll("\\*$", ""),
+				StringUtils.join(newInstance.getParameters(), ", "));
 	}
 
 	/**
@@ -421,9 +434,20 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		switch (unaryOperation.getOperator()) {
 		case POSTFIX_DECREMENT:
 		case POSTFIX_INCREMENT:
-			return String.format("(%s)%s%s", unaryOperation.getExpression(), unaryOperation.getTextualoperator(), unaryOperation.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"");
+			return String
+					.format("(%s)%s%s",
+							unaryOperation.getExpression(),
+							unaryOperation.getTextualoperator(),
+							unaryOperation.getOperator().equals(
+									Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+									: "");
 		default:
-			return String.format("%s%s(%s)", unaryOperation.getTextualoperator(), unaryOperation.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"", unaryOperation.getExpression());
+			return String
+					.format("%s%s(%s)",
+							unaryOperation.getTextualoperator(),
+							unaryOperation.getOperator().equals(
+									Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+									: "", unaryOperation.getExpression());
 		}
 	}
 
@@ -433,13 +457,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 * @param varDec
 	 *            the variable to be declared.
 	 * @return the formatted variable declaration.
-	 */	
+	 */
 	@Override
 	public String getCode(VarDeclaration varDec) {
 		String initialValue = "";
 		if (varDec.getInitialValue() != null) {
-			if(varDec.getType() instanceof TypeChar)
-				initialValue = " = '" + varDec.getInitialValue()+"'";
+			if (varDec.getType() instanceof TypeChar)
+				initialValue = " = '" + varDec.getInitialValue() + "'";
 			else
 				initialValue = " = " + varDec.getInitialValue();
 		}
@@ -450,74 +474,76 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(While whilee) {
 		String tab = new String();
-		for(int i=0;i<this.tabulation;i++)
+		for (int i = 0; i < this.tabulation; i++)
 			tab += "\t";
 		this.tabulation++;
-		String out = String.format("while(%s){\n%s\n%s\t}", whilee.getCondition(), whilee
-				.getWhileStatement(),tab);
+		String out = String.format("while(%s){\n%s\n%s\t}",
+				whilee.getCondition(), whilee.getWhileStatement(), tab);
 		this.tabulation--;
 		return out;
 	}
-	
+
 	@Override
 	public String getCode(TypeArray typeArray) {
 		return String.format("%s[]", typeArray.getElementType());
 	}
-	
+
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return String.format("this( %s )", GeneratorHelper.joinParams(thisCall.getParameters()));
+		return String.format("this( %s )",
+				GeneratorHelper.joinParams(thisCall.getParameters()));
 	}
 
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		return String.format("%s /* Unrecognized by GOOL, passed on */", typeUnknown.getTextualtype());
+		return String.format("%s /* Unrecognized by GOOL, passed on */",
+				typeUnknown.getTextualtype());
 	}
-	
+
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
-		return String.format("%s /* Unrecognized by GOOL, passed on */", unknownExpression.getTextual());
+		return String.format("%s /* Unrecognized by GOOL, passed on */",
+				unknownExpression.getTextual());
 	}
 
 	@Override
 	public String getCode(ClassFree classFree) {
 		return "free /* Not Implemented, passed on by GOOL */";
 	}
-	
+
 	@Override
 	public String getCode(Platform platform) {
 		return platform.getName();
 	}
-	
+
 	@Override
 	public String getCode(ClassDef classDef) {
-		return String.format("%s.%s", classDef.getPackageName(),classDef.getName());
+		return String.format("%s.%s", classDef.getPackageName(),
+				classDef.getName());
 	}
 
 	@Override
 	public String getCode(Package _package) {
 		return _package.getName();
 	}
-	
+
 	@Override
-	public String getCode(TypePackage typePackage){
+	public String getCode(TypePackage typePackage) {
 		return typePackage.getTextualtype();
 	}
-	
+
 	@Override
-	public String getCode(TypeVar typeVar){
-		//For now if one wants to print the type of a TypeVar, this returns just the name of the TypeVar.
+	public String getCode(TypeVar typeVar) {
+		// For now if one wants to print the type of a TypeVar, this returns
+		// just the name of the TypeVar.
 		return typeVar.getTextualtype();
 	}
 
-
-	
 	@Override
-	public String getCode(TypeMethod typeMethod){
-		//For now if one wants to print the type of a Method, this returns just the name of the method.
+	public String getCode(TypeMethod typeMethod) {
+		// For now if one wants to print the type of a Method, this returns just
+		// the name of the method.
 		return typeMethod.getTextualtype();
 	}
 
-	
-	
 }

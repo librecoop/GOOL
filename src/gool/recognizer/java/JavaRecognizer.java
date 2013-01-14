@@ -246,7 +246,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	/**
 	 * Print errors on log.
 	 * */
-	static Logger logger = Logger.getLogger(JavaRecognizer.class.getName());
+	static private Logger logger = Logger.getLogger(JavaRecognizer.class.getName());
 
 	/**
 	 * Even though this is now our turn to take Sun's abstract Java and make it
@@ -501,6 +501,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	};
 
 	private static final Map<String, Otd> string2otdMap = new HashMap<String, Otd>();
+	
 	static {
 
 		Otd tmpOtd = new Otd() {
