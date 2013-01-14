@@ -581,6 +581,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return "";
 	}
+	
+	@Override
+	public String printClass(ClassDef classDef) {
+		return "Not implemented";
+	}
 
 
 	@Override

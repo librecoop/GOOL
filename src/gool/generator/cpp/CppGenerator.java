@@ -533,6 +533,11 @@ public class CppGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	@Override
+	public String printClass(ClassDef classDef) {
+		return "Not implemented";
+	}
 
 }
+

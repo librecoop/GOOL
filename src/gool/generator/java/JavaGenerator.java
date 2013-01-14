@@ -47,10 +47,12 @@ import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
+import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -303,23 +305,33 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	
 	@Override
-	public String getCode(ClassDef classDef) {
+	public String printClass(ClassDef classDef) {
 		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
+		// print the package containing the class
 		if (classDef.getPpackage() != null)
 			sb = sb.append(String.format("package %s;\n\n", classDef.getPackageName()));
-		// TODO: add imports
-		sb = sb.append(String.format("%s %s %s", 
+		// print the includes
+		// BUG: yield a stack overflow
+		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
+		if (! dependencies.isEmpty()) {
+			for (String dependency : dependencies)
+				sb = sb.append(String.format("import %s;\n", dependency));
+			sb = sb.append("\n");
+		}
+		// print the class prototype
+		sb = sb.append(String.format("%s %s %s",
 				StringUtils.join(classDef.getModifiers(), ' '),
 				classDef.isInterface()?"interface":"class",
 				classDef.getName()));
 		if (classDef.getParentClass() != null)
 			sb = sb.append(String.format(" extends %s",classDef.getParentClass()));
-		// BUG: "interfaces" always printed 
 		if (! classDef.getInterfaces().isEmpty())
 			sb = sb.append(String.format(" interfaces %s",StringUtils.join(classDef.getInterfaces(),", ")));
 		sb = sb.append(" {\n\n");
+		// print the fields
 		for (Field field : classDef.getFields())
 			sb = sb.append(formatIndented("%-1%s;\n\n", field));
+		// print the methods
 		for (Meth meth : classDef.getMethods()){
 			// TODO: deal with constructors ?
 			if (classDef.isInterface())
