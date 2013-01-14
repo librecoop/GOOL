@@ -134,27 +134,21 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(Constructor cons) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return formatIndented("for %s:%1", enhancedForLoop.getExpression(), enhancedForLoop.getStatements());
+		return formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec(),
+				enhancedForLoop.getExpression() ,enhancedForLoop.getStatements());
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s == %s", equalsCall.getTarget(), equalsCall.getParameters().get(1));
 	}
 
 	@Override
 	public String getCode(Field field) {
 		String value;
 		if (field.getDefaultValue() != null) {
-			value =  field.getDefaultValue().toString();
+			value = field.getDefaultValue().toString();
 		}
 		else {
 			value = "None";
@@ -163,23 +157,26 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("%s = %s\n", field.getName(), value);
 	}
 
-	@Override
-	public String getCode(FieldAccess sfa) {
-		// TODO Auto-generated method stub
-		return "";
-	}
+//	@Override
+//	public String getCode(FieldAccess sfa) {
+//		// TODO Auto-generated method stub
+//		return "";
+//	}
 
 	@Override
 	public String getCode(For forr) {
-		// TODO Auto-generated method stub
-		return "";
+		return formatIndented("%s\nwhile %s:%1%1",
+				forr.getInitializer(),
+				forr.getCondition(),
+				forr.getWhileStatement(),
+				forr.getUpdater());
 	}
 
-	@Override
-	public String getCode(GoolCall goolCall) {
-		// TODO Auto-generated method stub
-		return "";
-	}
+//	@Override
+//	public String getCode(GoolCall goolCall) {
+//		// TODO Auto-generated method stub
+//		return "";
+//	}
 
 	@Override
 	public String getCode(If pif) {
@@ -326,7 +323,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		return formatIndented("def %s(%s):%1",
+		return formatIndented("def %s(self, %s):%1",
 				meth.isConstructor()?"__init__":meth.getName(),
 				StringUtils.join(meth.getParams(),", ").replaceFirst("\\s\\z", ""),
 				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
