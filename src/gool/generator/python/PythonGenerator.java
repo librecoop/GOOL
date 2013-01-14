@@ -246,7 +246,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
-		return formatIndented("%", mainMeth) + "\n" + mainMeth.getName();
+		return formatIndented("%1", mainMeth) + "\n" +  mainMeth.getName();
 	}
 
 	@Override
@@ -323,8 +323,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		String out = String.format("def %s():\n", meth.getName(),StringUtils.join(meth.getParams(),", "));
-		out = out + formatIndented("%s", meth.getBlock());
+		String out = String.format("def %s():", meth.getName(),StringUtils.join(meth.getParams(),", "));
+		out = out + formatIndented("%1", meth.getBlock());
 		return out;
 	}
 
@@ -542,11 +542,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
 		
 		for(Field f : classDef.getFields()) {
-			code = code + formatIndented("%s", f);
+			code = code + formatIndented("%1", f);
 		}
 
 		for(Meth method : classDef.getMethods()) {
-			code = code + formatIndented("%s", method);
+			code = code + formatIndented("%1", method);
 		}
 		
 		return code;
