@@ -26,7 +26,6 @@ import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
-import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
 import gool.ast.constructs.Package;
@@ -82,12 +81,22 @@ import gool.ast.type.TypeVoid;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.Platform;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 public class PythonGenerator extends CommonCodeGenerator {
 
+	private Map<Meth, String> methodsNames = new HashMap<Meth, String>();
+	
+	private String getName(Meth meth) {
+		return methodsNames.get(meth);
+	}
+	
 	@Override
 	public void addCustomDependency(String key, Dependency value) {
 	}
@@ -131,20 +140,20 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Constructor cons) {
-		// TODO Auto-generated method stub
-		return "";
+			return "";
 	}
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		// TODO Auto-generated method stub
-		return "";
+		return formatIndented("for %s in %s:%1",
+				enhancedForLoop.getVarDec(), 
+				enhancedForLoop.getExpression(),
+				enhancedForLoop.getStatements());
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s == %s", equalsCall.getTarget(), equalsCall.getParameters().get(0));
 	}
 
 	@Override
@@ -180,32 +189,37 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(If pif) {
-		// TODO Auto-generated method stub
-		return "";
+		String out = formatIndented ("if %s:%1", pif.getCondition(), pif.getThenStatement());
+		if (pif.getElseStatement() != null){
+			if (pif.getElseStatement() instanceof If) {
+				out += formatIndented ("el%s", pif.getElseStatement());
+			}
+			else {
+				out += formatIndented ("else:%1", pif.getElseStatement());
+			}
+		}
+		return out;
 	}
 
 	@Override
 	public String getCode(Collection<Modifier> modifiers) {
-		// TODO Auto-generated method stub
 		return "";
 	}
 
 	@Override
 	public String getCode(ListAddCall lac) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[%s]", lac.getExpression(), StringUtils
+				.join(lac.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s in %s", StringUtils.join(lcc.getParameters(), ", "), lcc.getExpression());
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[%s]", lgc.getExpression(), lgc.getParameters().get(0));
 	}
 
 	@Override
@@ -323,15 +337,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		String out = String.format("def %s():\n", meth.getName(),StringUtils.join(meth.getParams(),", "));
-		out = out + formatIndented("%s", meth.getBlock());
+		String out = String.format("def %s():", meth.getName(),StringUtils.join(meth.getParams(),", "));
+		out = out + formatIndented("%1", meth.getBlock());
 		return out;
-	}
-
-	@Override
-	public String getCode(MethCall methodCall) {
-		// TODO Auto-generated method stub
-		return "";
 	}
 
 	@Override
@@ -342,8 +350,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(NewInstance newInstance) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s = %s( %s )", newInstance.getVariable(),
+				newInstance.getVariable().getType().toString().replaceAll(
+						"\\*$", ""), StringUtils.join(newInstance
+						.getParameters(), ", "));
 	}
 
 	@Override
@@ -358,8 +368,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Return returnExpr) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("return %s", returnExpr.getExpression());
 	}
 
 	@Override
@@ -370,19 +379,17 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("print (%s)", StringUtils.join(
+				systemOutPrintCall.getParameters(), ","));
 	}
 
 	@Override
 	public String getCode(This pthis) {
-		// TODO Auto-generated method stub
-		return "";
+		return "self";
 	}
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		// TODO Auto-generated method stub
 		return "";
 	}
 
@@ -532,21 +539,64 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Platform platform) {
-		// TODO Auto-generated method stub
-		return "";
+		return platform.getName();
 	}
 
 	@Override
 	public String getCode(ClassDef classDef) {
-		String code = String.format("%s%s:\n", classDef.getName(),
+		String code = String.format("%s%s:", classDef.getName(),
 				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
 		
 		for(Field f : classDef.getFields()) {
-			code = code + formatIndented("%s", f);
+			code = code + formatIndented("%1", f);
 		}
 
+		List<Meth> meths = new ArrayList<Meth>();
 		for(Meth method : classDef.getMethods()) {
-			code = code + formatIndented("%s", method);
+			if(getName(method) == null) {
+				meths.clear();
+				for(Meth m : classDef.getMethods()) {
+					if(m.getName().equals(method.getName())) {
+						meths.add(m);
+					}
+				}
+				
+				if(meths.size()>1) {
+					String block = "";
+					String newName = "_" + method.getName();
+					boolean first = true;
+					
+					for(Meth m2 : meths) {
+						while(methodsNames.containsValue(newName)) {
+							newName = "_" + newName;
+						}
+						methodsNames.put(m2, newName);
+						
+						String conditions = "";
+						for(VarDeclaration p : m2.getParams()) {
+							conditions += " and isinstance(%s,%s)";
+							
+						}
+						
+						block += String.format("%sif len(args) == %s%s:%1", first?"":"el", m2.getParams().size(), conditions, "self." + newName + "(*args)");  
+						first = false;
+					}
+					
+					String name = method.getName();
+					if(method.isConstructor()) {
+						name = "__init__";
+					}
+					
+					code += formatIndented("%1", formatIndented("def %s(self, *args):%1", name, block));
+				}
+				else {
+					methodsNames.put(method, method.getName());
+				}
+			}
+		}
+		
+		for(Meth method : classDef.getMethods()) {
+			code = code + formatIndented("%1", method);
 		}
 		
 		return code;
