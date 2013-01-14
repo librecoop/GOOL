@@ -81,6 +81,7 @@ import gool.ast.type.TypeVoid;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.Platform;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -89,6 +90,7 @@ import java.util.Map;
 
 import logger.Log;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class PythonGenerator extends CommonCodeGenerator {
@@ -138,12 +140,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Comment comment) {
 		return comment.getValue().replaceAll("(^ *)([^ ])", "$1# $2");
 	}
-
-	@Override
-	public String getCode(Constant constant) {
-		return constant.getValue().toString();
-	}
-
+	
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
 		return formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec(),
@@ -262,7 +259,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
-		return formatIndented("%1", mainMeth) + "\n" +  mainMeth.getName();
+		return mainMeth.getBlock().toString();
 	}
 
 	@Override
@@ -339,10 +336,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		return formatIndented("def %s(self, %s):%1",
-				methodsNames.get(meth),
-				StringUtils.join(meth.getParams(),", ").replaceAll("\n", ""),
-				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
+		if(meth.isMainMethod()) {
+			return meth.getBlock().toString();
+		}
+		else {
+			return formatIndented("def %s(self, %s):%1",
+					methodsNames.get(meth),
+					StringUtils.join(meth.getParams(),", ").replaceAll("\n", ""),
+					meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
+		}
 	}
 
 	@Override
@@ -382,7 +384,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("print (%s)", StringUtils.join(
+		return String.format("print %s", StringUtils.join(
 				systemOutPrintCall.getParameters(), ","));
 	}
 
@@ -577,7 +579,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		String code = String.format("%s%s:", classDef.getName(),
+		String code = String.format("class %s%s:", classDef.getName(),
 				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
 		
 		for(Field f : classDef.getFields()) {

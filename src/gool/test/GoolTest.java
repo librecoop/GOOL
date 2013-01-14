@@ -6,6 +6,7 @@ import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
+import gool.generator.python.PythonPlatform;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,8 +48,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance());
-//	private List<Platform> platforms = Arrays.asList(CppPlatform.getInstance());
+	 Arrays.asList(PythonPlatform.getInstance(), JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance());
 
 	@BeforeClass
 	public static void init() {
