@@ -26,7 +26,6 @@ public class GoolTest {
 		}
 		public void compare(Platform platform) throws Exception {
 			String result = compileAndRun(platform);
-			Log.i(platform + " Result: " + result);
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -57,6 +56,7 @@ public class GoolTest {
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
 	}
+
 
 	@Test
 	public void simpleAddition() throws Exception {

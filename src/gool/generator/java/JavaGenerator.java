@@ -39,6 +39,7 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
@@ -215,6 +216,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	public String getCode(ToStringCall tsc) {
 		return String.format("%s.toString()", tsc.getTarget());
+		
 	}
 
 	@Override
@@ -225,6 +227,12 @@ public class JavaGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeDecimal typeReal) {
 		return "Double";
+	}
+	
+	@Override
+	public String getCode(TypeChar typeChar) {
+		// TODO Auto-generated method stub
+		return "char";
 	}
 
 	public String getCode(TypeDependency typeDependency) {
@@ -294,6 +302,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	
 	@Override
 	public String printClass(ClassDef classDef) {

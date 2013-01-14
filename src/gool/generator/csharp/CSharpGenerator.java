@@ -41,6 +41,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -85,6 +86,12 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeByte t) {
 		return "byte";
+	}
+	
+	@Override
+	public String getCode(TypeChar typeChar) {
+		// TODO Auto-generated method stub
+		return "char";
 	}
 
 	/**
@@ -423,4 +430,5 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String printClass(ClassDef classDef) {
 		return "Not implemented";
 	}
+
 }
