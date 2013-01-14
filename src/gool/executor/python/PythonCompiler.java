@@ -18,32 +18,28 @@ public class PythonCompiler extends SpecificCompiler {
 	public File compileToExecutable(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
 			throws FileNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return files.get(0);
 	}
 
 	@Override
 	public String getSourceCodeExtension() {
-		// TODO Auto-generated method stub
 		return "py";
 	}
 
 	@Override
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
-		// TODO Auto-generated method stub
-		System.out.print("dans run Python **************************************\n\n\n\n");
-		return Command.exec(getOutputDir(), "python");
+		List<String> params = new ArrayList<String>();
+		params.add("python");
+		
+		params.add(file.getName());
+		return Command.exec(getOutputDir(), params);
 	}
 
 	@Override
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
 			throws FileNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return mainFile;
 	}
-	
-	
-
 }
