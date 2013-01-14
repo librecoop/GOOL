@@ -80,6 +80,7 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
+import gool.ast.type.TypeChar;
 
 import java.util.Collection;
 
@@ -292,6 +293,8 @@ public interface CodeGenerator {
 	String getCode(TypeClass typeClass);
 
 	String getCode(TypeDecimal typeReal);
+	
+	String getCode(TypeChar typeChar);
 
 	String getCode(TypeDependency typeDependency);
 

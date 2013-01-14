@@ -40,6 +40,7 @@ import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
@@ -228,8 +229,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			return "\"" + StringEscapeUtils.escapeJava(constant.getValue().toString())
 					+ "\"";
 		}
+		else if (constant.getType() == TypeChar.INSTANCE){
+			return "'" + StringEscapeUtils.escapeJava(constant.getValue().toString()) +"'";
+		}
 		return constant.getValue().toString();
 	}
+	
 
 	@Override
 	public String getCode(Constructor cons) {
