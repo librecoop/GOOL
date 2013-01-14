@@ -3,6 +3,8 @@ package gool.ast.constructs;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
+import gool.ast.type.TypeString;
 import gool.generator.GoolGeneratorController;
 
 
@@ -32,7 +34,13 @@ public class Constant extends Expression {
 	 */
 	public Constant(IType type, Object code){
 		super(type);
+		if(type instanceof TypeChar) {
+			this.value= (Object) ("'"+code.toString()+"'");
+		}
+		else 
+		{
 		this.value=code;
+		}
 	}
 	public Constant(byte[] value) {
 		this(new TypeArray(TypeByte.INSTANCE), value);
