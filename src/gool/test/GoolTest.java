@@ -26,7 +26,6 @@ public class GoolTest {
 		}
 		public void compare(Platform platform) throws Exception {
 			String result = compileAndRun(platform);
-			Log.i(platform + " Result: " + result);
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
