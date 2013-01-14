@@ -67,6 +67,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -575,6 +576,12 @@ public class PythonGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(TypeVar typeVar) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(TypeChar typeChar) {
 		// TODO Auto-generated method stub
 		return null;
 	}

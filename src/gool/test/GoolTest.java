@@ -56,6 +56,7 @@ public class GoolTest {
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
+
 	@Test
 	public void simpleAddition() throws Exception {
 		String input = TestHelper.surroundWithClassMain("System.out.println(2 + 2);",
