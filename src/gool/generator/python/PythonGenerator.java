@@ -87,6 +87,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import logger.Log;
+
 import org.apache.commons.lang.StringUtils;
 
 public class PythonGenerator extends CommonCodeGenerator {
@@ -115,7 +117,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
-			result.append(statement);
+			result.append(statement + "\n");
 		}
 		return result.toString();
 	}
@@ -128,7 +130,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassNew classNew) {
-		return String.format("%s(%s)", classNew.getType(), StringUtils
+		return String.format("%s(%s)", classNew.getName(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
 
@@ -338,8 +340,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(Meth meth) {
 		return formatIndented("def %s(self, %s):%1",
-				meth.isConstructor()?"__init__":meth.getName(),
-				StringUtils.join(meth.getParams(),", ").replaceFirst("\\s\\z", ""),
+				methodsNames.get(meth),
+				StringUtils.join(meth.getParams(),", ").replaceAll("\n", ""),
 				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
 	}
 
@@ -493,7 +495,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			value = "None";
 		}
 		
-		return String.format("%s = %s\n", varDec.getName(), value);
+		return String.format("%s = %s", varDec.getName(), value);
 	}
 
 	@Override
@@ -542,67 +544,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Platform platform) {
 		return platform.getName();
 	}
-
-	@Override
-	public String getCode(ClassDef classDef) {
-		String code = String.format("%s%s:", classDef.getName(),
-				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
-		
-		for(Field f : classDef.getFields()) {
-			code = code + formatIndented("%1", f);
-		}
-
-		List<Meth> meths = new ArrayList<Meth>();
-		for(Meth method : classDef.getMethods()) {
-			if(getName(method) == null) {
-				meths.clear();
-				for(Meth m : classDef.getMethods()) {
-					if(m.getName().equals(method.getName())) {
-						meths.add(m);
-					}
-				}
-				
-				if(meths.size()>1) {
-					String block = "";
-					String newName = "_" + method.getName();
-					boolean first = true;
-					
-					for(Meth m2 : meths) {
-						while(methodsNames.containsValue(newName)) {
-							newName = "_" + newName;
-						}
-						methodsNames.put(m2, newName);
-						
-						String conditions = "";
-						for(VarDeclaration p : m2.getParams()) {
-							conditions += " and isinstance(%s,%s)";
-							
-						}
-						
-						block += String.format("%sif len(args) == %s%s:%1", first?"":"el", m2.getParams().size(), conditions, "self." + newName + "(*args)");  
-						first = false;
-					}
-					
-					String name = method.getName();
-					if(method.isConstructor()) {
-						name = "__init__";
-					}
-					
-					code += formatIndented("%1", formatIndented("def %s(self, *args):%1", name, block));
-				}
-				else {
-					methodsNames.put(method, method.getName());
-				}
-			}
-		}
-		
-		for(Meth method : classDef.getMethods()) {
-			code = code + formatIndented("%1", method);
-		}
-		
-		return code;
-	}
-
+	
 	@Override
 	public String getCode(Package _package) {
 		// TODO Auto-generated method stub
@@ -635,17 +577,72 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		String code = String.format("class %s%s:\n", classDef.getName(),
+		String code = String.format("%s%s:", classDef.getName(),
 				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
 		
 		for(Field f : classDef.getFields()) {
 			code = code + formatIndented("%1", f);
 		}
 
+		List<Meth> meths = new ArrayList<Meth>();
+		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
+			if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
+				meths.clear();
+				
+				for(Meth m : classDef.getMethods()) { //On récupère les méthodes de mêmes noms
+					if(m.getName().equals(method.getName())) {
+						meths.add(m);
+					}
+				}
+				
+				if(meths.size()>1) { //Si il y a plusieurs méthodes de même nom
+					String block = "";
+					String newName = method.getName();
+					int i = 0;
+					boolean first = true;
+					
+					for(Meth m2 : meths) {
+						
+						newName = method.getName() + i++;
+						while(methodsNames.containsValue(newName)) {
+							newName = method.getName() + i++;
+						}
+						methodsNames.put(m2, newName);
+						
+						String conditions = "";
+						int cpt = 0;
+						for(VarDeclaration p : m2.getParams()) {
+							conditions += String.format(" and isinstance(args[%s],%s)", cpt++, p.getType());
+							
+						}
+						
+						block += formatIndented("%sif len(args) == %s%s:%1", first?"":"el", m2.getParams().size(), conditions, "self." + newName + "(*args)");  
+						first = false;
+					}
+					
+					String name = method.getName();
+					if(method.isConstructor()) {
+						name = "__init__";
+					}
+					
+					code += formatIndented("%1", formatIndented("def %s(self, *args):%1", name, block));
+					
+				}
+				else {
+					if(method.isConstructor()) {
+						methodsNames.put(method, "__init__");
+					}
+					else {
+						methodsNames.put(method, method.getName());
+					}
+				}
+			}
+		}
+		
 		for(Meth method : classDef.getMethods()) {
 			code = code + formatIndented("%1", method);
 		}
-		
+
 		return code;
 	}
 
