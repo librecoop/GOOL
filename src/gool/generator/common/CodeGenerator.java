@@ -397,5 +397,7 @@ public interface CodeGenerator {
 	String getCode(TypeMethod typeMethod);
 	
 	String getCode(TypeVar typeVar);
+
+	String printClass(ClassDef pclass);
 	
 }

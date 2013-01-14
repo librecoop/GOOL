@@ -90,6 +90,10 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 public class PythonGenerator extends CommonCodeGenerator {
+	
+	public PythonGenerator() {
+		indentation = "    ";
+	}
 
 	private Map<Meth, String> methodsNames = new HashMap<Meth, String>();
 	
@@ -130,7 +134,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Comment comment) {
-		return String.format("\"\"\"\n%s\n\"\"\"", comment.getValue());
+		return comment.getValue().replaceAll("(^ *)([^ ])", "$1# $2");
 	}
 
 	@Override
@@ -139,16 +143,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(Constructor cons) {
-			return "";
-	}
-
-	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return formatIndented("for %s in %s:%1",
-				enhancedForLoop.getVarDec(), 
-				enhancedForLoop.getExpression(),
-				enhancedForLoop.getStatements());
+		return formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec(),
+				enhancedForLoop.getExpression() ,enhancedForLoop.getStatements());
 	}
 
 	@Override
@@ -160,7 +157,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Field field) {
 		String value;
 		if (field.getDefaultValue() != null) {
-			value =  field.getDefaultValue().toString();
+			value = field.getDefaultValue().toString();
 		}
 		else {
 			value = "None";
@@ -169,23 +166,26 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("%s = %s\n", field.getName(), value);
 	}
 
-	@Override
-	public String getCode(FieldAccess sfa) {
-		// TODO Auto-generated method stub
-		return "";
-	}
+//	@Override
+//	public String getCode(FieldAccess sfa) {
+//		// TODO Auto-generated method stub
+//		return "";
+//	}
 
 	@Override
 	public String getCode(For forr) {
-		// TODO Auto-generated method stub
-		return "";
+		return formatIndented("%s\nwhile %s:%1%1",
+				forr.getInitializer(),
+				forr.getCondition(),
+				forr.getWhileStatement(),
+				forr.getUpdater());
 	}
 
-	@Override
-	public String getCode(GoolCall goolCall) {
-		// TODO Auto-generated method stub
-		return "";
-	}
+//	@Override
+//	public String getCode(GoolCall goolCall) {
+//		// TODO Auto-generated method stub
+//		return "";
+//	}
 
 	@Override
 	public String getCode(If pif) {
@@ -260,7 +260,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
-		return formatIndented("%", mainMeth) + "\n" + mainMeth.getName();
+		return formatIndented("%1", mainMeth) + "\n" +  mainMeth.getName();
 	}
 
 	@Override
@@ -337,9 +337,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		String out = String.format("def %s():", meth.getName(),StringUtils.join(meth.getParams(),", "));
-		out = out + formatIndented("%1", meth.getBlock());
-		return out;
+		return formatIndented("def %s(self, %s):%1",
+				meth.isConstructor()?"__init__":meth.getName(),
+				StringUtils.join(meth.getParams(),", ").replaceFirst("\\s\\z", ""),
+				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
 	}
 
 	@Override
@@ -630,6 +631,22 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeVar typeVar) {
 		// TODO Auto-generated method stub
 		return "";
+	}
+	
+	@Override
+	public String printClass(ClassDef classDef) {
+		String code = String.format("class %s%s:\n", classDef.getName(),
+				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
+		
+		for(Field f : classDef.getFields()) {
+			code = code + formatIndented("%1", f);
+		}
+
+		for(Meth method : classDef.getMethods()) {
+			code = code + formatIndented("%1", method);
+		}
+		
+		return code;
 	}
 
 

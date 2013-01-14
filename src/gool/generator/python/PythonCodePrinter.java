@@ -14,10 +14,6 @@ import org.apache.commons.lang.StringUtils;
 
 public class PythonCodePrinter extends CodePrinter {
 	
-	public String processTemplate(String templateFilename, Node classDef) {
-		return classDef.toString();
-	}
-	
 	public PythonCodePrinter(File outputDir) {
 		super(new PythonGenerator(), outputDir);
 	}
@@ -32,24 +28,4 @@ public class PythonCodePrinter extends CodePrinter {
 		return "";
 	}
 	
-	@Override
-	public List<File> print(ClassDef pclass) throws FileNotFoundException {
-
-		String code = pclass.getCode();
-
-		PrintWriter writer;
-
-		File dir = new File(getOutputDir().getAbsolutePath(), StringUtils
-				.replace(pclass.getPackageName(), ".", File.separator));
-		dir.mkdirs();
-		File classFile = new File(dir, getFileName(pclass.getName()));
-
-		writer = new PrintWriter(classFile);
-		writer.println(code);
-		writer.close();
-
-		List<File> r = new ArrayList<File>();
-		r.add(classFile);
-		return r;
-	}
 }
