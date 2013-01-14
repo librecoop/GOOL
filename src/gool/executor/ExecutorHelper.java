@@ -2,6 +2,7 @@ package gool.executor;
 
 import gool.ast.constructs.ClassDef;
 import gool.executor.common.SpecificCompiler;
+import gool.executor.csharp.CSharpCompiler;
 import gool.generator.common.Platform;
 
 import java.io.File;
@@ -16,10 +17,11 @@ import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public final class ExecutorHelper {
 
-
+	private static Logger logger = Logger.getLogger(ExecutorHelper.class.getName());
 	public static Iterable<? extends JavaFileObject> getJavaFileObjects(
 			Collection<? extends File> inputFiles) {
 		return ToolProvider.getSystemJavaCompiler().getStandardFileManager(
@@ -46,7 +48,7 @@ public final class ExecutorHelper {
 		StringBuilder result = new StringBuilder();
 
 		List<File> compiledFiles = ExecutorHelper.compile(files);
-		System.out.println(compiledFiles);
+		logger.info(compiledFiles);
 		result.append(platform.getCompiler().run(compiledFiles.get(0)));
 		return result.toString();
 	}
@@ -62,7 +64,7 @@ public final class ExecutorHelper {
 	
 		for (Entry<Platform, List<File>> item : files.entrySet()) {
 			SpecificCompiler compiler = item.getKey().getCompiler();
-			System.out.println("---3-->" + compiler);
+			logger.info("---3-->" + compiler);
 			File outputFile = compiler.compileToExecutable(item.getValue(), null, null, null);	
 			result.add(outputFile);
 		}

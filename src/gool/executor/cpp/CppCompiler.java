@@ -12,8 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class CppCompiler extends SpecificCompiler {
 
+	private static Logger logger = Logger.getLogger(CppCompiler.class.getName());
 	@SuppressWarnings("unused")
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
@@ -30,7 +33,8 @@ public class CppCompiler extends SpecificCompiler {
 		if (mainFile == null) {
 			mainFile = files.get(0);
 		}
-		System.out.println("--->" + mainFile);
+		
+		logger.info("--->" + mainFile);
 		String execFileName = mainFile.getName().replace(".cpp",".bin");
 		params.addAll(Arrays.asList(Settings.get("cpp_compiler_cmd"), "-I", Settings.get("boost_lib_dir"), "-o", execFileName) );
 

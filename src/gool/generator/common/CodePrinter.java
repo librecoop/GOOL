@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -36,16 +37,17 @@ import org.apache.velocity.exception.ResourceNotFoundException;
  * Note: Only one {@link CodeGenerator} at a time is supported.
  */
 public abstract class CodePrinter {
+	public static Logger logger = Logger.getLogger(CodePrinter.class.getName());
 	/**
-	 * The directory where the generated code will be written.
-	 * Usually, this is that specified in gool.properties
-	 * For a given target language
-	 * But ultimately this is specified by Platform objects
+	 * The directory where the generated code will be written. Usually, this is
+	 * that specified in gool.properties For a given target language But
+	 * ultimately this is specified by Platform objects
 	 */
 	private File outputDir;
 
 	/**
-	 * This list is just to remember which abstract GOOL classes were printed already.
+	 * This list is just to remember which abstract GOOL classes were printed
+	 * already.
 	 */
 	private Set<ClassDef> printedClasses = new HashSet<ClassDef>();
 
@@ -79,9 +81,8 @@ public abstract class CodePrinter {
 		try {
 			Properties p = new Properties();
 			p.setProperty("resource.loader", "class");
-			p
-					.setProperty("class.resource.loader.class",
-							"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+			p.setProperty("class.resource.loader.class",
+					"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 			engine.init(p);
 		} catch (Exception e) {
 			throw new VelocityException(
@@ -114,10 +115,9 @@ public abstract class CodePrinter {
 	}
 
 	/**
-	 * Parses a Velocity template with its required parameters.
-	 * Except for the top ClassDef.getCode() call triggered by the print(ClassDef) below
-	 * all of the other getCode() calls will be triggered from here
-	 * by velocity itself.
+	 * Parses a Velocity template with its required parameters. Except for the
+	 * top ClassDef.getCode() call triggered by the print(ClassDef) below all of
+	 * the other getCode() calls will be triggered from here by velocity itself.
 	 * 
 	 * @param template
 	 *            the relative path to a velocity template.
@@ -133,27 +133,29 @@ public abstract class CodePrinter {
 	public String processTemplate(String templateFilename, Node classDef) {
 
 		try {
-			//Load the template into velocity
+			// Load the template into velocity
 			String templateFile = getTemplateDir() + templateFilename;
 			Template template = engine.getTemplate(templateFile);
-			System.out.println(String.format("Loaded velocity template: %s", templateFile));
-			
-			//Provide velocity with what it needs to fill in the template
-			//i.e. the ClassDef
-			//but also some macros
-			//and helpful routines
+			logger.info(String.format("Loaded velocity template: %s",
+					templateFile));
+
+			// Provide velocity with what it needs to fill in the template
+			// i.e. the ClassDef
+			// but also some macros
+			// and helpful routines
 			VelocityContext context = new VelocityContext();
 			context.put("class", classDef);
 			context.put("macros", getTemplateDir() + "macros.vm");
 			context.put("Helper", GeneratorHelper.class);
-			
-			//Go fill in template.
-			//A great quick introduction to velocity syntax is available
-			//Here: http://velocity.apache.org/engine/releases/velocity-1.5/user-guide.html
+
+			// Go fill in template.
+			// A great quick introduction to velocity syntax is available
+			// Here:
+			// http://velocity.apache.org/engine/releases/velocity-1.5/user-guide.html
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
 			return writer.toString();
-			
+
 		} catch (Exception e) {
 
 			throw new VelocityException(e.getLocalizedMessage(), e);
@@ -161,51 +163,54 @@ public abstract class CodePrinter {
 	}
 
 	/**
-	 * This is the main entry point of this class.
-	 * It generates the code for a GOOL class and its corresponding dependent
-	 * classes.
+	 * This is the main entry point of this class. It generates the code for a
+	 * GOOL class and its corresponding dependent classes.
 	 * 
-	 * @param pclass 
-	 * 			   the class to generate.
+	 * @param pclass
+	 *            the class to generate.
 	 * @return the list of files of generated concrete target classes
 	 * @throws FileNotFoundException
 	 * @throws Exception
 	 *             when the generated code cannot be written to the file system
 	 *             or when there is a parsing error in Velocity templates.
-	 * Side-effects: updates the list of abstract GOOL classes that have been processed
+	 *             Side-effects: updates the list of abstract GOOL classes that
+	 *             have been processed
 	 */
 	public List<File> print(ClassDef pclass) throws FileNotFoundException {
 		/*
-		 * Delegate the code generation to the ClassDef object, 
-		 * which may decide that the currentPrinter need be changed
-		 * since platforms are decided on a per class basis
+		 * Delegate the code generation to the ClassDef object, which may decide
+		 * that the currentPrinter need be changed since platforms are decided
+		 * on a per class basis
 		 */
 		String code = pclass.getCode();
 
 		// file separator is just a slash in Unix
-		// so the second argument to File() is just the directory 
+		// so the second argument to File() is just the directory
 		// that corresponds to the package name
 		// the first argument is the default output directory of the platform
 		// so the directory name ends up being something like
 		// GOOLOUPTUTTARGET/pack/age
-		File dir = new File(getOutputDir().getAbsolutePath(), StringUtils
-				.replace(pclass.getPackageName(), ".", File.separator));
-		//Typically the outputdir was created before, but not the package subdirs
-		dir.mkdirs(); 
-		//Create the file for the class, fill it in, close it
+		File dir = new File(getOutputDir().getAbsolutePath(),
+				StringUtils.replace(pclass.getPackageName(), ".",
+						File.separator));
+		// Typically the outputdir was created before, but not the package
+		// subdirs
+		dir.mkdirs();
+		// Create the file for the class, fill it in, close it
 		File classFile = new File(dir, getFileName(pclass.getName()));
-		System.out.println(String.format("Writing to file %s", classFile));
+		logger.info(String.format("Writing to file %s", classFile));
 		PrintWriter writer = new PrintWriter(classFile);
 		writer.println(code);
 		writer.close();
-		//Remember that you did the generation for this one abstract GOOL class
+		// Remember that you did the generation for this one abstract GOOL class
 		printedClasses.add(pclass);
-		//Put the generated class into the result list
+		// Put the generated class into the result list
 		List<File> result = new ArrayList<File>();
 		result.add(classFile);
-		//Go through the dependencies
-		//If they are abstract GOOL classes and have not been generated, do that
-		//And add the generated classes into the result list
+		// Go through the dependencies
+		// If they are abstract GOOL classes and have not been generated, do
+		// that
+		// And add the generated classes into the result list
 		for (Dependency dependency : pclass.getDependencies()) {
 			if (!printedClasses.contains(dependency)
 					&& dependency instanceof ClassDef) {
@@ -249,19 +254,17 @@ public abstract class CodePrinter {
 	}
 
 	/**
-	* Each platform has specifies a CodePrinter.
-	* which itself has a CodeGenerator
-	* this returns that CodePrinter
-	* after having set its CodeGenerator in the GoolGeneratorController
-	*/
+	 * Each platform has specifies a CodePrinter. which itself has a
+	 * CodeGenerator this returns that CodePrinter after having set its
+	 * CodeGenerator in the GoolGeneratorController
+	 */
 	public static CodePrinter getPrinter(IType platform) {
 		CodePrinter codePrinter = ((Platform) platform).getCodePrinter();
 		if (codePrinter == null) {
 			throw new IllegalStateException(
-					String
-							.format(
-									"There are no registered code writers for the specified platform: %s",
-									platform));
+					String.format(
+							"There are no registered code writers for the specified platform: %s",
+							platform));
 		}
 
 		GoolGeneratorController

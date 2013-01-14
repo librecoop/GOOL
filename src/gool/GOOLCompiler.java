@@ -9,6 +9,7 @@ package gool;
 
 import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
+import gool.executor.csharp.CSharpCompiler;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
@@ -23,8 +24,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 public class GOOLCompiler {
 
+	private static Logger logger = Logger.getLogger(GOOLCompiler.class.getName());
 	/**
 	 * The main
 	 * - gets the folder to open from Settings
@@ -33,13 +38,15 @@ public class GOOLCompiler {
 	 * - triggers it upon the files, with argument the target platform.
 	 */
 	public static void main(String[] args) {
+		
+			BasicConfigurator.configure();
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = Arrays.asList(folder.listFiles());
-			System.out.println(files);
+			logger.info(files);
 			GOOLCompiler gc = new GOOLCompiler();
 			Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
-			System.out.println(f);
+			logger.info(f);
 			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
 					files);
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);

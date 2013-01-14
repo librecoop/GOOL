@@ -9,13 +9,13 @@
 
 #includes ($Helper.printDependencies($class))
 #foreach( $field in $class.Fields )
-#if($field.DefaultValue)$field.Type $class.Name::$field.Name = $field.DefaultValue;
+#if($field.DefaultValue)$field.Type$class.Name::$field.Name = $field.DefaultValue;
 #end
 #end
 
 #foreach( $method in $class.Methods )
-${method.Header}#if($class.isInterface() || $method.isAbstract() );#else {
-    $method.Block
+	${method.Header}#if($class.isInterface() || $method.isAbstract() );#else {
+$method.Block
 }#end
 
 #end
