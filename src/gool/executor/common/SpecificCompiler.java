@@ -7,10 +7,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 public abstract class SpecificCompiler {
 
-
+	public static Logger logger = Logger.getLogger(SpecificCompiler.class.getName());
 	/**
 	 * The output directory.
 	 */
@@ -34,7 +36,7 @@ public abstract class SpecificCompiler {
 	}
 
 	public static void cleanOutDir(File outDir) {
-		System.out.println("Cleaning out directory " + outDir);
+		logger.info("Cleaning out directory " + outDir);
 		
 		File[] binFiles = outDir.listFiles();
 		if (binFiles != null) {

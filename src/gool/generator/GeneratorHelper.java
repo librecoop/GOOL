@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * This class helps generate the concrete target
@@ -24,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
  * As well as some ancillary methods
  */
 public final class GeneratorHelper {
-
+	public static Logger logger = Logger.getLogger(GeneratorHelper.class.getName());
 	public static String joinParams(List<?> parameters) {
 		if (parameters == null) {
 			return "";
@@ -72,7 +73,7 @@ public final class GeneratorHelper {
 			}
 			//If the target output directory is not there yet, make it.
 			if (!currentPrinter.getOutputDir().exists()) {
-				System.out.println("Creating the output directory "
+				logger.info("Creating the output directory "
 						+ currentPrinter.getOutputDir());
 				currentPrinter.getOutputDir().mkdirs();
 			}

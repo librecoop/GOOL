@@ -49,11 +49,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class JavaGenerator extends CommonCodeGenerator {
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
-
+	static Logger logger=Logger.getLogger(JavaGenerator.class.getName());
+	
 	public void addCustomDependency(String key, Dependency value){
 		customDependencies.put(key, value);
 	}
@@ -75,7 +77,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	public String getCode(CustomDependency customDependency) {
 		if (!customDependencies.containsKey(customDependency.getName())) {
-			System.out.println(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
+			logger.info(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Java for the GOOL type '%s'.", customDependency.getName()));
 		}
 		return customDependencies.get(customDependency.getName()).toString();
