@@ -98,7 +98,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				pos += arguments[arg].toString().length() -1;
 				arg++;
 			} else if (Character.isDigit(sb.charAt(pos +1))) {
-				String replacement = ("\n" + arguments[arg].toString().replaceFirst("\\s\\z", "")).replace("\n",
+				String replacement = ("\n" + arguments[arg].toString().replaceFirst("\\s*\\z", "")).replace("\n",
 						"\n"+StringUtils.repeat(indentation, Character.digit(sb.charAt(pos +1), 10))) + "\n";
 				sb = sb.replace(pos, pos +2, replacement);
 				pos += replacement.length() -1;

@@ -94,6 +94,7 @@ import org.apache.commons.lang.StringUtils;
 public class PythonGenerator extends CommonCodeGenerator {
 	
 	public PythonGenerator() {
+		super();
 		indentation = "    ";
 	}
 
@@ -326,20 +327,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s.pop(%s, None)", mapRemoveCall.getExpression(),
+				StringUtils.join(mapRemoveCall.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(MapSizeCall mapSizeCall) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
-	public String getCode(MemberSelect memberSelect) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("len(%s)", mapSizeCall.getExpression());
 	}
 
 	@Override
