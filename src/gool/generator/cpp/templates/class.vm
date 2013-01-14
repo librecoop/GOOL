@@ -14,7 +14,8 @@
 #end
 
 #foreach( $method in $class.Methods )
-${method.Header}#if($class.isInterface() || $method.isAbstract());#else {
-    $method.Block}#end
+	${method.Header}#if($class.isInterface() || $method.isAbstract() );#else {
+$method.Block
+}#end
 
 #end
