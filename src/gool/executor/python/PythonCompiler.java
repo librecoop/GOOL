@@ -1,5 +1,6 @@
 package gool.executor.python;
 
+import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
 
 import java.io.File;
@@ -24,14 +25,15 @@ public class PythonCompiler extends SpecificCompiler {
 	@Override
 	public String getSourceCodeExtension() {
 		// TODO Auto-generated method stub
-		return null;
+		return "py";
 	}
 
 	@Override
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
 		// TODO Auto-generated method stub
-		return null;
+		System.out.print("dans run Python **************************************\n\n\n\n");
+		return Command.exec(getOutputDir(), "python");
 	}
 
 	@Override
@@ -41,5 +43,7 @@ public class PythonCompiler extends SpecificCompiler {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
 
 }
