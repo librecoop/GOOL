@@ -311,8 +311,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 		if (classDef.getPpackage() != null)
 			sb = sb.append(String.format("package %s;\n\n", classDef.getPackageName()));
 		// print the includes
-		// BUG: yield a stack overflow
-		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
+		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
 			for (String dependency : dependencies)
 				sb = sb.append(String.format("import %s;\n", dependency));
