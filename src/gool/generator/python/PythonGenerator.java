@@ -208,8 +208,17 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListAddCall lac) {
-		return String.format("%s[%s]", lac.getExpression(), StringUtils
-				.join(lac.getParameters(), ", "));
+		switch (lac.getParameters().size()) {
+		case 1:
+			return String.format("%s.append(%s)",
+					lac.getExpression(), lac.getParameters().get(0));
+		case 2:
+			return String.format("%s.insert(%s, %s)",
+					lac.getExpression(), lac.getParameters().get(1), lac.getParameters().get(0));
+		default:
+			return String.format("%s.add(%s) # Unrecognized by GOOL, passed on",
+					lac.getExpression(), StringUtils.join(lac.getParameters(), ", "));
+		}
 	}
 
 	@Override
@@ -230,32 +239,30 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("(not %s)", liec.getExpression());
 	}
 
-	@Override
-	public String getCode(ListMethCall lmc) {
-		// TODO Auto-generated method stub
-		return "";
-	}
+//	@Override
+//	public String getCode(ListMethCall lmc) {
+//		// TODO Auto-generated method stub
+//		return "";
+//	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s.pop(%s)", lrc.getExpression(), StringUtils
+				.join(lrc.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s.remove(%s)", lrc.getExpression(), StringUtils
+				.join(lrc.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(ListSizeCall lsc) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("len(%s)", lsc.getExpression());
 	}
 
 	@Override
@@ -265,8 +272,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s in %s",
+				mapContainsKeyCall.getParameters().get(0), mapContainsKeyCall.getExpression());
 	}
 
 	@Override
@@ -289,8 +296,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[%s]", mapGetCall.getExpression(), mapGetCall.getParameters().get(0));
 	}
 
 	@Override
@@ -301,8 +307,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("(not %s)", mapIsEmptyCall.getExpression());
 	}
 
 	@Override
