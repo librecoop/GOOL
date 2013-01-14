@@ -40,6 +40,7 @@ import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
@@ -62,6 +63,55 @@ import org.apache.commons.lang.StringUtils;
  * languages.
  */
 public abstract class CommonCodeGenerator implements CodeGenerator {
+	
+	/**
+	 * String used to produce one level of indentation
+	 */
+	protected String indentation = "\t";
+	
+	/**<pre>
+	 * Produce indented code in a manner similar to printf but with custom conversions.
+	 * %%  a single "%"
+	 * %s  Print an argument as a string, without indentation or newlines added. 
+	 * %<i>n</i>  (where <i>n</i> is a digit)
+	 *     Print an argument as a bloc indented <i>n</i> times from the current indentation level.
+	 *     Newlines are inserted before and after the bloc.
+	 * %-<i>n</i> (where <i>n</i> is a digit)
+	 *     <i>n</i> times the indentation string, does not consumes a argument.
+	 *     %-0 becomes a empty string (it does nothing but is still parsed)
+	 * 
+	 * @param format
+	 *            the format string
+	 * @param arguments
+	 *            the objects to format, each one corresponding to a % code
+	 * @return the formated string
+	 */
+	protected String formatIndented(String format, Object... arguments){
+		StringBuilder sb = new StringBuilder(format);
+		int pos = sb.indexOf("%");
+		int arg = 0;
+		while (pos != -1){
+			if (sb.charAt(pos +1) == '%'){
+				sb = sb.replace(pos, pos +2, "%");
+			} else if (sb.charAt(pos +1) == 's') {
+				sb = sb.replace(pos, pos +2, arguments[arg].toString());
+				pos += arguments[arg].toString().length() -1;
+				arg++;
+			} else if (Character.isDigit(sb.charAt(pos +1))) {
+				String replacement = ("\n" + arguments[arg].toString().replaceFirst("\\s\\z", "")).replace("\n",
+						"\n"+StringUtils.repeat(indentation, Character.digit(sb.charAt(pos +1), 10))) + "\n";
+				sb = sb.replace(pos, pos +2, replacement);
+				pos += replacement.length() -1;
+				arg++;
+			} else if (sb.charAt(pos +1) == '-' && Character.isDigit(sb.charAt(pos +2))) {
+				String replacement = StringUtils.repeat(indentation, Character.digit(sb.charAt(pos +2), 10));
+				sb = sb.replace(pos, pos +3, replacement);
+				pos += replacement.length();
+			}
+			pos = sb.indexOf("%", pos);
+		}
+		return sb.toString();
+	}
 	
 	
 	@Override
@@ -179,8 +229,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			return "\"" + StringEscapeUtils.escapeJava(constant.getValue().toString())
 					+ "\"";
 		}
+		else if (constant.getType() == TypeChar.INSTANCE){
+			return "'" + StringEscapeUtils.escapeJava(constant.getValue().toString()) +"'";
+		}
 		return constant.getValue().toString();
 	}
+	
 
 	@Override
 	public String getCode(Constructor cons) {
@@ -215,7 +269,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(For forInstruction) {
-		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
+//		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
+//				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
+		return formatIndented("for (%s ; %s ; %s) {%1}", forInstruction.getInitializer(), forInstruction
 				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
 	}
 
@@ -235,11 +291,18 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(If pif) {
-		String out = String.format("if ( %s ) {\n%s;\n}\n", pif.getCondition(),
-				pif.getThenStatement());
-		if (pif.getElseStatement() != null) {
-			out = String.format("%s else {\n%s\n}\n", out, pif
-					.getElseStatement());
+//		String out = String.format("if ( %s ) {\n%s;\n}\n", pif.getCondition(),
+//				pif.getThenStatement());
+//		if (pif.getElseStatement() != null) {
+//			out = String.format("%s else {\n%s\n}\n", out, pif
+//					.getElseStatement());
+//		}
+		String out = formatIndented ("if (%s) {%1}", pif.getCondition(), pif.getThenStatement());
+		if (pif.getElseStatement() != null){
+			if (pif.getElseStatement() instanceof If)
+				out += formatIndented (" else %s", pif.getElseStatement());
+			else
+				out += formatIndented (" else {%1}", pif.getElseStatement());
 		}
 		return out;
 	}
@@ -279,7 +342,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()), meth
+		return String.format("%s %s %s (%s)", getCode(meth.getModifiers()), meth
 				.getType(), meth.getName(), StringUtils.join(meth.getParams(),
 				", "));
 	}
@@ -293,7 +356,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(MethCall methodCall) {
-		return String.format("%s( %s )", methodCall.getTarget(), StringUtils
+		return String.format("%s (%s)", methodCall.getTarget(), StringUtils
 				.join(methodCall.getParameters(), ", "));
 	}
 
@@ -427,7 +490,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(While whilee) {
-		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
+//		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
+//				.getWhileStatement());
+		return formatIndented("while (%s) {%1}", whilee.getCondition(), whilee
 				.getWhileStatement());
 	}
 	
@@ -438,7 +503,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return String.format("this( %s )", GeneratorHelper.joinParams(thisCall.getParameters()));
+		return String.format("this (%s)", GeneratorHelper.joinParams(thisCall.getParameters()));
 	}
 
 	@Override
@@ -463,7 +528,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(ClassDef classDef) {
-		return String.format("%s.%s", classDef.getPackageName(),classDef.getName());
+		return String.format("%s.%s", classDef.getPackageName(),classDef.getName());		
 	}
 
 	@Override

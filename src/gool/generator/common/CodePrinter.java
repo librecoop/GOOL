@@ -180,7 +180,8 @@ public abstract class CodePrinter {
 		 * which may decide that the currentPrinter need be changed
 		 * since platforms are decided on a per class basis
 		 */
-		String code = pclass.getCode();
+//		String code = pclass.getCode();
+		String code = generator.getCode(pclass);
 
 		// file separator is just a slash in Unix
 		// so the second argument to File() is just the directory 

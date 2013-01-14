@@ -8,7 +8,9 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.Field;
 import gool.ast.constructs.MainMeth;
+import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
@@ -85,7 +87,8 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return String.format("for(%s : %s){%s}",
+//		return String.format("for(%s : %s){%s}",
+		return formatIndented("for (%s : %s){%1}",
 				enhancedForLoop.getVarDec(), 
 				(enhancedForLoop.getExpression().getType() instanceof TypeMap)?String.format("%s.entrySet()",enhancedForLoop.getExpression()):enhancedForLoop.getExpression(), 
 				enhancedForLoop.getStatements());
@@ -169,7 +172,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		return String.format("(%s.isEmpty()", mapIsEmptyCall.getExpression());
+		return String.format("%s.isEmpty()", mapIsEmptyCall.getExpression());
 	}
 
 	@Override
@@ -298,5 +301,32 @@ public class JavaGenerator extends CommonCodeGenerator {
 		return null;
 	}
 
-
+	
+	@Override
+	public String getCode(ClassDef classDef) {
+		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
+		if (classDef.getPpackage() != null)
+			sb = sb.append(String.format("package %s;\n\n", classDef.getPackageName()));
+		// TODO: add imports
+		sb = sb.append(String.format("%s %s %s", 
+				StringUtils.join(classDef.getModifiers(), ' '),
+				classDef.isInterface()?"interface":"class",
+				classDef.getName()));
+		if (classDef.getParentClass() != null)
+			sb = sb.append(String.format(" extends %s",classDef.getParentClass()));
+		// BUG: "interfaces" always printed 
+		if (! classDef.getInterfaces().isEmpty())
+			sb = sb.append(String.format(" interfaces %s",StringUtils.join(classDef.getInterfaces(),", ")));
+		sb = sb.append(" {\n\n");
+		for (Field field : classDef.getFields())
+			sb = sb.append(formatIndented("%-1%s;\n\n", field));
+		for (Meth meth : classDef.getMethods()){
+			// TODO: deal with constructors ?
+			if (classDef.isInterface())
+				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
+			else
+				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));
+		}
+		return sb.toString() + "}";
+	}
 }

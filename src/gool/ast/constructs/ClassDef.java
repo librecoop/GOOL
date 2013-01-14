@@ -2,6 +2,7 @@ package gool.ast.constructs;
 
 import gool.ast.type.IType;
 import gool.ast.type.TypeClass;
+import gool.generator.GoolGeneratorController;
 import gool.generator.common.Platform;
 
 import java.util.ArrayList;
@@ -330,7 +331,7 @@ public class ClassDef extends Dependency {
 
 	@Override
 	public String callGetCode() {
-		return name;
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	public final Meth getMethod(String methName) {

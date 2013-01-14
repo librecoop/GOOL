@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import logger.Log;
+
 public final class TestHelper {
 
 
@@ -27,7 +29,7 @@ public final class TestHelper {
 			String mainClassName) throws Exception, FileNotFoundException {
 		GOOLCompiler gc = new GOOLCompiler();
 		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, input); 
-		System.out.println("--2-->"+files);
+		Log.i("--2-->"+files);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
 

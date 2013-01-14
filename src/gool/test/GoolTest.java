@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import logger.Log;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,7 +26,7 @@ public class GoolTest {
 		}
 		public void compare(Platform platform) throws Exception {
 			String result = compileAndRun(platform);
-			System.out.println(platform + " Result: " + result);
+			Log.i(platform + " Result: " + result);
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -93,7 +95,7 @@ public class GoolTest {
 				.surroundWithClassMain(
 						"ArrayList<Integer> l = new ArrayList<Integer>(); l.add(4); System.out.println(l.get(0));",
 						MAIN_CLASS_NAME);
-		System.out.println(input);
+		Log.i(input);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -191,7 +193,7 @@ public class GoolTest {
 			if (e.getCause() != null && e.getCause().getClass().equals(IllegalStateException.class)) {
 				return;
 			}
-			System.out.println(e);
+			Log.e(e);
 		}
 		Assert.fail("Maps with object keys are not allowed in C++.");
 	}
