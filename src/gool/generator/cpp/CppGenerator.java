@@ -543,11 +543,13 @@ public class CppGenerator extends CommonCodeGenerator {
 			sb = sb.append(String.format("namespace %s {", classDef.getPackageName()));
 		sb = sb.append("#include <boost/any.hpp>\n");
 		sb = sb.append("#include <boost/lexical_cast.hpp>\n\n");
-		sb = sb.append(String.format("#include \"%s\"\n\n", classDef.getName()));
+		sb = sb.append(String.format("#include \"%s.h\"\n\n", classDef.getName()));
 		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies)
-				sb = sb.append(String.format("#include \"%s\";\n", dependency));
+			for (String dependency : dependencies) {
+				if (! dependency.equals("noprint"))
+					sb = sb.append(String.format("#include <%s>\n", dependency));
+			}
 			sb = sb.append("\n");
 		}
 		for (Meth meth : classDef.getMethods()){
