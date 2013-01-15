@@ -536,8 +536,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 
 		List<Meth> meths = new ArrayList<Meth>();
+		Meth mainMeth = null;
 		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
-			if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
+			// the main method will be printed outside of the class later
+			if (method.isMainMethod()) {
+				mainMeth = method;
+			}
+			else if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
 				meths.clear();
 				
 				for(Meth m : classDef.getMethods()) { //On récupère les méthodes de mêmes noms
@@ -591,7 +596,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		
 		for(Meth method : classDef.getMethods()) {
-			code = code.append(formatIndented("%1", method));
+			if (! method.isMainMethod())
+				code = code.append(formatIndented("%1", method));
+		}
+		
+		if (mainMeth != null) {
+			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
+					mainMeth.getBlock()));
 		}
 
 		return code.toString();
