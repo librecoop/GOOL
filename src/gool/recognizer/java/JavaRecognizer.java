@@ -383,7 +383,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d("XXX just before claiming a typeName from classsymbol XXX");
 		Log.d("XXX type, classSymbol, kind XXX");
 		Log.d(type.toString());
-		Log.d(classSymbol.toString());
+		Log.d(classSymbol==null?"null":classSymbol.toString());
 		Log.d(typeMirror.getKind().toString());		
 		Log.d("XXX");
 		String typeName;
