@@ -395,8 +395,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s, %s",typeEntry.getKeyType(), typeEntry.getElementType() );
 	}
 
 	@Override
@@ -442,7 +441,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
-		return super.getCode(unaryOperation) + "#ERROR : Unrecognized by Python";
+		return String.format("%s+=1", unaryOperation.getExpression());
 	}
 
 	@Override
