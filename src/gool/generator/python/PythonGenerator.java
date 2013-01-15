@@ -166,12 +166,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("%s = %s\n", field.getName(), value);
 	}
 
-//	@Override
-//	public String getCode(FieldAccess sfa) {
-//		// TODO Auto-generated method stub
-//		return "";
-//	}
-
 	@Override
 	public String getCode(For forr) {
 		return formatIndented("%s\nwhile %s:%1%1",
@@ -180,12 +174,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 				forr.getWhileStatement(),
 				forr.getUpdater());
 	}
-
-//	@Override
-//	public String getCode(GoolCall goolCall) {
-//		// TODO Auto-generated method stub
-//		return "";
-//	}
 
 	@Override
 	public String getCode(If pif) {
@@ -233,20 +221,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("iter(%s)", lgic.getExpression());
 	}
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
 		return String.format("(not %s)", liec.getExpression());
 	}
-
-//	@Override
-//	public String getCode(ListMethCall lmc) {
-//		// TODO Auto-generated method stub
-//		return "";
-//	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
@@ -278,14 +259,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[0]", mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapEntryGetValueCall mapEntryGetKeyCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[1]", mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
@@ -301,8 +280,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("iter(%s)", mapGetIteratorCall.getExpression());
 	}
 
 	@Override
@@ -312,14 +290,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapMethCall mapMethCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[%s])", mapMethCall.getExpression(),
+				mapMethCall.getParameters().get(0));
 	}
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[%s] = %s", mapPutCall.getExpression(), 
+				mapPutCall.getParameters().get(0), mapPutCall.getParameters().get(1));
 	}
 
 	@Override
