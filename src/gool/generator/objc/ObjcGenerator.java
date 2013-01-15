@@ -8,6 +8,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
@@ -37,20 +38,22 @@ import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+
+
 
 public class ObjcGenerator extends CommonCodeGenerator {
-
-	public void ObjcGenrator() {
-	}
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
@@ -68,7 +71,18 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		customDependencies.put(key, value);
 
 	}
+	
+	@Override
+	public String getCode(TypeNull typeNull) {
+		return "nil";
+	}
 
+	@Override
+	public String getCode(ThisCall thisCall) {
+		// TODO Auto-generated method stub
+		return "self";
+	}
+	
 	@Override
 	public String getCode(ClassNew classNew) {
 		return String.format("[%s new]", removePointer(classNew.getType())); // a
@@ -112,7 +126,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
+				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
 
 	@Override
@@ -165,7 +180,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
-		return "int main()";
+		// TODO Auto-generated method stub
+		return "int main(int argc, const char * argv[])";
 	}
 
 	@Override
@@ -306,6 +322,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "char";
+	}
+
+	@Override
+	public String getCode(TypeFile typeFile) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -89,6 +89,6 @@ public class CppCompiler extends SpecificCompiler {
 
 	@Override
 	public String getSourceCodeExtension() {
-		return "cs";
+		return "cpp";
 	}
 }

@@ -254,6 +254,8 @@ public class GoolTest {
 	
 	@Test
 	public void listContainsElement() throws Exception {
+		//TODO not implemented
+		@SuppressWarnings("unused")
 		String input = 
 				"import gool.imports.java.util.ArrayList;\n" + 
 				TestHelper
