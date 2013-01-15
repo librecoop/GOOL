@@ -329,7 +329,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-		Log.i(getTypeMirror(n).toString());
+		Log.i(getTypeMirror(n)==null?"null":getTypeMirror(n).toString());
 		return goolType(getTypeMirror(n), context);
 	}
 
@@ -971,7 +971,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		String t2 = type.getName();
 		Log.d("testN : "+test1+"\n");
 		Log.d("testType : "+t2+"\n");
-		Log.d("test cntext : "+context.getClassDef().getName().toString());
+		Log.d("test cntext : "+(context==null?"null":context.getClassDef().getName().toString()));
 		if (type.getName().equals(n.getName().toString())) {
 			return new Constant(type, n.getName().toString());
 		}

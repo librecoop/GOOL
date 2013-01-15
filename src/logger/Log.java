@@ -95,7 +95,7 @@ public class Log {
 	
 	//Print an error message
 	public static void e(Exception e) {
-		print(Level.ERROR, Color.RED, e.getMessage());
+		print(Level.ERROR, Color.RED, e);
 	}
 		
 	//Print a fatal message
@@ -106,6 +106,12 @@ public class Log {
 	private static void print(Level lv, Color c, String message) {
 		for(Printer p : log.printers) {
 			p.print(lv, message, c);
+		}
+	}
+	
+	private static void print(Level lv, Color c, Exception e) {
+		for(Printer p : log.printers) {
+			p.printErr(lv, e, c);
 		}
 	}
 	
