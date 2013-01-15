@@ -1,10 +1,5 @@
 package gool.generator.objc;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
@@ -47,6 +42,9 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ObjcGenerator extends CommonCodeGenerator{
 	
@@ -224,19 +222,16 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(ToStringCall tsc) {
-		// TODO Auto-generated method stub
 		return String.format("[%s ToString]", tsc.getTarget());
 	}
 
 	@Override
 	public String getCode(TypeBool typeBool) {
-		// TODO Auto-generated method stub
 		return "Boolean";
 	}
 
 	@Override
 	public String getCode(TypeDecimal typeReal) {
-		// TODO Auto-generated method stub
 		return "double";
 	}
 
@@ -248,7 +243,6 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(TypeInt typeInt) {
-		// TODO Auto-generated method stub
 		return "int";
 	}
 
@@ -272,7 +266,6 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(TypeString typeString) {
-		// TODO Auto-generated method stub
 		return "char *";
 	}
 
@@ -290,7 +283,6 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(TypeChar typeChar) {
-		// TODO Auto-generated method stub
 		return "char";
 	}
 

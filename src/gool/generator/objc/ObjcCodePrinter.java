@@ -1,27 +1,27 @@
 package gool.generator.objc;
 
-import java.io.File;
-
-import gool.generator.common.CodeGenerator;
 import gool.generator.common.CodePrinter;
 
-public class ObjcCodePrinter extends CodePrinter{
+import java.io.File;
 
-	public ObjcCodePrinter(CodeGenerator generator, File outputDir) {
-		super(generator, outputDir);
-		// TODO Auto-generated constructor stub
-	}
+/**
+ * Provides the basic functionality to generate Objective C code from a list of
+ * GOOL classes.
+ */
+public class ObjcCodePrinter extends CodePrinter {
+	private static final String TEMPLATE_DIR = "gool/generator/objc/templates/";
 
-	@Override
-	public String getFileName(String className) {
-		// TODO Auto-generated method stub
-		return null;
+	public ObjcCodePrinter(File outputDir) {
+		super(new ObjcGenerator(), outputDir);
 	}
 
 	@Override
 	public String getTemplateDir() {
-		// TODO Auto-generated method stub
-		return null;
+		return TEMPLATE_DIR;
 	}
 
+	@Override
+	public String getFileName(String className) {
+		return className + ".java";
+	}
 }

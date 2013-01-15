@@ -1,26 +1,39 @@
 package gool.generator.objc;
 
+import gool.Settings;
 import gool.executor.common.SpecificCompiler;
+import gool.executor.objc.ObjcCompiler;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
-public class ObjcPlatform extends Platform{
+import java.io.File;
+import java.util.ArrayList;
 
-	protected ObjcPlatform(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
+public class ObjcPlatform extends Platform {
+	private final String outputDir = Settings.get("objc_out_dir");
+
+	protected ObjcPlatform() {
+		super("OBJC");
 	}
 
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ObjcCodePrinter(new File(outputDir));
 	}
 
 	@Override
 	protected SpecificCompiler initializeCompiler() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ObjcCompiler(new File(outputDir), new ArrayList<File>());
+	}
+
+	private static ObjcPlatform instance = new ObjcPlatform();
+
+	public static ObjcPlatform getInstance() {
+		return instance;
+	}
+
+	public static void newInstance() {
+		instance = new ObjcPlatform();
 	}
 
 }
