@@ -8,6 +8,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
@@ -38,6 +39,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
@@ -63,7 +65,18 @@ public class ObjcGenerator extends CommonCodeGenerator{
 		customDependencies.put(key, value);
 		
 	}
+	
+	@Override
+	public String getCode(TypeNull typeNull) {
+		return "nil";
+	}
 
+	@Override
+	public String getCode(ThisCall thisCall) {
+		// TODO Auto-generated method stub
+		return "self";
+	}
+	
 	@Override
 	public String getCode(ClassNew classNew) {
 		 	return String.format("[%s new]", removePointer(classNew.getType())); // a completer
@@ -276,7 +289,7 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(TypeString typeString) {
-		return "char *";
+		return "NSString";
 	}
 
 	@Override
