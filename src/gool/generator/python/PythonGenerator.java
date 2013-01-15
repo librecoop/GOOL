@@ -24,7 +24,6 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
@@ -59,29 +58,28 @@ import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
-import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
-import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
-import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
-import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
+import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
-import gool.generator.common.Platform;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -92,14 +90,17 @@ public class PythonGenerator extends CommonCodeGenerator {
 		indentation = "    ";
 	}
 
-	private Map<Meth, String> methodsNames = new HashMap<Meth, String>();
+	private static Map<Meth, String> methodsNames = new HashMap<Meth, String>();
 	
+	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
+
 	private String getName(Meth meth) {
 		return methodsNames.get(meth);
 	}
 	
 	@Override
 	public void addCustomDependency(String key, Dependency value) {
+		customDependencies.put(key, value);
 	}
 	
 	@Override
@@ -376,8 +377,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ToStringCall tsc) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("str(%s)", tsc.getTarget());
 	}
 
 	@Override
@@ -389,13 +389,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeByte typeByte) {
 		return "bytearray";
 	}
-
-	@Override
-	public String getCode(TypeClass typeClass) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
+	
 	@Override
 	public String getCode(TypeDecimal typeReal) {
 		return "float";
@@ -409,8 +403,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s, %s",typeEntry.getKeyType(), typeEntry.getElementType() );
 	}
 
 	@Override
@@ -456,8 +449,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s+=1", unaryOperation.getExpression());
 	}
 
 	@Override
@@ -475,8 +467,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(While whilee) {
-		// TODO Auto-generated method stub
-		return "";
+		return formatIndented("while %s:%1", whilee.getCondition(), whilee.getWhileStatement());
 	}
 
 	@Override
@@ -487,8 +478,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(CustomDependency customDependency) {
-		// TODO Auto-generated method stub
-		return "";
+		if (!customDependencies.containsKey(customDependency.getName())) {
+			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
+			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));
+		}
+		return customDependencies.get(customDependency.getName()).toString();
 	}
 
 	@Override
@@ -525,11 +519,20 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		String code = String.format("class %s(%s):", classDef.getName(),
-				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object");
+		StringBuilder code = new StringBuilder (String.format("# Platform: %s\n\n", classDef.getPlatform()));
 		
+		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
+		if (! dependencies.isEmpty()) {
+			for (String dependency : dependencies)
+				code = code.append(String.format("import %s\n", dependency));
+			code = code.append("\n");
+		}
+		
+		code = code.append(String.format("class %s(%s):", classDef.getName(),
+				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object"));
+
 		for(Field f : classDef.getFields()) {
-			code = code + formatIndented("%1", f);
+			code = code.append(formatIndented("%1", f));
 		}
 
 		List<Meth> meths = new ArrayList<Meth>();
@@ -573,7 +576,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 						name = "__init__";
 					}
 					
-					code += formatIndented("%1", formatIndented("def %s(self, *args):%1", name, block));
+					code = code.append(formatIndented("%1", formatIndented("def %s(self, *args):%1", name, block)));
 					
 				}
 				else {
@@ -588,10 +591,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		
 		for(Meth method : classDef.getMethods()) {
-			code = code + formatIndented("%1", method);
+			code = code.append(formatIndented("%1", method));
 		}
 
-		return code;
+		return code.toString();
 	}
 
 
