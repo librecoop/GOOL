@@ -7,20 +7,15 @@ import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
-import gool.ast.constructs.Constant;
-import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
-import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
-import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
-import gool.ast.constructs.ListMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
@@ -81,16 +76,12 @@ import gool.ast.type.TypeVoid;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.Platform;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import logger.Log;
-
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class PythonGenerator extends CommonCodeGenerator {
@@ -115,7 +106,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("%s[%s]", arrayNew.getType(), StringUtils
 				.join(arrayNew.getDimesExpressions(), ", "));
 	}
-
+	
 	@Override
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
@@ -166,12 +157,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("%s = %s\n", field.getName(), value);
 	}
 
-//	@Override
-//	public String getCode(FieldAccess sfa) {
-//		// TODO Auto-generated method stub
-//		return "";
-//	}
-
 	@Override
 	public String getCode(For forr) {
 		return formatIndented("%s\nwhile %s:%1%1",
@@ -180,12 +165,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 				forr.getWhileStatement(),
 				forr.getUpdater());
 	}
-
-//	@Override
-//	public String getCode(GoolCall goolCall) {
-//		// TODO Auto-generated method stub
-//		return "";
-//	}
 
 	@Override
 	public String getCode(If pif) {
@@ -233,20 +212,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("iter(%s)", lgic.getExpression());
 	}
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
 		return String.format("(not %s)", liec.getExpression());
 	}
-
-//	@Override
-//	public String getCode(ListMethCall lmc) {
-//		// TODO Auto-generated method stub
-//		return "";
-//	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
@@ -278,14 +250,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[0]", mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapEntryGetValueCall mapEntryGetKeyCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[1]", mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
@@ -301,8 +271,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("iter(%s)", mapGetIteratorCall.getExpression());
 	}
 
 	@Override
@@ -312,14 +281,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapMethCall mapMethCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[%s])", mapMethCall.getExpression(),
+				mapMethCall.getParameters().get(0));
 	}
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("%s[%s] = %s", mapPutCall.getExpression(), 
+				mapPutCall.getParameters().get(0), mapPutCall.getParameters().get(1));
 	}
 
 	@Override
@@ -339,13 +308,20 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return meth.getBlock().toString();
 		}
 		else {
-			return formatIndented("def %s(self, %s):%1",
+			return formatIndented("def %s(self%s%s):%1",
 					methodsNames.get(meth),
+					meth.getParams().size()>0?", ":"",
 					StringUtils.join(meth.getParams(),", ").replaceAll("\n", ""),
 					meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
 		}
 	}
 
+	@Override
+	public String getCode(MemberSelect memberSelect) {
+		return String.format("%s.%s", memberSelect.getTarget().toString().equals("this")?"self":memberSelect.getTarget(), memberSelect
+				.getIdentifier());
+	}
+	
 	@Override
 	public String getCode(Modifier modifier) {
 		// TODO Auto-generated method stub
