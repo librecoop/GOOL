@@ -47,6 +47,8 @@ import gool.generator.common.CommonCodeGenerator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 public class ObjcGenerator extends CommonCodeGenerator{
 	
 	private String removePointer(IType type) {
@@ -91,7 +93,8 @@ public class ObjcGenerator extends CommonCodeGenerator{
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
+				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
 
 	@Override
@@ -145,7 +148,7 @@ public class ObjcGenerator extends CommonCodeGenerator{
 	@Override
 	public String getCode(MainMeth mainMeth) {
 		// TODO Auto-generated method stub
-		return null;
+		return "int main(int argc, const char * argv[])";
 	}
 
 	@Override
@@ -215,10 +218,17 @@ public class ObjcGenerator extends CommonCodeGenerator{
 	}
 
 	@Override
-	public String getCode(SystemOutPrintCall systemOutPrintCall) {
+	public String getCode(SystemOutPrintCall systemOutPrintCall) {     //a corriger
 		// TODO Auto-generated method stub
-		return String.format("printf(%s)", GeneratorHelper
+		Expression toPrint = systemOutPrintCall.getParameters().get(0);
+		if (toPrint.getType().equals(TypeString.INSTANCE)) {
+			return String.format("printf()", GeneratorHelper
 				.joinParams(systemOutPrintCall.getParameters()));
+		}
+		else {
+			return String.format("printf", GeneratorHelper
+					.joinParams(systemOutPrintCall.getParameters()));
+		}
 	}
 
 	@Override
@@ -228,7 +238,7 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(TypeBool typeBool) {
-		return "Boolean";
+		return "BOOL";
 	}
 
 	@Override
