@@ -333,7 +333,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-
 		// System.out.println("X");
 		// System.out.println(getTypeMirror(n));
 		logger.info("X" + getTypeMirror(n));
@@ -501,8 +500,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	};
 
 	private static final Map<String, Otd> string2otdMap = new HashMap<String, Otd>();
-	
-	
 	static {
 
 		Otd tmpOtd = new Otd() {
@@ -512,6 +509,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("String", tmpOtd);
 		string2otdMap.put("java.lang.String", tmpOtd);
+		
+		/*tmpOtd = new Otd(){
+			public IType getType(){
+				return TypeFile.INSTANCE;
+			}
+		};
+		string2otdMap.put("File", tmpOtd);
+		string2otdMap.put("java.io.File",tmpOtd);*/
 
 		// We found a Java boxed Double.
 		// As far as type goes, we unbox it and just say it is a GOOL Decimal.

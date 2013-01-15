@@ -2,7 +2,6 @@ package gool.executor;
 
 import gool.ast.constructs.ClassDef;
 import gool.executor.common.SpecificCompiler;
-import gool.executor.csharp.CSharpCompiler;
 import gool.generator.common.Platform;
 
 import java.io.File;
