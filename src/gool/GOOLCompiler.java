@@ -10,6 +10,7 @@ package gool;
 import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
+import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
@@ -48,6 +49,7 @@ public class GOOLCompiler {
 			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
 					files);
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(AndroidPlatform.getInstance(), files);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
