@@ -42,4 +42,9 @@ public class PrinterFile extends Printer {
 			}
 		}
 	}
+	
+	@Override
+	public void printErr(Level lv, Exception e, Color color) {
+		print(lv, e.toString(), color);
+	}
 }

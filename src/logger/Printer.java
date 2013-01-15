@@ -32,6 +32,8 @@ public abstract class Printer {
 	
 	public abstract void print(Level lv, String message, Color color);
 	
+	public abstract void printErr(Level lv, Exception e, Color color);
+	
 	protected String formatedDate() {
 		if(dateFormat!=null) {
 			return dateFormat.format(new Date());

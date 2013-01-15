@@ -27,4 +27,16 @@ public class PrinterTerminal extends Printer {
 		}
 	}
 
+	@Override
+	public void printErr(Level lv, Exception e, Color color) {
+		if(lv.ordinal() >= level.ordinal()) {
+			System.err.println(super.formatedDate());
+			
+			if(tag) {
+				System.err.println("[" + lv + "] ");
+			}
+			
+			e.printStackTrace();			
+		}
+	}
 }
