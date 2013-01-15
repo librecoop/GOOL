@@ -178,7 +178,7 @@ import com.sun.tools.javac.tree.TreeInfo;
  * necessary for that and is declared at the bottom of this file.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
-
+	
 	/**
 	 * The Sun's abstract Java AST that we will now convert to abstract GOOL.
 	 */
@@ -501,6 +501,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	};
 
 	private static final Map<String, Otd> string2otdMap = new HashMap<String, Otd>();
+	
+	
 	static {
 
 		Otd tmpOtd = new Otd() {
