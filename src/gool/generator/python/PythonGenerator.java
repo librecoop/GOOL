@@ -405,14 +405,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeBool typeBool) {
-		// TODO Auto-generated method stub
-		return "";
+		return "bool";
 	}
 
 	@Override
 	public String getCode(TypeByte typeByte) {
-		// TODO Auto-generated method stub
-		return "";
+		return "bytearray";
 	}
 
 	@Override
@@ -423,8 +421,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeDecimal typeReal) {
-		// TODO Auto-generated method stub
-		return "";
+		return "float";
 	}
 
 	@Override
@@ -492,7 +489,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if(varDec.getInitialValue() != null) {
 			value = varDec.getInitialValue().toString();
 		}
-		else {
+		else { 
 			value = "None";
 		}
 		
@@ -554,27 +551,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
-		// TODO Auto-generated method stub
-		return "";
+		// a verifier car de partout à null et je ne sais pas ce que ça fait
+		return null;
 	}
 
-	@Override
-	public String getCode(TypePackage typePackage) {
-		// TODO Auto-generated method stub
-		return "";
-	}
 
-	@Override
-	public String getCode(TypeMethod typeMethod) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
-	public String getCode(TypeVar typeVar) {
-		// TODO Auto-generated method stub
-		return "";
-	}
 	
 	@Override
 	public String printClass(ClassDef classDef) {
@@ -650,8 +631,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeChar typeChar) {
-		// TODO Auto-generated method stub
-		return "";
+		return "str";
 	}
 
 }
