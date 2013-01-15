@@ -23,7 +23,6 @@ import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
@@ -58,23 +57,18 @@ import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
-import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
-import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
-import gool.ast.type.TypePackage;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
-import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.common.CommonCodeGenerator;
-import gool.generator.common.Platform;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -388,13 +382,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeByte typeByte) {
 		return "bytearray";
 	}
-
-	@Override
-	public String getCode(TypeClass typeClass) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
+	
 	@Override
 	public String getCode(TypeDecimal typeReal) {
 		return "float";
@@ -455,8 +443,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
-		// TODO Auto-generated method stub
-		return "";
+		return super.getCode(unaryOperation) + "#ERROR : Unrecognized by Python";
 	}
 
 	@Override
@@ -474,8 +461,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(While whilee) {
-		// TODO Auto-generated method stub
-		return "";
+		return formatIndented("while %s:%1", whilee.getCondition(), whilee.getWhileStatement());
 	}
 
 	@Override
