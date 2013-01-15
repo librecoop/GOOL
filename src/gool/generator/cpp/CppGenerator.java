@@ -547,7 +547,7 @@ public class CppGenerator extends CommonCodeGenerator {
 		if (! dependencies.isEmpty()) {
 			for (String dependency : dependencies) {
 				if (! dependency.equals("noprint"))
-					sb = sb.append(String.format("#include <%s>\n", dependency));
+					sb = sb.append(String.format("#include \"%s\"\n", dependency));
 			}
 			sb = sb.append("\n");
 		}
