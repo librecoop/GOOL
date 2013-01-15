@@ -449,7 +449,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeVoid typeVoid) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub a verifier car void n'existe pas en python, a mettre a la fin de la fonction retourn None
 		return "";
 	}
 
@@ -480,37 +480,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeArray typeArray) {
-		// TODO Auto-generated method stub
-		return "";
+		return "list";
 	}
 
 	@Override
 	public String getCode(CustomDependency customDependency) {
 		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
-	public String getCode(Identifier identifier) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
-	public String getCode(TypeUnknown typeUnknown) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
-	public String getCode(ExpressionUnknown unknownExpression) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
-	public String getCode(ClassFree classFree) {
-		// TODO Auto-generated method stub
+		//je ne sais pas d'ou ça vient!!!
 		return "";
 	}
 
