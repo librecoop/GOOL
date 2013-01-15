@@ -651,7 +651,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeChar typeChar) {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

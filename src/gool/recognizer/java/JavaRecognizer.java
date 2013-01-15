@@ -328,7 +328,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-		System.out.println("X");
 		System.out.println(getTypeMirror(n));
 		return goolType(getTypeMirror(n), context);
 	}
@@ -506,6 +505,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("Integer", tmpOtd);
 		string2otdMap.put("java.lang.Integer", tmpOtd);
+		
 		
 		//NEXT We recognize that the abstact Java was using some well-known class
 		//Which we want to treat in a particular manner
