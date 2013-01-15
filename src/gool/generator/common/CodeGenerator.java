@@ -32,8 +32,8 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Package;
+import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
@@ -69,7 +69,6 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
-import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -399,7 +398,6 @@ public interface CodeGenerator {
 	String getCode(TypeVar typeVar);
 
 	String getCode(TypeChar typeChar);
-	
-	String getCode(TypeFile typeFile);
+
 	
 }
