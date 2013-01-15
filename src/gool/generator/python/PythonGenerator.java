@@ -515,17 +515,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(Platform platform) {
-		return platform.getName();
-	}
-	
-	@Override
-	public String getCode(Package _package) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
 		// a verifier car de partout à null et je ne sais pas ce que ça fait
 		return null;
