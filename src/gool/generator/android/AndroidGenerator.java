@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 
+
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -131,8 +132,13 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		return String.format("%s.size()", lsc.getExpression());
 	}
 
+	/**
+	 * Changed from java, might cause problems if input java has more than one main method
+	 * or if Android uses public static void main. Currently sufficient for preliminary
+	 * tests on HelloWorld.
+	 */
 	public String getCode(MainMeth mainMeth) {
-		return "public static void main(String[] args)";
+		return "public static void EntryMethod(TextView systemOutTextBox, String[] args)";
 	}
 
 	@Override
