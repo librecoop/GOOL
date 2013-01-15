@@ -42,7 +42,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(PythonPlatform.getInstance(), JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance());
+	 Arrays.asList(CSharpPlatform.getInstance(), CppPlatform.getInstance(), JavaPlatform.getInstance(), PythonPlatform.getInstance());
 
 	@BeforeClass
 	public static void init() {

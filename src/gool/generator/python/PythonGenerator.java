@@ -7,6 +7,7 @@ import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
+import gool.ast.constructs.Constant;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
@@ -558,6 +559,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "str";
+	}
+	
+	
+	@Override
+	public String getCode(Constant constant) {
+		if (constant.getType().equals(TypeBool.INSTANCE)) {
+			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "");
+		} else {
+			return super.getCode(constant);
+		}
 	}
 
 }

@@ -204,7 +204,8 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 	
 	public String getCode(SystemOutDependency systemOutDependency) {
-		return "noprint";
+		//return "noprint";
+		return "java.util.*";
 	}
 
 	@Override
@@ -245,8 +246,9 @@ public class JavaGenerator extends CommonCodeGenerator {
 			return "java.util.Map";
 		}
 		return super.getCode(typeDependency);
+		//return "java.util.*";
 	}
-
+	
 	@Override
 	public String getCode(TypeEntry typeEntry) {
 		return String.format("Map.Entry<%s, %s>",typeEntry.getKeyType(), typeEntry.getElementType());
@@ -254,7 +256,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeInt typeInt) {
-		return "Integer";
+		return "java.lang.Integer";
 	}
 	
 	@Override
@@ -280,7 +282,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeString typeString) {
-		return "String";
+		return "java.lang.String";
 	}
 	
 	@Override
