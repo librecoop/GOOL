@@ -1,6 +1,10 @@
 package gool.generator.python;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import gool.Settings;
@@ -15,6 +19,22 @@ public class PythonPlatform extends Platform {
 	
 	protected PythonPlatform() {
 		super("PYTHON");
+		// create goolHelper.py by copying the resource
+		FileOutputStream goolHelperOut;
+		InputStream goolHelperIn;
+		byte[] buffer = new byte[1024];
+		int noOfBytes;
+		goolHelperIn = PythonPlatform.class.getResourceAsStream("goolHelper.py");
+		try {
+			goolHelperOut = new FileOutputStream (outputDir+"/goolHelper.py");
+			while ((noOfBytes = goolHelperIn.read(buffer)) != -1)
+				goolHelperOut.write(buffer, 0, noOfBytes);
+			goolHelperOut.close();
+			goolHelperIn.close();
+		} catch (IOException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();	
+		}
 	}
 
 	@Override
