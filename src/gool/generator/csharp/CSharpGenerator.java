@@ -43,6 +43,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -421,5 +422,13 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+<<<<<<< HEAD
+=======
+	@Override
+	public String getCode(TypeFile typeFile) {
+		return "filecsharp";
+	}
+>>>>>>> 10be9d733b74224ae1c8f7a7ca040f39217a8ef9
 
 }

@@ -25,6 +25,7 @@ public abstract class IType extends Node {
 	 * Gets the arguments of a type.
 	 * @return a list containing all the type arguments.
 	 */
+	
 	public List<IType> getTypeArguments() {
 		return typeArguments;
 	}

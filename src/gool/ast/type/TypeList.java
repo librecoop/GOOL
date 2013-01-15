@@ -7,6 +7,7 @@ import gool.generator.GoolGeneratorController;
 /**
  * This is the basic type for classes defined in the intermediate language.
  */
+
 public class TypeList extends ReferenceType {
 	
 	/**
@@ -15,6 +16,7 @@ public class TypeList extends ReferenceType {
 	private ClassDef classDef;
 	
 	public TypeList() {
+		
 	}
 
 	public TypeList(IType elementType) {

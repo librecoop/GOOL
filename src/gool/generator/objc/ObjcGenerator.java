@@ -8,6 +8,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
@@ -31,23 +32,29 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
+import gool.ast.type.PrimitiveType;
+import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 
-public class ObjcGenerator extends CommonCodeGenerator{
-	
+
+
+public class ObjcGenerator extends CommonCodeGenerator {
+
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
 	}
@@ -55,16 +62,31 @@ public class ObjcGenerator extends CommonCodeGenerator{
 	private String removePointer(String type) {
 		return type.replaceAll("[\\s*]+$", "");
 	}
+
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
+
 	@Override
 	public void addCustomDependency(String key, Dependency value) {
+
 		customDependencies.put(key, value);
-		
+
+	}
+	
+	@Override
+	public String getCode(TypeNull typeNull) {
+		return "nil";
 	}
 
 	@Override
+	public String getCode(ThisCall thisCall) {
+		// TODO Auto-generated method stub
+		return "self";
+	}
+	
+	@Override
 	public String getCode(ClassNew classNew) {
-		 	return String.format("[%s new]", removePointer(classNew.getType())); // a completer
+		return String.format("[%s new]", removePointer(classNew.getType())); // a
+																				// completer
 	}
 
 	@Override
@@ -73,24 +95,39 @@ public class ObjcGenerator extends CommonCodeGenerator{
 		String varName = varDec.getName();
 		Expression expression = enhancedForLoop.getExpression();
 		String expressionToString = enhancedForLoop.getExpression().toString();
-		return String
-				.format(
-						"for(%s::iterator %sIterator = %s->begin(); %sIterator != %s->end(); ++%sIterator){\n"
-								+ "%s %s *%sIterator;" + "%s" + "\n}",
-						removePointer(expression.getType()), varName,
-						expressionToString, varName, expressionToString,
-						varName, varDec.getType(),
-						(expression.getType() instanceof TypeMap) ? (String
-								.format("* %s = (%s*)&", varName, varDec
-										.getType())) : (String.format("%s = ",
-								varName)), varName, enhancedForLoop
-								.getStatements());
+		if (varDec.getType() instanceof PrimitiveType) {
+			return String
+					.format("for(%s::iterator %sIterator = %s->begin(); %sIterator != %s->end(); ++%sIterator){\n"
+							+ "%s %s *%sIterator;" + "%s" + "\n}",
+							removePointer(expression.getType()),
+							varName,
+							expressionToString,
+							varName,
+							expressionToString,
+							varName,
+							varDec.getType(),
+							(expression.getType() instanceof TypeMap) ? (String
+									.format("* %s = (%s*)&", varName,
+											varDec.getType())) : (String
+									.format("%s = ", varName)), varName,
+							enhancedForLoop.getStatements());
+		} else {
+			return String
+					.format("for(%s in %s){%s}",
+							enhancedForLoop.getVarDec(),
+							(enhancedForLoop.getExpression().getType() instanceof TypeMap) ? String
+									.format("%s.entrySet()",
+											enhancedForLoop.getExpression())
+									: enhancedForLoop.getExpression(),
+							enhancedForLoop.getStatements());
+		}
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
+				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
 
 	@Override
@@ -144,7 +181,7 @@ public class ObjcGenerator extends CommonCodeGenerator{
 	@Override
 	public String getCode(MainMeth mainMeth) {
 		// TODO Auto-generated method stub
-		return null;
+		return "int main(int argc, const char * argv[])";
 	}
 
 	@Override
@@ -202,9 +239,9 @@ public class ObjcGenerator extends CommonCodeGenerator{
 	}
 
 	@Override
+	//TODO super
 	public String getCode(ParentCall parentCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return "self =[super init]";
 	}
 
 	@Override
@@ -215,9 +252,8 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		// TODO Auto-generated method stub
-		return String.format("printf(%s)", GeneratorHelper
-				.joinParams(systemOutPrintCall.getParameters()));
+		return String.format("NSLog(@%s)",
+				GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
 	}
 
 	@Override
@@ -227,7 +263,7 @@ public class ObjcGenerator extends CommonCodeGenerator{
 
 	@Override
 	public String getCode(TypeBool typeBool) {
-		return "Boolean";
+		return "BOOL";
 	}
 
 	@Override
@@ -241,32 +277,34 @@ public class ObjcGenerator extends CommonCodeGenerator{
 		return null;
 	}
 
+	public String getCode(TypeObject typeObject) {
+		// type java.object
+		return "id";
+	}
+
 	@Override
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
+	
+	public String getCode(TypeArray typeArray){
+		return String.format("NSArray");
+	}
 
 	@Override
 	public String getCode(TypeList typeList) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("NSMutableArray");
 	}
 
 	@Override
+	//TODO NSMutableDictionary
 	public String getCode(TypeMap typeMap) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(TypeObject typeObject) {
-		// TODO Auto-generated method stub
-		return "NSObject";
+		return "NSMutableDictionary";
 	}
 
 	@Override
 	public String getCode(TypeString typeString) {
-		return "char *";
+		return "NSString *";
 	}
 
 	@Override
@@ -284,6 +322,12 @@ public class ObjcGenerator extends CommonCodeGenerator{
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "char";
+	}
+
+	@Override
+	public String getCode(TypeFile typeFile) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

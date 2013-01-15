@@ -32,8 +32,8 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Package;
+import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
@@ -69,6 +69,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -273,6 +274,7 @@ public interface CodeGenerator {
 	String getCode(ThisCall thisCall);
 
 	String getCode(ToStringCall tsc);
+	
 
 	/**
 	 * Produces code for a boolean type in the target language.
@@ -397,5 +399,10 @@ public interface CodeGenerator {
 	String getCode(TypeVar typeVar);
 
 	String getCode(TypeChar typeChar);
+
+<<<<<<< HEAD
+=======
+	String getCode(TypeFile typeFile);
+>>>>>>> 10be9d733b74224ae1c8f7a7ca040f39217a8ef9
 	
 }
