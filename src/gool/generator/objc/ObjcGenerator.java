@@ -79,7 +79,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		// TODO Auto-generated method stub
 		return "self";
 	}
 	

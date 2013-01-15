@@ -173,6 +173,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "System.Collections.Generic";
 		}
+		if (typeDependency.getType() instanceof TypeFile){
+			return "System.IO";
+		}
 		if (typeDependency.getType() instanceof TypeString) {
 			return "noprint";
 		}
@@ -423,12 +426,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		return null;
 	}
 
-<<<<<<< HEAD
-=======
 	@Override
 	public String getCode(TypeFile typeFile) {
 		return "filecsharp";
 	}
->>>>>>> 10be9d733b74224ae1c8f7a7ca040f39217a8ef9
 
 }
