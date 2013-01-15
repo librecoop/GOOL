@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -201,9 +202,15 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		return "noprint";
 	}
 
+	
+	 // TODO Currently an android.widget.TextView called systemOutTextBox is used
+	 // as a System.out equivalent, this can probably be optimized with a Singleton
+	// type instance
+	 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("System.out.println(%s)", StringUtils.join(
+		return String.format("systemOutTextBox.append(%s+\"\\n\") ",
+		 StringUtils.join(
 				systemOutPrintCall.getParameters(), ","));
 	}
 
