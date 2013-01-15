@@ -369,8 +369,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ToStringCall tsc) {
-		// TODO Auto-generated method stub
-		return "";
+		return String.format("str(%s)", tsc.getTarget());
 	}
 
 	@Override
