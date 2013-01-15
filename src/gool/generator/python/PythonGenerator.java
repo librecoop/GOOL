@@ -21,6 +21,7 @@ import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
+import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
 import gool.ast.constructs.Package;
@@ -524,8 +525,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		String code = String.format("class %s%s:", classDef.getName(),
-				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
+		String code = String.format("class %s(%s):", classDef.getName(),
+				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object");
 		
 		for(Field f : classDef.getFields()) {
 			code = code + formatIndented("%1", f);
