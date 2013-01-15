@@ -161,11 +161,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(For forr) {
-		return formatIndented("%s\nwhile %s:%1%1",
-				forr.getInitializer(),
-				forr.getCondition(),
-				forr.getWhileStatement(),
-				forr.getUpdater());
+		return formatIndented("%s\nwhile %s:%1",
+				forr.getInitializer(), forr.getCondition(),
+				forr.getWhileStatement().toString() + forr.getUpdater().toString());
 	}
 
 	@Override
@@ -174,8 +172,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (pif.getElseStatement() != null){
 			if (pif.getElseStatement() instanceof If) {
 				out += formatIndented ("el%s", pif.getElseStatement());
-			}
-			else {
+			} else {
 				out += formatIndented ("else:%1", pif.getElseStatement());
 			}
 		}
@@ -204,7 +201,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s in %s", StringUtils.join(lcc.getParameters(), ", "), lcc.getExpression());
+		return String.format("%s in %s", lcc.getParameters().get(0), lcc.getExpression());
 	}
 
 	@Override
@@ -306,16 +303,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		if(meth.isMainMethod()) {
-			return meth.getBlock().toString();
+		String params = "";
+		for (VarDeclaration p : meth.getParams()) {
+			params += ", " + p.getName();
+			if (p.getInitialValue() != null)
+				params += " = " + p.getInitialValue();
 		}
-		else {
-			return formatIndented("def %s(self%s%s):%1",
-					methodsNames.get(meth),
-					meth.getParams().size()>0?", ":"",
-					StringUtils.join(meth.getParams(),", ").replaceAll("\n", ""),
-					meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
-		}
+		return formatIndented("def %s(self%s):%1",
+				methodsNames.get(meth), params,
+				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
 	}
 
 	@Override
@@ -372,7 +368,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return "";
+		return String.format("self = %s(%s)", thisCall.getType(), GeneratorHelper.joinParams(thisCall.getParameters()));
 	}
 
 	@Override
@@ -449,7 +445,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
-		return String.format("%s+=1", unaryOperation.getExpression());
+		switch (unaryOperation.getOperator()){
+		case POSTFIX_INCREMENT:
+		case PREFIX_INCREMENT:
+			return String.format("%s +=1", unaryOperation.getExpression());
+		case POSTFIX_DECREMENT:
+		case PREFIX_DECREMENT:
+			return String.format("%s -=1", unaryOperation.getExpression());
+		default:
+			return String.format("%s%s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
+		}
 	}
 
 	@Override
@@ -472,8 +477,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeArray typeArray) {
-		// TODO Auto-generated method stub
-		return "";
+		return "list";
 	}
 
 	@Override
@@ -483,12 +487,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));
 		}
 		return customDependencies.get(customDependency.getName()).toString();
-	}
-
-	@Override
-	public String getCode(Identifier identifier) {
-		// TODO Auto-generated method stub
-		return "";
 	}
 
 	@Override
@@ -527,7 +525,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 				code = code.append(String.format("import %s\n", dependency));
 		}
 		
-		code = code.append(String.format("\nclass %s(%s):", classDef.getName(),
+		code = code.append(String.format("\nclass %s(%s):\n", classDef.getName(),
 				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object"));
 
 		for(Field f : classDef.getFields()) {
