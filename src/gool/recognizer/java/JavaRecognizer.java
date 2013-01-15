@@ -26,7 +26,6 @@ import gool.ast.constructs.Expression;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
-import gool.ast.constructs.Node;
 import gool.ast.constructs.If;
 import gool.ast.constructs.InitCall;
 import gool.ast.constructs.MainMeth;
@@ -34,6 +33,7 @@ import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
+import gool.ast.constructs.Node;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.Parameterizable;
@@ -101,10 +101,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+
+import logger.Log;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ArrayAccessTree;
@@ -149,6 +150,7 @@ import com.sun.source.tree.SwitchTree;
 import com.sun.source.tree.SynchronizedTree;
 import com.sun.source.tree.ThrowTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.TryTree;
 import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.TypeParameterTree;
@@ -156,18 +158,17 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.WildcardTree;
-import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Symbol.MethodSymbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
+import com.sun.tools.javac.tree.TreeInfo;
 
 
 
@@ -328,7 +329,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-		System.out.println(getTypeMirror(n));
+		Log.i(getTypeMirror(n).toString());
 		return goolType(getTypeMirror(n), context);
 	}
 
@@ -379,12 +380,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
 		Symbol classSymbol = (Symbol) type.asElement();
-		System.out.println("XXX just before claiming a typeName from classsymbol XXX");
-		System.out.println("XXX type, classSymbol, kind XXX");
-		System.out.println(type);
-		System.out.println(classSymbol);
-		System.out.println(typeMirror.getKind());		
-		System.out.println("XXX");
+		Log.d("XXX just before claiming a typeName from classsymbol XXX");
+		Log.d("XXX type, classSymbol, kind XXX");
+		Log.d(type.toString());
+		Log.d(classSymbol==null?"null":classSymbol.toString());
+		Log.d(typeMirror.getKind().toString());		
+		Log.d("XXX");
 		String typeName;
 		IType goolType;
 		switch (typeMirror.getKind()) {
@@ -968,9 +969,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// TODO identifiers. Create a specific node to access to class literal (i.e. when calling static members).
 		String test1 = n.getName().toString();
 		String t2 = type.getName();
-		System.out.println("testN : "+test1+"\n");
-		System.out.println("testType : "+t2+"\n");
-		System.out.println("test cntext : "+context.getClassDef().getName().toString());
+		Log.d("testN : "+test1+"\n");
+		Log.d("testType : "+t2+"\n");
+		Log.d("test cntext : "+context.getClassDef().getName().toString());
 		if (type.getName().equals(n.getName().toString())) {
 			return new Constant(type, n.getName().toString());
 		}
@@ -1024,10 +1025,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Expression target = (Expression) n.getExpression()
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
-		System.out.println("XX Entering MemberSelect with target-identifier XX");
-		System.out.println(target);
-		System.out.println(identifier);
-		System.out.println("XX");
+		Log.d("XX Entering MemberSelect with target-identifier XX");
+		Log.d(target.toString());
+		Log.d(identifier.toString());
+		Log.d("XX");
 		/*
 		 * TODO Currently we are assuming that the following methods are always the same as the methods
 		 * "toString" and "equals" belonging to the Object class.
@@ -1040,9 +1041,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 
 		IType type = target.getType();
-		System.out.println("X Target type X");
-		System.out.println(type);
-		System.out.println("X");
+		Log.d("X Target type X");
+		Log.d(type.toString());
+		Log.d("X");
 
 		if (type != null) {
 
@@ -1112,10 +1113,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//were not recognized
 		//i.e. it is not a library that requires a particular treatment
 		//it gets the standard treatment.
-		System.out.println("X Standard method call for X");
-		System.out.println(n);
+		Log.d("X Standard method call for X");
+		Log.d(n.toString());
 		IType goolType = goolType(n, context);
-		System.out.println("X");
+		Log.d("X");
 		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
 				.toString());
 		return f;
@@ -1131,7 +1132,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//Get the name of the class
 		JCClassDecl c = (JCClassDecl) n;
 		ClassDef classDef = new ClassDef(n.getSimpleName().toString());
-		System.out.println(String.format("Parsing class %s", n.getSimpleName()));
+		Log.i(String.format("Parsing class %s", n.getSimpleName()));
 		
 		//The new class will provide the context for the things parsed inside of it.
 		Context newContext = new Context(classDef, null);
@@ -1237,7 +1238,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				classDef.addField(new Field(Arrays.asList(Modifier.PRIVATE),
 						(VarDeclaration) member));
 			} else if (member != null) {
-				System.out.println(String.format(
+				Log.i(String.format(
 						"Unrecognized member for class %s: %s ", classDef
 								.getName(), member));
 			}
@@ -1442,9 +1443,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 						.getReturnType(), context));
 		} 
 		else {
-				System.out.println("YYYY from method to member select YYYY");
-				System.out.println(n.getMethodSelect().toString());
-				System.out.println("YYYYYYYYYYYYY");
+				Log.d("YYYY from method to member select YYYY");
+				Log.d(n.getMethodSelect().toString());
+				Log.d("YYYYYYYYYYYYY");
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().
 			target = (Expression) n.getMethodSelect().accept(this,

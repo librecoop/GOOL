@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import logger.Log;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -136,7 +138,7 @@ public abstract class CodePrinter {
 			//Load the template into velocity
 			String templateFile = getTemplateDir() + templateFilename;
 			Template template = engine.getTemplate(templateFile);
-			System.out.println(String.format("Loaded velocity template: %s", templateFile));
+			Log.i(String.format("Loaded velocity template: %s", templateFile));
 			
 			//Provide velocity with what it needs to fill in the template
 			//i.e. the ClassDef
@@ -195,7 +197,7 @@ public abstract class CodePrinter {
 		dir.mkdirs(); 
 		//Create the file for the class, fill it in, close it
 		File classFile = new File(dir, getFileName(pclass.getName()));
-		System.out.println(String.format("Writing to file %s", classFile));
+		Log.i(String.format("Writing to file %s", classFile));
 		PrintWriter writer = new PrintWriter(classFile);
 		writer.println(code);
 		writer.close();

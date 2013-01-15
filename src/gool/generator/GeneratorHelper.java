@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import logger.Log;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -72,7 +74,7 @@ public final class GeneratorHelper {
 			}
 			//If the target output directory is not there yet, make it.
 			if (!currentPrinter.getOutputDir().exists()) {
-				System.out.println("Creating the output directory "
+				Log.i("Creating the output directory "
 						+ currentPrinter.getOutputDir());
 				currentPrinter.getOutputDir().mkdirs();
 			}

@@ -1,19 +1,13 @@
 package gool.test;
 
-import gool.Settings;
-import gool.executor.python.PythonCompiler;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import logger.Log;
 
@@ -288,7 +282,7 @@ public class GoolTest {
 						"int total = 1 ^ 0; System.out.println(total);",
 						MAIN_CLASS_NAME);
 		String expected = "";
-		compareResultsDifferentPlatforms(input, "expected");
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	private void compareResultsDifferentPlatforms(String input,

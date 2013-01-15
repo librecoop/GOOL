@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import logger.Log;
+
 public class GOOLCompiler {
 
 	/**
@@ -37,16 +39,16 @@ public class GOOLCompiler {
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = Arrays.asList(folder.listFiles());
-			System.out.println(files);
+			Log.i(files.toString());
 			GOOLCompiler gc = new GOOLCompiler();
 			Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
-			System.out.println(f);
+			Log.i(f.toString());
 			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
 					files);
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
 			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 

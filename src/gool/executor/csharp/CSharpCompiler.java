@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import logger.Log;
+
 import org.apache.commons.lang.StringUtils;
 
 public class CSharpCompiler extends SpecificCompiler {
@@ -30,7 +32,7 @@ public class CSharpCompiler extends SpecificCompiler {
 		List<String> params = new ArrayList<String>();
 
 		if (mainFile == null) {
-			System.out.println(files);
+			Log.i(files.toString());
 			mainFile = files.get(0);
 		}
 
@@ -66,7 +68,7 @@ public class CSharpCompiler extends SpecificCompiler {
 		// TODO Duplicate code in compile and compileAll
 		
 		if (mainFile == null) {
-			System.out.println(files);
+			Log.i(files.toString());
 			mainFile = files.get(0);
 		}
 		

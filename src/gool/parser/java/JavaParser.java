@@ -19,6 +19,8 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import logger.Log;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.sun.source.tree.CompilationUnitTree;
@@ -152,7 +154,7 @@ public class JavaParser {
 		ArrayList<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
 		compilationUnits.add(new MyFileObject(
 		 input, "Random.java"));
-		System.out.println(input);
+		Log.i(input);
 		return parseGool(defaultPlatform, compilationUnits);
 	}
 	
