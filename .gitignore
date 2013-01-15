@@ -3,4 +3,4 @@
 .project
 bin/
 gool.jar
-gool/properties
+src/properties
