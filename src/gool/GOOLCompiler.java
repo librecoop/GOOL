@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import logger.Log;
+
 public class GOOLCompiler {
 
 	/**
@@ -46,7 +48,7 @@ public class GOOLCompiler {
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
 			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(e);
 		}
 	}
 

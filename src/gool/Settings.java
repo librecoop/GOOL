@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import logger.Log;
+
 
 public final class Settings {
 
@@ -22,7 +24,7 @@ public final class Settings {
 				properties.load(stream);
 			}
 		} catch (IOException e) {
-			System.out.println(String.format("Failed to load the property file %s", propertyFile)+e);
+			Log.e(String.format("Failed to load the property file %s", propertyFile)+e.toString());
 		}
 
 	}
