@@ -40,6 +40,7 @@ import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
+import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.list.ListAddCall;
@@ -361,6 +362,8 @@ public interface CodeGenerator {
 
 	String getCode(UnaryOperation unaryOperation);
 
+	String getCode(VarAccess varAccess);
+	
 	/**
 	 * Produces code for a variable declaration.
 	 * 

@@ -1,5 +1,7 @@
 package gool.ast.constructs;
 
+import gool.generator.GoolGeneratorController;
+
 
 /**
  * This class captures variable content invocation.
@@ -23,9 +25,13 @@ public class VarAccess extends Expression {
 		this.var=var;
 	}
 
+	public Dec getDec() {
+		return var;
+	}
+	
 	@Override
 	public String callGetCode() {
-		return var.getName();
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

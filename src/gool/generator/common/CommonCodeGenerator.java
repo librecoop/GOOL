@@ -8,11 +8,9 @@ import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
-import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.Constructor;
-import gool.ast.constructs.Dependency;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
@@ -36,6 +34,7 @@ import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
+import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
@@ -487,11 +486,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return String.format("%s %s%s", varDec.getType(), varDec.getName(),
 				initialValue);
 	}
-
+	
+	@Override
+	public String getCode(VarAccess varAccess) {
+		return varAccess.getDec().getName();
+	}
+	
 	@Override
 	public String getCode(While whilee) {
-//		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
-//				.getWhileStatement());
 		return formatIndented("while (%s) {%1}", whilee.getCondition(), whilee
 				.getWhileStatement());
 	}

@@ -7,20 +7,15 @@ import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
-import gool.ast.constructs.Constant;
-import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
-import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
-import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
-import gool.ast.constructs.ListMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
@@ -81,16 +76,12 @@ import gool.ast.type.TypeVoid;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.Platform;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import logger.Log;
-
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class PythonGenerator extends CommonCodeGenerator {
@@ -115,7 +106,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("%s[%s]", arrayNew.getType(), StringUtils
 				.join(arrayNew.getDimesExpressions(), ", "));
 	}
-
+	
 	@Override
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
@@ -339,13 +330,20 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return meth.getBlock().toString();
 		}
 		else {
-			return formatIndented("def %s(self, %s):%1",
+			return formatIndented("def %s(self%s%s):%1",
 					methodsNames.get(meth),
+					meth.getParams().size()>0?", ":"",
 					StringUtils.join(meth.getParams(),", ").replaceAll("\n", ""),
 					meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
 		}
 	}
 
+	@Override
+	public String getCode(MemberSelect memberSelect) {
+		return String.format("%s.%s", memberSelect.getTarget().toString().equals("this")?"self":memberSelect.getTarget(), memberSelect
+				.getIdentifier());
+	}
+	
 	@Override
 	public String getCode(Modifier modifier) {
 		// TODO Auto-generated method stub
