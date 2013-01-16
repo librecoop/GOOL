@@ -172,16 +172,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(Constant constant) {
-		if(constant.getType() == TypeBool.INSTANCE) {
-			if(constant.getValue().toString().equals("true")) {
-				return "True";
-			}
-			else {
-				return "False";
-			}
+		if (constant.getType().equals(TypeBool.INSTANCE)) {
+			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "False");
+		} else {
+			return super.getCode(constant);
 		}
-
-		return super.getCode(constant);
 	}
 	
 	@Override
@@ -671,15 +666,4 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeChar typeChar) {
 		return "str";
 	}
-	
-	
-	@Override
-	public String getCode(Constant constant) {
-		if (constant.getType().equals(TypeBool.INSTANCE)) {
-			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "");
-		} else {
-			return super.getCode(constant);
-		}
-	}
-
 }
