@@ -124,7 +124,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		// TODO Auto-generated method stub
 		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
 				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
@@ -252,7 +251,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		return String.format("NSLog(@%s)",
-				GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
+				GeneratorHelper.joinParams(systemOutPrintCall.getParameters())); //a completer
 	}
 
 	@Override
