@@ -39,6 +39,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
+import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
@@ -230,11 +231,10 @@ public class JavaGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(TypeChar typeChar) {
-		// TODO Auto-generated method stub
 		return "char";
 	}
 
-	public String getCode(TypeDependency typeDependency) {
+	public String getCode(TypeDependency typeDependency) {		
 		if (typeDependency.getType() instanceof TypeList) {
 			return "java.util.ArrayList";
 		}
@@ -246,7 +246,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 		}
 		return super.getCode(typeDependency);
 	}
-
+	
 	@Override
 	public String getCode(TypeEntry typeEntry) {
 		return String.format("Map.Entry<%s, %s>",typeEntry.getKeyType(), typeEntry.getElementType());
@@ -312,8 +312,11 @@ public class JavaGenerator extends CommonCodeGenerator {
 		// print the includes
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies)
-				sb = sb.append(String.format("import %s;\n", dependency));
+			for (String dependency : dependencies){
+				if(dependency != "noprint" && dependency.contains("."))
+					sb = sb.append(String.format("import %s;\n", dependency));
+			}
+				
 			sb = sb.append("\n");
 		}
 		// print the class prototype

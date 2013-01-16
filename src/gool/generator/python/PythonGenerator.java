@@ -1,12 +1,13 @@
 package gool.generator.python;
 
 import gool.ast.constructs.ArrayNew;
+import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
+import gool.ast.constructs.Constant;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
@@ -14,16 +15,15 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
-import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
-import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
+import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
@@ -136,6 +136,24 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 	
 	@Override
+	public String getCode(BinaryOperation binaryOp) {
+		String textualOp = "";
+		
+		switch (binaryOp.getOperator()) {
+			case AND :
+				textualOp = "and";
+				break;
+			case OR :
+				textualOp = "or";
+				break;
+			default :
+				return super.getCode(binaryOp);
+		}
+		
+		return String.format("(%s %s%s %s)", binaryOp.getLeft(), textualOp, binaryOp.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"", binaryOp.getRight());
+	}
+
+	@Override
 	public String getCode(CastExpression cast) {
 		return String.format("%s(%s)", cast.getType(), cast
 				.getExpression());
@@ -150,6 +168,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(Comment comment) {
 		return comment.getValue().replaceAll("(^ *)([^ ])", "$1# $2");
+	}
+	
+	@Override
+	public String getCode(Constant constant) {
+		if (constant.getType().equals(TypeBool.INSTANCE)) {
+			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "False");
+		} else {
+			return super.getCode(constant);
+		}
 	}
 	
 	@Override
@@ -464,7 +491,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeVoid typeVoid) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub a verifier car void n'existe pas en python, a mettre a la fin de la fonction retourn None
 		return "";
 	}
 
@@ -472,13 +499,17 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(UnaryOperation unaryOperation) {
 		switch (unaryOperation.getOperator()){
 		case POSTFIX_INCREMENT:
+			return String.format("goolHelper.increment(%s)", unaryOperation.getExpression());
 		case PREFIX_INCREMENT:
 			comment ("GOOL warnning: semantic may have changed");
 			return String.format("%s +=1", unaryOperation.getExpression());
 		case POSTFIX_DECREMENT:
+			return String.format("goolHelper.decrement(%s)", unaryOperation.getExpression());
 		case PREFIX_DECREMENT:
 			comment ("GOOL warnning: semantic may have changed");
 			return String.format("%s -=1", unaryOperation.getExpression());
+		case NOT:
+			return String.format("not %s", unaryOperation.getExpression());
 		case UNKNOWN:
 			comment("Unrecognized by GOOL, passed on");
 		default:
@@ -531,14 +562,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(ClassFree classFree) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
-		// a verifier car de partout à null et je ne sais pas ce que ça fait
+		// TODO a verifier car de partout à null et je ne sais pas ce que ça fait
 		return null;
 	}
 
@@ -550,8 +575,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies)
-				code = code.append(String.format("import %s\n", dependency));
+			for (String dependency : dependencies) {
+				if(!dependency.isEmpty())
+					code = code.append(String.format("importr %s\n", dependency));
+			}
 		}
 		
 		code = code.append(String.format("\nclass %s(%s):\n", classDef.getName(),
@@ -648,5 +675,4 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeChar typeChar) {
 		return "str";
 	}
-
 }
