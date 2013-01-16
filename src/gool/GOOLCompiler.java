@@ -14,6 +14,7 @@ import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
+import gool.generator.objc.ObjcPlatform;
 import gool.parser.java.JavaParser;
 
 import java.io.File;
@@ -46,9 +47,9 @@ public class GOOLCompiler {
 			GOOLCompiler gc = new GOOLCompiler();
 			Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
 			logger.info(f);
-			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
-					files);
+			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),files);
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

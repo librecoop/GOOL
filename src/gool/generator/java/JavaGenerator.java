@@ -245,6 +245,9 @@ public class JavaGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "java.util.Map";
 		}
+		if (typeDependency.getType() instanceof TypeFile) {
+			return "java.io.File";
+		}
 		return super.getCode(typeDependency);
 	}
 
@@ -307,7 +310,6 @@ public class JavaGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	@Override
 	public String getCode(TypeFile typeFile) {

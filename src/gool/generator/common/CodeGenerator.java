@@ -400,8 +400,6 @@ public interface CodeGenerator {
 
 	String getCode(TypeChar typeChar);
 
-
 	String getCode(TypeFile typeFile);
-
 	
 }
