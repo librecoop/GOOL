@@ -319,18 +319,24 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("len(%s)", mapSizeCall.getExpression());
 	}
 
-	@Override
-	public String getCode(Meth meth) {
+	private String printMeth(Meth meth, String prefix){
 		String params = "";
 		for (VarDeclaration p : meth.getParams()) {
 			params += ", " + p.getName();
 			if (p.getInitialValue() != null)
 				params += " = " + p.getInitialValue();
 		}
+		if (prefix == "" && meth.getBlock().getStatements().isEmpty())
+			prefix = "pass";
 		return formatIndented("%sdef %s(self%s):%1",
 				meth.getModifiers().contains(Modifier.STATIC)?"@classmethod\n":"",
 				methodsNames.get(meth), params,
-				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
+				prefix + meth.getBlock());
+	}
+	
+	@Override
+	public String getCode(Meth meth) {
+		return printMeth(meth, "");
 	}
 
 	@Override
@@ -551,11 +557,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 		code = code.append(String.format("\nclass %s(%s):\n", classDef.getName(),
 				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object"));
 
+		String dynamicAttributs = "";
 		for(Field f : classDef.getFields()) {
 			if (f.getModifiers().contains(Modifier.STATIC))
 				code = code.append(formatIndented("%1", f));
+			else
+				dynamicAttributs += String.format("self.%s\n", f);
 		}
-
+		dynamicAttributs = dynamicAttributs.replaceFirst("\\s*\\z", "\n");
+		
 		List<Meth> meths = new ArrayList<Meth>();
 		Meth mainMeth = null;
 		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
@@ -599,12 +609,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 					String name = method.getName();
 					if(method.isConstructor()) {
 						name = "__init__";
-						String params = "";
-						for(Field f : classDef.getFields()) {
-							if (! f.getModifiers().contains(Modifier.STATIC))
-								params += String.format("self.%s\n",f);
-						}
-						block = params.replaceFirst("\\s*\\z", "\n") + block;
+						block = dynamicAttributs + block;
 					}
 					
 					code = code.append(formatIndented("%-1def %s(self, *args):%2", name, block));
@@ -622,8 +627,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		
 		for(Meth method : classDef.getMethods()) {
-			if (! method.isMainMethod())
-				code = code.append(formatIndented("%1", method));
+			if (! method.isMainMethod()) {
+				if (methodsNames.get(method).equals("__init__"))
+					code = code.append(formatIndented("%1", printMeth(method, dynamicAttributs)));
+				else
+					code = code.append(formatIndented("%1", method));
+			}
 		}
 		
 		if (mainMeth != null) {
