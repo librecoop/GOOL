@@ -22,6 +22,7 @@ import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
+import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
 import gool.ast.constructs.ParentCall;
@@ -69,6 +70,7 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
+import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.ArrayList;
@@ -76,6 +78,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -85,15 +90,35 @@ public class PythonGenerator extends CommonCodeGenerator {
 		super();
 		indentation = "    ";
 	}
-
-	private Map<Meth, String> methodsNames = new HashMap<Meth, String>();
 	
+	private ArrayList<String> comments = new ArrayList<String>();
+	
+	private void comment(String newcomment) {
+		comments.add("# " + newcomment + "\n");
+	}
+	
+	private String printWithComment(Statement statement) {
+		String sttmnt = statement.toString().replaceFirst("\\s*\\z", "");
+		if (comments.size() == 1 && ! sttmnt.contains("\n")) {
+			sttmnt += " " + comments.get(0);
+		} else {
+			sttmnt = StringUtils.join(comments,"") + sttmnt + "\n";
+		}
+		comments.clear();
+		return sttmnt;
+	}
+
+	private static Map<Meth, String> methodsNames = new HashMap<Meth, String>();
+	
+	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
+
 	private String getName(Meth meth) {
 		return methodsNames.get(meth);
 	}
 	
 	@Override
 	public void addCustomDependency(String key, Dependency value) {
+		customDependencies.put(key, value);
 	}
 	
 	@Override
@@ -106,7 +131,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
-			result.append(statement + "\n");
+			result.append(printWithComment(statement));
 		}
 		return result.toString();
 	}
@@ -154,11 +179,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(For forr) {
-		return formatIndented("%s\nwhile %s:%1%1",
-				forr.getInitializer(),
-				forr.getCondition(),
-				forr.getWhileStatement(),
-				forr.getUpdater());
+		return formatIndented("%swhile %s:%1%-1%s",
+				printWithComment(forr.getInitializer()),forr.getCondition(),
+				forr.getWhileStatement().toString(), printWithComment(forr.getUpdater()));
 	}
 
 	@Override
@@ -167,8 +190,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (pif.getElseStatement() != null){
 			if (pif.getElseStatement() instanceof If) {
 				out += formatIndented ("el%s", pif.getElseStatement());
-			}
-			else {
+			} else {
 				out += formatIndented ("else:%1", pif.getElseStatement());
 			}
 		}
@@ -190,14 +212,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return String.format("%s.insert(%s, %s)",
 					lac.getExpression(), lac.getParameters().get(1), lac.getParameters().get(0));
 		default:
-			return String.format("%s.add(%s) # Unrecognized by GOOL, passed on",
+			comment ("Unrecognized by GOOL, passed on");
+			return String.format("%s.add(%s)",
 					lac.getExpression(), StringUtils.join(lac.getParameters(), ", "));
 		}
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s in %s", StringUtils.join(lcc.getParameters(), ", "), lcc.getExpression());
+		return String.format("%s in %s", lcc.getParameters().get(0), lcc.getExpression());
 	}
 
 	@Override
@@ -299,16 +322,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
-		if(meth.isMainMethod()) {
-			return meth.getBlock().toString();
+		String params = "";
+		for (VarDeclaration p : meth.getParams()) {
+			params += ", " + p.getName();
+			if (p.getInitialValue() != null)
+				params += " = " + p.getInitialValue();
 		}
-		else {
-			return formatIndented("def %s(self%s%s):%1",
-					methodsNames.get(meth),
-					meth.getParams().size()>0?", ":"",
-					StringUtils.join(meth.getParams(),", ").replaceAll("\n", ""),
-					meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
-		}
+		return formatIndented("%sdef %s(self%s):%1",
+				meth.getModifiers().contains(Modifier.STATIC)?"@classmethod\n":"",
+				methodsNames.get(meth), params,
+				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
 	}
 
 	@Override
@@ -365,7 +388,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return "";
+		return String.format("self.__init__(%s)", GeneratorHelper.joinParams(thisCall.getParameters()));
 	}
 
 	@Override
@@ -442,7 +465,20 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
-		return String.format("%s+=1", unaryOperation.getExpression());
+		switch (unaryOperation.getOperator()){
+		case POSTFIX_INCREMENT:
+		case PREFIX_INCREMENT:
+			comment ("GOOL warnning: semantic may have changed");
+			return String.format("%s +=1", unaryOperation.getExpression());
+		case POSTFIX_DECREMENT:
+		case PREFIX_DECREMENT:
+			comment ("GOOL warnning: semantic may have changed");
+			return String.format("%s -=1", unaryOperation.getExpression());
+		case UNKNOWN:
+			comment("Unrecognized by GOOL, passed on");
+		default:
+			return String.format("%s%s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
+		}
 	}
 
 	@Override
@@ -470,8 +506,28 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(CustomDependency customDependency) {
+		if (!customDependencies.containsKey(customDependency.getName())) {
+			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
+			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));
+		}
+		return customDependencies.get(customDependency.getName()).toString();
+	}
+
+	@Override
+	public String getCode(TypeUnknown typeUnknown) {
 		// TODO Auto-generated method stub
-		//je ne sais pas d'ou ça vient!!!
+		return "";
+	}
+
+	@Override
+	public String getCode(ExpressionUnknown unknownExpression) {
+		comment ("Unrecognized by GOOL, passed on");
+		return unknownExpression.getTextual();
+	}
+
+	@Override
+	public String getCode(ClassFree classFree) {
+		// TODO Auto-generated method stub
 		return "";
 	}
 
@@ -485,16 +541,30 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		String code = String.format("class %s%s:", classDef.getName(),
-				(classDef.getParentClass() != null) ? "(" + classDef.getParentClass().getName() + ")" : "");
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
 		
+		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
+		if (! dependencies.isEmpty()) {
+			for (String dependency : dependencies)
+				code = code.append(String.format("import %s\n", dependency));
+		}
+		
+		code = code.append(String.format("\nclass %s(%s):\n", classDef.getName(),
+				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object"));
+
 		for(Field f : classDef.getFields()) {
-			code = code + formatIndented("%1", f);
+			if (f.getModifiers().contains(Modifier.STATIC))
+				code = code.append(formatIndented("%1", f));
 		}
 
 		List<Meth> meths = new ArrayList<Meth>();
+		Meth mainMeth = null;
 		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
-			if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
+			// the main method will be printed outside of the class later
+			if (method.isMainMethod()) {
+				mainMeth = method;
+			}
+			else if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
 				meths.clear();
 				
 				for(Meth m : classDef.getMethods()) { //On récupère les méthodes de mêmes noms
@@ -504,6 +574,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 				}
 				
 				if(meths.size()>1) { //Si il y a plusieurs méthodes de même nom
+					code = code.append(formatIndented("\n%-1# Wrapper generated by GOOL\n"));
 					String block = "";
 					String newName = method.getName();
 					int i = 0;
@@ -517,23 +588,27 @@ public class PythonGenerator extends CommonCodeGenerator {
 						}
 						methodsNames.put(m2, newName);
 						
-						String conditions = "";
-						int cpt = 0;
+						String types = "";
 						for(VarDeclaration p : m2.getParams()) {
-							conditions += String.format(" and isinstance(args[%s],%s)", cpt++, p.getType());
-							
+							types += ", " + p.getType();
 						}
-						
-						block += formatIndented("%sif len(args) == %s%s:%1", first?"":"el", m2.getParams().size(), conditions, "self." + newName + "(*args)");  
+						block += formatIndented("%sif goolHelper.test_args(args%s):\n%-1self.%s(*args)\n",
+								first?"":"el", types, newName);  
 						first = false;
 					}
 					
 					String name = method.getName();
 					if(method.isConstructor()) {
 						name = "__init__";
+						String params = "";
+						for(Field f : classDef.getFields()) {
+							if (! f.getModifiers().contains(Modifier.STATIC))
+								params += String.format("self.%s\n",f);
+						}
+						block = params.replaceFirst("\\s*\\z", "\n") + block;
 					}
 					
-					code += formatIndented("%1", formatIndented("def %s(self, *args):%1", name, block));
+					code = code.append(formatIndented("%-1def %s(self, *args):%2", name, block));
 					
 				}
 				else {
@@ -548,10 +623,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		
 		for(Meth method : classDef.getMethods()) {
-			code = code + formatIndented("%1", method);
+			if (! method.isMainMethod())
+				code = code.append(formatIndented("%1", method));
+		}
+		
+		if (mainMeth != null) {
+			code = code.append(formatIndented(
+					"\n# main program\nif __name__ == '__main__':%1", mainMeth.getBlock()));
 		}
 
-		return code;
+		return code.toString();
 	}
 
 
