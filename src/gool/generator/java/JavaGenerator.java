@@ -205,8 +205,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 	
 	public String getCode(SystemOutDependency systemOutDependency) {
-		//return "noprint";
-		return "";
+		return "noprint";
 	}
 
 	@Override
@@ -232,14 +231,10 @@ public class JavaGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(TypeChar typeChar) {
-		// TODO Auto-generated method stub
 		return "char";
 	}
 
-	public String getCode(TypeDependency typeDependency) {
-		
-		System.out.println("monType : "+typeDependency.getType().getClass().toString());
-		
+	public String getCode(TypeDependency typeDependency) {		
 		if (typeDependency.getType() instanceof TypeList) {
 			return "java.util.ArrayList";
 		}
@@ -249,17 +244,6 @@ public class JavaGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "java.util.Map";
 		}
-		if (typeDependency.getType() instanceof TypeString){
-			return "java.lang.String";
-		}
-		if (typeDependency.getType() instanceof TypeInt){
-			return "java.lang.Integer";
-		}
-		if (typeDependency.getType() instanceof TypeChar){
-			return "java.lang.Character";
-		}
-		if (typeDependency.getType() instanceof TypeClass)
-			return "";
 		return super.getCode(typeDependency);
 	}
 	
@@ -329,7 +313,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
 			for (String dependency : dependencies){
-				if(dependency != "")
+				if(dependency != "noprint" && dependency.contains("."))
 					sb = sb.append(String.format("import %s;\n", dependency));
 			}
 				
