@@ -47,7 +47,7 @@ public abstract class CodePrinter {
 	/**
 	 * This list is just to remember which abstract GOOL classes were printed already.
 	 */
-	private Set<ClassDef> printedClasses = new HashSet<ClassDef>();
+	protected Set<ClassDef> printedClasses = new HashSet<ClassDef>();
 
 	/**
 	 * the Velocity template engine.

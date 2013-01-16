@@ -1,0 +1,49 @@
+##---------------------
+##  This is a velocity template file for printing out Android classes
+##  See http://velocity.apache.org/engine/releases/velocity-1.5/user-guide.html
+##  Velocity Note:
+##  - Velocity instructions begin with a single #
+##  - Comments with a double #
+##  - The $ are references and get replaced.
+##  - The rest prints out directly.                          
+##---------------------
+##
+## Load up some velocity macros. 
+## (Velocity Note: the parse command inserts another template.)
+#parse($macros)
+##
+## Print out the platform as comment. 
+## (Velocity Note: the .Platform is short for .getPlatform().)
+// Platform: $class.Platform
+
+## Print out the package when there is one
+#if($class.Ppackage)package ${class.PackageName};#end
+
+## Print out the imports
+ import android.os.Bundle;
+ import android.app.Activity;
+ import android.widget.TextView;
+ 
+ ## Declare the class with the format: 
+## [modifiers] interface/class [extends ...] [implements ...]
+public class $class.AndroidActivityName extends Activity {
+
+	TextView systemOutTextBox;	
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		systemOutTextBox = new TextView(this);
+		setContentView(getSystemOutTextBox());
+		EntryClass.EntryMethod(systemOutTextBox, null);	
+		 
+	}
+	public TextView getSystemOutTextBox() {
+		return systemOutTextBox;
+	}
+}
+
+
+
+
+

@@ -29,6 +29,7 @@ public class ClassDef extends Dependency {
 	 * Class' name.
 	 */
 	private String name;
+		
 	/**
 	 * List of fields.
 	 */
@@ -175,6 +176,16 @@ public class ClassDef extends Dependency {
 	public final String getName() {
 		return name;
 	}
+	
+	/**
+	 * Android activity file name, probably not the best place to put it as this class
+	 * is generic, however only android activity.vm will use it. Work around as I do not 
+	 * know how to concatenate directly after a identifier ($class.Name) in activity.vm file
+	 */
+	public final String getandroidActivityName() {
+		return name+"Activity";
+	}
+	//private String androidActivityName;
 
 	public final void setName(String name) {
 		this.name = name;
