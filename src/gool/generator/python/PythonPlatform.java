@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import logger.Log;
+
 import gool.Settings;
 import gool.executor.common.SpecificCompiler;
 import gool.executor.python.PythonCompiler;
@@ -33,7 +35,7 @@ public class PythonPlatform extends Platform {
 			goolHelperIn.close();
 		} catch (IOException e){
 			// TODO Auto-generated catch block
-			e.printStackTrace();	
+			Log.e(e);	
 		}
 	}
 

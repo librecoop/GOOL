@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import logger.Log;
+
 public class PythonCompiler extends SpecificCompiler {
 
 	public PythonCompiler(File pythonOutputDir, ArrayList<File> arrayList) {
@@ -29,10 +31,13 @@ public class PythonCompiler extends SpecificCompiler {
 	@Override
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
+		
 		List<String> params = new ArrayList<String>();
 		params.add("python");
-		
 		params.add(file.getName());
+		params.add("--pythonpath");
+		params.add(".");
+		
 		return Command.exec(getOutputDir(), params);
 	}
 
