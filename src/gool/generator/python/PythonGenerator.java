@@ -179,9 +179,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(For forr) {
 		return formatIndented("%swhile %s:%1%-1%s",
-				printWithComment(forr.getInitializer()), forr.getCondition(),
-				forr.getWhileStatement().toString(),
-				printWithComment(forr.getUpdater()));
+				printWithComment(forr.getInitializer()),forr.getCondition(),
+				forr.getWhileStatement().toString(), printWithComment(forr.getUpdater()));
 	}
 
 	@Override
@@ -328,7 +327,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 			if (p.getInitialValue() != null)
 				params += " = " + p.getInitialValue();
 		}
-		return formatIndented("def %s(self%s):%1",
+		return formatIndented("%sdef %s(self%s):%1",
+				meth.getModifiers().contains(Modifier.STATIC)?"@classmethod\n":"",
 				methodsNames.get(meth), params,
 				meth.getBlock().getStatements().isEmpty()?"pass":meth.getBlock());
 	}
@@ -552,7 +552,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object"));
 
 		for(Field f : classDef.getFields()) {
-			code = code.append(formatIndented("%1", f));
+			if (f.getModifiers().contains(Modifier.STATIC))
+				code = code.append(formatIndented("%1", f));
 		}
 
 		List<Meth> meths = new ArrayList<Meth>();
@@ -598,6 +599,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 					String name = method.getName();
 					if(method.isConstructor()) {
 						name = "__init__";
+						String params = "";
+						for(Field f : classDef.getFields()) {
+							if (! f.getModifiers().contains(Modifier.STATIC))
+								params += String.format("self.%s\n",f);
+						}
+						block = params.replaceFirst("\\s*\\z", "\n") + block;
 					}
 					
 					code = code.append(formatIndented("%-1def %s(self, *args):%2", name, block));
