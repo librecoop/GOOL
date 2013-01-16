@@ -15,6 +15,7 @@ import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
+import gool.generator.xml.XmlPlatform;
 import gool.parser.java.JavaParser;
 
 import java.io.File;
