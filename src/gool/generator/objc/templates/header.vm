@@ -1,4 +1,4 @@
-## Velocity template for writing out classes .h in Objectiv C
+## Velocity template for writing out classes .h in Objective C
 #parse($macros)
 
 #includes ($Helper.printDependencies($class))

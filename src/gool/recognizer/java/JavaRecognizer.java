@@ -267,7 +267,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	public static void addForbiddenKeyword(File keywordsFile)
 			throws IOException {
-		@SuppressWarnings("resource")
 		BufferedReader reader = new BufferedReader(new FileReader(keywordsFile));
 
 		String keyword;
