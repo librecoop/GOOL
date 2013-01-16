@@ -94,6 +94,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	private ArrayList<String> comments = new ArrayList<String>();
 	
 	private ArrayList<String> paramsMethCurrent = new ArrayList<String>();
+	private ArrayList<String> privateMeth = new ArrayList<String>();
 	
 	private void comment(String newcomment) {
 		comments.add("# " + newcomment + "\n");
@@ -511,7 +512,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		else { 
 			value = "None";
 		}
-		
+		paramsMethCurrent.add(varDec.getName());
 		return String.format("%s = %s", varDec.getName(), value);
 	}
 
@@ -587,6 +588,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 			if (method.isMainMethod()) {
 				mainMeth = method;
 			}
+			// we register all private method to be able to rename them
+			if (method.getModifiers().contains(Modifier.PRIVATE)) {
+				privateMeth.add(method.getName());
+			}
 			else if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
 				meths.clear();
 				
@@ -611,9 +616,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 							someStatics = true;
 						else
 							someDynamics = true;
-						newName = method.getName() + i++;
+						newName = String.format("__%s_%d", method.getName().replaceFirst("^_*", ""), i++);
 						while(methodsNames.containsValue(newName)) {
-							newName = method.getName() + i++;
+							newName = String.format("__%s_%d", method.getName().replaceFirst("^_*", ""), i++);
 						}
 						methodsNames.put(m2, newName);
 						
@@ -663,8 +668,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		
 		if (mainMeth != null) {
-			code = code.append(formatIndented(
-					"\n# main program\nif __name__ == '__main__':%1", mainMeth.getBlock()));
+			paramsMethCurrent.clear();
+			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
+					mainMeth.getBlock().toString().replaceAll("self", classDef.getName())));
 		}
 
 		return code.toString();
