@@ -32,6 +32,7 @@ import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
+import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.list.ListAddCall;
@@ -91,6 +92,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 	
 	private ArrayList<String> comments = new ArrayList<String>();
+	
+	private ArrayList<String> paramsMethCurrent = new ArrayList<String>();
 	
 	private void comment(String newcomment) {
 		comments.add("# " + newcomment + "\n");
@@ -321,7 +324,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	private String printMeth(Meth meth, String prefix){
 		String params = "";
+		paramsMethCurrent.clear();
 		for (VarDeclaration p : meth.getParams()) {
+			paramsMethCurrent.add(p.getName());
 			params += ", " + p.getName();
 			if (p.getInitialValue() != null)
 				params += " = " + p.getInitialValue();
@@ -337,6 +342,17 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(Meth meth) {
 		return printMeth(meth, "");
+	}
+
+	@Override
+	public String getCode(VarAccess varAccess) {
+		String name = varAccess.getDec().getName();
+		if (name.equals("this"))
+			return "self";
+		else if (paramsMethCurrent.contains(name))
+			return name;
+		else
+			return "self." + name;
 	}
 
 	@Override
@@ -424,7 +440,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		return String.format("%s, %s",typeEntry.getKeyType(), typeEntry.getElementType() );
+		return String.format("(%s, %s)",typeEntry.getKeyType(), typeEntry.getElementType() );
 	}
 
 	@Override
@@ -541,8 +557,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 		// a verifier car de partout à null et je ne sais pas ce que ça fait
 		return null;
 	}
-
-
 	
 	@Override
 	public String printClass(ClassDef classDef) {
