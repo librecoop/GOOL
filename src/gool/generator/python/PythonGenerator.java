@@ -89,6 +89,23 @@ public class PythonGenerator extends CommonCodeGenerator {
 		super();
 		indentation = "    ";
 	}
+	
+	private ArrayList<String> comments = new ArrayList<String>();
+	
+	private void comment(String newcomment) {
+		comments.add("# " + newcomment + "\n");
+	}
+	
+	private String printWithComment(Statement statement) {
+		String sttmnt = statement.toString().replaceFirst("\\s*\\z", "");
+		if (comments.size() == 1 && ! sttmnt.contains("\n")) {
+			sttmnt += " " + comments.get(0);
+		} else {
+			sttmnt = StringUtils.join(comments,"") + sttmnt + "\n";
+		}
+		comments.clear();
+		return sttmnt;
+	}
 
 	private static Map<Meth, String> methodsNames = new HashMap<Meth, String>();
 	
@@ -113,7 +130,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
-			result.append(statement + "\n");
+			result.append(printWithComment(statement));
 		}
 		return result.toString();
 	}
@@ -161,9 +178,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(For forr) {
-		return formatIndented("%s\nwhile %s:%1",
-				forr.getInitializer(), forr.getCondition(),
-				forr.getWhileStatement().toString() + forr.getUpdater().toString());
+		return formatIndented("%swhile %s:%1%-1%s",
+				printWithComment(forr.getInitializer()), forr.getCondition(),
+				forr.getWhileStatement().toString(),
+				printWithComment(forr.getUpdater()));
 	}
 
 	@Override
@@ -194,7 +212,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return String.format("%s.insert(%s, %s)",
 					lac.getExpression(), lac.getParameters().get(1), lac.getParameters().get(0));
 		default:
-			return String.format("%s.add(%s) # Unrecognized by GOOL, passed on",
+			comment ("Unrecognized by GOOL, passed on");
+			return String.format("%s.add(%s)",
 					lac.getExpression(), StringUtils.join(lac.getParameters(), ", "));
 		}
 	}
@@ -368,7 +387,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return String.format("self = %s(%s)", thisCall.getType(), GeneratorHelper.joinParams(thisCall.getParameters()));
+		return String.format("self.__init__(%s)", GeneratorHelper.joinParams(thisCall.getParameters()));
 	}
 
 	@Override
@@ -448,10 +467,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 		switch (unaryOperation.getOperator()){
 		case POSTFIX_INCREMENT:
 		case PREFIX_INCREMENT:
+			comment ("GOOL warnning: semantic may have changed");
 			return String.format("%s +=1", unaryOperation.getExpression());
 		case POSTFIX_DECREMENT:
 		case PREFIX_DECREMENT:
+			comment ("GOOL warnning: semantic may have changed");
 			return String.format("%s -=1", unaryOperation.getExpression());
+		case UNKNOWN:
+			comment("Unrecognized by GOOL, passed on");
 		default:
 			return String.format("%s%s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
 		}
@@ -497,8 +520,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
-		// TODO Auto-generated method stub
-		return "";
+		comment ("Unrecognized by GOOL, passed on");
+		return unknownExpression.getTextual();
 	}
 
 	@Override
