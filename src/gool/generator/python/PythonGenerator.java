@@ -490,7 +490,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeVoid typeVoid) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub a verifier car void n'existe pas en python, a mettre a la fin de la fonction retourn None
 		return "";
 	}
 
@@ -670,6 +670,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "str";
+	}
+	
+	
+	@Override
+	public String getCode(Constant constant) {
+		if (constant.getType().equals(TypeBool.INSTANCE)) {
+			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "");
+		} else {
+			return super.getCode(constant);
+		}
 	}
 
 }
