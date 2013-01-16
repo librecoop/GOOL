@@ -10,23 +10,29 @@ enum $class.Name {
 	#end
 };
 #elseif (!$class.Interfaces.isEmpty())
-@interface $class.Name {
+@interface $class.Name #if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end{
 	#foreach( $field in $class.Fields )
 	    $field;
 	#end
 }
 	#foreach( $method in $class.Methods )
-	    #if(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
+		
+		#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())and$p.Name:($p.Type)$p.Name #end;
+	    #elseif(!$method.isMainMethod())($method.Type)$method.Name:#foreach($p in $method.getParams())#if($velocityCount != 1)and$p.Name:#end($p.Type)$p.Name #end;#end
 	#end
+	
 @end
 #else
-class $class.Name {
+@interface $class.Name #if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end{
 	#foreach( $field in $class.Fields )
 	    $field;
 	#end
-
+}
 	#foreach( $method in $class.Methods )
-	    #if(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
+		
+		#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())and$p.Name:($p.Type)$p.Name #end;
+	    #elseif(!$method.isMainMethod())($method.Type)$method.Name:#foreach($p in $method.getParams())#if($velocityCount != 1)and$p.Name:#end($p.Type)$p.Name #end;#end
 	#end
-};
+	
+@end
 #end

@@ -45,11 +45,13 @@ public class GOOLCompiler {
 			Collection<File> files = Arrays.asList(folder.listFiles());
 			logger.info(files);
 			GOOLCompiler gc = new GOOLCompiler();
-			Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
-			logger.info(f);
-			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),files);
-			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
-			gc.concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);
+			Map<Platform, List<File>> f; 
+			f = gc.concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);
+			//logger.info(f);
+			//f = gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),files);
+			//f = gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
+			//f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

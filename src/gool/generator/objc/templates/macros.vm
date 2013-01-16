@@ -1,6 +1,6 @@
 #macro( params $params )
 #set( $paramsNb = $params.size() )
-#foreach( $p in $params )$p.Type $p.Name#if($velocityCount != $paramsNb), #end#end
+#foreach( $p in $params )($p.Type)$p.Name#if($velocityCount != $paramsNb) and$p.Name:#end#end
 #end
 
 #macro ( block $block )
@@ -20,6 +20,6 @@
 #end
 
 #macro ( includes $dependencies )
-#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))using ${dep};#end
+#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))#import "${dep}";#end
 #end
 #end
