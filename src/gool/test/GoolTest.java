@@ -1,5 +1,6 @@
 package gool.test;
 
+import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
@@ -44,7 +45,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance());
+	 Arrays.asList(JavaPlatform.getInstance(),CppPlatform.getInstance(),CSharpPlatform.getInstance(), AndroidPlatform.getInstance());
 //	private List<Platform> platforms = Arrays.asList(CppPlatform.getInstance());
 
 	@BeforeClass
