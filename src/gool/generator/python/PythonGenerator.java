@@ -14,14 +14,12 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
-import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
-import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
 import gool.ast.constructs.ParentCall;
@@ -544,8 +542,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies)
-				code = code.append(String.format("import %s\n", dependency));
+			for (String dependency : dependencies) {
+				if(!dependency.isEmpty())
+					code = code.append(String.format("importr %s\n", dependency));
+			}
 		}
 		
 		code = code.append(String.format("\nclass %s(%s):\n", classDef.getName(),
