@@ -39,6 +39,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
+import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
@@ -205,7 +206,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	
 	public String getCode(SystemOutDependency systemOutDependency) {
 		//return "noprint";
-		return "java.util.*";
+		return "";
 	}
 
 	@Override
@@ -236,6 +237,9 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 
 	public String getCode(TypeDependency typeDependency) {
+		
+		System.out.println("monType : "+typeDependency.getType().getClass().toString());
+		
 		if (typeDependency.getType() instanceof TypeList) {
 			return "java.util.ArrayList";
 		}
@@ -245,8 +249,18 @@ public class JavaGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "java.util.Map";
 		}
+		if (typeDependency.getType() instanceof TypeString){
+			return "java.lang.String";
+		}
+		if (typeDependency.getType() instanceof TypeInt){
+			return "java.lang.Integer";
+		}
+		if (typeDependency.getType() instanceof TypeChar){
+			return "java.lang.Character";
+		}
+		if (typeDependency.getType() instanceof TypeClass)
+			return "";
 		return super.getCode(typeDependency);
-		//return "java.util.*";
 	}
 	
 	@Override
@@ -256,7 +270,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeInt typeInt) {
-		return "java.lang.Integer";
+		return "Integer";
 	}
 	
 	@Override
@@ -282,7 +296,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeString typeString) {
-		return "java.lang.String";
+		return "String";
 	}
 	
 	@Override
@@ -314,8 +328,11 @@ public class JavaGenerator extends CommonCodeGenerator {
 		// print the includes
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies)
-				sb = sb.append(String.format("import %s;\n", dependency));
+			for (String dependency : dependencies){
+				if(dependency != "")
+					sb = sb.append(String.format("import %s;\n", dependency));
+			}
+				
 			sb = sb.append("\n");
 		}
 		// print the class prototype

@@ -48,6 +48,7 @@ public final class GeneratorHelper {
 		for (Dependency dep : classDef.getDependencies()) {
 			if (!dep.toString().equals(classDef.toString())){
 				result.add(dep.toString());
+				System.out.println("dependance dans helper : ");
 			}
 		}
 		return result;
