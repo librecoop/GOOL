@@ -313,6 +313,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		return "filejava";
+		return "File";
 	}
+
 }

@@ -28,5 +28,6 @@ class $class.Name {
 	#foreach( $method in $class.Methods )
 	    #if(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
 	#end
-};
+	
+@end
 #end
