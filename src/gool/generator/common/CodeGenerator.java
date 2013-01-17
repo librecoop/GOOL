@@ -81,7 +81,7 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
-
+import gool.ast.type.TypeFile;
 import java.util.Collection;
 
 /**
@@ -406,4 +406,5 @@ public interface CodeGenerator {
 	
 	String getCode(TypeVar typeVar);
 	
+	String getCode(TypeFile typeFile);
 }
