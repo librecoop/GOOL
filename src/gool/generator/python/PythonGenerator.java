@@ -7,6 +7,7 @@ import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
+import gool.ast.constructs.CompoundAssign;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
@@ -24,6 +25,7 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
+import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
@@ -539,6 +541,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeUnknown typeUnknown) {
 		// TODO Auto-generated method stub
 		return "";
+	}
+	
+	@Override
+	public String getCode(CompoundAssign compoundAssign) {
+		if (compoundAssign.getOperator().equals(Operator.UNKNOWN))
+			comment("Unrecognized by GOOL, passed on");
+		return String.format("%s %s= %s", compoundAssign.getLValue(), compoundAssign.getTextualoperator(),
+				compoundAssign.getValue());
 	}
 
 	@Override

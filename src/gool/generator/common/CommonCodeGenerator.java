@@ -9,6 +9,7 @@ import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.Comment;
+import gool.ast.constructs.CompoundAssign;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.ExpressionUnknown;
@@ -138,6 +139,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(Assign assign) {
 		return assign.getLValue() + " = " + assign.getValue();
+	}
+	
+	@Override
+	public String getCode(CompoundAssign compoundAssign) {
+		return String.format("%s %s=%s %s", compoundAssign.getLValue(), compoundAssign.getTextualoperator(),
+				compoundAssign.getOperator().equals(Operator.UNKNOWN)?"/* Unrecognized by GOOL, passed on */":"",
+				compoundAssign.getValue());
 	}
 
 	/**
