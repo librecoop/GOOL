@@ -21,6 +21,8 @@
 
 ## Print out the imports
 #includes ($Helper.printDependencies($class))
+##Print out fixed import for text view
+import android.widget.TextView;
 
 ## Declare the class with the format: 
 ## [modifiers] interface/class [extends ...] [implements ...]

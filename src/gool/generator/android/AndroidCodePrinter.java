@@ -61,7 +61,7 @@ private static final String TEMPLATE_DIR = "gool/generator/android/templates/";
 			writer.println(code);
 			writer.close();
 			//This part checks whether the class contains a main method/entry point
-			if(true) { //TODO Check if class contains main method
+			if(pclass.isMainClass()) { //Check if class contains main method and if yes create activity class as well
 				/**
 				 * As standard each .java file with a main method will have a corresponding *Activity.java file
 				 */
