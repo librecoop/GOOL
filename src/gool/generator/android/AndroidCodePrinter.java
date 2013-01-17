@@ -111,6 +111,10 @@ public class AndroidCodePrinter extends CodePrinter {
 
 		File oldAndroidFolder = new File(Settings.get("android_out_dir"));
 		File newAndroidFolder = new File(Settings.get("android_out_dir_final"));
+		if (newAndroidFolder.exists()) {
+			deleteFolder(newAndroidFolder); // Removes all files and the
+											// directory as this causes problems for android project creation
+		}
 		File newAndroidFolderSource = new File(
 				Settings.get("android_out_dir_final") + "//src");
 
@@ -146,11 +150,22 @@ public class AndroidCodePrinter extends CodePrinter {
 			e.printStackTrace();
 		}
 		// Then Copies and replaces all files from temporary directory to
-		// android project
+		// android project and deletes the old files
 		copyFolder(oldAndroidFolder, newAndroidFolderSource);
+		deleteFolder(oldAndroidFolder); // This can be commented out for
+										// debugging purposes
 
-		return null; // TODO return a list of all the android files! not used at
-						// present but maybe in future
+		return null; // TODO return a list of all the android files in
+						// newAndroidFolderSource
+						// return value not used at present but may be needed in
+						// future
+	}
+
+	private void deleteFolder(File deleteFolder) {
+		// TODO Create a method to delete this directory and all its sub
+		// directories
+		// as it is only a temporary file that was created.
+
 	}
 
 	private void copyFolder(File source, File destination) {
