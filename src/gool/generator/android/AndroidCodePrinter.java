@@ -1,5 +1,6 @@
 package gool.generator.android;
 
+
 import gool.Settings;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
@@ -162,10 +163,21 @@ public class AndroidCodePrinter extends CodePrinter {
 	}
 
 	private void deleteFolder(File deleteFolder) {
-		// TODO Create a method to delete this directory and all its sub
-		// directories
-		// as it is only a temporary file that was created.
-
+	
+		 String[] content;      
+	      if(deleteFolder.isDirectory()){  
+	          content = deleteFolder.list();  
+	          for (int i=0; i<content.length; i++) { 
+	         	       	 
+	              File myFile = new File(deleteFolder, content[i]);   
+	              if (myFile.isDirectory())
+	              {
+	            	  deleteFolder(myFile);
+	              }
+	              myFile.delete();  
+	          }  
+	       }  
+	      deleteFolder.delete();
 	}
 
 	private void copyFolder(File source, File destination) {
