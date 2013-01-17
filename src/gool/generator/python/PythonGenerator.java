@@ -387,8 +387,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MethCall methodCall) {
 		String name = methodCall.getTarget().toString();
-		if (methodCall.getModifiers().contains(Modifier.PRIVATE))
+		if (methodCall.getModifiers() != null
+				&& methodCall.getModifiers().contains(Modifier.PRIVATE)) {
 			name = name.replaceFirst("\\w*\\s*\\z", "__$0");
+		}
 		return String.format("%s (%s)", name,
 				StringUtils.join(methodCall.getParameters(), ", "));
 	}
