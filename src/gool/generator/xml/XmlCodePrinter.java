@@ -2,7 +2,7 @@ package gool.generator.xml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.*;
+
 import javax.xml.parsers.*;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -23,13 +24,14 @@ import logger.Log;
 
 import gool.ast.constructs.ClassDef;
 import gool.generator.common.CodePrinter;
+import gool.generator.java.JavaGenerator;
 
 public class XmlCodePrinter extends CodePrinter {
 	
 	
 
 	public XmlCodePrinter(File outputDir) {
-		super(null, outputDir);
+		super(new JavaGenerator(), outputDir);
 	}
 	
 	private Set<ClassDef> printedClasses = new HashSet<ClassDef>();
@@ -47,6 +49,7 @@ public class XmlCodePrinter extends CodePrinter {
 			DocumentBuilder builder = fabrique.newDocumentBuilder();
 			document = builder.newDocument();
 			Element racine = (Element) document.createElement("class");
+			racine.appendChild(NodeToElement(pclass, document));
 			document.appendChild(racine);
 			
 			// file separator is just a slash in Unix
@@ -83,6 +86,20 @@ public class XmlCodePrinter extends CodePrinter {
 		}
 		
 		return result;
+	}
+
+	private Element NodeToElement(gool.ast.constructs.Node node, Document document) {
+		Element newElement = null;
+		newElement = document.createElement(node.getClass().getName());
+		newElement.setTextContent(node.toString());
+
+		Method[] meths = node.getClass().getMethods();
+		for (Method meth: meths) {
+			if (meth.getReturnType().getName().equals(node.getClass().getName())) {
+				
+			}
+		}        
+        return newElement;
 	}
 
 	@Override
