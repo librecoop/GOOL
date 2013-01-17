@@ -308,7 +308,7 @@ public class ClassDef extends Dependency {
 	}
 
 	public final void addDependency(Dependency dependency) {
-		Log.e("ah=jout : "+dependency.toString());
+		Log.i("ah=jout : "+dependency.toString());
 		if (
 				(dependency instanceof TypeDependency)
 				&& 
@@ -353,7 +353,7 @@ public class ClassDef extends Dependency {
 
 	public final void addDependencies(List<Dependency> dependencies) {
 		for (Dependency dependency : dependencies) {
-			Log.e(dependency.toString());
+			Log.i(dependency.toString());
 			addDependency(dependency);
 		}
 	}
