@@ -41,6 +41,7 @@ import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -490,6 +491,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return typeMethod.getTextualtype();
 	}
 
-
+	public String getCode(TypeFile typeFile) {
+		// TODO Auto-generated method stub
+		return "File";
 	
 }
