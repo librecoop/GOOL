@@ -26,7 +26,7 @@
  
  ## Declare the class with the format: 
 ## [modifiers] interface/class [extends ...] [implements ...]
-public class $class.AndroidActivityName extends Activity {
+public class ${class.Name}Activity extends Activity {
 
 	TextView systemOutTextBox;	
 
@@ -35,7 +35,7 @@ public class $class.AndroidActivityName extends Activity {
 		super.onCreate(savedInstanceState);
 		systemOutTextBox = new TextView(this);
 		setContentView(getSystemOutTextBox());
-		EntryClass.EntryMethod(systemOutTextBox, null);	
+		${class.Name}.EntryMethod(systemOutTextBox, null);	
 		 
 	}
 	public TextView getSystemOutTextBox() {
