@@ -87,7 +87,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassNew classNew) {
-		return String.format("[%s new]", removePointer(classNew.getType()));
+		return String.format("[[[%s alloc]init]autorelease]",
+				removePointer(classNew.getType()));
 	}
 
 	@Override
@@ -126,14 +127,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		if (equalsCall.getTarget().getType() instanceof TypeString) {
-			return String.format("[%s isEqualToString: %s]",
-					equalsCall.getTarget(),
-					StringUtils.join(equalsCall.getParameters(), ", "));
-		} else {
-			return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
-					StringUtils.join(equalsCall.getParameters(), ", "));
-		}
+		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
+				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
 
 	@Override
@@ -146,48 +141,50 @@ public class ObjcGenerator extends CommonCodeGenerator {
 					lac.getExpression(),
 					StringUtils.join(lac.getParameters(), ", "));
 			String str[] = new String[lac.getParameters().size()];
-			for (int i = 2; i <= lac.getParameters().size(); i++) {	
+			for (int i = 2; i <= lac.getParameters().size(); i++) {
 				str[i] = (String) String.format("[%s addObject:%s]%n",
 						lac.getExpression(), lac.getParameters().get(i));
 			}
-			return String.format("%s%n%s", s,str);
+			return String.format("%s%n%s", s, str);
 		}
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format(
+				"([string rangeOfString:@%s].location == NSNotFound)",
+				lcc.getParameters());
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s ObjectsAtIndex:%s]", lgc.getExpression(),
+				lgc.getParameters());
+		// the number of lgic.getParameters() ? TODO
 	}
 
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
-		String s = "if(( "+ String.format("[%s count]", liec.getExpression()) + " ) == 0 )";
+		String s = "( " + String.format("[%s count]", liec.getExpression())
+				+ "== 0)";
 		return s;
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("[%s removeObjectsAtIndex:%s]", lrc.getExpression(),
-				lrc.getParameters());
+		return String.format("[%s removeObjectsAtIndex:%s]",
+				lrc.getExpression(), lrc.getParameters());
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-			return String.format("[%s removeObject:%s]", lrc.getExpression(),
-					lrc.getParameters());
+		return String.format("[%s removeObject:%s]", lrc.getExpression(),
+				lrc.getParameters());
 	}
 
 	@Override
@@ -202,26 +199,28 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[[%s objectForKey:@%s]isEqualToString:@"+"("+"null"+")"+"]",
+				mapContainsKeyCall.getExpression(),
+				mapContainsKeyCall.getParameters());
 	}
-
+	
+	
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
-		// TODO Auto-generated method stub
+	//TODO
 		return null;
 	}
 
 	@Override
-	public String getCode(MapEntryGetValueCall mapEntryGetKeyCall) {
+	public String getCode(MapEntryGetValueCall mapEntryGetValueCall) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s objectForKey:@%s]", mapGetCall.getExpression(),
+				StringUtils.join(mapGetCall.getParameters(), ", "));
 	}
 
 	@Override
@@ -232,8 +231,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		// TODO Auto-generated method stub
-		return null;
+		String s = "( " + String.format("[%s count]", mapIsEmptyCall.getExpression())
+				+ "== 0)";
+		return s;
 	}
 
 	@Override
@@ -343,27 +343,27 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public String getCode(This pthis) {
 		return "self";
 	}
-	
+
 	@Override
 	public String getCode(MethCall methodCall) {
-		return String.format("[%s:%s]", methodCall.getTarget() , 
-				StringUtils.join(methodCall.getParameters(), ":"));			
+		return String.format("[%s:%s]", methodCall.getTarget(),
+				StringUtils.join(methodCall.getParameters(), ":"));
 	}
-	
+
 	@Override
 	public String getCode(MemberSelect memberSelect) {
 		return String.format("%s %s", memberSelect.getTarget(),
 				memberSelect.getIdentifier());
 	}
-	
+
 	@Override
 	public String getCode(Modifier modifier) {
-		switch(modifier){
+		switch (modifier) {
 		case ABSTRACT:
 			return "";
 		case FINAL:
@@ -376,40 +376,41 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			return "@public";
 		case STATIC:
 			return "+";
-		default :
+		default:
 			return super.getCode(modifier);
 		}
 	}
-	
+
 	@Override
 	public String getCode(Meth meth) {
 		String ret = new String();
 		String arg = new String();
 		boolean b = false;
-		if(!(meth.getType() instanceof TypeNone))
+		if (!(meth.getType() instanceof TypeNone))
 			ret = String.format("(%s)", meth.getType().toString());
-		else 
+		else
 			ret = "(void)";
-		
-		for(VarDeclaration e : meth.getParams()) {
-			if(!b){
+
+		for (VarDeclaration e : meth.getParams()) {
+			if (!b) {
 				arg += String.format(":(%s)%s ", e.getType(), e.getName());
 				b = true;
-			}
-			else
-				arg += String.format("and%s:(%s)%s ", e.getName(), e.getType(), e.getName());
+			} else
+				arg += String.format("and%s:(%s)%s ", e.getName(), e.getType(),
+						e.getName());
 		}
-		
-		return String.format("%s %s%s",ret, meth.getName(),arg);
+
+		return String.format("%s %s%s", ret, meth.getName(), arg);
 	}
-	
+
 	@Override
 	public String getCode(Constructor cons) {
 		String param = new String();
-		for(VarDeclaration e : cons.getParams()) {
-			param += String.format("and%s:(%s)%s ", e.getName(), e.getType(), e.getName());
+		for (VarDeclaration e : cons.getParams()) {
+			param += String.format("and%s:(%s)%s ", e.getName(), e.getType(),
+					e.getName());
 		}
-		
+
 		return String.format("- (id)init%s", param);
 	}
 
