@@ -1,6 +1,7 @@
 package gool.generator.python;
 
 import gool.ast.constructs.ArrayNew;
+import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
@@ -8,6 +9,7 @@ import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
 import gool.ast.constructs.CompoundAssign;
+import gool.ast.constructs.Constant;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
@@ -141,6 +143,39 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return result.toString();
 	}
 	
+	@Override
+	public String getCode(BinaryOperation binaryOp) {
+		String textualOp;
+		switch (binaryOp.getOperator()) {
+		case AND :
+			textualOp = "and";
+			break;
+		case OR :
+			textualOp = "or";
+			break;
+		case DIV :
+			if (binaryOp.getType().equals(TypeInt.INSTANCE))
+				textualOp = "//";
+			else
+				textualOp = "/";
+			break;
+		default :
+			textualOp = binaryOp.getTextualoperator();
+		}
+		if(binaryOp.getOperator().equals(Operator.UNKNOWN))
+			comment("Unrecognized by GOOL, passed on");
+		return String.format("(%s %s %s)", binaryOp.getLeft(), textualOp, binaryOp.getRight());
+	}
+ 
+	@Override
+	public String getCode(Constant constant) {
+		if (constant.getType().equals(TypeBool.INSTANCE)) {
+			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "False");
+		} else {
+			return super.getCode(constant);
+		}
+	}
+
 	@Override
 	public String getCode(CastExpression cast) {
 		return String.format("%s(%s)", cast.getType(), cast
@@ -491,15 +526,18 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(UnaryOperation unaryOperation) {
 		switch (unaryOperation.getOperator()){
 		case POSTFIX_INCREMENT:
+			comment("GOOL warning: post-incrementation became pre-incrementation");
+			// no break: follow to the next case
 		case PREFIX_INCREMENT:
-			comment ("GOOL warnning: semantic may have changed");
-			return String.format("%s +=1", unaryOperation.getExpression());
+			return String.format("goolHelper.increment(%s)", unaryOperation.getExpression());
 		case POSTFIX_DECREMENT:
+			comment("GOOL warning: post-decrementation became pre-decrementation");
+			// no break: follow to the next case
 		case PREFIX_DECREMENT:
-			comment ("GOOL warnning: semantic may have changed");
-			return String.format("%s -=1", unaryOperation.getExpression());
+			return String.format("goolHelper.decrement(%s)", unaryOperation.getExpression());
 		case UNKNOWN:
 			comment("Unrecognized by GOOL, passed on");
+			// no break: follow to the next case
 		default:
 			return String.format("%s%s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
 		}
@@ -545,9 +583,26 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(CompoundAssign compoundAssign) {
+		String textualOp;
+		switch (compoundAssign.getOperator()) {
+		case AND :
+			textualOp = "&";
+			break;
+		case OR :
+			textualOp = "|";
+			break;
+		case DIV :
+			if (compoundAssign.getType().equals(TypeInt.INSTANCE))
+				textualOp = "//";
+			else
+				textualOp = "/";
+			break;
+		default :
+			textualOp = compoundAssign.getTextualoperator();
+		}
 		if (compoundAssign.getOperator().equals(Operator.UNKNOWN))
 			comment("Unrecognized by GOOL, passed on");
-		return String.format("%s %s= %s", compoundAssign.getLValue(), compoundAssign.getTextualoperator(),
+		return String.format("%s %s= %s", compoundAssign.getLValue(), textualOp,
 				compoundAssign.getValue());
 	}
 
@@ -575,8 +630,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies)
-				code = code.append(String.format("import %s\n", dependency));
+			for (String dependency : dependencies) {
+				if(!dependency.isEmpty())
+					code = code.append(String.format("import %s\n", dependency));
+			}
 		}
 		
 		code = code.append(String.format("\nclass %s(%s):\n", classDef.getName(),
