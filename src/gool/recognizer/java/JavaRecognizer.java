@@ -15,6 +15,7 @@ import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
+import gool.ast.constructs.CompoundAssign;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
@@ -242,6 +243,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		operatorMap.put(Kind.POSTFIX_DECREMENT, Operator.POSTFIX_DECREMENT);
 		operatorMap.put(Kind.PREFIX_INCREMENT, Operator.PREFIX_INCREMENT);
 		operatorMap.put(Kind.POSTFIX_INCREMENT, Operator.POSTFIX_INCREMENT);
+		operatorMap.put(Kind.AND_ASSIGNMENT, Operator.AND);
+		operatorMap.put(Kind.DIVIDE_ASSIGNMENT, Operator.DIV);
+		operatorMap.put(Kind.MINUS_ASSIGNMENT, Operator.MINUS);
+		operatorMap.put(Kind.MULTIPLY_ASSIGNMENT, Operator.MULT);
+		operatorMap.put(Kind.OR_ASSIGNMENT, Operator.OR);
+		operatorMap.put(Kind.PLUS_ASSIGNMENT, Operator.PLUS);
 	}
 
 	/**
@@ -654,7 +661,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitCompoundAssignment(CompoundAssignmentTree n,
 			Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+		Node variable = (Node) n.getVariable().accept(this, context);
+		Expression expression = (Expression) n.getExpression().accept(this,
+				context);
+		Operator operator = getOperator(n.getKind());
+		IType type=goolType(n,context);
+		String textualoperator = n.toString().replace(n.getVariable().toString(), "").replaceFirst("=.*", "").trim();
+		return new CompoundAssign(variable, expression, operator, textualoperator, type);
 	}
 
 	@Override
@@ -869,7 +882,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				context);
 		Operator operator = getOperator(n.getKind());
 		IType type=goolType(n,context);
-		String textualoperator=  n.toString().replace(n.getExpression().toString(), "");
+		String textualoperator=  n.toString().replace(n.getExpression().toString(), "").trim();
 		return new UnaryOperation(operator, expression, type, textualoperator);
 	}
 	
@@ -883,7 +896,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				context);
 		Operator operator = getOperator(n.getKind());
 		IType type=goolType(n,context);
-		String textualoperator= n.toString().replace(n.getLeftOperand().toString(), "").replace(n.getRightOperand().toString(), "");
+		String textualoperator= n.toString().replace(n.getLeftOperand().toString(), "").replace(n.getRightOperand().toString(), "").trim();
 		return new BinaryOperation(operator, leftExp, rightExp, type, textualoperator);
 	}
 

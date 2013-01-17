@@ -10,6 +10,7 @@ import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
+import gool.ast.constructs.CompoundAssign;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
@@ -401,6 +402,8 @@ public interface CodeGenerator {
 	
 	String getCode(TypeVar typeVar);
 
+	String getCode(CompoundAssign compoundAssign);
+	
 	String printClass(ClassDef pclass);
 	
 }
