@@ -1,6 +1,10 @@
 def test_args(args,*types):
-    return len(args) == len(types) and False not in [isinstance(a,t) for a,t in zip(args,types)]
+	for a, t in zip(args, types):
+		if not isinstance(a, t):
+			return False
+    return len(args) == len(types)
 
+# i n'est pas modifié !
 def increment(i):
 	i += 1
 	return i

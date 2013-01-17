@@ -6,7 +6,7 @@ import gool.generator.GoolGeneratorController;
 public class ToStringCall extends MethCall {
 
 	public ToStringCall(Expression target) {
-		super(TypeString.INSTANCE, target);
+		super(TypeString.INSTANCE, null, target);
 	}
 
 	@Override

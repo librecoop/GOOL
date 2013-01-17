@@ -1450,6 +1450,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
 		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());	
 		Expression target;
+		System.out.println(">>>>>>>>>>>>>>>"+n+" "+method.getModifiers().contains(javax.lang.model.element.Modifier.PRIVATE));
 		if (n.getMethodSelect().toString().equals("System.out.println")) {
 			context.getClassDef().addDependency(new SystemOutDependency());
 			target = new SystemOutPrintCall();
@@ -1473,8 +1474,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 	
 		if (!(target instanceof Parameterizable)) {
-				target = new MethCall(goolType(((MethodSymbol) method)
-						.getReturnType(), context), target);
+			target = new MethCall(
+					goolType(((MethodSymbol) method).getReturnType(), context),
+					JavaModifiers2GoolModifiers(method.getModifiers()),
+					target);
 		}
 		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
@@ -1484,13 +1487,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	/**
 	 * Translates abstract Java modifiers into abstract GOOL modifiers
 	 */
-	@Override
-	public Object visitModifiers(ModifiersTree n, Context context) {
-		Collection<Modifier> result = new HashSet<Modifier>();
-
-		Set<javax.lang.model.element.Modifier> flags = n.getFlags();
-
-		for (javax.lang.model.element.Modifier modifier : flags) {
+	
+	private ArrayList<Modifier> JavaModifiers2GoolModifiers (
+			Set<javax.lang.model.element.Modifier> modifiers) {
+		ArrayList<Modifier> result = new ArrayList<Modifier>();
+		for (javax.lang.model.element.Modifier modifier : modifiers) {
 			switch (modifier) {
 			case PRIVATE:
 				result.add(Modifier.PRIVATE);
@@ -1525,9 +1526,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			case SYNCHRONIZED:
 				result.add(Modifier.SYNCHRONIZED);
 				break;
-		}}
-
+			}
+		}
 		return result;
+	}
+	
+	@Override
+	public Object visitModifiers(ModifiersTree n, Context context) {
+		return JavaModifiers2GoolModifiers(n.getFlags());
 	}
 
 }

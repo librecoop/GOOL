@@ -98,7 +98,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	private ArrayList<String> comments = new ArrayList<String>();
 	
 	private ArrayList<String> paramsMethCurrent = new ArrayList<String>();
-	private ArrayList<String> privateMeth = new ArrayList<String>();
 	
 	private void comment(String newcomment) {
 		comments.add("# " + newcomment + "\n");
@@ -384,6 +383,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Meth meth) {
 		return printMeth(meth, "");
 	}
+	
+	@Override
+	public String getCode(MethCall methodCall) {
+		String name = methodCall.getTarget().toString();
+		if (methodCall.getModifiers().contains(Modifier.PRIVATE))
+			name = name.replaceFirst("\\w*\\s*\\z", "__$0");
+		return String.format("%s (%s)", name,
+				StringUtils.join(methodCall.getParameters(), ", "));
+	}
 
 	@Override
 	public String getCode(VarAccess varAccess) {
@@ -536,21 +544,32 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
 		switch (unaryOperation.getOperator()){
+// BUG : python is call-by-value, increment and decrement do not update the variable		
+//		case POSTFIX_INCREMENT:
+//			comment("GOOL warning: post-incrementation became pre-incrementation");
+//			// no break: follow to the next case
+//		case PREFIX_INCREMENT:
+//			return String.format("goolHelper.increment(%s)", unaryOperation.getExpression());
+//		case POSTFIX_DECREMENT:
+//			comment("GOOL warning: post-decrementation became pre-decrementation");
+//			// no break: follow to the next case
+//		case PREFIX_DECREMENT:
+//			return String.format("goolHelper.decrement(%s)", unaryOperation.getExpression());
 		case POSTFIX_INCREMENT:
-			comment("GOOL warning: post-incrementation became pre-incrementation");
-			// no break: follow to the next case
 		case PREFIX_INCREMENT:
-			return String.format("goolHelper.increment(%s)", unaryOperation.getExpression());
+			comment("GOOL warning: semantic may have changed");
+			return unaryOperation.getExpression() + " +=1";
 		case POSTFIX_DECREMENT:
-			comment("GOOL warning: post-decrementation became pre-decrementation");
-			// no break: follow to the next case
 		case PREFIX_DECREMENT:
-			return String.format("goolHelper.decrement(%s)", unaryOperation.getExpression());
+			comment("GOOL warning: semantic may have changed");
+			return unaryOperation.getExpression() + " -=1";
+		case NOT:
+			return "not " + unaryOperation.getExpression();
 		case UNKNOWN:
 			comment("Unrecognized by GOOL, passed on");
 			// no break: follow to the next case
 		default:
-			return String.format("%s%s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
+			return String.format("%s %s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
 		}
 	}
 
@@ -559,8 +578,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		String value;
 		if(varDec.getInitialValue() != null) {
 			value = varDec.getInitialValue().toString();
-		}
-		else { 
+		} else { 
 			value = "None";
 		}
 		paramsMethCurrent.add(varDec.getName());
@@ -595,20 +613,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(CompoundAssign compoundAssign) {
 		String textualOp;
-		switch (compoundAssign.getOperator()) {
-		case AND :
-			textualOp = "&";
-			break;
-		case OR :
-			textualOp = "|";
-			break;
-		case DIV :
-			if (compoundAssign.getType().equals(TypeInt.INSTANCE))
-				textualOp = "//";
-			else
-				textualOp = "/";
-			break;
-		default :
+		if (compoundAssign.getOperator() == Operator.DIV
+				&& compoundAssign.getType().equals(TypeInt.INSTANCE)) {
+			textualOp = "//";
+		} else {
 			textualOp = compoundAssign.getTextualoperator();
 		}
 		if (compoundAssign.getOperator().equals(Operator.UNKNOWN))
@@ -664,6 +672,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		dynamicAttributs = dynamicAttributs.replaceFirst("\\s+\\z", "\n");
 		
+		// renaming private methods
+		for (Meth meth : classDef.getMethods()){
+			if (meth.getModifiers().contains(Modifier.PRIVATE))
+				meth.setName("__" + meth.getName());
+		}
+		
 		List<Meth> meths = new ArrayList<Meth>();
 		Meth mainMeth = null;
 		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
@@ -671,11 +685,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			if (method.isMainMethod()) {
 				mainMeth = method;
 			}
-			// we register all private method to be able to rename them
-			if (method.getModifiers().contains(Modifier.PRIVATE)) {
-				privateMeth.add(method.getName());
-			}
-			else if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
+			if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
 				meths.clear();
 				
 				for(Meth m : classDef.getMethods()) { //On récupère les méthodes de mêmes noms
@@ -748,7 +758,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 					code = code.append(formatIndented("\n%-1# used in wrapper '%s'",
 							method.isConstructor()?"__init__":method.getName()));
 				if (methodsNames.get(method).equals("__init__"))
-					code = code.append(formatIndented("\n%-1# constructor%1", printMeth(method, dynamicAttributs)));
+					code = code.append(formatIndented("%1", printMeth(method, dynamicAttributs)));
 				else
 					code = code.append(formatIndented("%1", method));
 			}
