@@ -42,7 +42,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(CSharpPlatform.getInstance(), CppPlatform.getInstance(), PythonPlatform.getInstance(), JavaPlatform.getInstance());
+	 Arrays.asList(CSharpPlatform.getInstance(), CppPlatform.getInstance(), JavaPlatform.getInstance(), PythonPlatform.getInstance());
 
 	@BeforeClass
 	public static void init() {
@@ -116,9 +116,10 @@ public class GoolTest {
 
 	@Test
 	public void simpleNew() throws Exception {
+		//j'ai changé le nom de la fonction print en printr car la fonction print est deja presente dans python
 		String input = TestHelper
 				.surroundWithClass(
-						"public void print(){System.out.println(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.print();}",
+						"public void printr(){System.out.println(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.printr();}",
 						MAIN_CLASS_NAME, "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -126,11 +127,12 @@ public class GoolTest {
 
 	@Test
 	public void simpleTwoClasses() throws Exception {
+		//j'ai changer le nom de la fonction print en printr
 		String input = TestHelper.surroundWithClassMain(
-				"Printer p = new Printer(); p.print();", MAIN_CLASS_NAME);
+				"Printer p = new Printer(); p.printr();", MAIN_CLASS_NAME);
 		input += "\n"
 				+ TestHelper.surroundWithClass(
-						"public void print(){System.out.println(2 + 2);}", "Printer", "");
+						"public void printr(){System.out.println(2 + 2);}", "Printer", "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}

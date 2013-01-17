@@ -49,6 +49,7 @@ public final class GeneratorHelper {
 				result.add(dep.toString());
 			}
 		}
+		
 		return result;
 	}
 

@@ -153,7 +153,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec(),
+		if(enhancedForLoop.getExpression().getType() instanceof TypeMap)
+			return formatIndented("for %s in %s.iteritems():%1", enhancedForLoop.getVarDec().getName(),
+				enhancedForLoop.getExpression() ,enhancedForLoop.getStatements());
+		return formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec().getName(),
 				enhancedForLoop.getExpression() ,enhancedForLoop.getStatements());
 	}
 
@@ -369,8 +372,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {
-		// TODO Auto-generated method stub
-		return "";
+		return "noprint";
 	}
 
 	@Override
@@ -412,7 +414,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeDependency typeDependency) {
 		// TODO Auto-generated method stub
-		return "";
+		
+		if(typeDependency.getType() instanceof TypeInt)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeString)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeList)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeMap)
+			return "noprint";
+		return super.getCode(typeDependency);
 	}
 
 	@Override
@@ -539,13 +550,18 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
+		//StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
+		
+		StringBuilder code = new StringBuilder (String.format("# Platform: %s\n\n", classDef.getPlatform()));
+		code.append("import goolHelper\n");
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
+		
 		if (! dependencies.isEmpty()) {
 			for (String dependency : dependencies) {
 				if(!dependency.isEmpty())
-					code = code.append(String.format("importr %s\n", dependency));
+					if(dependency != "noprint")
+					code = code.append(String.format("import %s\n", dependency));
 			}
 		}
 		

@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import logger.Log;
+
 /**
  * This captures classes in the intermediate language. For each object member of
  * ClassDef the compiler will have to generate a separate file containing the
@@ -306,6 +308,7 @@ public class ClassDef extends Dependency {
 	}
 
 	public final void addDependency(Dependency dependency) {
+		Log.e("ah=jout : "+dependency.toString());
 		if (
 				(dependency instanceof TypeDependency)
 				&& 
@@ -350,6 +353,7 @@ public class ClassDef extends Dependency {
 
 	public final void addDependencies(List<Dependency> dependencies) {
 		for (Dependency dependency : dependencies) {
+			Log.e(dependency.toString());
 			addDependency(dependency);
 		}
 	}
