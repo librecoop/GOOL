@@ -2,6 +2,8 @@ package gool.generator;
 
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
+import gool.generator.android.AndroidCodePrinter;
+import gool.generator.android.AndroidPlatform;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
@@ -80,6 +82,16 @@ public final class GeneratorHelper {
 			//Just compile each abstract GOOL class and add it to the map.
 			compilationUnits.get(platform).addAll(
 					currentPrinter.print(classDef));
+						
+			
+		}
+		//If the platform is android a project has to be created and the files created
+		// above copied into the project.
+		if(compilationUnits.containsKey(AndroidPlatform.getInstance())) {
+			Platform platform = AndroidPlatform.getInstance();
+			AndroidCodePrinter currentPrinter = (AndroidCodePrinter) CodePrinter.getPrinter(platform);
+			List<File> newFileList = currentPrinter.createAndroidProject(compilationUnits.get(platform));
+			compilationUnits.put(platform, newFileList);
 		}
 		return compilationUnits;
 	}

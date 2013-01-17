@@ -111,7 +111,7 @@ public class GOOLCompiler {
 	 */
 	private Map<Platform, List<File>> abstractGool2Target(
 			Collection<ClassDef> classDefs) throws FileNotFoundException {
-		return GeneratorHelper.printClassDefs(classDefs);
+		return GeneratorHelper.printClassDefs(classDefs);		
 	}
 
 
