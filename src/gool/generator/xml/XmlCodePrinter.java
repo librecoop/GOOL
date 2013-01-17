@@ -2,6 +2,7 @@ package gool.generator.xml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,9 +96,21 @@ public class XmlCodePrinter extends CodePrinter {
 
 		Method[] meths = node.getClass().getMethods();
 		for (Method meth: meths) {
-			if (meth.getReturnType().getName().equals(node.getClass().getName())) {
-				
-			}
+			Class laCl = meth.getReturnType();
+			do {
+				if (laCl.getName().equals(node.getClass().getName())) {
+					try {
+						newElement.appendChild(NodeToElement((gool.ast.constructs.Node)meth.invoke(node, null), document));
+					} catch (IllegalAccessException e) {
+						Log.e(e);
+					} catch (IllegalArgumentException e) {
+						Log.e(e);
+					} catch (InvocationTargetException e) {
+						Log.e(e);
+					}
+				}
+				laCl = laCl.getSuperclass();
+			} while(laCl!=null);
 		}        
         return newElement;
 	}
