@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
+
 public class AndroidCompiler extends SpecificCompiler {
 
 	public AndroidCompiler(File androidOutputDir, List<File> deps) {
@@ -30,14 +32,9 @@ public class AndroidCompiler extends SpecificCompiler {
 			List<File> classPath, List<String> args)
 			throws FileNotFoundException {
 		List<String> params = new ArrayList<String>();
-		params.add("android");
-		params.add("create project ");
-		params.add("--target 1 ");
-		params.add("--name Bazinga ");
-		params.add("--path ./MyAndroidAppProject ");
-		params.add("--activity MyAndroidAppActivity ");
-		params.add("--package com.bazinga.android ");
-		addSdkToClasspath();
+		params.add("ant");
+		params.add("debug");
+//		addSdkToClasspath();
 //		if (mainFile == null) {
 //			mainFile = files.get(0);
 //		}
@@ -47,8 +44,8 @@ public class AndroidCompiler extends SpecificCompiler {
 //		if (args != null) {
 //			params.addAll(args);
 //		}
-		Command.exec(getOutputDir(), params);	
-		return (new File(getOutputDir(), mainFile.getName().replace(".java", ".class")));
+		Command.exec(new File(Settings.get("android_out_dir_final")), params);	
+		return (new File(Settings.get("android_out_dir_final")));
 	}
 	
 	@Override
@@ -61,13 +58,32 @@ public class AndroidCompiler extends SpecificCompiler {
 	@Override
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
-		List<String> params = new ArrayList<String>();
-		params.add("java");
-
-		addSdkToClasspath();
-
-		params.add(file.getName().replace(".class", ""));
-		return Command.exec(getOutputDir(), params);
+		try{
+			
+			List<String> paramsToRunEmulator = new ArrayList<String>();
+			List<String> paramsToExecuteApk = new ArrayList<String>();
+			ProcessBuilder pb=new ProcessBuilder(paramsToRunEmulator);
+			paramsToRunEmulator.add("android");
+			paramsToRunEmulator.add("avd");
+			pb.directory(new File(Settings.get("android_sdk_path")));
+			Process p = pb.redirectErrorStream(true).start();
+			int retval = p.waitFor();
+			if (retval != 0) {
+					throw new CommandException("The command execution returned "
+							+ retval + " as return value... !\n");
+							}
+			paramsToExecuteApk.add("adb");
+			paramsToExecuteApk.add("install");
+			paramsToExecuteApk.add(Settings.get("android_out_dir_final")+"//bin//AndroidProject-debug.apk");
+			return Command.exec(new File(Settings.get("android_sdk_path")), paramsToExecuteApk);
+		}
+		catch (IOException e) {
+			throw new CommandException(e);
+		} catch (InterruptedException e) {
+			throw new CommandException("It seems the process was killed", e);
+		}
+		//addSdkToClasspath();
+		
 	}
 
 	private void addSdkToClasspath(){
@@ -117,6 +133,10 @@ public class AndroidCompiler extends SpecificCompiler {
 
 	@Override
 	public String getSourceCodeExtension() {
-		return "java";
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	
+	
 }
