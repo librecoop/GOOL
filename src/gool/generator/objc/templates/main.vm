@@ -1,0 +1,11 @@
+#parse($macros)
+
+#import "${class.Name}.h"
+
+#foreach( $method in $class.Methods )
+	#if(${method.isMainMethod()})
+${method.Header}{
+${method.Block}
+}
+	#end
+#end

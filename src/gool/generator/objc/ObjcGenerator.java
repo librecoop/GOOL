@@ -7,6 +7,7 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
+import gool.ast.constructs.Field;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
@@ -16,6 +17,7 @@ import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -83,11 +85,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ThisCall thisCall) {
 		return "self()";
-	}
-
-	@Override
-	public String getCode(ClassNew classNew) {
-		return String.format("[%s new]", removePointer(classNew.getType()));
 	}
 
 	@Override
@@ -350,17 +347,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 	
 	@Override
-	public String getCode(MethCall methodCall) {
-		return String.format("[%s:%s]", methodCall.getTarget() , 
-				StringUtils.join(methodCall.getParameters(), ":"));			
-	}
-	
-	@Override
 	public String getCode(MemberSelect memberSelect) {
 		return String.format("%s %s", memberSelect.getTarget(),
 				memberSelect.getIdentifier());
 	}
 	
+	//TODO Parcourir toutes les méthods private, protected etc, rajouter - si pas static, + sinon
 	@Override
 	public String getCode(Modifier modifier) {
 		switch(modifier){
@@ -382,10 +374,57 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 	
 	@Override
+	public String getCode(ClassNew classNew) {
+		
+		String init = new String("init");
+		
+		boolean b = false;
+		Integer numP = 1;
+		
+		for(Expression e : classNew.getParameters()) {
+			if(!b){
+				init += String.format("WithParam%s:%s ", numP.toString(), e.toString());
+				b = true;
+			}
+			else
+				init += String.format("andParam%s:%s ", numP.toString(), e.toString());
+			numP++;
+		}
+		
+		return String.format("[[%s alloc]%s]", removePointer(classNew.getType()), init);
+	}
+	
+	@Override
+	public String getCode(MethCall methodCall) {
+		String arg = new String();
+		boolean b = false;
+		Integer numP = 1;
+	
+		for(Expression e : methodCall.getParameters()) {
+			if(!b){
+				arg += String.format("Param%s:%s ", numP.toString(), e.toString());
+				b = true;
+			}
+			else
+				arg += String.format("andParam%s:%s ", numP.toString(), e.toString());
+			
+			numP++;
+		}
+		
+		if(methodCall.getTarget() instanceof VarAccess){
+			return String.format("[self %s%s]", methodCall.getTarget(), arg);
+		}
+		return String.format("[%s%s]", methodCall.getTarget(), arg);
+	}
+	
+	@Override
 	public String getCode(Meth meth) {
 		String ret = new String();
 		String arg = new String();
+		String mod = (meth.getModifiers().contains(Modifier.STATIC) ? "+" : "-");
+		Integer numP = 1;
 		boolean b = false;
+		
 		if(!(meth.getType() instanceof TypeNone))
 			ret = String.format("(%s)", meth.getType().toString());
 		else 
@@ -393,24 +432,43 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		for(VarDeclaration e : meth.getParams()) {
 			if(!b){
-				arg += String.format(":(%s)%s ", e.getType(), e.getName());
+				arg += String.format("Param%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
 				b = true;
 			}
 			else
-				arg += String.format("and%s:(%s)%s ", e.getName(), e.getType(), e.getName());
+				arg += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+			numP++;
 		}
 		
-		return String.format("%s %s%s",ret, meth.getName(),arg);
+		return String.format("%s %s %s%s", mod, ret, meth.getName(),arg);
 	}
 	
 	@Override
 	public String getCode(Constructor cons) {
 		String param = new String();
+		boolean b = false;
+		Integer numP = 1;
+		
 		for(VarDeclaration e : cons.getParams()) {
-			param += String.format("and%s:(%s)%s ", e.getName(), e.getType(), e.getName());
+			if(!b){
+				param += String.format("WithParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+				b = true;
+			}
+			else
+				param += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+			numP++;
 		}
 		
 		return String.format("- (id)init%s", param);
+	}
+	
+	@Override
+	public String getCode(Field field) {
+		String out = String.format("%s %s",field.getType(), field.getName());
+		if (field.getDefaultValue() != null) {
+			out = String.format("%s = %s", out, field.getDefaultValue());
+		}
+		return out;
 	}
 
 }

@@ -35,7 +35,7 @@ public class ObjcCodePrinter extends CodePrinter {
 	@Override
 	public List<File> print(ClassDef pclass) throws FileNotFoundException {
 		if (pclass.getParentClass() != null) {
-			pclass.getInterfaces().add(0, pclass.getParentClass());
+			pclass.setParentClass(pclass.getParentClass());
 		}
 		
 		String headerFile = processTemplate("header.vm", pclass);

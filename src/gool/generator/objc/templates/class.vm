@@ -3,19 +3,13 @@
 
 #import "${class.Name}.h"
 @implementation ${class.Name}
-#foreach( $field in $class.Fields )
-	#if($field.DefaultValue)$field.Type$class.Name::$field.Name = $field.DefaultValue;
-	#end
-#end
-
-
 #foreach( $method in $class.Methods )
-	#if(!${method.isMainMethod()})
-		${method.Header}#if($class.isInterface() || $method.isAbstract() );#else
+	#if(!${method.isMainMethod()} && !$method.isAbstract())
+${method.Header}#if($class.isInterface());#else
 {
-		$method.Block
-		#if(${method.isConstructor()})
-			return self;
+$method.Block
+#if(${method.isConstructor()})
+	return self;
 		#end
 }
 	#end
