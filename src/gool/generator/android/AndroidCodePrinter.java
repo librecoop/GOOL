@@ -129,6 +129,13 @@ public class AndroidCodePrinter extends CodePrinter {
 		String packageDirectory = mainMethodFolderString
 				.replace(folderString, "").replace("/", ".")
 				.replaceFirst(".", "");
+		//Below ensures that the code is within a package as required by android, if not creates one and
+		//updates folders accordingly
+		if(packageDirectory.equals("")) {
+			packageDirectory = "com.test";
+			newAndroidFolderSource = new File(
+					Settings.get("android_out_dir_final") + "//src//com//test");
+		}
 		String activityString = mainClassFiles.get(0).getName()
 				.replace(".java", "");
 
