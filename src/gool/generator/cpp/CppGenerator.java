@@ -536,8 +536,7 @@ public class CppGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		// TODO Auto-generated method stub
-		return null;
+		return "ofstream";
 	}
 
 	

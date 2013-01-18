@@ -494,5 +494,5 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(TypeFile typeFile) {
 		// TODO Auto-generated method stub
 		return "File";
-	
+	}
 }
