@@ -10,7 +10,6 @@ enum $class.Name {
 	    $field.Name,
 	#end
 };
-<<<<<<< HEAD
 #elseif(!$class.isInterface())
 #set($dp = 0)
 @interface $class.Name #if($class.ParentClass) : $class.ParentClass#set($dp = 1)#end#if($dp != 1 && !$class.Interfaces.isEmpty()):#end#if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
@@ -30,44 +29,24 @@ enum $class.Name {
 	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "public")
 	$field;
 #end
-=======
-#elseif (!$class.Interfaces.isEmpty())
-@interface $class.Name {
-	#foreach( $field in $class.Fields )
-	    $field;
->>>>>>> 61dbc5b3ce8bb4bbc5f1a2a8de9a5c33cff0e634
 	#end
 
 }
 	#foreach( $method in $class.Methods )
-<<<<<<< HEAD
 		#set($p = 1)#foreach($mod in $method.getModifiers())#if($mod == "private")#set($p = 0)#end#end
 		#if($p != 0)
 		
 	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;
 	#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#end
 		#end
-=======
-	    #if(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
->>>>>>> 61dbc5b3ce8bb4bbc5f1a2a8de9a5c33cff0e634
 	#end
 @end
 #else
-<<<<<<< HEAD
 @protocol $class.Name
 	#foreach( $method in $class.Methods )
 		
 	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;
 	#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#end
-=======
-class $class.Name {
-	#foreach( $field in $class.Fields )
-	    $field;
-	#end
-
-	#foreach( $method in $class.Methods )
-	    #if(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
->>>>>>> 61dbc5b3ce8bb4bbc5f1a2a8de9a5c33cff0e634
 	#end
 
 @end
