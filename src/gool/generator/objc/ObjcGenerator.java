@@ -56,6 +56,7 @@ import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
@@ -154,8 +155,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ListContainsCall lcc) {
 		return String.format(
-				"([string rangeOfString:@%s].location == NSNotFound)",
-				lcc.getParameters());
+				"([%s rangeOfString:@%s].location == NSNotFound)",
+				lcc.getExpression(),lcc.getParameters());
 	}
 
 	@Override
@@ -281,12 +282,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(SystemOutPrintCall systemOutPrintCall) {  
-		Expression toPrint = systemOutPrintCall.getParameters().get(0);
-		if (toPrint.getType().equals(TypeString.INSTANCE)){
-			return String.format("NSlog(%s)", GeneratorHelper
-					.joinParams(systemOutPrintCall.getParameters()));
-		}else 
+	public String getCode(SystemOutPrintCall systemOutPrintCall) {   // a completer
+		List<Expression> toPrint = systemOutPrintCall.getParameters();
+		for(Expression ex:toPrint){
+			System.out.println(ex.toString()+"11111111111111111111111");
+			
+		}
 		
 		return String.format("NSLog(@%s)",GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
 	
