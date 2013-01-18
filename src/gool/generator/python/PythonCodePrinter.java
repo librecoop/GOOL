@@ -31,8 +31,13 @@ public class PythonCodePrinter extends CodePrinter {
 	public List<File> print(ClassDef pclass) throws FileNotFoundException {
 		List<File> res = super.print(pclass);
 		
-		File rep = getOutputDir();
-		File[] dirs = rep.listFiles(new FileFilter(){
+		createInitFile(getOutputDir());
+		
+		return res;		
+	}
+	
+	private void createInitFile(File dir) {
+		File[] dirs = dir.listFiles(new FileFilter(){
 		  public boolean accept(File f) {
 		    return f.isDirectory();
 		  }
@@ -46,8 +51,7 @@ public class PythonCodePrinter extends CodePrinter {
 				// TODO Auto-generated catch block
 				Log.e(e);
 			}
+			createInitFile(d);
 		}
-		
-		return res;		
 	}
 }

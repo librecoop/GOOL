@@ -42,7 +42,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(CSharpPlatform.getInstance(), CppPlatform.getInstance(), JavaPlatform.getInstance(), PythonPlatform.getInstance());
+	 Arrays.asList(JavaPlatform.getInstance(), CppPlatform.getInstance(), CSharpPlatform.getInstance(), PythonPlatform.getInstance());
 
 	@BeforeClass
 	public static void init() {
@@ -125,6 +125,17 @@ public class GoolTest {
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
+	@Test
+	public void simpleNewPackage() throws Exception {
+		//j'ai changé le nom de la fonction print en printr car la fonction print est deja presente dans python
+		String input = TestHelper
+				.surroundWithClass(
+						"public void printr(){System.out.println(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.printr();}",
+						MAIN_CLASS_NAME, "", "pkg");
+		String expected = "4";
+		compareResultsDifferentPlatforms(input, expected);
+	}
+	
 	@Test
 	public void simpleTwoClasses() throws Exception {
 		//j'ai changer le nom de la fonction print en printr

@@ -25,6 +25,10 @@ public final class TestHelper {
 		return accessModifier + " class " + className + " { public " + className+ "(){} " + input + " } ";
 	}
 	
+	public static String surroundWithClass(String input, String className, String accessModifier, String packageName) {
+		return "package " + packageName  + ";\n" + accessModifier + " class " + className + " { public " + className+ "(){} " + input + " } ";
+	}
+	
 	public static String generateCompileRun(Platform platform, String input,
 			String mainClassName) throws Exception, FileNotFoundException {
 		GOOLCompiler gc = new GOOLCompiler();
