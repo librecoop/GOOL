@@ -538,7 +538,7 @@ public class CppGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		return "fstream";
+		return "filecpp";
 	}
 
 }

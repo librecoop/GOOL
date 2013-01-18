@@ -122,7 +122,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 		return String.format("%s.get(%s)", lgc.getExpression(),
 				StringUtils.join(lgc.getParameters(), ", "));
 	}
-
+	
 	public String getCode(ListGetIteratorCall lgic) {
 		return String.format("%s.getIterator()", lgic.getExpression());
 	}

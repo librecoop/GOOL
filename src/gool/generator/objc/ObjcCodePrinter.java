@@ -1,7 +1,8 @@
 package gool.generator.objc;
 
-import gool.ast.constructs.ClassDef;
 import gool.generator.common.CodePrinter;
+
+import gool.ast.constructs.ClassDef;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -64,5 +65,6 @@ public class ObjcCodePrinter extends CodePrinter {
 		} else {
 			return super.print(pclass);
 		}
+
 	}
 }
