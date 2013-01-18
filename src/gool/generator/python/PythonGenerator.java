@@ -17,7 +17,6 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
-import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
@@ -398,6 +397,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
+		if(varAccess.getType().getName().equals("")) {
+			return name;
+		}
+		
 		if (name.equals("this"))
 			return "self";
 		else if (paramsMethCurrent.contains(name))
@@ -485,7 +488,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeDependency typeDependency) {
 		// TODO Auto-generated method stub
-		
 		if(typeDependency.getType() instanceof TypeInt)
 			return "noprint";
 		if(typeDependency.getType() instanceof TypeString)
@@ -673,7 +675,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 				dynamicAttributs += String.format("self.%s\n", f);
 		}
 		dynamicAttributs = dynamicAttributs.replaceFirst("\\s+\\z", "\n");
-		
+
 		// renaming private methods
 		for (Meth meth : classDef.getMethods()){
 			if (meth.getModifiers().contains(Modifier.PRIVATE))

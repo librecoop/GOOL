@@ -5,6 +5,7 @@ import gool.executor.common.SpecificCompiler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +34,16 @@ public class PythonCompiler extends SpecificCompiler {
 			throws FileNotFoundException {
 		
 		List<String> params = new ArrayList<String>();
+/*
+		try {
+			Runtime.getRuntime().exec("export PYTHONPATH=$PYTHONPATH:" + getOutputDir().getAbsolutePath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	*/	
 		params.add("python");
 		params.add(file.getName());
-		params.add("--pythonpath");
-		params.add(".");
-		
 		return Command.exec(getOutputDir(), params);
 	}
 
