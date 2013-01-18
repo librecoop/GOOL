@@ -1,13 +1,19 @@
 package gool.generator.objc;
 
 import gool.ast.constructs.ClassNew;
+import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.MainMeth;
+import gool.ast.constructs.MemberSelect;
+import gool.ast.constructs.Meth;
+import gool.ast.constructs.MethCall;
+import gool.ast.constructs.Modifier;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.VarDeclaration;
@@ -42,6 +48,7 @@ import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
@@ -50,8 +57,6 @@ import gool.generator.common.CommonCodeGenerator;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-
-
 
 public class ObjcGenerator extends CommonCodeGenerator {
 
@@ -67,11 +72,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public void addCustomDependency(String key, Dependency value) {
-
 		customDependencies.put(key, value);
-
 	}
-	
+
 	@Override
 	public String getCode(TypeNull typeNull) {
 		return "nil";
@@ -79,14 +82,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		// TODO Auto-generated method stub
-		return "self";
+		return "self()";
 	}
-	
+
 	@Override
 	public String getCode(ClassNew classNew) {
-		return String.format("[%s new]", removePointer(classNew.getType())); // a
-																				// completer
+		return String.format("[%s new]", removePointer(classNew.getType()));
 	}
 
 	@Override
@@ -125,15 +126,32 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		// TODO Auto-generated method stub
-		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
-				StringUtils.join(equalsCall.getParameters(), ", "));
+		if (equalsCall.getTarget().getType() instanceof TypeString) {
+			return String.format("[%s isEqualToString: %s]",
+					equalsCall.getTarget(),
+					StringUtils.join(equalsCall.getParameters(), ", "));
+		} else {
+			return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
+					StringUtils.join(equalsCall.getParameters(), ", "));
+		}
 	}
 
 	@Override
 	public String getCode(ListAddCall lac) {
-		// TODO Auto-generated method stub
-		return null;
+		if (lac.getParameters().size() == 1) {
+			return String.format("[%s addObject:%s]", lac.getExpression(),
+					lac.getParameters());
+		} else {
+			String s = String.format("[%s arrayWithObjects:%s]",
+					lac.getExpression(),
+					StringUtils.join(lac.getParameters(), ", "));
+			String str[] = new String[lac.getParameters().size()];
+			for (int i = 2; i <= lac.getParameters().size(); i++) {	
+				str[i] = (String) String.format("[%s addObject:%s]%n",
+						lac.getExpression(), lac.getParameters().get(i));
+			}
+			return String.format("%s%n%s", s,str);
+		}
 	}
 
 	@Override
@@ -156,31 +174,29 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
-		// TODO Auto-generated method stub
-		return null;
+		String s = "if(( "+ String.format("[%s count]", liec.getExpression()) + " ) == 0 )";
+		return s;
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s removeObjectsAtIndex:%s]", lrc.getExpression(),
+				lrc.getParameters());
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		// TODO Auto-generated method stub
-		return null;
+			return String.format("[%s removeObject:%s]", lrc.getExpression(),
+					lrc.getParameters());
 	}
 
 	@Override
 	public String getCode(ListSizeCall lsc) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s count]", lsc.getExpression());
 	}
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
-		// TODO Auto-generated method stub
 		return "int main(int argc, const char * argv[])";
 	}
 
@@ -239,15 +255,14 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	//TODO super
+	// TODO super
 	public String getCode(ParentCall parentCall) {
-		return "self =[super init]";
+		return "self = [super init]";
 	}
 
 	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {
-		// TODO Auto-generated method stub
-		return null;
+		return "Foundation/Foundation.h";
 	}
 
 	@Override
@@ -273,8 +288,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[dictionary setObject:@%s forKey@%s]",
+				typeEntry.getElementType(), typeEntry.getKeyType());
 	}
 
 	public String getCode(TypeObject typeObject) {
@@ -286,8 +301,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
-	
-	public String getCode(TypeArray typeArray){
+
+	public String getCode(TypeArray typeArray) {
 		return String.format("NSArray");
 	}
 
@@ -297,7 +312,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	//TODO NSMutableDictionary
 	public String getCode(TypeMap typeMap) {
 		return "NSMutableDictionary";
 	}
@@ -328,6 +342,75 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(TypeFile typeFile) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public String getCode(This pthis) {
+		return "self";
+	}
+	
+	@Override
+	public String getCode(MethCall methodCall) {
+		return String.format("[%s:%s]", methodCall.getTarget() , 
+				StringUtils.join(methodCall.getParameters(), ":"));			
+	}
+	
+	@Override
+	public String getCode(MemberSelect memberSelect) {
+		return String.format("%s %s", memberSelect.getTarget(),
+				memberSelect.getIdentifier());
+	}
+	
+	@Override
+	public String getCode(Modifier modifier) {
+		switch(modifier){
+		case ABSTRACT:
+			return "";
+		case FINAL:
+			return "const";
+		case PRIVATE:
+			return "@private";
+		case PROTECTED:
+			return "@protected";
+		case PUBLIC:
+			return "@public";
+		case STATIC:
+			return "+";
+		default :
+			return super.getCode(modifier);
+		}
+	}
+	
+	@Override
+	public String getCode(Meth meth) {
+		String ret = new String();
+		String arg = new String();
+		boolean b = false;
+		if(!(meth.getType() instanceof TypeNone))
+			ret = String.format("(%s)", meth.getType().toString());
+		else 
+			ret = "(void)";
+		
+		for(VarDeclaration e : meth.getParams()) {
+			if(!b){
+				arg += String.format(":(%s)%s ", e.getType(), e.getName());
+				b = true;
+			}
+			else
+				arg += String.format("and%s:(%s)%s ", e.getName(), e.getType(), e.getName());
+		}
+		
+		return String.format("%s %s%s",ret, meth.getName(),arg);
+	}
+	
+	@Override
+	public String getCode(Constructor cons) {
+		String param = new String();
+		for(VarDeclaration e : cons.getParams()) {
+			param += String.format("and%s:(%s)%s ", e.getName(), e.getType(), e.getName());
+		}
+		
+		return String.format("- (id)init%s", param);
 	}
 
 }

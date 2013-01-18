@@ -274,6 +274,9 @@ public class CppGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "map";
 		}
+		if (typeDependency.getType() instanceof TypeFile) {
+			return "fstream";
+		}
 		if (typeDependency.getType() instanceof TypeString) {
 			return "string";
 		}
@@ -535,7 +538,7 @@ public class CppGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		return "filecpp";
+		return "fstream";
 	}
 
 }

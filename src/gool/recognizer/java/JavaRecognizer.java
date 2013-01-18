@@ -73,6 +73,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -509,13 +510,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("String", tmpOtd);
 		string2otdMap.put("java.lang.String", tmpOtd);
 		
-		/*tmpOtd = new Otd(){
+		tmpOtd = new Otd(){
 			public IType getType(){
-				return TypeFile.INSTANCE;
+				return new TypeFile();
 			}
 		};
 		string2otdMap.put("File", tmpOtd);
-		string2otdMap.put("java.io.File",tmpOtd);*/
+		string2otdMap.put("java.io.File",tmpOtd);
 
 		// We found a Java boxed Double.
 		// As far as type goes, we unbox it and just say it is a GOOL Decimal.
