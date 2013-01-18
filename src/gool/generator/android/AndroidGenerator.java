@@ -216,7 +216,10 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("systemOutTextBox.append(%s+\"\\n\") ",
+		return String.format("systemOutTextBox.append(%s+\"\\n\"); ",
+		 StringUtils.join(
+				systemOutPrintCall.getParameters(), ",")) + 
+				String.format(" Log.i(\"JUnitSysOut\",String.valueOf(%s)) ",
 		 StringUtils.join(
 				systemOutPrintCall.getParameters(), ","));
 	}
