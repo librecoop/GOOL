@@ -125,7 +125,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 	
 	public String getCode(ListGetIteratorCall lgic) {
-		return String.format("%s.getIterator()", lgic.getExpression());
+		return String.format("%s.iterator()", lgic.getExpression());
 	}
 
 	public String getCode(ListIsEmptyCall liec) {

@@ -54,6 +54,9 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
+
+import java.awt.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
@@ -151,8 +154,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format(
-				"([string rangeOfString:@%s].location == NSNotFound)",
+		return String.format("[%s containsObject: %s]", lcc.getExpression(),
 				lcc.getParameters());
 	}
 
@@ -160,12 +162,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(ListGetCall lgc) {
 		return String.format("[%s ObjectsAtIndex:%s]", lgc.getExpression(),
 				lgc.getParameters());
-		// the number of lgic.getParameters() ? TODO
 	}
 
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
-		return null;
+		return String.format("[%s objectEnumerator]", lgic.getExpression());
 	}
 
 	@Override
@@ -199,63 +200,65 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
-		return String.format("[[%s objectForKey:@%s]isEqualToString:@"+"("+"null"+")"+"]",
-				mapContainsKeyCall.getExpression(),
+		return String.format("[[%s objectForKey:@%s]isEqualToString:@" + "("
+				+ "null" + ")" + "]", mapContainsKeyCall.getExpression(),
 				mapContainsKeyCall.getParameters());
 	}
-	
-	
+
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
-	//TODO
-		return null;
+		return String
+				.format("[%s allKeys]", mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapEntryGetValueCall mapEntryGetValueCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s allValues]",
+				mapEntryGetValueCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String.format("[%s objectForKey:@%s]", mapGetCall.getExpression(),
+		return String.format("[%s objectForKey:@%s]",
+				mapGetCall.getExpression(),
 				StringUtils.join(mapGetCall.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		String s = "( " + String.format("[%s count]", mapIsEmptyCall.getExpression())
+		String s = "( "
+				+ String.format("[%s count]", mapIsEmptyCall.getExpression())
 				+ "== 0)";
 		return s;
 	}
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s setObject:@%s forKey:@%s]",
+				mapPutCall.getExpression(), mapPutCall.getParameters().get(0),
+				mapPutCall.getParameters().get(1));
 	}
 
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("[%s removeObjectForKey:@%s]",
+				mapRemoveCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapSizeCall mapSizeCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format(
+				"NSArray * allKeys = [%s allKeys]%n[allKeys count]",
+				mapSizeCall.getExpression());
+		//TODO
 	}
 
 	@Override
-	// TODO super
 	public String getCode(ParentCall parentCall) {
 		return "self = [super init]";
 	}
@@ -340,8 +343,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		// TODO Auto-generated method stub
-		return null;
+		return "NSFileManager";
 	}
 
 	@Override
