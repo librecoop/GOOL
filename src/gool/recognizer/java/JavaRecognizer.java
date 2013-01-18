@@ -70,6 +70,7 @@ import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeBufferedReader;
+import gool.ast.type.TypeBufferedWriter;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
@@ -77,6 +78,7 @@ import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -567,7 +569,27 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("BufferedReader", tmpOtd);
 		string2otdMap.put("java.io.BufferedReader", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.BufferedReader", tmpOtd);
+		
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeFileWriter();
+			}
+		};
+		string2otdMap.put("FileWriter", tmpOtd);
+		string2otdMap.put("java.io.FileWriter", tmpOtd);
+		string2otdMap.put("gool.imports.java.io.FileWriter", tmpOtd);
+	
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeBufferedWriter();
+			}
+		};
+		string2otdMap.put("BufferedWriter", tmpOtd);
+		string2otdMap.put("java.io.BufferedWriterr", tmpOtd);
+		string2otdMap.put("gool.imports.java.io.BufferedWriter", tmpOtd);
 	}
+	
 
 	private IType string2IType(String typeName, Context context) {
 

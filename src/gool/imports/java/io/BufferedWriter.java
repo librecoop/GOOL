@@ -1,7 +1,7 @@
 package gool.imports.java.io;
 
-public class BufferedReader {
-	public BufferedReader (FileReader arg) {
+public class BufferedWriter {
+	public BufferedWriter (FileWriter arg) {
 		// TODO Auto-generated method stub
 	}
 }

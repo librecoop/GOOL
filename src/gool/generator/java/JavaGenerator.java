@@ -38,11 +38,13 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeBufferedReader;
+import gool.ast.type.TypeBufferedWriter;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -244,7 +246,13 @@ public class JavaGenerator extends CommonCodeGenerator {
 		}
 		if (typeDependency.getType() instanceof TypeBufferedReader) {
 			return "java.io.BufferedReader";
-	}
+		}
+		if (typeDependency.getType() instanceof TypeFileWriter) {
+			return "java.io.FileWriter";
+		}
+		if (typeDependency.getType() instanceof TypeBufferedWriter) {
+			return "java.io.BufferedWriter";
+		}
 		return super.getCode(typeDependency);
 	}
 
@@ -321,5 +329,15 @@ public class JavaGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeBufferedReader typeBufferedReader) {
 		return "BufferedReader";
+	}
+	
+	@Override
+	public String getCode(TypeFileWriter typeFileWriter) {
+		return "FileWriter";
+	}
+	
+	@Override
+	public String getCode(TypeBufferedWriter typeBufferedWriter) {
+		return "BufferedWriter";
 	}
 }

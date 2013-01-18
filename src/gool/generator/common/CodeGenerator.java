@@ -65,12 +65,14 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeBufferedReader;
+import gool.ast.type.TypeBufferedWriter;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -413,4 +415,8 @@ public interface CodeGenerator {
 	String getCode(TypeFileReader typeFileReader);
 	
 	String getCode(TypeBufferedReader typeBufferedReader);
+	
+    String getCode(TypeFileWriter typeFileWriter);
+	
+	String getCode(TypeBufferedWriter typeBufferedWriter);
 }
