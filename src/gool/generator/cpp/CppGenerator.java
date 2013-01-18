@@ -50,11 +50,13 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -539,6 +541,14 @@ public class CppGenerator extends CommonCodeGenerator {
 		return "ofstream";
 	}
 
-	
-
+	@Override
+	public String getCode(TypeFileReader typeFileReader) {
+		//TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(TypeBufferedReader typeBufferedReader) {
+		//TODO Auto-generated method stub
+		return null;
+	}
 }
