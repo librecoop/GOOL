@@ -17,7 +17,6 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
-import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
@@ -217,9 +216,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		else {
 			value = "None";
 		}
-		if (field.getModifiers().contains(Modifier.PRIVATE))
-			name = "__" + field.getName();
-		else
+//		if (field.getModifiers().contains(Modifier.PRIVATE))
+//			name = "__" + field.getName();
+//		else
 			name = field.getName();
 		return printWithComment(String.format("%s = %s\n", name, value));
 	}
@@ -403,11 +402,15 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
-		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE))
-			name = "__" + name;
+		System.out.println(varAccess.getType());
+		if(varAccess.getType() == null)
+			return name;
 		if (name.equals("this"))
 			return "self";
-		else if (paramsMethCurrent.contains(name))
+
+//		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE))
+//			name = "__" + name;
+		if (paramsMethCurrent.contains(name))
 			return name;
 		else
 			return "self." + name;
@@ -419,9 +422,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (target.equals("this"))
 			target = "self";
 		String identifier;
-		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE))
-			identifier = "__" + memberSelect.getIdentifier();
-		else
+//		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE))
+//			identifier = "__" + memberSelect.getIdentifier();
+//		else
 			identifier = memberSelect.getIdentifier();
 		return String.format("%s.%s", target, identifier);
 	}
@@ -499,7 +502,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeDependency typeDependency) {
 		// TODO Auto-generated method stub
-		
 		if(typeDependency.getType() instanceof TypeInt)
 			return "noprint";
 		if(typeDependency.getType() instanceof TypeString)
@@ -679,13 +681,17 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 		String dynamicAttributs = "";
 		for(Field f : classDef.getFields()) {
+			// renaming private fields
+			if (f.getModifiers().contains(Modifier.PRIVATE))
+				f.setName("__" + f.getName());
+			// static fields are declared in the class, dynamic ones in the constructor
 			if (f.getModifiers().contains(Modifier.STATIC))
 				code = code.append(formatIndented("%1", f));
 			else
 				dynamicAttributs += String.format("self.%s\n", f);
 		}
 		dynamicAttributs = dynamicAttributs.replaceFirst("\\s+\\z", "\n");
-		
+
 		// renaming private methods
 		for (Meth meth : classDef.getMethods()){
 			if (meth.getModifiers().contains(Modifier.PRIVATE))

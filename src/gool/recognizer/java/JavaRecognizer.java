@@ -996,16 +996,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		//This method returns a VarAccess, accessing a previously declared variable, i.e. a VarDeclaration.
-		//TODO: The link to the suitable VarDeclaration should be done by name analysis.
-		//For not we just create a dummy VarDeclaration for that purpose.
-//		Dec dec = new VarDeclaration(goolType(n, context), n
-//				.getName().toString());
-//		for (Field f : context.getClassDef().getFields()) {
-//			if (f.getName().equals(n.getName().toString())) {
-//				dec = f;
-//				break;
-//			}
-//		}
 		Dec dec = context.getDeclaration(n.getName().toString());
 		if (dec == null) {
 			Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
