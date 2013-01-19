@@ -4,26 +4,16 @@ import gool.Settings;
 import gool.executor.Command;
 import gool.executor.CommandException;
 import gool.executor.common.SpecificCompiler;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
 
 public class AndroidCompiler extends SpecificCompiler {
 
-	public AndroidCompiler(File androidOutputDir, List<File> deps) {
+	public AndroidCompiler(File androidOutputDir, List<File> deps)
+	{
 		super(androidOutputDir, deps);
 	}
 
@@ -61,21 +51,18 @@ public class AndroidCompiler extends SpecificCompiler {
 		try{
 			
 			List<String> paramsToRunEmulator = new ArrayList<String>();
-			List<String> paramsToExecuteApk = new ArrayList<String>();
-			ProcessBuilder pb=new ProcessBuilder(paramsToRunEmulator);
+			ProcessBuilder pbForEmulator=new ProcessBuilder(paramsToRunEmulator);
 			paramsToRunEmulator.add("android");
 			paramsToRunEmulator.add("avd");
-			pb.directory(new File(Settings.get("android_sdk_path")));
-			Process p = pb.redirectErrorStream(true).start();
-			int retval = p.waitFor();
-			if (retval != 0) {
-					throw new CommandException("The command execution returned "
-							+ retval + " as return value... !\n");
-							}
-			paramsToExecuteApk.add("adb");
-			paramsToExecuteApk.add("install");
-			paramsToExecuteApk.add(Settings.get("android_out_dir_final")+"//bin//AndroidProject-debug.apk");
-			return Command.exec(new File(Settings.get("android_sdk_path")), paramsToExecuteApk);
+			pbForEmulator.directory(new File(Settings.get("android_sdk_path")));
+			Process avdManagerStart = pbForEmulator.redirectErrorStream(true).start();
+			int retval = avdManagerStart.waitFor();
+				if (retval != 0)
+				{
+						throw new CommandException("The command execution returned "
+								+ retval + " as return value... !\n");
+				}
+			return installApkOnPhone();
 		}
 		catch (IOException e) {
 			throw new CommandException(e);
@@ -86,23 +73,23 @@ public class AndroidCompiler extends SpecificCompiler {
 		
 	}
 
-	private void addSdkToClasspath(){
-		/*
-		 * Add the classpath
-		 */
-		try {
-			
-			String addSdkDir="export PATH=$PATH:"+Settings.get("android_sdk_location")+"/tools:"+Settings.get("android_sdk_location")+"/platform-tools";
-			addSdkDir.concat(Settings.get("android_sdk_location")+"/platform-tools");
-			FileWriter fstream = new FileWriter("android.sh");
-	        BufferedWriter out = new BufferedWriter(fstream);
-	        
-		    out.write(addSdkDir);
-		    out.newLine();
-		    out.write("android create project  --target 1  --name Bazinga  --path ./MyAndroidAppProject  --activity MyAndroidAppActivity  --package com.bazinga.android");
-		    out.close();
-		    Runtime.getRuntime().exec("sh android.sh");
-		    Runtime.getRuntime().exec("ant debug");
+//	private void addSdkToClasspath(){
+//		/*
+//		 * Add the classpath
+//		 */
+//		try {
+//			
+//			String addSdkDir="export PATH=$PATH:"+Settings.get("android_sdk_location")+"/tools:"+Settings.get("android_sdk_location")+"/platform-tools";
+//			addSdkDir.concat(Settings.get("android_sdk_location")+"/platform-tools");
+//			FileWriter fstream = new FileWriter("android.sh");
+//	        BufferedWriter out = new BufferedWriter(fstream);
+//	        
+//		    out.write(addSdkDir);
+//		    out.newLine();
+//		    out.write("android create project  --target 1  --name Bazinga  --path ./MyAndroidAppProject  --activity MyAndroidAppActivity  --package com.bazinga.android");
+//		    out.close();
+//		    Runtime.getRuntime().exec("sh android.sh");
+//		    Runtime.getRuntime().exec("ant debug");
 //		    Runtime.getRuntime().exec("android create project  --target 1  --name Bazinga  --path ./MyAndroidAppProject  --activity MyAndroidAppActivity  --package com.bazinga.android");
 //			ProcessBuilder pb = new ProcessBuilder("android.sh");		
 //			Map<String,String> env=pb.environment();
@@ -122,21 +109,56 @@ public class AndroidCompiler extends SpecificCompiler {
 //				throw new CommandException("The command execution returned "
 //						+ retval + " as return value... !\n" + buffer);
 //			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 //		catch (InterruptedException e) {
 //			throw new CommandException("It seems the process was killed", e);
 //		}
-	}
+//	}
 
 	@Override
 	public String getSourceCodeExtension() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	String installApkOnPhone()
+	{
+		try{
+			
+			List<String> paramsToInstallApk = new ArrayList<String>();
+			ProcessBuilder pbForApk=new ProcessBuilder(paramsToInstallApk);
+			paramsToInstallApk.add("adb");
+			paramsToInstallApk.add("install");
+			paramsToInstallApk.add(Settings.get("android_out_dir_final")+"//bin//AndroidProject-debug.apk");
+			Process executeApk = pbForApk.redirectErrorStream(true).start();
+			int retValForApk = executeApk.waitFor();
+			if (retValForApk != 0) {
+				throw new CommandException("The command execution returned "
+						+ retValForApk + " as return value... !\n");
+						}
+			return runApkOnPhone();
+		}
+		catch (IOException e) {
+			throw new CommandException(e);
+		} catch (InterruptedException e) {
+			throw new CommandException("It seems the process was killed", e);
+		}
+	}
+	
 
+	String runApkOnPhone()
+	{
+			List<String> paramsToRunApk = new ArrayList<String>();
+			paramsToRunApk.add("adb");
+			paramsToRunApk.add("shell");
+			paramsToRunApk.add("am");
+			paramsToRunApk.add("start");
+			paramsToRunApk.add("-n");
+			paramsToRunApk.add("com.google.test/.TestActivity");
+			return Command.exec(new File(Settings.get("android_sdk_path")), paramsToRunApk);
+		}
+	}
 	
-	
-}
