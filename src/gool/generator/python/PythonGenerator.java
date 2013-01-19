@@ -403,10 +403,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		if (name.equals("this"))
 			return "self";
-		else if (paramsMethCurrent.contains(name))
-			return name;
 		else
-			return "self." + name;
+			return name;
+			
 	}
 
 	@Override
