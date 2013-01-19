@@ -103,7 +103,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		comments.add("# " + newcomment + "\n");
 	}
 	
-	private String printWithComment(Statement statement) {
+	private String printWithComment(Object statement) {
 		String sttmnt = statement.toString().replaceFirst("\\s*\\z", "");
 		if (comments.size() == 1 && ! sttmnt.contains("\n")) {
 			sttmnt += " " + comments.get(0);
@@ -208,22 +208,26 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Field field) {
-		String value;
+		String value, name;
 		if (field.getDefaultValue() != null) {
 			value = field.getDefaultValue().toString();
 		}
 		else {
 			value = "None";
 		}
-		
-		return String.format("%s = %s\n", field.getName(), value);
+		comment ("getCode(Field) "+field.getName()+field.getModifiers());
+//		if (field.getAccessModifier() == Modifier.PRIVATE)
+//			name = "__" + field.getName();
+//		else
+			name = field.getName();
+		return printWithComment(String.format("%s = %s\n", name, value));
 	}
 
 	@Override
 	public String getCode(For forr) {
-		return formatIndented("%swhile %s:%1%-1%s",
+		return formatIndented("%swhile %s:%1",
 				printWithComment(forr.getInitializer()),forr.getCondition(),
-				forr.getWhileStatement().toString(), printWithComment(forr.getUpdater()));
+				forr.getWhileStatement().toString() + printWithComment(forr.getUpdater()));
 	}
 
 	@Override
@@ -387,10 +391,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MethCall methodCall) {
 		String name = methodCall.getTarget().toString();
-		if (methodCall.getModifiers() != null
-				&& methodCall.getModifiers().contains(Modifier.PRIVATE)) {
-			name = name.replaceFirst("\\w*\\s*\\z", "__$0");
-		}
+//		if (methodCall.getModifiers() != null
+//				&& methodCall.getModifiers().contains(Modifier.PRIVATE)) {
+//			name = name.replaceFirst("\\w*\\s*\\z", "__$0");
+//		}
 		return String.format("%s (%s)", name,
 				StringUtils.join(methodCall.getParameters(), ", "));
 	}
@@ -398,6 +402,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
+		comment("getCode(VarAccess) "+name+" "+varAccess.getDec().getModifiers());
+//		comment(varAccess.getDec().getAccessModifier().toString());
+//		if (varAccess.getDec().getAccessModifier() == Modifier.PRIVATE
+//				&& ! paramsMethCurrent.contains(name)) {
+//			name = "__" + name;
+//		}
 		if (name.equals("this"))
 			return "self";
 		else if (paramsMethCurrent.contains(name))
@@ -408,8 +418,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
-		return String.format("%s.%s", memberSelect.getTarget().toString().equals("this")?"self":memberSelect.getTarget(), memberSelect
-				.getIdentifier());
+		String target = memberSelect.getTarget().toString();
+		if (target.equals("this"))
+			target = "self";
+		comment("getCode(MemberSelect) "+memberSelect.getIdentifier()+" "+memberSelect.getDec().getModifiers());
+		return String.format("%s.%s", target, memberSelect.getIdentifier());
 	}
 	
 	@Override
@@ -584,6 +597,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			value = "None";
 		}
 		paramsMethCurrent.add(varDec.getName());
+		comment ("getCode(VarDeclaration) "+varDec.getName()+" "+varDec.getModifiers());
 		return String.format("%s = %s", varDec.getName(), value);
 	}
 
@@ -647,11 +661,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		//StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
-		
-		StringBuilder code = new StringBuilder (String.format("# Platform: %s\n\n", classDef.getPlatform()));
-		code.append("import goolHelper\n");
-		
+		// every python script has to start with a hash-bang:
+		// do not change the "#!/usr/bin/env python" line!
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		
 		if (! dependencies.isEmpty()) {
@@ -675,10 +687,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		dynamicAttributs = dynamicAttributs.replaceFirst("\\s+\\z", "\n");
 		
 		// renaming private methods
-		for (Meth meth : classDef.getMethods()){
-			if (meth.getModifiers().contains(Modifier.PRIVATE))
-				meth.setName("__" + meth.getName());
-		}
+//		for (Meth meth : classDef.getMethods()){
+//			if (meth.getModifiers().contains(Modifier.PRIVATE))
+//				meth.setName("__" + meth.getName());
+//		}
 		
 		List<Meth> meths = new ArrayList<Meth>();
 		Meth mainMeth = null;

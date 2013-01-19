@@ -13,7 +13,7 @@ public class VarAccess extends Expression {
 	/**
 	 * The declared variable.
 	 */
-	private Dec var;
+	protected Dec var;
 
 	/**
 	 * The type of the return value is T
