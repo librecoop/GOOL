@@ -100,7 +100,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 	private ArrayList<String> paramsMethCurrent = new ArrayList<String>();
 	
 	private void comment(String newcomment) {
-		comments.add("# " + newcomment + "\n");
+		String com = "# " + newcomment + "\n";
+		if (! comments.contains(com))
+			comments.add(com);
 	}
 	
 	private String printWithComment(Object statement) {
@@ -162,7 +164,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			textualOp = binaryOp.getTextualoperator();
 		}
 		if(binaryOp.getOperator().equals(Operator.UNKNOWN))
-			comment("Unrecognized by GOOL, passed on");
+			comment("Unrecognized by GOOL, passed on: " + textualOp);
 		return String.format("(%s %s %s)", binaryOp.getLeft(), textualOp, binaryOp.getRight());
 	}
  
@@ -215,10 +217,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		else {
 			value = "None";
 		}
-		comment ("getCode(Field) "+field.getName()+field.getModifiers());
-//		if (field.getAccessModifier() == Modifier.PRIVATE)
-//			name = "__" + field.getName();
-//		else
+		if (field.getModifiers().contains(Modifier.PRIVATE))
+			name = "__" + field.getName();
+		else
 			name = field.getName();
 		return printWithComment(String.format("%s = %s\n", name, value));
 	}
@@ -258,7 +259,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return String.format("%s.insert(%s, %s)",
 					lac.getExpression(), lac.getParameters().get(1), lac.getParameters().get(0));
 		default:
-			comment ("Unrecognized by GOOL, passed on");
+			comment ("Unrecognized by GOOL, passed on: add");
 			return String.format("%s.add(%s)",
 					lac.getExpression(), StringUtils.join(lac.getParameters(), ", "));
 		}
@@ -402,12 +403,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
-		comment("getCode(VarAccess) "+name+" "+varAccess.getDec().getModifiers());
-//		comment(varAccess.getDec().getAccessModifier().toString());
-//		if (varAccess.getDec().getAccessModifier() == Modifier.PRIVATE
-//				&& ! paramsMethCurrent.contains(name)) {
-//			name = "__" + name;
-//		}
+		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE))
+			name = "__" + name;
 		if (name.equals("this"))
 			return "self";
 		else if (paramsMethCurrent.contains(name))
@@ -421,8 +418,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 		String target = memberSelect.getTarget().toString();
 		if (target.equals("this"))
 			target = "self";
-		comment("getCode(MemberSelect) "+memberSelect.getIdentifier()+" "+memberSelect.getDec().getModifiers());
-		return String.format("%s.%s", target, memberSelect.getIdentifier());
+		String identifier;
+		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE))
+			identifier = "__" + memberSelect.getIdentifier();
+		else
+			identifier = memberSelect.getIdentifier();
+		return String.format("%s.%s", target, identifier);
 	}
 	
 	@Override
@@ -581,7 +582,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		case NOT:
 			return "not " + unaryOperation.getExpression();
 		case UNKNOWN:
-			comment("Unrecognized by GOOL, passed on");
+			comment("Unrecognized by GOOL, passed on: " + unaryOperation.getTextualoperator());
 			// no break: follow to the next case
 		default:
 			return String.format("%s %s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
@@ -597,7 +598,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 			value = "None";
 		}
 		paramsMethCurrent.add(varDec.getName());
-		comment ("getCode(VarDeclaration) "+varDec.getName()+" "+varDec.getModifiers());
 		return String.format("%s = %s", varDec.getName(), value);
 	}
 
@@ -636,14 +636,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 			textualOp = compoundAssign.getTextualoperator();
 		}
 		if (compoundAssign.getOperator().equals(Operator.UNKNOWN))
-			comment("Unrecognized by GOOL, passed on");
+			comment("Unrecognized by GOOL, passed on: " + textualOp);
 		return String.format("%s %s= %s", compoundAssign.getLValue(), textualOp,
 				compoundAssign.getValue());
 	}
 
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
-		comment ("Unrecognized by GOOL, passed on");
+		comment ("Unrecognized by GOOL, passed on: " + unknownExpression.getTextual());
 		return unknownExpression.getTextual();
 	}
 
@@ -687,10 +687,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		dynamicAttributs = dynamicAttributs.replaceFirst("\\s+\\z", "\n");
 		
 		// renaming private methods
-//		for (Meth meth : classDef.getMethods()){
-//			if (meth.getModifiers().contains(Modifier.PRIVATE))
-//				meth.setName("__" + meth.getName());
-//		}
+		for (Meth meth : classDef.getMethods()){
+			if (meth.getModifiers().contains(Modifier.PRIVATE))
+				meth.setName("__" + meth.getName());
+		}
 		
 		List<Meth> meths = new ArrayList<Meth>();
 		Meth mainMeth = null;
@@ -781,7 +781,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (mainMeth != null) {
 			paramsMethCurrent.clear();
 			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
-					mainMeth.getBlock().toString().replaceAll("self", classDef.getName())));
+					mainMeth.getBlock().toString().replaceAll("([^\\w])self([^\\w])", "$1"+classDef.getName()+"$2")));
 		}
 
 		return code.toString();
