@@ -9,17 +9,13 @@ import gool.generator.GoolGeneratorController;
  */
 public final class TypeBufferedReader extends IType {
 	public static final TypeBufferedReader INSTANCE = new TypeBufferedReader();
-	//private IType textualtype;
-	
-	//public IType getTextualtype() {
-	//	return textualtype;
-	//}
-
-//	public TypeBufferedReader(IType textualtype) {this.textualtype=textualtype;}
-
-	//public TypeBufferedReader() {
+	public TypeBufferedReader(IType elementType) {
+		this();
+		addArgument(elementType);
+	}
+	public TypeBufferedReader() {
 		// TODO Auto-generated constructor stub
-//	}
+	}
 
 	@Override
 	public String getName() {

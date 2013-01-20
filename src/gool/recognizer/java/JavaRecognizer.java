@@ -25,6 +25,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.For;
 import gool.ast.constructs.Node;
 import gool.ast.constructs.If;
@@ -47,6 +48,7 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
+import gool.ast.file.FileReadLine;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -586,7 +588,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		};
 		string2otdMap.put("BufferedWriter", tmpOtd);
-		string2otdMap.put("java.io.BufferedWriterr", tmpOtd);
+		string2otdMap.put("java.io.BufferedWriter", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.BufferedWriter", tmpOtd);
 	}
 	
@@ -1152,6 +1154,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					return new MapEntryGetValueCall(target);
 				}
 			}
+			if (type instanceof TypeBufferedReader) {
+				if (identifier.equals("readLine")) {
+					return new FileReadLine(target);
+				}
+			}
 		}
 		//the type of the target
 		//or the identifier
@@ -1490,7 +1497,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		else {
 				System.out.println("YYYY from method to member select YYYY");
 				System.out.println(n.getMethodSelect().toString());
-				System.out.println("YYYYYYYYYYYYY");
+				//System.out.println("YYYYYYYYYYYY");
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().
 			target = (Expression) n.getMethodSelect().accept(this,

@@ -8,6 +8,7 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
@@ -15,6 +16,7 @@ import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
+import gool.ast.file.FileReadLine;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -340,4 +342,20 @@ public class JavaGenerator extends CommonCodeGenerator {
 	public String getCode(TypeBufferedWriter typeBufferedWriter) {
 		return "BufferedWriter";
 	}
+
+
+	@Override
+	public String getCode(FileMethCall fileMethCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.readLine()", fileMethCall.getExpression());
+	}
+
+	@Override
+	public String getCode(FileReadLine fileReadLine) {
+		// TODO Auto-generated method stub
+		return String.format("%s.readLine()", fileReadLine.getExpression());
+	}
+
+	
+
 }

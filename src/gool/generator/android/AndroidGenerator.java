@@ -20,6 +20,7 @@ import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
+import gool.ast.file.FileReadLine;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -341,5 +342,11 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(TypeBufferedWriter typeBufferedWriter) {
 		//TODO Auto-generated method stub
 		return "BufferedWriter";
+	}
+
+	@Override
+	public String getCode(FileReadLine fileReadLine) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

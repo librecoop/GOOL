@@ -27,11 +27,6 @@ public class GoolTest {
 			this.expected = expected;
 		}
 		public void compare(Platform platform) throws Exception {
-			//This inserts a package which is mandatory for android
-			//TODO Not the ideal place to put it also com.test should be in the properties file
-			if(platform instanceof AndroidPlatform) {
-				this.input = "package com.test; "+ input;
-			}
 			String result = compileAndRun(platform);
 			logger.info(platform + " Result: " + result);
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
@@ -50,7 +45,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(JavaPlatform.getInstance(), AndroidPlatform.getInstance());
+	 Arrays.asList(JavaPlatform.getInstance(),CppPlatform.getInstance());
 //	private List<Platform> platforms = Arrays.asList(CppPlatform.getInstance());
 
 	@BeforeClass
@@ -68,8 +63,8 @@ public class GoolTest {
 	@Test
 	public void simpleChar() throws Exception {
 		String input = TestHelper.surroundWithClassMain(
-				"char testChar = 'B'; System.out.println(testChar);", MAIN_CLASS_NAME);
-		String expected = "B";
+				"char testChar = 'A'; System.out.println(testChar);", MAIN_CLASS_NAME);
+		String expected = "A";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -301,7 +296,24 @@ public class GoolTest {
 		String expected = "";
 		compareResultsDifferentPlatforms(input, "expected");
 	}
-
+	@Test
+	public void fileTest() throws Exception {
+		String input = 
+				"import gool.imports.java.io.BufferedReader;\n" +"import gool.imports.java.io.FileReader;\n"+ 
+				TestHelper
+				.surroundWithClassMain(
+						"BufferedReader br = new BufferedReader(new FileReader(\"/GOOLOUTPUTJAVA/src/test.txt\"));while((br.readLine()) != null) {}",MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "");
+	}
+	@Test
+	public void simpleFileTest() throws Exception {
+		String input = 
+				"import gool.imports.java.io.File;\n" + 
+				TestHelper
+				.surroundWithClassMain(
+						"File f = new File(\"a.txt\");",MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "");
+	}
 	private void compareResultsDifferentPlatforms(String input,
 			String expected) throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected));

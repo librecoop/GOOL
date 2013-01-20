@@ -9,17 +9,17 @@ import gool.generator.GoolGeneratorController;
  */
 public final class TypeFileReader extends IType {
 	public static final TypeFileReader INSTANCE = new TypeFileReader();
-	//private IType textualtype;
+	private IType textualtype;
 	
-	//public IType getTextualtype() {
-	//	return textualtype;
-	//}
+	public IType getTextualtype() {
+		return textualtype;
+	}
 
-	//public TypeFileReader (IType textualtype) {this.textualtype=textualtype;}
+	public TypeFileReader (IType textualtype) {this.textualtype=textualtype;}
 
-	//public TypeFileReader() {
+	public TypeFileReader() {
 		// TODO Auto-generated constructor stub
-//	}
+	}
 
 	@Override
 	public String getName() {

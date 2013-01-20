@@ -28,6 +28,7 @@ import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarDeclaration;
+import gool.ast.file.FileReadLine;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -562,6 +563,12 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeBufferedWriter typeBufferedWriter) {
 		//TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(FileReadLine fileReadLine) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
