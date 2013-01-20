@@ -1136,12 +1136,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d("X Standard method call for X");
 		Log.d(n.toString());
 		Log.d("X");
-		Context targetContext;
-		if (n.getExpression().toString().equals("this"))
-			targetContext = context.getClassContext();
-		else
-			targetContext = context;
-		Dec dec = targetContext.getDeclaration(n.getIdentifier() + ":" + getTypeMirror(n));
+
+		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier() + ":" + getTypeMirror(n));
 		if (dec == null) {
 			Log.e(String.format("No declaration found for '%s' in curent context", n.getIdentifier().toString()));
 			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
@@ -1265,10 +1261,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			Dec dec = null;
 			Collection<Modifier> mods = null;
 			if (tree instanceof MethodTree) {
-				dec = new Meth(null, ((MethodTree) tree).getName().toString());
+				dec = new Meth(goolType(tree, context), ((MethodTree) tree).getName().toString());
 				mods = (Collection<Modifier>)((MethodTree) tree).getModifiers().accept(this, context);
 			} else if (tree instanceof VariableTree) {
-				dec = new Field(((VariableTree) tree).getName().toString(), null, null);
+				dec = new Field(((VariableTree) tree).getName().toString(), goolType(tree, context), null);
 				mods = (Collection<Modifier>)((VariableTree) tree).getModifiers().accept(this, context);
 			}
 			if (dec != null) {
@@ -1594,7 +1590,7 @@ class Context {
 	}
 	
 	public void addDeclaration(Dec dec, String name) {
-		map.put(name, dec);
+		Dec old = map.put(name, dec);
 	}
 	
 	public Dec getDeclaration(String name) {

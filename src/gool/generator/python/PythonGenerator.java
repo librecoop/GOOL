@@ -398,7 +398,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return name;
 		if (name.equals("this"))
 			return "self";
-
+		
+		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)
+				&& ! name.startsWith("__"))
+			name = "__" + name;
 		if (paramsMethCurrent.contains(name))
 			return name;
 		else
