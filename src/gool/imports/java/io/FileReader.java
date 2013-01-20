@@ -1,7 +1,7 @@
 package gool.imports.java.io;
 
 public class FileReader {
-	public FileReader(File arg) {
+	public FileReader(String arg) {
 		// TODO Auto-generated method stub
 	}
 }
