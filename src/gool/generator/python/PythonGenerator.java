@@ -216,11 +216,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		else {
 			value = "None";
 		}
-//		if (field.getModifiers().contains(Modifier.PRIVATE))
-//			name = "__" + field.getName();
-//		else
-			name = field.getName();
-		return printWithComment(String.format("%s = %s\n", name, value));
+		return printWithComment(String.format("%s = %s\n", field.getName(), value));
 	}
 
 	@Override
@@ -390,26 +386,19 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(MethCall methodCall) {
-		String name = methodCall.getTarget().toString();
-//		if (methodCall.getModifiers() != null
-//				&& methodCall.getModifiers().contains(Modifier.PRIVATE)) {
-//			name = name.replaceFirst("\\w*\\s*\\z", "__$0");
-//		}
-		return String.format("%s (%s)", name,
+		return String.format("%s (%s)",
+				methodCall.getTarget().toString(),
 				StringUtils.join(methodCall.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
-		System.out.println(varAccess.getType());
 		if(varAccess.getType() == null)
 			return name;
 		if (name.equals("this"))
 			return "self";
 
-//		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE))
-//			name = "__" + name;
 		if (paramsMethCurrent.contains(name))
 			return name;
 		else
@@ -421,12 +410,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		String target = memberSelect.getTarget().toString();
 		if (target.equals("this"))
 			target = "self";
-		String identifier;
-//		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE))
-//			identifier = "__" + memberSelect.getIdentifier();
-//		else
-			identifier = memberSelect.getIdentifier();
-		return String.format("%s.%s", target, identifier);
+		return String.format("%s.%s", target, memberSelect.getIdentifier());
 	}
 	
 	@Override
@@ -562,7 +546,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
 		switch (unaryOperation.getOperator()){
-// BUG : python is call-by-value, increment and decrement do not update the variable		
+// BUG : python is call-by-value, increment and decrement do not update the variable
+// TODO: find a way to express this in python
 //		case POSTFIX_INCREMENT:
 //			comment("GOOL warning: post-incrementation became pre-incrementation");
 //			// no break: follow to the next case

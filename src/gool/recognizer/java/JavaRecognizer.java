@@ -967,10 +967,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
-			context.addDeclaration(f);
+			context.addDeclaration(f, f.getName() + ":" + getTypeMirror(n));
 			return f;
 		}
-		context.addDeclaration(variable);
+		context.addDeclaration(variable, variable.getName() + ":" + getTypeMirror(n));
 		return variable;
 	}
 
@@ -996,7 +996,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		//This method returns a VarAccess, accessing a previously declared variable, i.e. a VarDeclaration.
-		Dec dec = context.getDeclaration(n.getName().toString());
+		Dec dec = context.getDeclaration(n.getName() + ":" + getTypeMirror(n));
 		if (dec == null) {
 			Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
 			dec = new VarDeclaration(goolType(n, context), n.getName().toString());
@@ -1141,7 +1141,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			targetContext = context.getClassContext();
 		else
 			targetContext = context;
-		Dec dec = targetContext.getDeclaration(n.getIdentifier().toString());
+		Dec dec = targetContext.getDeclaration(n.getIdentifier() + ":" + getTypeMirror(n));
 		if (dec == null) {
 			Log.e(String.format("No declaration found for '%s' in curent context", n.getIdentifier().toString()));
 			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
@@ -1164,6 +1164,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		
 		//The new class will provide the context for the things parsed inside of it.
 		context = new Context(classDef, context);
+		//Create a variable called 'this' of type 'Classtree' to prevent errors
+		context.addDeclaration(new VarDeclaration(TypeObject.INSTANCE, "this"), "this:"+n.getSimpleName());
 		
 		//Enums are just classes with a particular flag, which we set up if necessary
 		//We said that before, with DECLARED types
@@ -1257,8 +1259,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		// add dummy declarations to the context to solve the problem
 		// caused by forward declarations
-		// TODO find a way to create shallow declarations
-		// before the internal parsing
+		// TODO find a way to create the actual declarations
+		// (but shallow) before the internal parsing
 		for (Tree tree : n.getMembers()) {
 			Dec dec = null;
 			Collection<Modifier> mods = null;
@@ -1271,15 +1273,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			if (dec != null) {
 				dec.addModifiers(mods);
-				context.addDeclaration(dec);
+				context.addDeclaration(dec, dec.getName() + ":" + getTypeMirror(tree));
 			}
 		}
 		
 		//Recursively go through each member and add it to the abstract GOOL class
 		for (Tree tree : n.getMembers()) {
 			Node member = (Node) tree.accept(this, context);
-			if (member instanceof Dec)
-				context.addDeclaration((Dec)member);
+//			if (member instanceof Dec)
+//				context.addDeclaration((Dec)member);
 			if (member instanceof Meth) {
 				classDef.addMethod((Meth) member);
 			} else if (member instanceof Field) {
@@ -1416,14 +1418,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			} else {
 				method = new Meth(type, n.getName().toString());
 			}
-			context.addDeclaration(method, n.getName().toString());
+			context.addDeclaration(method, method.getName() + ":" + getTypeMirror(n));
 		}
 
 		//go through each parameter and add it.
 		if (n.getParameters() != null) {
 			for (VariableTree p : n.getParameters()) {
 				VarDeclaration v = new VarDeclaration((Dec) p.accept(this, context));
-				context.addDeclaration(v);
+				//context.addDeclaration(v);
 				method.addParameter(v);
 			}
 		}
@@ -1491,29 +1493,29 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			target = new SystemOutPrintCall();
 		}
 		else if (n.getMethodSelect().toString().equals("super")) {
-				target = new ParentCall(goolType(((MethodSymbol) method)
-						.getReturnType(), context));
+			target = new ParentCall(goolType(((MethodSymbol) method)
+					.getReturnType(), context));
 		}
 		else if (n.getMethodSelect().toString().equals("this")) {
-				target = new ThisCall(goolType(((MethodSymbol) method)
-						.getReturnType(), context));
+			target = new ThisCall(goolType(((MethodSymbol) method)
+					.getReturnType(), context));
 		} 
 		else {
-				Log.d("YYYY from method to member select YYYY");
-				Log.d(n.getMethodSelect().toString());
-				Log.d("YYYYYYYYYYYYY");
+			Log.d("YYYY from method to member select YYYY");
+			Log.d(n.getMethodSelect().toString());
+			Log.d("YYYYYYYYYYYYY");
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().
-			target = (Expression) n.getMethodSelect().accept(this,
-					context);
+			target = (Expression) n.getMethodSelect().accept(this, context);
+
 		}
-	
 		if (!(target instanceof Parameterizable)) {
 				target = new MethCall(goolType(((MethodSymbol) method)
 						.getReturnType(), context), target);
 		}
 		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
+
 		return target;
 	}
 
@@ -1579,21 +1581,16 @@ class Context {
 	private Context parent;
 	
 	private ClassDef classDef;
-
-	private HashMap<String,Dec> map = new HashMap<String,Dec>();
+	
+	private HashMap<String,Dec> map= new HashMap<String,Dec>();
 	
 	public Context(Context parent) {
-		this.parent = parent;
-		this.classDef = null;
+		this(null, parent);
 	}
 	
 	public Context(ClassDef classDef, Context parent) {
 		this.parent = parent;
 		this.classDef = classDef;
-	}
-	
-	public void addDeclaration(Dec dec) {
-		map.put(dec.getName(), dec);
 	}
 	
 	public void addDeclaration(Dec dec, String name) {
