@@ -310,7 +310,7 @@ public class GoolTest {
 				+ "import gool.imports.java.io.FileReader;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								"BufferedReader br = new BufferedReader(new FileReader(\"/GOOLOUTPUTJAVA/src/test.txt\"));while((br.readLine()) != null) {}",
+								"try{BufferedReader br = new BufferedReader(new FileReader(\"/GOOLOUTPUTJAVA/src/test.txt\"));while((br.readLine()) != null) {}}catch(Exception e){e.printStackTrace();}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "");
 	}
