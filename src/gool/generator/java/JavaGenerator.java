@@ -54,6 +54,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import logger.Log;
+
 import org.apache.commons.lang.StringUtils;
 
 public class JavaGenerator extends CommonCodeGenerator {
@@ -80,6 +82,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 
 	public String getCode(CustomDependency customDependency) {
+		
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			System.out.println(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Java for the GOOL type '%s'.", customDependency.getName()));
@@ -233,7 +236,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 		return "char";
 	}
 
-	public String getCode(TypeDependency typeDependency) {		
+	public String getCode(TypeDependency typeDependency) {
 		if (typeDependency.getType() instanceof TypeList) {
 			return "java.util.ArrayList";
 		}

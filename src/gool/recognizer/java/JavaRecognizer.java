@@ -564,7 +564,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		} else if (typeName.equalsIgnoreCase("Byte")) {
 			return TypeByte.INSTANCE;
 		} else {
-			Log.e("ggggggggggggggg "+typeName);
 			return new TypeClass(typeName);
 		}
 	}
@@ -1315,7 +1314,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n.getPackageName() != null) {
 			ppackage = n.getPackageName().accept(this, context).toString();
 		}
-		Log.e("nb import : "+n.getImports().size());
 		//Dealing with the imports
 		//Each class that is imported is registered as a dependency
 		//TODO: We don't automatically go and compile dependencies.
@@ -1346,7 +1344,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			classDef.addDependencies(dependencies);
 		}
-		Log.e("dans java recognizer"+dependencies.size());
 		return null;
 	}
 

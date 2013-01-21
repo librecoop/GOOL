@@ -405,9 +405,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 			name = "__" + name;
 		if (paramsMethCurrent.contains(name))
 			return name;
-		else {
-			return "self." + name;
-		}
+		else
+			return name;
+			
 	}
 
 	@Override
@@ -490,13 +490,20 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeDependency typeDependency) {
-		if(typeDependency.getType() instanceof TypeInt)
+
+		if(typeDependency.getType() instanceof TypeInt){
 			return "noprint";
-		if(typeDependency.getType() instanceof TypeString)
+		}
+		if(typeDependency.getType() instanceof TypeString){
 			return "noprint";
-		if(typeDependency.getType() instanceof TypeList)
+		}
+		if(typeDependency.getType() instanceof TypeList){
 			return "noprint";
-		if(typeDependency.getType() instanceof TypeMap)
+		}
+		if(typeDependency.getType() instanceof TypeMap){
+			return "noprint";
+		}
+		if(typeDependency.getType() instanceof TypeEntry)
 			return "noprint";
 		return super.getCode(typeDependency);
 	}
@@ -603,7 +610,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
+
 	public String getCode(CustomDependency customDependency) {		
+
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));
@@ -614,7 +623,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
 		// TODO Auto-generated method stub
-		return "";
+		return "noprint";
 	}
 	
 	@Override
