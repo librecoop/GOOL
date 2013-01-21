@@ -101,6 +101,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.lang.model.type.ArrayType;
@@ -967,10 +968,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
-			context.addDeclaration(f, f.getName() + ":" + getTypeMirror(n));
+			context.addDeclaration(f, f.getName(), getTypeMirror(n));
 			return f;
 		}
-		context.addDeclaration(variable, variable.getName() + ":" + getTypeMirror(n));
+		context.addDeclaration(variable, variable.getName(), getTypeMirror(n));
 		return variable;
 	}
 
@@ -996,7 +997,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		//This method returns a VarAccess, accessing a previously declared variable, i.e. a VarDeclaration.
-		Dec dec = context.getDeclaration(n.getName() + ":" + getTypeMirror(n));
+		Dec dec = context.getDeclaration(n.getName().toString(), getTypeMirror(n));
 		if (dec == null) {
 			Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
 			dec = new VarDeclaration(goolType(n, context), n.getName().toString());
@@ -1137,7 +1138,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d(n.toString());
 		Log.d("X");
 
-		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier() + ":" + getTypeMirror(n));
+		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier().toString(), getTypeMirror(n));
 		if (dec == null) {
 			Log.e(String.format("No declaration found for '%s' in curent context", n.getIdentifier().toString()));
 			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
@@ -1161,7 +1162,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//The new class will provide the context for the things parsed inside of it.
 		context = new Context(classDef, context);
 		//Create a variable called 'this' of type 'Classtree' to prevent errors
-		context.addDeclaration(new VarDeclaration(TypeObject.INSTANCE, "this"), "this:"+n.getSimpleName());
+		context.addDeclaration(new VarDeclaration(TypeObject.INSTANCE, "this"), "this", getTypeMirror(n));
 		
 		//Enums are just classes with a particular flag, which we set up if necessary
 		//We said that before, with DECLARED types
@@ -1269,7 +1270,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			if (dec != null) {
 				dec.addModifiers(mods);
-				context.addDeclaration(dec, dec.getName() + ":" + getTypeMirror(tree));
+				context.addDeclaration(dec, dec.getName(), getTypeMirror(tree));
 			}
 		}
 		
@@ -1414,7 +1415,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			} else {
 				method = new Meth(type, n.getName().toString());
 			}
-			context.addDeclaration(method, method.getName() + ":" + getTypeMirror(n));
+			context.addDeclaration(method, method.getName(), getTypeMirror(n));
 		}
 
 		//go through each parameter and add it.
@@ -1578,26 +1579,41 @@ class Context {
 	
 	private ClassDef classDef;
 	
-	private HashMap<String,Dec> map= new HashMap<String,Dec>();
+	private HashMap<String,HashMap<TypeMirror,Dec>> map;
 	
 	public Context(Context parent) {
 		this(null, parent);
 	}
 	
 	public Context(ClassDef classDef, Context parent) {
+		map = new HashMap<String,HashMap<TypeMirror,Dec>>();
 		this.parent = parent;
 		this.classDef = classDef;
 	}
 	
-	public void addDeclaration(Dec dec, String name) {
-		Dec old = map.put(name, dec);
+	public void addDeclaration(Dec dec, String name, TypeMirror type) {
+		HashMap<TypeMirror,Dec> identifier = map.get(name);
+		if (identifier == null) {
+			identifier = new HashMap<TypeMirror,Dec>();
+			identifier.put(type, dec);
+			map.put(name, identifier);
+		} else {
+			identifier.put(type, dec);
+		}
 	}
 	
-	public Dec getDeclaration(String name) {
-		Dec ret = map.get(name);
-		if (ret == null && parent != null)
-			ret = parent.getDeclaration(name);
-		return ret;
+	public Dec getDeclaration(String name, TypeMirror type) {
+		HashMap<TypeMirror,Dec> identifier = map.get(name);
+		if (identifier != null) {
+			for (Entry<TypeMirror,Dec> e : identifier.entrySet()) {
+				if (isTypeMirrorCompatible(type, e.getKey()))
+						return e.getValue();
+			}
+		}
+		if (parent != null)
+			return parent.getDeclaration(name, type);
+		else
+			return null;
 	}
 	
 	public Context getClassContext() {
@@ -1614,6 +1630,11 @@ class Context {
 			return parent.getClassDef();
 		else
 			return classDef;
+	}
+	
+	private boolean isTypeMirrorCompatible(TypeMirror t1, TypeMirror t2) {
+		//TODO: test for "compatibility" rather than equality
+		return t1.toString().equals(t2.toString());
 	}
 
 }
