@@ -308,7 +308,6 @@ public class ClassDef extends Dependency {
 	}
 
 	public final void addDependency(Dependency dependency) {
-		Log.i("ah=jout : "+dependency.toString());
 		if (
 				(dependency instanceof TypeDependency)
 				&& 
