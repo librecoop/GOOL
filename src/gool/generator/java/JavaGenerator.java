@@ -83,8 +83,6 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	public String getCode(CustomDependency customDependency) {
 		
-		Log.e("mes dependences : "+customDependencies.size());
-		
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			System.out.println(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Java for the GOOL type '%s'.", customDependency.getName()));
@@ -239,8 +237,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 		return "char";
 	}
 
-	public String getCode(TypeDependency typeDependency) {	
-		Log.e("mnType : "+typeDependency.getType());
+	public String getCode(TypeDependency typeDependency) {
 		if (typeDependency.getType() instanceof TypeList) {
 			return "java.util.ArrayList";
 		}
@@ -255,7 +252,6 @@ public class JavaGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		Log.e("mmmmeeeerrrrdddeee : "+ typeEntry.getElementType());
 		return String.format("Map.Entry<%s, %s>",typeEntry.getKeyType(), typeEntry.getElementType());
 	}
 

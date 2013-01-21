@@ -661,7 +661,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitCompoundAssignment(CompoundAssignmentTree n,
 			Context context) {
-		Log.e("ça merde la!! javaRecognizer");
 		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
@@ -967,7 +966,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
-			Log.e("peu etre ici JavaRecognizer");
 			context.addDeclaration(f, f.getName() + ":" + getTypeMirror(n));
 			return f;
 		}
@@ -1260,7 +1258,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// (but shallow) before the internal parsing
 		for (Tree tree : n.getMembers()) {
 			Dec dec = null;
-			Log.e("pas sur la meme chosse....??");
 			Collection<Modifier> mods = null;
 			if (tree instanceof MethodTree) {
 				dec = new Meth(goolType(tree, context), ((MethodTree) tree).getName().toString());
@@ -1310,7 +1307,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n.getPackageName() != null) {
 			ppackage = n.getPackageName().accept(this, context).toString();
 		}
-		Log.e("nb import : "+n.getImports().size());
 		//Dealing with the imports
 		//Each class that is imported is registered as a dependency
 		//TODO: We don't automatically go and compile dependencies.
@@ -1506,7 +1502,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		if (!(target instanceof Parameterizable)) {
-			Log.e("merde : "+target.toString());
 				target = new MethCall(goolType(((MethodSymbol) method)
 						.getReturnType(), context), target);
 		}
