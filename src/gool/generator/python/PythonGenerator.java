@@ -209,7 +209,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Field field) {
-		String value, name;
+		String value;
 		if (field.getDefaultValue() != null) {
 			value = field.getDefaultValue().toString();
 		}
@@ -394,18 +394,20 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
-		if(varAccess.getType() == null)
+		if(varAccess.getType() == null || varAccess.getType().getName().isEmpty()) {
 			return name;
+		}
 		if (name.equals("this"))
 			return "self";
-		
+
 		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)
 				&& ! name.startsWith("__"))
 			name = "__" + name;
 		if (paramsMethCurrent.contains(name))
 			return name;
-		else
+		else {
 			return "self." + name;
+		}
 	}
 
 	@Override
@@ -488,7 +490,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeDependency typeDependency) {
-		// TODO Auto-generated method stub
 		if(typeDependency.getType() instanceof TypeInt)
 			return "noprint";
 		if(typeDependency.getType() instanceof TypeString)
@@ -654,13 +655,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
 		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
-		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
-		
-		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies) {
-				if(!dependency.isEmpty())
-					if(dependency != "noprint")
-					code = code.append(String.format("from %s import *\n", dependency));
+
+		for (String dependency : customDependencies.keySet()) {
+			if(!dependency.isEmpty() && dependency != "noprint" && !dependency.equals("." + classDef.getName())) {
+				if(dependency.startsWith(".")) {
+					dependency = dependency.substring(1);
+				}
+				code = code.append(String.format("from %s import *\n", dependency));
 			}
 		}
 		

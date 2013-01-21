@@ -21,5 +21,4 @@ public class CustomDependency extends Dependency {
 	public String getName() {
 		return name;
 	}
-
 }

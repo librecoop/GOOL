@@ -996,11 +996,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		//This method returns a VarAccess, accessing a previously declared variable, i.e. a VarDeclaration.
-		Dec dec = context.getDeclaration(n.getName() + ":" + getTypeMirror(n));
-		if (dec == null) {
-			Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
+		Dec dec;
+		if(context!=null) {
+			dec = context.getDeclaration(n.getName() + ":" + getTypeMirror(n));
+			if (dec == null) {
+				Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
+				dec = new VarDeclaration(goolType(n, context), n.getName().toString());
+			}
+		}
+		else {
 			dec = new VarDeclaration(goolType(n, context), n.getName().toString());
 		}
+		
 		return new VarAccess(dec);
 	}
 	
@@ -1315,11 +1322,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
-			Log.e("depString : "+dependencyString);
 			if (!dependencyString.contains("gool.imports.java")
-					&& !dependencyString
-							.contains("gool.imports.java.annotations")) {
-				
+					&& !dependencyString.contains("gool.imports.java.annotations")) {
 				dependencies.add(new CustomDependency(dependencyString));
 			}
 		}

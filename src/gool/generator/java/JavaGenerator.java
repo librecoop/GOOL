@@ -89,7 +89,6 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-//		return String.format("for(%s : %s){%s}",
 		return formatIndented("for (%s : %s){%1}",
 				enhancedForLoop.getVarDec(), 
 				(enhancedForLoop.getExpression().getType() instanceof TypeMap)?String.format("%s.entrySet()",enhancedForLoop.getExpression()):enhancedForLoop.getExpression(), 
