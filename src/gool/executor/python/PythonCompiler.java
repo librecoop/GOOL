@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import logger.Log;
 
@@ -33,18 +35,13 @@ public class PythonCompiler extends SpecificCompiler {
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
 		
+		Map<String, String> env = new HashMap<String, String>();
+		env.put("PYTHONPATH", getOutputDir().getAbsolutePath());
+		
 		List<String> params = new ArrayList<String>();
-/*
-		try {
-			Runtime.getRuntime().exec("export PYTHONPATH=$PYTHONPATH:" + getOutputDir().getAbsolutePath());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	*/	
 		params.add("python");
-		params.add(file.getName());
-		return Command.exec(getOutputDir(), params);
+		params.add(file.getAbsolutePath());
+		return Command.exec(getOutputDir(), params, env);
 	}
 
 	@Override

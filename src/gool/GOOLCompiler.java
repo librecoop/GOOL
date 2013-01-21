@@ -42,15 +42,13 @@ public class GOOLCompiler {
 			Collection<File> files = Arrays.asList(folder.listFiles());
 			Log.i(files.toString());
 			GOOLCompiler gc = new GOOLCompiler();
-			Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
-			//Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(XmlPlatform.getInstance(), files);
-//			Log.i(f.toString());
-//			
-//			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
-//					files);
-//			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);
+
+			
+			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);			
+			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
 			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
-//			gc.concreteJavaToConcretePlatform(XmlPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
 		} catch (Exception e) {
 			Log.e(e);
 		}

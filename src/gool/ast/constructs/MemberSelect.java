@@ -3,14 +3,12 @@ package gool.ast.constructs;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
-public class MemberSelect extends Expression{
+public class MemberSelect extends VarAccess{
 	private Expression target;
-	private String identifier;
 	
-	public MemberSelect(IType goolType, Expression target, String identifier) {
-		super(goolType);
+	public MemberSelect(Expression target, Dec var) {
+		super(var);
 		this.target = target;
-		this.identifier = identifier;
 	}
 
 	public Expression getTarget() {
@@ -18,7 +16,7 @@ public class MemberSelect extends Expression{
 	}
 	
 	public String getIdentifier() {
-		return identifier;
+		return var.getName();
 	}
 	
 	@Override

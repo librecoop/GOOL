@@ -42,7 +42,9 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(JavaPlatform.getInstance(), CppPlatform.getInstance(), CSharpPlatform.getInstance(),PythonPlatform.getInstance() );
+
+	 Arrays.asList(JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance(), PythonPlatform.getInstance());
+
 
 	@BeforeClass
 	public static void init() {
@@ -147,7 +149,7 @@ public class GoolTest {
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-
+	
 	@Test
 	public void simpleForEach() throws Exception {
 		String input = 
@@ -170,11 +172,12 @@ public class GoolTest {
 				TestHelper.surroundWithClassMain("Integer total = 0;"
 				+ " HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();"
 				+ " m.put(0, 1); m.put(2, 3);"
-				+ " for(HashMap.Entry<Integer, Integer> entry : m){"
+				+ " for(Entry<Integer, Integer> entry : m){"
 				+ "total = total + entry.getKey();"
 				+ "total = total + entry.getValue();" + "}"
 				+ "System.out.println(total);", MAIN_CLASS_NAME);
 		String expected = "6";
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
