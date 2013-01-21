@@ -45,6 +45,7 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
+import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
@@ -114,17 +115,19 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListAddCall lac) {
+		String nsObject = ((lac.getParameters().get(0).getType() instanceof PrimitiveType) ? "@" : "" );
 		if (lac.getParameters().size() == 1) {
-			return String.format("[%s addObject:%s]", lac.getExpression(),
-					lac.getParameters());
+			return String.format("[%s addObject:%s%s]", lac.getExpression(),nsObject,
+					lac.getParameters().get(0));
 		} else {
-			String s = String.format("[%s arrayWithObjects:%s]",
-					lac.getExpression(),
+			String s = String.format("[%s arrayWithObjects:%s%s]",
+					lac.getExpression(),nsObject,
 					StringUtils.join(lac.getParameters(), ", "));
 			String str[] = new String[lac.getParameters().size()];
 			for (int i = 2; i <= lac.getParameters().size(); i++) {
-				str[i] = (String) String.format("[%s addObject:%s]%n",
-						lac.getExpression(), lac.getParameters().get(i));
+				nsObject = ((lac.getParameters().get(i).getType() instanceof PrimitiveType) ? "@" : "" );
+				str[i] = (String) String.format("[%s addObject:%s%s]%n",
+						lac.getExpression(),nsObject, lac.getParameters().get(i));
 			}
 			return String.format("%s%n%s", s, str);
 		}
@@ -132,20 +135,19 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-
-		return String.format("[%s containsObject: %s]", lcc.getExpression(),
-				lcc.getParameters());
+		String nsObject = ((lcc.getParameters().get(0).getType() instanceof PrimitiveType) ? "@" : "" );
+		return String.format("[%s containsObject:%s%s]", lcc.getExpression(),nsObject,
+				lcc.getParameters().get(0));
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
 		return String.format("[%s ObjectsAtIndex:%s]", lgc.getExpression(),
-				lgc.getParameters());
+				lgc.getParameters().get(0));
 	}
 
 	@Override
 	public String getCode(Assign assign) {
-		System.out.println("pass here");
 		
 		/*Assignation et accès a une table ... langage stupide*/
 		if(assign.getLValue() instanceof ArrayAccess){
@@ -188,13 +190,14 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
 		return String.format("[%s removeObjectsAtIndex:%s]",
-				lrc.getExpression(), lrc.getParameters());
+				lrc.getExpression(), lrc.getParameters().get(0));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		return String.format("[%s removeObject:%s]", lrc.getExpression(),
-				lrc.getParameters());
+		String nsObject = ((lrc.getParameters().get(0).getType() instanceof PrimitiveType) ? "@" : "" );
+		return String.format("[%s removeObject:%s%s]", lrc.getExpression(),nsObject,
+				lrc.getParameters().get(0));
 	}
 
 	@Override
@@ -262,7 +265,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MapSizeCall mapSizeCall) {
 		return String.format(
-				"NSArray * allKeys = [%s allKeys]%n[allKeys count]",
+				"[(NSArray * )%s allKeys count]",
 				mapSizeCall.getExpression());
 		//TODO
 	}
@@ -383,7 +386,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(TypeArray typeArray) {
-		return String.format("NSMutableArray");
+		return String.format("NSMutableArray *");
 	}
 	
 	@Override
@@ -392,22 +395,23 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 	
 	private String getCode(ArrayAccess lValue, Expression value) {
-		return String.format("[%s replaceObjectAtIndex:%s WithObject:%s]",lValue.getExpression(),lValue.getIndex(),value.toString());
+		String nsObject = ((value.getType() instanceof PrimitiveType) ? "@" : "" );
+		return String.format("[%s replaceObjectAtIndex:%s WithObject:%s%s]",lValue.getExpression(),lValue.getIndex(),nsObject,value.toString());
 	}
 	
 	@Override
-	public String getCode(ArrayAccess arrayAccess) {
+	public String getCode(ArrayAccess arrayAccess) {//XXX
 		return String.format("[%s objectAtIndex: %s]", arrayAccess.getExpression(), arrayAccess.getIndex());
 	}
 
 	@Override
 	public String getCode(TypeList typeList) {
-		return String.format("NSMutableArray");
+		return String.format("NSMutableArray *");
 	}
 
 	@Override
 	public String getCode(TypeMap typeMap) {
-		return "NSMutableDictionary";
+		return "NSMutableDictionary *";
 	}
 
 	@Override
