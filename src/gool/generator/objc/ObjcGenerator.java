@@ -59,18 +59,13 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 
-import com.sun.javadoc.Type;
-
 public class ObjcGenerator extends CommonCodeGenerator {
-	
-	private ArrayList<String> sysoutFormat = new ArrayList<String>();
-	private ArrayList<String> sysoutOperand = new ArrayList<String>();
-	private boolean b = false;
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
@@ -299,17 +294,13 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return "Foundation/Foundation.h";
 	}
 
+	
 	@Override
-	public String getCode(SystemOutPrintCall systemOutPrintCall) {   // a completer
-		this.sysoutFormat.clear();
-		this.sysoutOperand.clear();
-		ArrayList<Expression> toPrint = (ArrayList<Expression>) systemOutPrintCall.getParameters();
-		for(Expression ex:toPrint){
-			System.out.println(ex.toString()+"11111111111111111111111");
-			
-		}
+	public String getCode(SystemOutPrintCall systemOutPrintCall){
+		//NSLog(@"%@",[NSString stringWithFormat:@"%@%d",[NSString stringWithFormat:@"%@%@",[NSString stringWithFormat:@"%@%d",[NSString stringWithFormat:@"%d%@",a,@" + "],b],@" = "],[self addParam1:a andParam2:b ]]);
+		String nsString = (systemOutPrintCall.getParameters().get(0).getType().equals(TypeString.INSTANCE) && !systemOutPrintCall.getParameters().get(0).toString().contains("[NSString stringWithFormat:@") ? "@" : "");
 		
-		return String.format("NSLog(@%s)",GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
+		return String.format("NSLog(@\"%s\",%s%s)",format(systemOutPrintCall.getParameters().get(0)),nsString,GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
 	
 	}
 	
@@ -333,19 +324,15 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(BinaryOperation binaryOp) {
 		String left = binaryOp.getLeft().toString();
 		String right = binaryOp.getRight().toString();
-		String fleft;
-		String fright;
 		
 		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
-			fleft = format(binaryOp.getLeft());
-			fright = format(binaryOp.getRight());
 			
-			if(!b){
-				b = true;
-				return fleft + fright;
-			}			
+			String nsStringLeft =  (binaryOp.getLeft().getType().equals(TypeString.INSTANCE) && !left.contains("[NSString stringWithFormat:@") ? "@" : "");
+			String nsStringRight =  (binaryOp.getRight().getType().equals(TypeString.INSTANCE) && !right.contains("[NSString stringWithFormat:@") ? "@" : "");
+			String fleft = format(binaryOp.getLeft());
+			String fright = format(binaryOp.getRight());
 			
-			return left + fright;
+			return String.format("[NSString stringWithFormat:@\"%s%s\",%s%s,%s%s]",fleft,fright,nsStringLeft,left,nsStringRight,right);
 		}
 		
 		return super.getCode(binaryOp);
