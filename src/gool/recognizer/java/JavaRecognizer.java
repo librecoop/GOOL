@@ -564,7 +564,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		} else if (typeName.equalsIgnoreCase("Byte")) {
 			return TypeByte.INSTANCE;
 		} else {
-			Log.e("ggggggggggggggg "+typeName);
 			return new TypeClass(typeName);
 		}
 	}
@@ -662,6 +661,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitCompoundAssignment(CompoundAssignmentTree n,
 			Context context) {
+		Log.e("ça merde la!! javaRecognizer");
 		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
@@ -967,6 +967,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
+			Log.e("peu etre ici JavaRecognizer");
 			context.addDeclaration(f, f.getName() + ":" + getTypeMirror(n));
 			return f;
 		}
@@ -1259,6 +1260,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// (but shallow) before the internal parsing
 		for (Tree tree : n.getMembers()) {
 			Dec dec = null;
+			Log.e("pas sur la meme chosse....??");
 			Collection<Modifier> mods = null;
 			if (tree instanceof MethodTree) {
 				dec = new Meth(goolType(tree, context), ((MethodTree) tree).getName().toString());
@@ -1315,7 +1317,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
-			Log.e("depString : "+dependencyString);
 			if (!dependencyString.contains("gool.imports.java")
 					&& !dependencyString
 							.contains("gool.imports.java.annotations")) {
@@ -1342,7 +1343,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			classDef.addDependencies(dependencies);
 		}
-		Log.e("dans java recognizer"+dependencies.size());
 		return null;
 	}
 
@@ -1506,6 +1506,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		if (!(target instanceof Parameterizable)) {
+			Log.e("merde : "+target.toString());
 				target = new MethCall(goolType(((MethodSymbol) method)
 						.getReturnType(), context), target);
 		}

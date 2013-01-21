@@ -351,6 +351,7 @@ public class ClassDef extends Dependency {
 	}
 
 	public final void addDependencies(List<Dependency> dependencies) {
+		Log.e("nbDependance ClassDef.java : "+dependencies.size());
 		for (Dependency dependency : dependencies) {
 			Log.i(dependency.toString());
 			addDependency(dependency);
