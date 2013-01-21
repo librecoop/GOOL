@@ -29,7 +29,7 @@ public class AndroidCompiler extends SpecificCompiler {
 		List<String> params = new ArrayList<String>();
 		params.add("ant");
 		params.add("debug");
-		
+
 		Command.exec(new File(Settings.get("android_out_dir_final")), params);
 		return (new File(Settings.get("android_out_dir_final")));
 	}
@@ -60,9 +60,22 @@ public class AndroidCompiler extends SpecificCompiler {
 						+ retval + " as return value... !\n");
 			}
 			installApkOnPhone();
+			execLogCatCommand("adb logcat -c");
 			runApkOnPhone();
-			return readLogCatFile(); // Reads the logCat file and returns the
-										// SysOut equivalent.
+			String returnString;
+			int waitTime = 0;
+			/*This waits until there is an output on the logcat file before continuing
+			 * as it may take some time, limited to a maximum of 10 seconds
+			 */			
+			do {
+				Thread.sleep(1000);
+				// Reads the logCat file and returns the SysOut equivalent
+			returnString = execLogCatCommand("adb logcat -d raw JUnitSysOut:I *:S"); 
+			waitTime++;
+			}
+			while(returnString.equals("")||waitTime>20);
+			System.out.println("Waited "+waitTime/2+" seconds for logcat output:" + returnString);
+			return returnString;
 		} catch (IOException e) {
 			throw new CommandException(e);
 		} catch (InterruptedException e) {
@@ -71,15 +84,22 @@ public class AndroidCompiler extends SpecificCompiler {
 		
 
 	}
-	
-	private String readLogCatFile() {
+
+	/**
+	 * Method used to execute logCat command
+	 * 
+	 * @param executeCommand
+	 * @return
+	 */
+	private String execLogCatCommand(String executeCommand) {
 		String returnString = null;
 		try {
-			String executeCommand = "adb logcat -d raw JUnitSysOut:I *:S";
+			// String executeCommand = "adb logcat -d raw JUnitSysOut:I *:S";
 			Process waitForProcess = Runtime.getRuntime().exec(executeCommand);
 
 			waitForProcess.waitFor();
-			BufferedReader buf = new BufferedReader(new InputStreamReader(waitForProcess.getInputStream()));
+			BufferedReader buf = new BufferedReader(new InputStreamReader(
+					waitForProcess.getInputStream()));
 			String line = "";
 			String output = "";
 			while ((line = buf.readLine()) != null) {
