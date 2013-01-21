@@ -1,17 +1,17 @@
-package gool.ast.file;
+package gool.ast.bufferedreader;
 
+import gool.ast.constructs.BufferedReaderMethCall;
 import gool.ast.constructs.Expression;
-import gool.ast.constructs.FileMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
-public class FileReadLine extends FileMethCall {
+public class BufferedReaderReadCall extends BufferedReaderMethCall {
 
-	public FileReadLine(Expression target) {
+	
+		public BufferedReaderReadCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}
-	
-	@Override
+		@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);		
 	}

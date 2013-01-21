@@ -5,15 +5,15 @@ import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
 
-public class FileMethCall extends Parameterizable {
+public class BufferedReaderMethCall extends Parameterizable {
 	private Expression expression;
 
-	public FileMethCall( IType type) {
+	public BufferedReaderMethCall( IType type) {
 		super(type);
 	}
 
 
-	public FileMethCall(IType type, Expression expression) {
+	public BufferedReaderMethCall(IType type, Expression expression) {
 		super(type);
 		this.expression = expression;
 	}
