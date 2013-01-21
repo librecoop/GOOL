@@ -4,8 +4,6 @@ import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 
 /**
@@ -24,48 +22,42 @@ public class MethCall extends Parameterizable {
 	 * The target object.
 	 */
 	private Expression target;
+
 	
-	private Collection<Modifier> modifiers;
-	
-	public MethCall(IType type, Collection<Modifier> modifiers, Expression target) {
+	public MethCall(IType type, Expression target) {
 		super(type);
 		this.target = target;
-		this.modifiers = modifiers;
 	}
 
-	private MethCall(IType type, Collection<Modifier> modifiers, Expression target, Expression param) {
-		this(type, modifiers, target);
+	private MethCall(IType type, Expression target, Expression param) {
+		this(type, target);
 		addParameter(param);
 	}
 
-	public MethCall(IType type, Collection<Modifier> modifiers, Expression target, String methodName, Expression... params) {
-		this(type, modifiers, new MemberSelect(type, target, methodName));
-		if (params != null){
-			addParameters(Arrays.asList(params));
-		}
-		
-	}
+//	public MethCall(IType type, Expression target, String methodName, Expression... params) {
+//		this(type, new MemberSelect(type, target, methodName));
+//		if (params != null){
+//			addParameters(Arrays.asList(params));
+//		}
+//		
+//	}
 	
-	public MethCall(IType type, Collection<Modifier> modifiers, String name) {
-		this(type, modifiers, new Identifier(type, name));
+	public MethCall(IType type, String name) {
+		this(type, new Identifier(type, name));
 	}
 
 	public static MethCall  create(IType type,
 			Expression target, Meth meth,
 			Expression param) {
-		return new MethCall(type, meth.getModifiers(), new FieldAccess(target.getType(), target, meth.getName()), param);
+		return new MethCall(type, new FieldAccess(target.getType(), target, meth.getName()), param);
 	}
 	
-	public static MethCall create(IType type, Collection<Modifier> modifiers, Expression expression) {
-		return new MethCall(type,modifiers, expression);
+	public static MethCall create(IType type, Expression expression) {
+		return new MethCall(type, expression);
 	}
 
 	public Expression getTarget() {
 		return target;
-	}
-	
-	public Collection<Modifier> getModifiers(){
-		return modifiers;
 	}
 
 	@Override

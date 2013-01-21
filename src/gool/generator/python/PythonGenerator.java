@@ -99,10 +99,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 	private ArrayList<String> paramsMethCurrent = new ArrayList<String>();
 	
 	private void comment(String newcomment) {
-		comments.add("# " + newcomment + "\n");
+		String com = "# " + newcomment + "\n";
+		if (! comments.contains(com))
+			comments.add(com);
 	}
 	
-	private String printWithComment(Statement statement) {
+	private String printWithComment(Object statement) {
 		String sttmnt = statement.toString().replaceFirst("\\s*\\z", "");
 		if (comments.size() == 1 && ! sttmnt.contains("\n")) {
 			sttmnt += " " + comments.get(0);
@@ -161,7 +163,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			textualOp = binaryOp.getTextualoperator();
 		}
 		if(binaryOp.getOperator().equals(Operator.UNKNOWN))
-			comment("Unrecognized by GOOL, passed on");
+			comment("Unrecognized by GOOL, passed on: " + textualOp);
 		return String.format("(%s %s %s)", binaryOp.getLeft(), textualOp, binaryOp.getRight());
 	}
  
@@ -207,22 +209,21 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Field field) {
-		String value;
+		String value, name;
 		if (field.getDefaultValue() != null) {
 			value = field.getDefaultValue().toString();
 		}
 		else {
 			value = "None";
 		}
-		
-		return String.format("%s = %s\n", field.getName(), value);
+		return printWithComment(String.format("%s = %s\n", field.getName(), value));
 	}
 
 	@Override
 	public String getCode(For forr) {
-		return formatIndented("%swhile %s:%1%-1%s",
+		return formatIndented("%swhile %s:%1",
 				printWithComment(forr.getInitializer()),forr.getCondition(),
-				forr.getWhileStatement().toString(), printWithComment(forr.getUpdater()));
+				forr.getWhileStatement().toString() + printWithComment(forr.getUpdater()));
 	}
 
 	@Override
@@ -253,7 +254,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return String.format("%s.insert(%s, %s)",
 					lac.getExpression(), lac.getParameters().get(1), lac.getParameters().get(0));
 		default:
-			comment ("Unrecognized by GOOL, passed on");
+			comment ("Unrecognized by GOOL, passed on: add");
 			return String.format("%s.add(%s)",
 					lac.getExpression(), StringUtils.join(lac.getParameters(), ", "));
 		}
@@ -385,25 +386,23 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(MethCall methodCall) {
-		String name = methodCall.getTarget().toString();
-		if (methodCall.getModifiers() != null
-				&& methodCall.getModifiers().contains(Modifier.PRIVATE)) {
-			name = name.replaceFirst("\\w*\\s*\\z", "__$0");
-		}
-		return String.format("%s (%s)", name,
+		return String.format("%s (%s)",
+				methodCall.getTarget().toString(),
 				StringUtils.join(methodCall.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
-		if(varAccess.getType().getName().equals("")) {
+		if(varAccess.getType() == null)
 			return name;
-		}
-		
 		if (name.equals("this"))
 			return "self";
-		else if (paramsMethCurrent.contains(name))
+		
+		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)
+				&& ! name.startsWith("__"))
+			name = "__" + name;
+		if (paramsMethCurrent.contains(name))
 			return name;
 		else
 			return "self." + name;
@@ -411,8 +410,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
-		return String.format("%s.%s", memberSelect.getTarget().toString().equals("this")?"self":memberSelect.getTarget(), memberSelect
-				.getIdentifier());
+		String target = memberSelect.getTarget().toString();
+		if (target.equals("this"))
+			target = "self";
+		return String.format("%s.%s", target, memberSelect.getIdentifier());
 	}
 	
 	@Override
@@ -548,7 +549,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
 		switch (unaryOperation.getOperator()){
-// BUG : python is call-by-value, increment and decrement do not update the variable		
+// BUG : python is call-by-value, increment and decrement do not update the variable
+// TODO: find a way to express this in python
 //		case POSTFIX_INCREMENT:
 //			comment("GOOL warning: post-incrementation became pre-incrementation");
 //			// no break: follow to the next case
@@ -570,7 +572,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		case NOT:
 			return "not " + unaryOperation.getExpression();
 		case UNKNOWN:
-			comment("Unrecognized by GOOL, passed on");
+			comment("Unrecognized by GOOL, passed on: " + unaryOperation.getTextualoperator());
 			// no break: follow to the next case
 		default:
 			return String.format("%s %s", unaryOperation.getTextualoperator(), unaryOperation.getExpression());
@@ -624,14 +626,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 			textualOp = compoundAssign.getTextualoperator();
 		}
 		if (compoundAssign.getOperator().equals(Operator.UNKNOWN))
-			comment("Unrecognized by GOOL, passed on");
+			comment("Unrecognized by GOOL, passed on: " + textualOp);
 		return String.format("%s %s= %s", compoundAssign.getLValue(), textualOp,
 				compoundAssign.getValue());
 	}
 
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
-		comment ("Unrecognized by GOOL, passed on");
+		comment ("Unrecognized by GOOL, passed on: " + unknownExpression.getTextual());
 		return unknownExpression.getTextual();
 	}
 
@@ -649,11 +651,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
-		//StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
-		
-		StringBuilder code = new StringBuilder (String.format("# Platform: %s\n\n", classDef.getPlatform()));
-		code.append("import goolHelper\n");
-		
+		// every python script has to start with a hash-bang:
+		// do not change the "#!/usr/bin/env python" line!
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		
 		if (! dependencies.isEmpty()) {
@@ -669,6 +669,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 		String dynamicAttributs = "";
 		for(Field f : classDef.getFields()) {
+			// renaming private fields
+			if (f.getModifiers().contains(Modifier.PRIVATE))
+				f.setName("__" + f.getName());
+			// static fields are declared in the class, dynamic ones in the constructor
 			if (f.getModifiers().contains(Modifier.STATIC))
 				code = code.append(formatIndented("%1", f));
 			else
@@ -771,7 +775,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (mainMeth != null) {
 			paramsMethCurrent.clear();
 			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
-					mainMeth.getBlock().toString().replaceAll("self", classDef.getName())));
+					mainMeth.getBlock().toString().replaceAll("([^\\w])self([^\\w])", "$1"+classDef.getName()+"$2")));
 		}
 
 		return code.toString();
