@@ -45,7 +45,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(JavaPlatform.getInstance(),CppPlatform.getInstance());
+	 Arrays.asList(JavaPlatform.getInstance(),CppPlatform.getInstance(),CSharpPlatform.getInstance(), AndroidPlatform.getInstance());
 //	private List<Platform> platforms = Arrays.asList(CppPlatform.getInstance());
 
 	@BeforeClass

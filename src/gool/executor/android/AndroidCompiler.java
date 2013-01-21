@@ -1,6 +1,7 @@
 package gool.executor.android;
 
 import gool.Settings;
+import gool.ast.system.SystemOutPrintCall;
 import gool.executor.Command;
 import gool.executor.CommandException;
 import gool.executor.common.SpecificCompiler;
@@ -62,7 +63,9 @@ public class AndroidCompiler extends SpecificCompiler {
 						throw new CommandException("The command execution returned "
 								+ retval + " as return value... !\n");
 				}
-			return installApkOnPhone();
+			installApkOnPhone();
+			runApkOnPhone();
+			return "Still need to do";
 		}
 		catch (IOException e) {
 			throw new CommandException(e);
@@ -124,7 +127,7 @@ public class AndroidCompiler extends SpecificCompiler {
 		return null;
 	}
 	
-	String installApkOnPhone()
+	void installApkOnPhone()
 	{
 		try{
 			
@@ -139,7 +142,7 @@ public class AndroidCompiler extends SpecificCompiler {
 				throw new CommandException("The command execution returned "
 						+ retValForApk + " as return value... !\n");
 						}
-			return runApkOnPhone();
+			
 		}
 		catch (IOException e) {
 			throw new CommandException(e);
@@ -149,7 +152,7 @@ public class AndroidCompiler extends SpecificCompiler {
 	}
 	
 
-	String runApkOnPhone()
+	void runApkOnPhone()
 	{
 			List<String> paramsToRunApk = new ArrayList<String>();
 			paramsToRunApk.add("adb");
@@ -158,7 +161,8 @@ public class AndroidCompiler extends SpecificCompiler {
 			paramsToRunApk.add("start");
 			paramsToRunApk.add("-n");
 			paramsToRunApk.add("com.google.test/.TestActivity");
-			return Command.exec(new File(Settings.get("android_sdk_path")), paramsToRunApk);
+			String runApkResult = Command.exec(new File(Settings.get("android_sdk_path")), paramsToRunApk);
+			System.out.println(runApkResult);
 		}
 	}
 	
