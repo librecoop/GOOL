@@ -11,6 +11,7 @@ import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.Platform;
+import gool.generator.cpp.CppPlatform;
 import gool.generator.objc.ObjcPlatform;
 import gool.parser.java.JavaParser;
 

@@ -1,6 +1,7 @@
 package gool.generator.objc;
 
 import gool.ast.constructs.Assign;
+import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
@@ -14,6 +15,7 @@ import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
+import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
@@ -62,7 +64,13 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
+import com.sun.javadoc.Type;
+
 public class ObjcGenerator extends CommonCodeGenerator {
+	
+	private ArrayList<String> sysoutFormat = new ArrayList<String>();
+	private ArrayList<String> sysoutOperand = new ArrayList<String>();
+	private boolean b = false;
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
@@ -293,6 +301,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {   // a completer
+		this.sysoutFormat.clear();
+		this.sysoutOperand.clear();
 		ArrayList<Expression> toPrint = (ArrayList<Expression>) systemOutPrintCall.getParameters();
 		for(Expression ex:toPrint){
 			System.out.println(ex.toString()+"11111111111111111111111");
@@ -301,6 +311,44 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		return String.format("NSLog(@%s)",GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
 	
+	}
+	
+	private String format(Expression e){
+		if(e.getType().equals(TypeString.INSTANCE)){
+			return "%@";
+		}
+		else if(e.getType().equals(TypeInt.INSTANCE)){
+			return "%d";
+		}
+		else if(e.getType().equals(TypeChar.INSTANCE)){
+			return "%c";
+		}
+		else if(e.getType().equals(TypeDecimal.INSTANCE)){
+			return "%ld";
+		}
+		return null;
+	}
+	
+	@Override
+	public String getCode(BinaryOperation binaryOp) {
+		String left = binaryOp.getLeft().toString();
+		String right = binaryOp.getRight().toString();
+		String fleft;
+		String fright;
+		
+		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
+			fleft = format(binaryOp.getLeft());
+			fright = format(binaryOp.getRight());
+			
+			if(!b){
+				b = true;
+				return fleft + fright;
+			}			
+			
+			return left + fright;
+		}
+		
+		return super.getCode(binaryOp);
 	}
 
 	@Override

@@ -51,12 +51,12 @@ public class ObjcCodePrinter extends CodePrinter {
 		writer.println(headerFile);
 		writer.close();
 		
-		String mainString = processTemplate("main.vm", pclass);
-		File mainFile = new File(dir, "main.m");
-		
-		writer = new PrintWriter(mainFile);
-		writer.println(mainString);
-		writer.close();
+//		String mainString = processTemplate("main.vm", pclass);
+//		File mainFile = new File(dir, "main.m");
+//		
+//		writer = new PrintWriter(mainFile);
+//		writer.println(mainString);
+//		writer.close();
 		
 		if (pclass.isEnum() || pclass.isInterface()) {
 			List<File> r = new ArrayList<File>();
