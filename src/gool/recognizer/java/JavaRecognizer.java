@@ -594,6 +594,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("BufferedWriter", tmpOtd);
 		string2otdMap.put("java.io.BufferedWriter", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.BufferedWriter", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeException();
+			}
+		};
+		string2otdMap.put("Exception", tmpOtd);
+		string2otdMap.put("java.lang.Exception", tmpOtd);
 	}
 	
 
