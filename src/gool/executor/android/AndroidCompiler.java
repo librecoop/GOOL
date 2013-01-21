@@ -195,7 +195,8 @@ public class AndroidCompiler extends SpecificCompiler {
 		paramsToRunApk.add("am");
 		paramsToRunApk.add("start");
 		paramsToRunApk.add("-n");
-		paramsToRunApk.add("com.google.test/.TestActivity");
+		String mainActivity = Settings.getAndroidRunCommand();
+		paramsToRunApk.add(mainActivity);
 		String runApkResult = Command.exec(
 				new File(Settings.get("android_sdk_path")), paramsToRunApk);
 		System.out.println(runApkResult);
