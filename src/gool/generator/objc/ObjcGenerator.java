@@ -297,11 +297,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall){
-		//NSLog(@"%@",[NSString stringWithFormat:@"%@%d",[NSString stringWithFormat:@"%@%@",[NSString stringWithFormat:@"%@%d",[NSString stringWithFormat:@"%d%@",a,@" + "],b],@" = "],[self addParam1:a andParam2:b ]]);
-		String nsString = (systemOutPrintCall.getParameters().get(0).getType().equals(TypeString.INSTANCE) && !systemOutPrintCall.getParameters().get(0).toString().contains("[NSString stringWithFormat:@") ? "@" : "");
+		String nsString = (systemOutPrintCall.getParameters().get(0).getType().equals(TypeString.INSTANCE) 
+				&& !(systemOutPrintCall.getParameters().get(0) instanceof VarAccess) 
+				&& !systemOutPrintCall.getParameters().get(0).toString().contains("[NSString stringWithFormat:@") ? "@" : "");
 		
 		return String.format("NSLog(@\"%s\",%s%s)",format(systemOutPrintCall.getParameters().get(0)),nsString,GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
-	
 	}
 	
 	private String format(Expression e){
@@ -315,7 +315,10 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			return "%c";
 		}
 		else if(e.getType().equals(TypeDecimal.INSTANCE)){
-			return "%ld";
+			return "%f";
+		}
+		else if(e.getType().equals(TypeBool.INSTANCE)){
+			return "%d";
 		}
 		return null;
 	}
@@ -327,8 +330,14 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
 			
-			String nsStringLeft =  (binaryOp.getLeft().getType().equals(TypeString.INSTANCE) && !left.contains("[NSString stringWithFormat:@") ? "@" : "");
-			String nsStringRight =  (binaryOp.getRight().getType().equals(TypeString.INSTANCE) && !right.contains("[NSString stringWithFormat:@") ? "@" : "");
+			String nsStringLeft =  (binaryOp.getLeft().getType().equals(TypeString.INSTANCE) 
+					&& !(binaryOp.getLeft() instanceof VarAccess) 
+					&& !left.contains("[NSString stringWithFormat:@") 
+					? "@" : "");
+			String nsStringRight =  (binaryOp.getRight().getType().equals(TypeString.INSTANCE) 
+					&& !(binaryOp.getRight() instanceof VarAccess) 
+					&& !right.contains("[NSString stringWithFormat:@") 
+					? "@" : "");
 			String fleft = format(binaryOp.getLeft());
 			String fright = format(binaryOp.getRight());
 			
