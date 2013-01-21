@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 public class AndroidCompiler extends SpecificCompiler {
 
 	public AndroidCompiler(File androidOutputDir, List<File> deps) {
@@ -27,16 +29,7 @@ public class AndroidCompiler extends SpecificCompiler {
 		List<String> params = new ArrayList<String>();
 		params.add("ant");
 		params.add("debug");
-		// addSdkToClasspath();
-		// if (mainFile == null) {
-		// mainFile = files.get(0);
-		// }
-		// for (File file : files) {
-		// params.add(file.toString());
-		// }
-		// if (args != null) {
-		// params.addAll(args);
-		// }
+		
 		Command.exec(new File(Settings.get("android_out_dir_final")), params);
 		return (new File(Settings.get("android_out_dir_final")));
 	}
@@ -75,56 +68,10 @@ public class AndroidCompiler extends SpecificCompiler {
 		} catch (InterruptedException e) {
 			throw new CommandException("It seems the process was killed", e);
 		}
-		// addSdkToClasspath();
+		
 
 	}
-
-	// private void addSdkToClasspath(){
-	// /*
-	// * Add the classpath
-	// */
-	// try {
-	//
-	// String
-	// addSdkDir="export PATH=$PATH:"+Settings.get("android_sdk_location")+"/tools:"+Settings.get("android_sdk_location")+"/platform-tools";
-	// addSdkDir.concat(Settings.get("android_sdk_location")+"/platform-tools");
-	// FileWriter fstream = new FileWriter("android.sh");
-	// BufferedWriter out = new BufferedWriter(fstream);
-	//
-	// out.write(addSdkDir);
-	// out.newLine();
-	// out.write("android create project  --target 1  --name Bazinga  --path ./MyAndroidAppProject  --activity MyAndroidAppActivity  --package com.bazinga.android");
-	// out.close();
-	// Runtime.getRuntime().exec("sh android.sh");
-	// Runtime.getRuntime().exec("ant debug");
-	// Runtime.getRuntime().exec("android create project  --target 1  --name Bazinga  --path ./MyAndroidAppProject  --activity MyAndroidAppActivity  --package com.bazinga.android");
-	// ProcessBuilder pb = new ProcessBuilder("android.sh");
-	// Map<String,String> env=pb.environment();
-	// Process p = pb.redirectErrorStream(true).start();
-	// p.getOutputStream().close();
-	// BufferedReader in = new BufferedReader(new InputStreamReader(p
-	// .getInputStream()));
-	// StringBuffer buffer = new StringBuffer();
-	// String line;
-	// while ((line = in.readLine()) != null) {
-	// buffer.append(line).append("\n");
-	// }
-	//
-	// int retval = p.waitFor();
-	//
-	// if (retval != 0) {
-	// throw new CommandException("The command execution returned "
-	// + retval + " as return value... !\n" + buffer);
-	// }
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// catch (InterruptedException e) {
-	// throw new CommandException("It seems the process was killed", e);
-	// }
-	// }
-
+	
 	private String readLogCatFile() {
 		String returnString = null;
 		try {
@@ -172,6 +119,7 @@ public class AndroidCompiler extends SpecificCompiler {
 			ProcessBuilder pbForApk = new ProcessBuilder(paramsToInstallApk);
 			paramsToInstallApk.add("adb");
 			paramsToInstallApk.add("install");
+			paramsToInstallApk.add("-r");
 			paramsToInstallApk.add(Settings.get("android_out_dir_final")
 					+ "//bin//AndroidProject-debug.apk");
 			Process executeApk = pbForApk.redirectErrorStream(true).start();
@@ -195,7 +143,8 @@ public class AndroidCompiler extends SpecificCompiler {
 		paramsToRunApk.add("am");
 		paramsToRunApk.add("start");
 		paramsToRunApk.add("-n");
-		paramsToRunApk.add("com.google.test/.TestActivity");
+		String mainActivity = Settings.getAndroidRunCommand();
+		paramsToRunApk.add(mainActivity);
 		String runApkResult = Command.exec(
 				new File(Settings.get("android_sdk_path")), paramsToRunApk);
 		System.out.println(runApkResult);

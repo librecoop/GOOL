@@ -125,6 +125,7 @@ public class AndroidCodePrinter extends CodePrinter {
 		// file to create a Android project
 		String mainMethodFolderString = mainClassFiles.get(0).getParentFile()
 				.getAbsolutePath(); // Get the first main method class
+		Settings.setAndroidMainActivity(mainClassFiles.get(0).getName()); //Sets this for later use by the Compiler class
 		String folderString = oldAndroidFolder.getAbsolutePath();
 		String packageDirectory = mainMethodFolderString
 				.replace(folderString, "").replace("/", ".")
@@ -136,6 +137,7 @@ public class AndroidCodePrinter extends CodePrinter {
 			newAndroidFolderSource = new File(
 					Settings.get("android_out_dir_final") + "//src//com//test");
 		}
+		Settings.setAndroidPackage(packageDirectory);
 		String activityString = mainClassFiles.get(0).getName()
 				.replace(".java", "");
 
@@ -239,12 +241,12 @@ public class AndroidCodePrinter extends CodePrinter {
 	/**
 	 * Returns a list of all the classes containing main methods
 	 * 
-	 * @param file
+	 * @param mainFolder
 	 * @param mainClassFiles
 	 * @return
 	 */
-	private void populateMainMethodClasses(File file, List<File> mainClassFiles) {
-		File[] tempFileList = file.listFiles();
+	private void populateMainMethodClasses(File mainFolder, List<File> mainClassFiles) {
+		File[] tempFileList = mainFolder.listFiles();
 		for (File tempFile : tempFileList) {
 			if (tempFile.isDirectory()) {
 				populateMainMethodClasses(tempFile, mainClassFiles);

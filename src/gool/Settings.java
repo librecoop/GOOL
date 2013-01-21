@@ -13,6 +13,8 @@ public final class Settings {
 
 	private static Properties properties;
 	private static Logger logger = Logger.getLogger(GoolTest.class);
+	private static String androidPackage;
+	private static String androidMainActivity;
 
 	static {
 		load("gool.properties");
@@ -44,5 +46,17 @@ public final class Settings {
 					"The property '%s' does not exist.", property));
 		}
 		return value;
+	}
+
+	public static void setAndroidPackage(String androidPackage) {
+		Settings.androidPackage = androidPackage;
+	}
+
+	public static void setAndroidMainActivity(String androidMainActivity) {
+		Settings.androidMainActivity = androidMainActivity;
+	}
+	
+	public static String getAndroidRunCommand() {
+		return androidPackage + "/." + androidMainActivity.replace(".java", "");
 	}
 }
