@@ -1,6 +1,7 @@
 ## Velocity template for writing out classes .h in Objectiv C
 #parse($macros)
 #set($m = "-")
+#set($ts = 1)
 
 #includes ($Helper.printDependencies($class))
 
@@ -36,8 +37,10 @@ enum $class.Name {
 		#set($p = 1)#foreach($mod in $method.getModifiers())#if($mod == "private")#set($p = 0)#end#end
 		#if($p != 0)
 		
-	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#end#end
+	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#end#end#if($method.getName() == "toString")#set($ts=0)#end
 	#end
+	
+	#if($ts==1)-(NSString *)toString;#end
 	
 @end
 #else
@@ -46,6 +49,6 @@ enum $class.Name {
 		
 	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#end
 	#end
-
+	
 @end
 #end
