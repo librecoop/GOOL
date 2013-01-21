@@ -167,29 +167,28 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(Assign assign) {
 		System.out.println("pass here");
-		if (assign.getValue().getType() instanceof TypeString){
-			
-		
+		if (assign.getValue().getType() instanceof TypeString) {
 			return assign.getLValue() + " = @" + assign.getValue();
-		}else 
+		} else
 
 			return super.getCode(assign);
-			
+
 	}
 
 	@Override
 	public String getCode(VarDeclaration varDec) {
 		String initialValue = "";
 		if (varDec.getInitialValue() != null) {
-			if (varDec.getType() instanceof TypeString){
+			if (varDec.getType() instanceof TypeString) {
 				initialValue = " = @" + varDec.getInitialValue();
-			return String.format("%s %s%s", varDec.getType(), varDec.getName(),
-					initialValue);}
-			else
-			return super.getCode(varDec);
-		}		return null;
+				return String.format("%s %s%s", varDec.getType(),
+						varDec.getName(), initialValue);
+			} else
+				return super.getCode(varDec);
+		}
+		return null;
 	}
-	
+
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
 		return String.format("[%s objectEnumerator]", lgic.getExpression());
@@ -281,7 +280,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return String.format(
 				"NSArray * allKeys = [%s allKeys]%n[allKeys count]",
 				mapSizeCall.getExpression());
-		//TODO
+		// TODO
 	}
 
 	@Override
@@ -294,47 +293,60 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return "Foundation/Foundation.h";
 	}
 
-	
 	@Override
-	public String getCode(SystemOutPrintCall systemOutPrintCall){
-		//NSLog(@"%@",[NSString stringWithFormat:@"%@%d",[NSString stringWithFormat:@"%@%@",[NSString stringWithFormat:@"%@%d",[NSString stringWithFormat:@"%d%@",a,@" + "],b],@" = "],[self addParam1:a andParam2:b ]]);
-		String nsString = (systemOutPrintCall.getParameters().get(0).getType().equals(TypeString.INSTANCE) && !systemOutPrintCall.getParameters().get(0).toString().contains("[NSString stringWithFormat:@") ? "@" : "");
-		
-		return String.format("NSLog(@\"%s\",%s%s)",format(systemOutPrintCall.getParameters().get(0)),nsString,GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
-	
+	public String getCode(SystemOutPrintCall systemOutPrintCall) {
+		// NSLog(@"%@",[NSString stringWithFormat:@"%@%d",[NSString
+		// stringWithFormat:@"%@%@",[NSString stringWithFormat:@"%@%d",[NSString
+		// stringWithFormat:@"%d%@",a,@" + "],b],@" = "],[self addParam1:a
+		// andParam2:b ]]);
+		String nsString = (systemOutPrintCall.getParameters().get(0).getType()
+				.equals(TypeString.INSTANCE)
+				&& !systemOutPrintCall.getParameters().get(0).toString()
+						.contains("[NSString stringWithFormat:@") ? "@" : "");
+
+		return String.format("NSLog(@\"%s\",%s%s)", format(systemOutPrintCall
+				.getParameters().get(0)), nsString, GeneratorHelper
+				.joinParams(systemOutPrintCall.getParameters()));
+
 	}
-	
-	private String format(Expression e){
-		if(e.getType().equals(TypeString.INSTANCE)){
+
+	private String format(Expression e) {
+		if (e.getType().equals(TypeString.INSTANCE)) {
 			return "%@";
-		}
-		else if(e.getType().equals(TypeInt.INSTANCE)){
+		} else if (e.getType().equals(TypeInt.INSTANCE)) {
 			return "%d";
-		}
-		else if(e.getType().equals(TypeChar.INSTANCE)){
+		} else if (e.getType().equals(TypeChar.INSTANCE)) {
 			return "%c";
-		}
-		else if(e.getType().equals(TypeDecimal.INSTANCE)){
+		} else if (e.getType().equals(TypeDecimal.INSTANCE)) {
 			return "%ld";
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
 		String left = binaryOp.getLeft().toString();
 		String right = binaryOp.getRight().toString();
-		
-		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
-			
-			String nsStringLeft =  (binaryOp.getLeft().getType().equals(TypeString.INSTANCE) && !left.contains("[NSString stringWithFormat:@") ? "@" : "");
-			String nsStringRight =  (binaryOp.getRight().getType().equals(TypeString.INSTANCE) && !right.contains("[NSString stringWithFormat:@") ? "@" : "");
+
+		if (binaryOp.getOperator() == Operator.PLUS
+				&& binaryOp.getType().equals(TypeString.INSTANCE)) {
+
+			String nsStringLeft = (binaryOp.getLeft().getType()
+					.equals(TypeString.INSTANCE)
+					&& !left.contains("[NSString stringWithFormat:@") ? "@"
+					: "");
+			String nsStringRight = (binaryOp.getRight().getType()
+					.equals(TypeString.INSTANCE)
+					&& !right.contains("[NSString stringWithFormat:@") ? "@"
+					: "");
 			String fleft = format(binaryOp.getLeft());
 			String fright = format(binaryOp.getRight());
-			
-			return String.format("[NSString stringWithFormat:@\"%s%s\",%s%s,%s%s]",fleft,fright,nsStringLeft,left,nsStringRight,right);
+
+			return String.format(
+					"[NSString stringWithFormat:@\"%s%s\",%s%s,%s%s]", fleft,
+					fright, nsStringLeft, left, nsStringRight, right);
 		}
-		
+
 		return super.getCode(binaryOp);
 	}
 
@@ -443,48 +455,51 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassNew classNew) {
-		
+
 		String init = new String("init");
-		
+
 		boolean b = false;
 		Integer numP = 1;
-		
-		for(Expression e : classNew.getParameters()) {
-			if(!b){
-				init += String.format("WithParam%s:%s ", numP.toString(), e.toString());
+
+		for (Expression e : classNew.getParameters()) {
+			if (!b) {
+				init += String.format("WithParam%s:%s ", numP.toString(),
+						e.toString());
 				b = true;
-			}
-			else
-				init += String.format("andParam%s:%s ", numP.toString(), e.toString());
+			} else
+				init += String.format("andParam%s:%s ", numP.toString(),
+						e.toString());
 			numP++;
 		}
-		
-		return String.format("[[%s alloc]%s]", removePointer(classNew.getType()), init);
+
+		return String.format("[[%s alloc]%s]",
+				removePointer(classNew.getType()), init);
 	}
-	
+
 	@Override
 	public String getCode(MethCall methodCall) {
 		String arg = new String();
 		boolean b = false;
 		Integer numP = 1;
-	
-		for(Expression e : methodCall.getParameters()) {
-			if(!b){
-				arg += String.format("Param%s:%s ", numP.toString(), e.toString());
+
+		for (Expression e : methodCall.getParameters()) {
+			if (!b) {
+				arg += String.format("Param%s:%s ", numP.toString(),
+						e.toString());
 				b = true;
-			}
-			else
-				arg += String.format("andParam%s:%s ", numP.toString(), e.toString());
-			
+			} else
+				arg += String.format("andParam%s:%s ", numP.toString(),
+						e.toString());
+
 			numP++;
 		}
-		
-		if(methodCall.getTarget() instanceof VarAccess){
+
+		if (methodCall.getTarget() instanceof VarAccess) {
 			return String.format("[self %s%s]", methodCall.getTarget(), arg);
 		}
 		return String.format("[%s%s]", methodCall.getTarget(), arg);
 	}
-	
+
 	@Override
 	public String getCode(Meth meth) {
 		String ret = new String();
@@ -498,17 +513,18 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		else
 			ret = "(void)";
 
-		for(VarDeclaration e : meth.getParams()) {
-			if(!b){
-				arg += String.format("Param%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+		for (VarDeclaration e : meth.getParams()) {
+			if (!b) {
+				arg += String.format("Param%s:(%s)%s ", numP.toString(),
+						e.getType(), e.getName());
 				b = true;
-			}
-			else
-				arg += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+			} else
+				arg += String.format("andParam%s:(%s)%s ", numP.toString(),
+						e.getType(), e.getName());
 			numP++;
 		}
-		
-		return String.format("%s %s %s%s", mod, ret, meth.getName(),arg);
+
+		return String.format("%s %s %s%s", mod, ret, meth.getName(), arg);
 	}
 
 	@Override
@@ -516,23 +532,24 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String param = new String();
 		boolean b = false;
 		Integer numP = 1;
-		
-		for(VarDeclaration e : cons.getParams()) {
-			if(!b){
-				param += String.format("WithParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+
+		for (VarDeclaration e : cons.getParams()) {
+			if (!b) {
+				param += String.format("WithParam%s:(%s)%s ", numP.toString(),
+						e.getType(), e.getName());
 				b = true;
-			}
-			else
-				param += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+			} else
+				param += String.format("andParam%s:(%s)%s ", numP.toString(),
+						e.getType(), e.getName());
 			numP++;
 		}
 
 		return String.format("- (id)init%s", param);
 	}
-	
+
 	@Override
 	public String getCode(Field field) {
-		String out = String.format("%s %s",field.getType(), field.getName());
+		String out = String.format("%s %s", field.getType(), field.getName());
 		if (field.getDefaultValue() != null) {
 			out = String.format("%s = %s", out, field.getDefaultValue());
 		}
