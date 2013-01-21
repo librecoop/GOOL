@@ -664,13 +664,18 @@ public class PythonGenerator extends CommonCodeGenerator {
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
 		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
-
+		
+		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		for (String dependency : customDependencies.keySet()) {
-			if(!dependency.isEmpty() && dependency != "noprint" && !dependency.equals("." + classDef.getName())) {
-				if(dependency.startsWith(".")) {
-					dependency = dependency.substring(1);
+			if(!dependency.isEmpty() && !dependency.equals("noprint")) {
+	
+				String name = dependency.substring(dependency.lastIndexOf('.') + 1);
+				for(String dep : dependencies) {
+					if(dep.equals(name)) {
+						code = code.append(String.format("from %s import *\n", (dependency.startsWith(".")?name:dependency)));
+						break;
+					}
 				}
-				code = code.append(String.format("from %s import *\n", dependency));
 			}
 		}
 		
