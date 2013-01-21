@@ -95,41 +95,18 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		VarDeclaration varDec = enhancedForLoop.getVarDec();
-		String varName = varDec.getName();
-		Expression expression = enhancedForLoop.getExpression();
-		String expressionToString = enhancedForLoop.getExpression().toString();
-		if (varDec.getType() instanceof PrimitiveType) {
-			return String
-					.format("for(%s::iterator %sIterator = %s->begin(); %sIterator != %s->end(); ++%sIterator){\n"
-							+ "%s %s *%sIterator;" + "%s" + "\n}",
-							removePointer(expression.getType()),
-							varName,
-							expressionToString,
-							varName,
-							expressionToString,
-							varName,
-							varDec.getType(),
-							(expression.getType() instanceof TypeMap) ? (String
-									.format("* %s = (%s*)&", varName,
-											varDec.getType())) : (String
-									.format("%s = ", varName)), varName,
-							enhancedForLoop.getStatements());
-		} else {
-			return String
-					.format("for(%s in %s){%s}",
-							enhancedForLoop.getVarDec(),
+		return String
+					.format("for(%s %s in %s){%s}",
+							enhancedForLoop.getVarDec().getType(),enhancedForLoop.getVarDec().getName(),
 							(enhancedForLoop.getExpression().getType() instanceof TypeMap) ? String
 									.format("%s.entrySet()",
 											enhancedForLoop.getExpression())
 									: enhancedForLoop.getExpression(),
 							enhancedForLoop.getStatements());
-		}
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-
 		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
 				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
@@ -301,8 +278,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String nsString = (systemOutPrintCall.getParameters().get(0).getType().equals(TypeString.INSTANCE) 
 				&& !(systemOutPrintCall.getParameters().get(0) instanceof VarAccess) 
 				&& !systemOutPrintCall.getParameters().get(0).toString().contains("[NSString stringWithFormat:@") ? "@" : "");
+		String out = null;
 		
-		return String.format("NSLog(@\"%s\",%s%s)",format(systemOutPrintCall.getParameters().get(0)),nsString,GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
+		if(systemOutPrintCall.getParameters().get(0).getType() instanceof TypeClass)
+			out = "["+ systemOutPrintCall.getParameters().get(0) + " toString]";
+		
+		return String.format("NSLog(@\"%s\",%s%s)",format(systemOutPrintCall.getParameters().get(0)),nsString,out == null ? GeneratorHelper.joinParams(systemOutPrintCall.getParameters()) : out);
 	}
 	
 	private String format(Expression e){
@@ -346,7 +327,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			if(binaryOp.getLeft().getType() instanceof TypeClass)
 				left = "["+ left + " toString]";
 			if(binaryOp.getRight().getType() instanceof TypeClass)
-				right = "["+ right + " toString]";;
+				right = "["+ right + " toString]";
 			
 			String fleft = format(binaryOp.getLeft());
 			String fright = format(binaryOp.getRight());
@@ -389,7 +370,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	public String getCode(TypeArray typeArray) {
-		return String.format("NSArray");
+		return String.format("NSMutableArray");
 	}
 
 	@Override
