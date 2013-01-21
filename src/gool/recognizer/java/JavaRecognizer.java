@@ -569,7 +569,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		} else if (typeName.equalsIgnoreCase("Byte")) {
 			return TypeByte.INSTANCE;
 		} else {
-			Log.e("ggggggggggggggg "+typeName);
 			return new TypeClass(typeName);
 		}
 	}
@@ -1001,11 +1000,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		//This method returns a VarAccess, accessing a previously declared variable, i.e. a VarDeclaration.
-		Dec dec = context.getDeclaration(n.getName().toString(), getTypeMirror(n));
-		if (dec == null) {
-			Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
+		Dec dec;
+		if(context!=null) {
+			dec = context.getDeclaration(n.getName().toString(), getTypeMirror(n));
+			if (dec == null) {
+				Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
+				dec = new VarDeclaration(goolType(n, context), n.getName().toString());
+			}
+		}
+		else {
 			dec = new VarDeclaration(goolType(n, context), n.getName().toString());
 		}
+		
 		return new VarAccess(dec);
 	}
 	
@@ -1313,18 +1319,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n.getPackageName() != null) {
 			ppackage = n.getPackageName().accept(this, context).toString();
 		}
-		Log.e("nb import : "+n.getImports().size());
 		//Dealing with the imports
 		//Each class that is imported is registered as a dependency
 		//TODO: We don't automatically go and compile dependencies.
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
-			Log.e("depString : "+dependencyString);
 			if (!dependencyString.contains("gool.imports.java")
-					&& !dependencyString
-							.contains("gool.imports.java.annotations")) {
-				
+					&& !dependencyString.contains("gool.imports.java.annotations")) {
 				dependencies.add(new CustomDependency(dependencyString));
 			}
 		}
@@ -1347,7 +1349,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			classDef.addDependencies(dependencies);
 		}
-		Log.e("dans java recognizer"+dependencies.size());
 		return null;
 	}
 

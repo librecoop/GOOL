@@ -2,7 +2,8 @@ package gool.generator.xml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,30 +14,21 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.*;
 
-import com.sun.xml.internal.xsom.impl.scd.Iterators.Map;
-
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import javax.xml.parsers.*;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import logger.Log;
 
 import gool.ast.constructs.ClassDef;
-import gool.ast.type.TypeClass;
 import gool.generator.common.CodePrinter;
 import gool.generator.java.JavaGenerator;
-import gool.imports.java.util.HashMap;
 
 public class XmlCodePrinter extends CodePrinter {
 	
-	private final HashMap<String, String[]> nodeexclude = new HashMap<String, String[]>();
-
+	private java.util.HashMap<String, String[]> nodeexclude = new java.util.HashMap<String, String[]>();
+	
 	int nbNode=0;
+	private boolean classdefok = true;
 
 	public XmlCodePrinter(File outputDir) {
 		super(new JavaGenerator(), outputDir);
@@ -50,21 +42,26 @@ public class XmlCodePrinter extends CodePrinter {
 		Document document = null;
 		DocumentBuilderFactory fabrique = null;
 		List<File> result = new ArrayList<File>();
-		String[] letableau = {ClassDef.class.getName()};
-		nodeexclude.put(TypeClass.class.getName(), letableau);
-		String[] letableau2 = {TypeClass.class.getName()};
-		nodeexclude.put(ClassDef.class.getName(), letableau2);
+		String[] letableau2 = {"gool.ast.type.TypeClass"};
+		nodeexclude.put("gool.ast.constructs.ClassDef", letableau2);
+		String[] letableau3 = {"gool.ast.constructs.ClassDef"};
+		nodeexclude.put("gool.ast.constructs.Constructor", letableau3);
 		
-		if(nodeexclude.containsKey(pclass.getClass().getName())) {
-			System.out.println("Coucou Couroucou Cou Paloma");
+		
+		System.out.println(pclass.getClass().getName());
+		if (nodeexclude.containsKey(pclass.getClass().getName())) {
+			System.out.println("Ok");
 		}
+		
 		try {
 			//creat document structure
 			fabrique = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = fabrique.newDocumentBuilder();
 			document = builder.newDocument();
 			Element racine = (Element) document.createElement("class");
-			racine.appendChild(NodeToElement(pclass, document));
+			Element  el = NodeToElement(pclass, document);
+			if (el!=null)
+				racine.appendChild(el);
 			document.appendChild(racine);
 			
 			// file separator is just a slash in Unix
@@ -81,13 +78,16 @@ public class XmlCodePrinter extends CodePrinter {
 			File classFile = new File(dir, getFileName(pclass.getName()));
 			Log.i(String.format("Writing to file %s", classFile));
 			
-			//save to XML File
-			TransformerFactory XML_Fabrique_Transformeur = TransformerFactory.newInstance();
-            Transformer XML_Transformeur = XML_Fabrique_Transformeur.newTransformer();
-            DOMSource source = new DOMSource(document);
-            StreamResult resultat = new StreamResult(classFile);
-            XML_Transformeur.setOutputProperty(OutputKeys.INDENT, "yes");
-            XML_Transformeur.transform(source, resultat); 
+            
+            OutputFormat format = new OutputFormat(document);
+            format.setEncoding("UTF-8");
+            format.setLineWidth(80);
+            format.setIndenting(true);
+            format.setIndent(4);
+
+            Writer out = new PrintWriter(classFile);
+            XMLSerializer serializer = new XMLSerializer(out, format);
+            serializer.serialize(document);
             
 			//Remember that you did the generation for this one abstract GOOL class
 			printedClasses.add(pclass);
@@ -100,37 +100,65 @@ public class XmlCodePrinter extends CodePrinter {
 		return result;
 	}
 
-	private Element NodeToElement(gool.ast.constructs.Node node, Document document) {
+	private Element NodeToElement(Object node, Document document) {
 		Element newElement = null;
-		newElement = document.createElement(node.getClass().getName());
+		if (node==null||node.getClass().getName().equals("gool.generator.xml.XmlPlatform"))
+			return null;
+		if (node.getClass().isAssignableFrom(gool.ast.constructs.Node.class)) {
+			return null;
+		}
+		if (node.getClass().getName().equals("gool.ast.constructs.ClassDef")) {
+			if (classdefok)
+				classdefok = false;
+			else
+				return null;
+		}
+		newElement = document.createElement(node.getClass().getName().substring(9));
 		newElement.setTextContent(node.toString());
 
 		Method[] meths = node.getClass().getMethods();
 		for (Method meth: meths) {
 			Class<?> laCl = meth.getReturnType();
-			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl) && (meth.getParameterTypes().length==0)
-					&& meth.getName().startsWith("get") && nbNode < 1000) {
+			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl) && (meth.getParameterTypes().length==0) && nbNode<1000) {
 				nbNode++;
+				System.out.println(laCl.getName() + "\n" + nbNode);
 				try {
 					gool.ast.constructs.Node newNode = (gool.ast.constructs.Node)meth.invoke(node);
-					boolean test = false;
-					if(nodeexclude.containsKey(node.getClass())) {
-						System.out.println("Coucou Couroucou Cou Paloma");
+					boolean test = (newNode==node)?true:false;
+					if(nodeexclude.containsKey(node.getClass().getName())) {
 						for (String cla : nodeexclude.get(node.getClass().getName()) ) {
-							if (newNode.getClass().getName().equals(cla))
+							if (newNode==null||newNode.getClass().getName().equals(cla))
 								test=true;
 						}
 					}
 					if (test) {
-						
+						Element newElement2 = document.createElement(node.getClass().getName().substring(9));
+						newElement2.setTextContent(node.toString());
+						newElement.appendChild(newElement2);
 					} else {
-						System.out.println(newNode.getClass() + "\n" + nbNode);
-						newElement.appendChild(NodeToElement(newNode, document));
+						Element el = NodeToElement(newNode, document);
+						if (el!=null) {
+							newElement.appendChild(el);
+						}
 					}
 				} catch (Exception e) {
 					Log.e(e);
 					System.exit(1);
 				}
+			}
+			else if (java.util.List.class.isAssignableFrom(laCl)) {
+				try {
+					java.util.List<gool.ast.constructs.Node> newNodes = (java.util.List<gool.ast.constructs.Node>)meth.invoke(node);
+					for (gool.ast.constructs.Node n: newNodes) {
+						Element el = NodeToElement(n, document);
+						if (el!=null)
+							newElement.appendChild(el);
+					}
+				} catch (Exception e) {
+					Log.e(e);
+					System.exit(1);
+				}
+				
 			}
 		}
         return newElement;

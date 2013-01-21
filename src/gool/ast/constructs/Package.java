@@ -4,6 +4,8 @@ import gool.generator.GoolGeneratorController;
 import java.util.ArrayList;
 import java.util.List;
 
+import logger.Log;
+
 /**
  * This captures packages in the intermediate language.
  * For each object member of Package the compiler will

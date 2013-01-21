@@ -20,6 +20,7 @@ import gool.parser.java.JavaParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -39,9 +40,10 @@ public class GOOLCompiler {
 	public static void main(String[] args) {
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
-			Collection<File> files = Arrays.asList(folder.listFiles());
+			Collection<File> files = getFilesInFolder(folder, "java");
 			Log.i(files.toString());
 			GOOLCompiler gc = new GOOLCompiler();
+
 			
 //			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);			
 //			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
@@ -51,6 +53,19 @@ public class GOOLCompiler {
 		} catch (Exception e) {
 			Log.e(e);
 		}
+	}
+
+	private static Collection<File> getFilesInFolder(File folder, String ext) {
+		Collection<File> files = new ArrayList<File>();
+		for(File f : folder.listFiles()) {
+			if(f.isDirectory()) {
+				files.addAll(getFilesInFolder(f, ext));
+			}
+			else if ( f.getName().endsWith(ext)) {
+				files.add(f);
+			}
+		}
+		return files;
 	}
 
 	/**
