@@ -16,6 +16,7 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.MainMeth;
@@ -575,6 +576,12 @@ public class CppGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(ExceptionMethCall exceptionMethCall) {
 		// TODO Auto-generated method stub
 		return null;
 	}

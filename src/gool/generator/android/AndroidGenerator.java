@@ -16,6 +16,7 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
@@ -353,6 +354,12 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(ExceptionMethCall exceptionMethCall) {
 		// TODO Auto-generated method stub
 		return null;
 	}

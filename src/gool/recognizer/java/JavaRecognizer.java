@@ -50,6 +50,7 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
+import gool.ast.exception.ExceptionPrintStackTraceCall;
 
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -80,6 +81,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
@@ -1162,6 +1164,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				}
 				if (identifier.equals("read")) {
 					return new BufferedReaderReadCall(target);
+				}
+			}
+			if (type instanceof TypeException) {
+				if (identifier.equals("printStackTrace")) {
+					return new ExceptionPrintStackTraceCall(target);
 				}
 			}
 		}

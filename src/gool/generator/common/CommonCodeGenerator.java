@@ -38,10 +38,12 @@ import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
+import gool.ast.exception.ExceptionPrintStackTraceCall;
 
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
@@ -500,6 +502,16 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(BufferedReaderMethCall bufferedReaderMethCall) {
 		// TODO Auto-generated method stub
 		return "" ;
+	}
+	
+	public String getCode(TypeException typeException) {
+		// TODO Auto-generated method stub
+		return "Exception" ;
+	}
+	public String getCode(
+			ExceptionPrintStackTraceCall exceptionPrintStackTraceCall) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
