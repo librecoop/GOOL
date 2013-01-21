@@ -123,7 +123,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public void addCustomDependency(String key, Dependency value) {
-		Log.e("dans add : "+value);
 		customDependencies.put(key, value);
 	}
 	
@@ -194,7 +193,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		Log.e("dans le truc dufor");
 		if(enhancedForLoop.getExpression().getType() instanceof TypeMap)
 			return formatIndented("for %s in %s.iteritems():%1", enhancedForLoop.getVarDec().getName(),
 				enhancedForLoop.getExpression() ,enhancedForLoop.getStatements());
@@ -490,30 +488,24 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeDependency typeDependency) {
 		// TODO Auto-generated method stub
 		if(typeDependency.getType() instanceof TypeInt){
-			Log.e("typeInt");
 			return "noprint";
 		}
 		if(typeDependency.getType() instanceof TypeString){
-			Log.e("typeString");
 			return "noprint";
 		}
 		if(typeDependency.getType() instanceof TypeList){
-			Log.e("typeList");
 			return "noprint";
 		}
 		if(typeDependency.getType() instanceof TypeMap){
-			Log.e("typeMap");
 			return "noprint";
 		}
 		if(typeDependency.getType() instanceof TypeEntry)
 			return "noprint";
-			Log.e("autre type");
 		return super.getCode(typeDependency);
 	}
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		Log.e("Ici");
 		return String.format("(%s, %s)",typeEntry.getKeyType(), typeEntry.getElementType() );
 	}
 
