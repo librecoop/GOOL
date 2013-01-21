@@ -1,5 +1,6 @@
 ## Velocity template for writing out classes in Objective C
 #parse($macros)
+#set($ts = 1)
 
 #import "${class.Name}.h"
 @implementation ${class.Name}
@@ -12,9 +13,15 @@ $method.Block
 	return self;
 		#end
 }
+#if($method.getName() == "toString")#set($ts=0)#end
 	#end
 	#end
 
+#end
+#if($ts == 1)
+-(NSString *)toString{
+	return self.description;
+}
 #end
 @end
 

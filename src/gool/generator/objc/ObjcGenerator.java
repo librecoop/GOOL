@@ -47,6 +47,7 @@ import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
+import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
@@ -320,6 +321,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		else if(e.getType().equals(TypeBool.INSTANCE)){
 			return "%d";
 		}
+		else if(e.getType() instanceof TypeClass){
+			return "%@";
+		}
 		return null;
 	}
 	
@@ -338,6 +342,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 					&& !(binaryOp.getRight() instanceof VarAccess) 
 					&& !right.contains("[NSString stringWithFormat:@") 
 					? "@" : "");
+			
+			if(binaryOp.getLeft().getType() instanceof TypeClass)
+				left = "["+ left + " toString]";
+			if(binaryOp.getRight().getType() instanceof TypeClass)
+				right = "["+ right + " toString]";;
+			
 			String fleft = format(binaryOp.getLeft());
 			String fright = format(binaryOp.getRight());
 			
@@ -349,7 +359,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ToStringCall tsc) {
-		return String.format("[%s ToString]", tsc.getTarget());
+		return String.format("[%s toString]", tsc.getTarget());
 	}
 
 	@Override
