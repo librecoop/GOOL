@@ -5,6 +5,8 @@
 
 package gool.generator.cpp;
 
+import gool.ast.bufferedreader.BufferedReaderReadCall;
+import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
@@ -28,7 +30,7 @@ import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarDeclaration;
-import gool.ast.file.FileReadLine;
+
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -567,7 +569,12 @@ public class CppGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(FileReadLine fileReadLine) {
+	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
 		// TODO Auto-generated method stub
 		return null;
 	}

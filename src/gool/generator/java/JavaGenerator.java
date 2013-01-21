@@ -1,6 +1,9 @@
 package gool.generator.java;
 
+import gool.ast.bufferedreader.BufferedReaderReadCall;
+import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.BufferedReaderMethCall;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -8,7 +11,7 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
-import gool.ast.constructs.FileMethCall;
+
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
@@ -16,7 +19,7 @@ import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
-import gool.ast.file.FileReadLine;
+
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -345,17 +348,22 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 
 	@Override
-	public String getCode(FileMethCall fileMethCall) {
+	public String getCode(BufferedReaderMethCall bufferedReaderMethCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s.readLine()", fileMethCall.getExpression());
+		return String.format("%s.readLine()", bufferedReaderMethCall.getExpression());
 	}
 
 	@Override
-	public String getCode(FileReadLine fileReadLine) {
+	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s.readLine()", fileReadLine.getExpression());
+		return String.format("%s.readLine()", bufferedReaderReadLineCall.getExpression());
 	}
 
+	@Override
+	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.read()", bufferedReaderReadCall.getExpression());
+	}
 	
 
 }

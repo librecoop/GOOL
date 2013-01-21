@@ -6,6 +6,8 @@
 
 package gool.recognizer.java;
 
+import gool.ast.bufferedreader.BufferedReaderReadCall;
+import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
@@ -25,7 +27,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
-import gool.ast.constructs.FileMethCall;
+
 import gool.ast.constructs.For;
 import gool.ast.constructs.Node;
 import gool.ast.constructs.If;
@@ -48,7 +50,7 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
-import gool.ast.file.FileReadLine;
+
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -1156,7 +1158,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			if (type instanceof TypeBufferedReader) {
 				if (identifier.equals("readLine")) {
-					return new FileReadLine(target);
+					return new BufferedReaderReadLineCall(target);
+				}
+				if (identifier.equals("read")) {
+					return new BufferedReaderReadCall(target);
 				}
 			}
 		}

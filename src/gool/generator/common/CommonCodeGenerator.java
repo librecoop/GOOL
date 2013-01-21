@@ -5,6 +5,7 @@ import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
+import gool.ast.constructs.BufferedReaderMethCall;
 import gool.ast.constructs.CastExpression;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
@@ -14,7 +15,7 @@ import gool.ast.constructs.Constructor;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
-import gool.ast.constructs.FileMethCall;
+
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
@@ -37,7 +38,7 @@ import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
-import gool.ast.file.FileReadLine;
+
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
@@ -496,7 +497,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return "File";
 	}
 	@Override
-	public String getCode(FileMethCall fileMethCall) {
+	public String getCode(BufferedReaderMethCall bufferedReaderMethCall) {
 		// TODO Auto-generated method stub
 		return "" ;
 	}
