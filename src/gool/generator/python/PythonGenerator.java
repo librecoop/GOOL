@@ -602,7 +602,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(CustomDependency customDependency) {
+	public String getCode(CustomDependency customDependency) {		
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));
@@ -660,7 +660,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			for (String dependency : dependencies) {
 				if(!dependency.isEmpty())
 					if(dependency != "noprint")
-					code = code.append(String.format("import %s\n", dependency));
+					code = code.append(String.format("from %s import *\n", dependency));
 			}
 		}
 		
