@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.lang.model.util.Types;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
@@ -47,6 +48,7 @@ public class JavaParser {
 	 * @return a list of classdefs, i.e. of abstract GOOL classes.
 	 * @throws Exception
 	 */
+		
 	public static Collection<ClassDef> parseGool(Platform defaultPlatform,
 			Iterable<? extends JavaFileObject> compilationUnits,
 			List<File> dependencies, JavaRecognizer visitor) throws Exception {
@@ -81,7 +83,7 @@ public class JavaParser {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		JavacTask task = (JavacTask) compiler.getTask(null, null, null, options, null, compilationUnits);
 		Iterable<? extends CompilationUnitTree> asts = task.parse();
-		
+		visitor.setTypes(task.getTypes());
 		/**
 		 * We now analyze using Sun's java compiler so as to get a Java abstract type tree.
 		 */

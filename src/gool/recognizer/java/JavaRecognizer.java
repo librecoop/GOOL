@@ -99,17 +99,20 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import logger.Log;
 
+import com.sun.mirror.util.Types;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.ArrayTypeTree;
@@ -161,6 +164,7 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.WildcardTree;
+import com.sun.source.util.JavacTask;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
@@ -1564,7 +1568,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		return result;
 	}
-
+	
+	public void setTypes(javax.lang.model.util.Types types) {
+		Context.types = types;
+	}
+	
 }
 
 class Context {
@@ -1579,6 +1587,8 @@ class Context {
 	
 	private ClassDef classDef;
 	
+	static public javax.lang.model.util.Types types;
+
 	private HashMap<String,HashMap<TypeMirror,Dec>> map;
 	
 	public Context(Context parent) {
@@ -1595,11 +1605,10 @@ class Context {
 		HashMap<TypeMirror,Dec> identifier = map.get(name);
 		if (identifier == null) {
 			identifier = new HashMap<TypeMirror,Dec>();
-			identifier.put(type, dec);
 			map.put(name, identifier);
-		} else {
-			identifier.put(type, dec);
 		}
+		identifier.put(type, dec);
+
 	}
 	
 	public Dec getDeclaration(String name, TypeMirror type) {
@@ -1632,9 +1641,12 @@ class Context {
 			return classDef;
 	}
 	
-	private boolean isTypeMirrorCompatible(TypeMirror t1, TypeMirror t2) {
-		//TODO: test for "compatibility" rather than equality
-		return t1.toString().equals(t2.toString());
+	private boolean isTypeMirrorCompatible(TypeMirror declaration, TypeMirror instance) {
+		if (declaration instanceof ExecutableType && instance instanceof ExecutableType) {
+			return types.isSubsignature((ExecutableType)declaration, (ExecutableType)instance);
+		} else {
+			return types.isAssignable(declaration, instance);
+		}
 	}
 
 }
