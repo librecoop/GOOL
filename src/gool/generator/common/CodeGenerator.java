@@ -1,7 +1,10 @@
 package gool.generator.common;
 
+import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
+import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
@@ -23,6 +26,7 @@ import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 
+import gool.ast.constructs.BufferedWriterMethCall;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
@@ -435,6 +439,8 @@ public interface CodeGenerator {
 	String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall);
 	
 	String getCode(BufferedReaderReadCall bufferedReaderReadCall);
+	
+	String getCode(BufferedReaderCloseCall bufferedReaderCloseCall);
 
 	String getCode(TypeException typeException);
 
@@ -442,5 +448,16 @@ public interface CodeGenerator {
 
 	String getCode(ExceptionMethCall exceptionMethCall);
 
+	
+	
+
+	String getCode(BufferedWriterMethCall bufferedWriterMethCall);
+
+	String getCode(BufferedWriterWriteCall bufferedWriterWriteCall);
+	
+
+	String getCode(BufferedWriterCloseCall bufferedWriterCloseCall);
+	
+	
 	
 }

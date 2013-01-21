@@ -1,9 +1,13 @@
 package gool.generator.java;
 
+import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
+import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.BufferedReaderMethCall;
+import gool.ast.constructs.BufferedWriterMethCall;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -349,11 +353,11 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 
 
-	@Override
-	public String getCode(BufferedReaderMethCall bufferedReaderMethCall) {
-		// TODO Auto-generated method stub
-		return String.format("%s.readLine()", bufferedReaderMethCall.getExpression());
-	}
+//	@Override
+//	public String getCode(BufferedReaderMethCall bufferedReaderMethCall) {
+//		// TODO Auto-generated method stub
+//		return String.format("%s.readLine()", bufferedReaderMethCall.getExpression());
+//	}
 
 	@Override
 	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
@@ -365,6 +369,11 @@ public class JavaGenerator extends CommonCodeGenerator {
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
 		// TODO Auto-generated method stub
 		return String.format("%s.read()", bufferedReaderReadCall.getExpression());
+	}
+	@Override
+	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.close()", bufferedReaderCloseCall.getExpression());
 	}
 	
 	@Override
@@ -379,4 +388,23 @@ public class JavaGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public String getCode(BufferedWriterMethCall bufferedWriterMethCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s", bufferedWriterMethCall.getExpression());
+	}
+	
+
+	@Override
+	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.write()", bufferedWriterWriteCall.getExpression());
+	}
+
+	@Override
+	public String getCode(BufferedWriterCloseCall bufferedWriterCloseCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.close()", bufferedWriterCloseCall.getExpression());
+	}
+	
 }

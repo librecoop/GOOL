@@ -6,8 +6,11 @@
 
 package gool.recognizer.java;
 
+import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
+import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
@@ -1173,10 +1176,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				if (identifier.equals("read")) {
 					return new BufferedReaderReadCall(target);
 				}
+				if (identifier.equals("close")) {
+					return new BufferedReaderCloseCall(target);
+				}
 			}
 			if (type instanceof TypeException) {
 				if (identifier.equals("printStackTrace")) {
 					return new ExceptionPrintStackTraceCall(target);
+				}
+			}
+			if (type instanceof TypeBufferedWriter) {
+				if (identifier.equals("write")) {
+					return new BufferedWriterWriteCall(target);
+				}
+				if (identifier.equals("close")) {
+					return new BufferedWriterCloseCall(target);
 				}
 			}
 		}

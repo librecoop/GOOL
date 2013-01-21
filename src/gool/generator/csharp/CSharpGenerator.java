@@ -1,8 +1,12 @@
 package gool.generator.csharp;
 
+import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
+import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.BufferedWriterMethCall;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
@@ -468,9 +472,35 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	@Override
+	public String getCode(BufferedWriterCloseCall bufferedWriCloseCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public String getCode(BufferedWriterMethCall bufferedWriterMethCall) {
 		// TODO Auto-generated method stub
 		return null;
 	}

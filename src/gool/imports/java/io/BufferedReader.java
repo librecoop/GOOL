@@ -8,4 +8,13 @@ public class BufferedReader {
 	{
 		return null;
 	}
+	public String read()
+	{
+		return null;
+	}
+	
+	public String close()
+	{
+		return null;
+	}
 }
