@@ -1,5 +1,7 @@
 package gool.generator.objc;
 
+import gool.ast.constructs.ArrayAccess;
+import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.ClassNew;
@@ -43,7 +45,6 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
-import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
@@ -82,7 +83,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public void addCustomDependency(String key, Dependency value) {
 		customDependencies.put(key, value);
 	}
-
+	
 	@Override
 	public String getCode(TypeNull typeNull) {
 		return "nil";
@@ -145,9 +146,13 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(Assign assign) {
 		System.out.println("pass here");
-		if (assign.getValue().getType() instanceof TypeString){
-			
 		
+		/*Assignation et accès a une table ... langage stupide*/
+		if(assign.getLValue() instanceof ArrayAccess){
+			return getCode((ArrayAccess)assign.getLValue(),assign.getValue());
+		}
+		else if (assign.getValue().getType() instanceof TypeString){
+			
 			return assign.getLValue() + " = @" + assign.getValue();
 		}else 
 
@@ -368,9 +373,31 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
-
+	
+	private String evalIntExpr(Expression e){
+		if(e instanceof BinaryOperation)
+			return "(" + evalIntExpr(((BinaryOperation) e).getLeft()) + ((BinaryOperation) e).getTextualoperator() + evalIntExpr(((BinaryOperation) e).getRight()) + ")";
+		else 
+			return e.toString();
+	}
+	
+	@Override
 	public String getCode(TypeArray typeArray) {
 		return String.format("NSMutableArray");
+	}
+	
+	@Override
+	public String getCode(ArrayNew arrayNew){
+		return String.format("[[NSMutableArray alloc]initWithCapacity:%s]", evalIntExpr(arrayNew.getDimesExpressions().get(0)));
+	}
+	
+	private String getCode(ArrayAccess lValue, Expression value) {
+		return String.format("[%s replaceObjectAtIndex:%s WithObject:%s]",lValue.getExpression(),lValue.getIndex(),value.toString());
+	}
+	
+	@Override
+	public String getCode(ArrayAccess arrayAccess) {
+		return String.format("[%s objectAtIndex: %s]", arrayAccess.getExpression(), arrayAccess.getIndex());
 	}
 
 	@Override
