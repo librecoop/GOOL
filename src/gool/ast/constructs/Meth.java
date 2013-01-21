@@ -1,7 +1,6 @@
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
-import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
 import java.util.ArrayList;

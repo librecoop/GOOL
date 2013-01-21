@@ -1,5 +1,7 @@
 ## Velocity template for writing out classes .h in Objective C
 #parse($macros)
+#set($m = "-")
+#set($ts = 1)
 
 #includes ($Helper.printDependencies($class))
 
@@ -9,29 +11,43 @@ enum $class.Name {
 	    $field.Name,
 	#end
 };
-#elseif (!$class.Interfaces.isEmpty())
-@interface $class.Name #if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end{
-	#foreach( $field in $class.Fields )
-	    $field;
+#elseif(!$class.isInterface())
+#set($dp = 0)
+@interface $class.Name #if($class.ParentClass) : $class.ParentClass#set($dp = 1)#end#if($dp != 1 && !$class.Interfaces.isEmpty()):#end#if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
+	@private
+	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "private")
+	$field;
+#end
 	#end
+
+	@protected
+	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "protected")
+	$field;
+#end
+	#end
+
+	@public
+	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "public")
+	$field;
+#end
+	#end
+
 }
 	#foreach( $method in $class.Methods )
+		#set($p = 1)#foreach($mod in $method.getModifiers())#if($mod == "private")#set($p = 0)#end#end
+		#if($p != 0)
 		
-		#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())and$p.Name:($p.Type)$p.Name #end;
-	    #elseif(!$method.isMainMethod())($method.Type)$method.Name:#foreach($p in $method.getParams())#if($velocityCount != 1)and$p.Name:#end($p.Type)$p.Name #end;#end
+	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#end#end#if($method.getName() == "toString")#set($ts=0)#end
 	#end
+	
+	#if($ts==1)-(NSString *)toString;#end
 	
 @end
 #else
-@interface $class.Name #if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end{
-	#foreach( $field in $class.Fields )
-	    $field;
-	#end
-}
+@protocol $class.Name
 	#foreach( $method in $class.Methods )
 		
-		#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())and$p.Name:($p.Type)$p.Name #end;
-	    #elseif(!$method.isMainMethod())($method.Type)$method.Name:#foreach($p in $method.getParams())#if($velocityCount != 1)and$p.Name:#end($p.Type)$p.Name #end;#end
+	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount == 1)WithParam#elseif($velocityCount != 1)andParam#end$velocityCount:($p.Type)$p.Name #end;#end
 	#end
 	
 @end

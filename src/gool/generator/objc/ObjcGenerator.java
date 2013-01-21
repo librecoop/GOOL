@@ -1,5 +1,7 @@
 package gool.generator.objc;
 
+import gool.ast.constructs.Assign;
+import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
@@ -7,15 +9,18 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
+import gool.ast.constructs.Field;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
+import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -42,6 +47,7 @@ import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
+import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
@@ -55,10 +61,9 @@ import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 
-import java.awt.List;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 
 public class ObjcGenerator extends CommonCodeGenerator {
@@ -86,12 +91,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ThisCall thisCall) {
 		return "self()";
-	}
-
-	@Override
-	public String getCode(ClassNew classNew) {
-		return String.format("[[[%s alloc]init]autorelease]",
-				removePointer(classNew.getType()));
 	}
 
 	@Override
@@ -130,6 +129,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
+
 		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
 				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
@@ -154,6 +154,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
+
 		return String.format("[%s containsObject: %s]", lcc.getExpression(),
 				lcc.getParameters());
 	}
@@ -164,6 +165,32 @@ public class ObjcGenerator extends CommonCodeGenerator {
 				lgc.getParameters());
 	}
 
+	@Override
+	public String getCode(Assign assign) {
+		System.out.println("pass here");
+		if (assign.getValue().getType() instanceof TypeString){
+			
+		
+			return assign.getLValue() + " = @" + assign.getValue();
+		}else 
+
+			return super.getCode(assign);
+			
+	}
+
+	@Override
+	public String getCode(VarDeclaration varDec) {
+		String initialValue = "";
+		if (varDec.getInitialValue() != null) {
+			if (varDec.getType() instanceof TypeString){
+				initialValue = " = @" + varDec.getInitialValue();
+			return String.format("%s %s%s", varDec.getType(), varDec.getName(),
+					initialValue);}
+			else
+			return super.getCode(varDec);
+		}		return null;
+	}
+	
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
 		return String.format("[%s objectEnumerator]", lgic.getExpression());
@@ -268,15 +295,71 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return "Foundation/Foundation.h";
 	}
 
+	
 	@Override
-	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("NSLog(@%s)",
-				GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
+	public String getCode(SystemOutPrintCall systemOutPrintCall){
+		String nsString = (systemOutPrintCall.getParameters().get(0).getType().equals(TypeString.INSTANCE) 
+				&& !(systemOutPrintCall.getParameters().get(0) instanceof VarAccess) 
+				&& !systemOutPrintCall.getParameters().get(0).toString().contains("[NSString stringWithFormat:@") ? "@" : "");
+		
+		return String.format("NSLog(@\"%s\",%s%s)",format(systemOutPrintCall.getParameters().get(0)),nsString,GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
+	}
+	
+	private String format(Expression e){
+		if(e.getType().equals(TypeString.INSTANCE)){
+			return "%@";
+		}
+		else if(e.getType().equals(TypeInt.INSTANCE)){
+			return "%d";
+		}
+		else if(e.getType().equals(TypeChar.INSTANCE)){
+			return "%c";
+		}
+		else if(e.getType().equals(TypeDecimal.INSTANCE)){
+			return "%f";
+		}
+		else if(e.getType().equals(TypeBool.INSTANCE)){
+			return "%d";
+		}
+		else if(e.getType() instanceof TypeClass){
+			return "%@";
+		}
+		return null;
+	}
+	
+	@Override
+	public String getCode(BinaryOperation binaryOp) {
+		String left = binaryOp.getLeft().toString();
+		String right = binaryOp.getRight().toString();
+		
+		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
+			
+			String nsStringLeft =  (binaryOp.getLeft().getType().equals(TypeString.INSTANCE) 
+					&& !(binaryOp.getLeft() instanceof VarAccess) 
+					&& !left.contains("[NSString stringWithFormat:@") 
+					? "@" : "");
+			String nsStringRight =  (binaryOp.getRight().getType().equals(TypeString.INSTANCE) 
+					&& !(binaryOp.getRight() instanceof VarAccess) 
+					&& !right.contains("[NSString stringWithFormat:@") 
+					? "@" : "");
+			
+			if(binaryOp.getLeft().getType() instanceof TypeClass)
+				left = "["+ left + " toString]";
+			if(binaryOp.getRight().getType() instanceof TypeClass)
+				right = "["+ right + " toString]";;
+			
+			String fleft = format(binaryOp.getLeft());
+			String fright = format(binaryOp.getRight());
+			
+			return String.format("[NSString stringWithFormat:@\"%s%s\",%s%s,%s%s]",fleft,fright,nsStringLeft,left,nsStringRight,right);
+		}
+		
+		return super.getCode(binaryOp);
 	}
 
 	@Override
 	public String getCode(ToStringCall tsc) {
-		return String.format("[%s ToString]", tsc.getTarget());
+		return String.format("[%s toString]", tsc.getTarget());
 	}
 
 	@Override
@@ -352,12 +435,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(MethCall methodCall) {
-		return String.format("[%s:%s]", methodCall.getTarget(),
-				StringUtils.join(methodCall.getParameters(), ":"));
-	}
-
-	@Override
 	public String getCode(MemberSelect memberSelect) {
 		return String.format("%s %s", memberSelect.getTarget(),
 				memberSelect.getIdentifier());
@@ -384,36 +461,101 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
+	public String getCode(ClassNew classNew) {
+		
+		String init = new String("init");
+		
+		boolean b = false;
+		Integer numP = 1;
+		
+		for(Expression e : classNew.getParameters()) {
+			if(!b){
+				init += String.format("WithParam%s:%s ", numP.toString(), e.toString());
+				b = true;
+			}
+			else
+				init += String.format("andParam%s:%s ", numP.toString(), e.toString());
+			numP++;
+		}
+		
+		return String.format("[[%s alloc]%s]", removePointer(classNew.getType()), init);
+	}
+	
+	@Override
+	public String getCode(MethCall methodCall) {
+		String arg = new String();
+		boolean b = false;
+		Integer numP = 1;
+	
+		for(Expression e : methodCall.getParameters()) {
+			if(!b){
+				arg += String.format("Param%s:%s ", numP.toString(), e.toString());
+				b = true;
+			}
+			else
+				arg += String.format("andParam%s:%s ", numP.toString(), e.toString());
+			
+			numP++;
+		}
+		
+		if(methodCall.getTarget() instanceof VarAccess){
+			return String.format("[self %s%s]", methodCall.getTarget(), arg);
+		}
+		return String.format("[%s%s]", methodCall.getTarget(), arg);
+	}
+	
+	@Override
 	public String getCode(Meth meth) {
 		String ret = new String();
 		String arg = new String();
+		String mod = (meth.getModifiers().contains(Modifier.STATIC) ? "+" : "-");
+		Integer numP = 1;
 		boolean b = false;
+
 		if (!(meth.getType() instanceof TypeNone))
 			ret = String.format("(%s)", meth.getType().toString());
 		else
 			ret = "(void)";
 
-		for (VarDeclaration e : meth.getParams()) {
-			if (!b) {
-				arg += String.format(":(%s)%s ", e.getType(), e.getName());
+		for(VarDeclaration e : meth.getParams()) {
+			if(!b){
+				arg += String.format("Param%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
 				b = true;
-			} else
-				arg += String.format("and%s:(%s)%s ", e.getName(), e.getType(),
-						e.getName());
+			}
+			else
+				arg += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+			numP++;
 		}
-
-		return String.format("%s %s%s", ret, meth.getName(), arg);
+		
+		return String.format("%s %s %s%s", mod, ret, meth.getName(),arg);
 	}
 
 	@Override
 	public String getCode(Constructor cons) {
 		String param = new String();
-		for (VarDeclaration e : cons.getParams()) {
-			param += String.format("and%s:(%s)%s ", e.getName(), e.getType(),
-					e.getName());
+		boolean b = false;
+		Integer numP = 1;
+		
+		for(VarDeclaration e : cons.getParams()) {
+			if(!b){
+				param += String.format("WithParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+				b = true;
+			}
+			else
+				param += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+			numP++;
 		}
 
 		return String.format("- (id)init%s", param);
+	}
+	
+	@Override
+	public String getCode(Field field) {
+		String out = String.format("%s %s",field.getType(), field.getName());
+		if (field.getDefaultValue() != null) {
+			out = String.format("%s = %s", out, field.getDefaultValue());
+		}
+		return out;
 	}
 
 }

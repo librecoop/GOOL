@@ -1,32 +1,41 @@
 ## Velocity template for writing out classes in Objective C
 #parse($macros)
-
-<<<<<<< HEAD
+#set($ts = 1)
 \#import "${class.Name}.h"
 
 #includes ($Helper.printDependencies($class))
-
-=======
 #import "${class.Name}.h"
->>>>>>> 246cdd13732699a9941289f08bb85e50ac9b40a6
 @implementation ${class.Name}
 #foreach( $field in $class.Fields )
 	#if($field.DefaultValue)$field.Type$class.Name::$field.Name = $field.DefaultValue;
 	#end
 }#end
 
-
 #foreach( $method in $class.Methods )
-	#if(!${method.isMainMethod()})
-		${method.Header}#if($class.isInterface() || $method.isAbstract() );#else
+	#if(!${method.isMainMethod()} && !$method.isAbstract())
+${method.Header}#if($class.isInterface());#else
 {
-		$method.Block
-		#if(${method.isConstructor()})
-			return self;
+$method.Block
+#if(${method.isConstructor()})
+	return self;
 		#end
 }
+#if($method.getName() == "toString")#set($ts=0)#end
 	#end
 	#end
 
 #end
+#if($ts == 1)
+-(NSString *)toString{
+	return self.description;
+}
+#end
 @end
+
+#foreach( $method in $class.Methods )
+	#if(${method.isMainMethod()})
+${method.Header}{
+${method.Block}
+}
+	#end
+#end

@@ -47,7 +47,6 @@ import gool.ast.type.TypeString;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -125,7 +124,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 	
 	public String getCode(ListGetIteratorCall lgic) {
-		return String.format("%s.iterator()", lgic.getExpression());
+		return String.format("%s.getIterator()", lgic.getExpression());
 	}
 
 	public String getCode(ListIsEmptyCall liec) {

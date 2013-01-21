@@ -1,7 +1,8 @@
 package gool.generator.objc;
 
-import gool.ast.constructs.ClassDef;
 import gool.generator.common.CodePrinter;
+
+import gool.ast.constructs.ClassDef;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +36,7 @@ public class ObjcCodePrinter extends CodePrinter {
 	@Override
 	public List<File> print(ClassDef pclass) throws FileNotFoundException {
 		if (pclass.getParentClass() != null) {
-			pclass.getInterfaces().add(0, pclass.getParentClass());
+			pclass.setParentClass(pclass.getParentClass());
 		}
 		
 		String headerFile = processTemplate("header.vm", pclass);
@@ -50,12 +51,12 @@ public class ObjcCodePrinter extends CodePrinter {
 		writer.println(headerFile);
 		writer.close();
 		
-		String mainString = processTemplate("main.vm", pclass);
-		File mainFile = new File(dir, "main.m");
-		
-		writer = new PrintWriter(mainFile);
-		writer.println(mainString);
-		writer.close();
+//		String mainString = processTemplate("main.vm", pclass);
+//		File mainFile = new File(dir, "main.m");
+//		
+//		writer = new PrintWriter(mainFile);
+//		writer.println(mainString);
+//		writer.close();
 		
 		if (pclass.isEnum() || pclass.isInterface()) {
 			List<File> r = new ArrayList<File>();
@@ -64,5 +65,6 @@ public class ObjcCodePrinter extends CodePrinter {
 		} else {
 			return super.print(pclass);
 		}
+
 	}
 }

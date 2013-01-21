@@ -427,6 +427,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(TypeFile typeFile) {
-		return "fileC#";
+		return "filecsharp";
 	}
+
 }
