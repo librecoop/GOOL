@@ -27,6 +27,7 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 
 import gool.ast.constructs.BufferedWriterMethCall;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
@@ -47,6 +48,7 @@ import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarDeclaration;
@@ -458,6 +460,10 @@ public interface CodeGenerator {
 
 	String getCode(BufferedWriterCloseCall bufferedWriterCloseCall);
 	
+	String getCode(Try t);
+	
+	String getCode(Catch catchExpression);
+
 	
 	
 }

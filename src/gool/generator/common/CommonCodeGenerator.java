@@ -16,6 +16,7 @@ import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
@@ -34,6 +35,7 @@ import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarDeclaration;
@@ -513,5 +515,32 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public String getCode(Try t ) {
+		StringBuilder result = new StringBuilder();
+		result.append("try{\n");
+		for (Statement statement : t.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("}\n");
+		result.append("catch(Exception e)\n");
+		result.append("{\n");
+		result.append("e.printStackTrace(); \n");
+		result.append("} \n");
+		return result.toString();
+	}
 	
+	@Override
+	public String getCode(Catch catchExpression ) {
+		StringBuilder result = new StringBuilder();
+		result.append("catch(Exception e)\n");
+		result.append("{\n");
+		result.append("e.printStackTrace()\n");
+		result.append("}\n");
+		return result.toString();
+	}
 }

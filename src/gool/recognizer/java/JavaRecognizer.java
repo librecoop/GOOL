@@ -48,6 +48,7 @@ import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -775,7 +776,16 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitTry(TryTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
+
+		Block block = new Block();
+		for (StatementTree stmt : node.getBlock().getStatements()) {
+			Statement statement = (Statement) stmt.accept(this, p);
+			if (statement != null) {
+				block.addStatement(statement);
+			}
+		}
+		//visitBlock(node.getBlock(), p);
+		return new Try(block);
 	}
 
 	@Override
