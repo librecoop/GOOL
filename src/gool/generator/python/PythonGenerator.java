@@ -95,6 +95,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 		indentation = "    ";
 	}
 	
+
+	
 	private ClassDef currentClass;
 	
 	private ArrayList<String> comments = new ArrayList<String>();
@@ -301,8 +303,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
+		if (lrc.getType().getTypeArguments().contains("[Int]"))		
 		return String.format("%s.remove(%s)", lrc.getExpression(), StringUtils
 				.join(lrc.getParameters(), ", "));
+		else
+			return String.format("%s.pop(%s)", lrc.getExpression(), StringUtils
+					.join(lrc.getParameters(), ", "));
 	}
 
 	@Override
@@ -366,7 +372,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
-		return String.format("%s.pop(%s, None)", mapRemoveCall.getExpression(),
+		return String.format("%s.pop(%s)", mapRemoveCall.getExpression(),
 				StringUtils.join(mapRemoveCall.getParameters(), ", "));
 	}
 
