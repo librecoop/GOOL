@@ -1295,7 +1295,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			} else if (member instanceof Field) {
 				classDef.addField((Field) member);
 			} else if (member instanceof VarDeclaration) {
-				classDef.addField(new Field(Arrays.asList(Modifier.PRIVATE),
+				classDef.addField(new Field(new ArrayList<Modifier>(), //Arrays.asList(Modifier.PRIVATE),
 						(VarDeclaration) member));
 			} else if (member != null) {
 				Log.i(String.format(

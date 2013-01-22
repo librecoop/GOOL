@@ -694,8 +694,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		String dynamicAttributs = "";
 		for(Field f : classDef.getFields()) {
 			// renaming private fields
-			if (f.getModifiers().contains(Modifier.PRIVATE))
+			if (f.getModifiers().contains(Modifier.PRIVATE)) {
 				f.setName("__" + f.getName());
+			}
 			// static fields are declared in the class, dynamic ones in the constructor
 			if (f.getModifiers().contains(Modifier.STATIC))
 				code = code.append(formatIndented("%1", f));
