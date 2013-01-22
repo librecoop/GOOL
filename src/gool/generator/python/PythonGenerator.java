@@ -207,6 +207,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
+		this.paramsMethCurrent.add(enhancedForLoop.getVarDec().getName());
 		if(enhancedForLoop.getExpression().getType() instanceof TypeMap)
 			return formatIndented("for %s in %s.iteritems():%1", enhancedForLoop.getVarDec().getName(),
 				enhancedForLoop.getExpression() ,enhancedForLoop.getStatements());
