@@ -1,5 +1,6 @@
 package gool.test;
 
+import gool.Settings;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
@@ -55,7 +56,8 @@ public class GoolTest {
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms = Arrays.asList(
 			JavaPlatform.getInstance(), CppPlatform.getInstance(),
-			CSharpPlatform.getInstance(), AndroidPlatform.getInstance());
+			CSharpPlatform.getInstance(), AndroidPlatform.getInstance()
+			);
 
 	// private List<Platform> platforms =
 	// Arrays.asList(CppPlatform.getInstance());
@@ -306,20 +308,23 @@ public class GoolTest {
 
 	@Test
 	public void fileTest() throws Exception {
+		String readFile = Settings.get("read_file_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								"try{BufferedReader br = new BufferedReader(new FileReader(\"/GOOLOUTPUTJAVA/src/test.txt\"));while((br.readLine()) != null) {}}catch(Exception e){e.printStackTrace();}",
+								" try{BufferedReader br = new BufferedReader(new FileReader(\""+readFile+"\")); "
+								+" String testString = br.readLine(); \n  while(testString != null) "
+								+" { \n System.out.println(testString);\n testString = br.readLine();}}catch(Exception e){e.printStackTrace();}",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "");
+		compareResultsDifferentPlatforms(input, "TestReadLn");
 	}
 
 	@Test
 	public void simpleFileTest() throws Exception {
 		String input = "import gool.imports.java.io.File;\n"
 				+ TestHelper.surroundWithClassMain(
-						"File f = new File(\"a.txt\");", MAIN_CLASS_NAME);
+						"File f = new File(\"../../../a.txt\");", MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "");
 	}
 
