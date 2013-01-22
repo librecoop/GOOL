@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +47,8 @@ public class XmlCodePrinter extends CodePrinter {
 		nodeexclude.put("gool.ast.constructs.ClassDef", letableau2);
 		String[] letableau3 = {"gool.ast.constructs.ClassDef"};
 		nodeexclude.put("gool.ast.constructs.Constructor", letableau3);
+		String[] letableau4 = {"gool.ast.constructs.Constant"};
+		nodeexclude.put("gool.ast.type.TypeClass", letableau4);
 		
 		
 		System.out.println(pclass.getClass().getName());
@@ -114,12 +117,12 @@ public class XmlCodePrinter extends CodePrinter {
 				return null;
 		}
 		newElement = document.createElement(node.getClass().getName().substring(9));
-		newElement.setTextContent(node.toString());
+//		newElement.setTextContent(node.toString());
 
 		Method[] meths = node.getClass().getMethods();
 		for (Method meth: meths) {
 			Class<?> laCl = meth.getReturnType();
-			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl) && (meth.getParameterTypes().length==0) && nbNode<1000) {
+			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl) && (meth.getParameterTypes().length==0)) {
 				nbNode++;
 				System.out.println(laCl.getName() + "\n" + nbNode);
 				try {
@@ -159,6 +162,14 @@ public class XmlCodePrinter extends CodePrinter {
 					System.exit(1);
 				}
 				
+			}
+			else if (meth.getName().startsWith("get") && !meth.getName().equals("getCode")  && (meth.getParameterTypes().length==0)) {
+				try {
+					newElement.setAttribute(meth.getName().substring(3), meth.invoke(node)==null?"null":meth.invoke(node).toString());
+				}  catch (Exception e) {
+					Log.e(e);
+					System.exit(1);
+				}
 			}
 		}
         return newElement;
