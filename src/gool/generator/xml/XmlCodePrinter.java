@@ -22,11 +22,28 @@ import logger.Log;
 
 import gool.ast.constructs.ClassDef;
 import gool.generator.common.CodePrinter;
+import gool.generator.cpp.CppGenerator;
 import gool.generator.java.JavaGenerator;
+import gool.generator.python.PythonGenerator;
 
 public class XmlCodePrinter extends CodePrinter {
 	
-	private java.util.HashMap<String, String[]> nodeexclude = new java.util.HashMap<String, String[]>();
+	private static final java.util.HashMap<String, String[]> nodeexclude = new java.util.HashMap<String, String[]>();
+	static {
+		String[] letableau4 = {"gool.ast.constructs.Constant"};
+		nodeexclude.put("gool.ast.type.TypeClass", letableau4);
+	}
+	private static final java.util.HashMap<String, String[]> methxclude = new java.util.HashMap<String, String[]>();
+	static {
+		String[] letableau4 = {"gool.ast.constructs.Constant"};
+		nodeexclude.put("gool.ast.type.TypeClass", letableau4);
+	}
+	private static final java.util.ArrayList<String> attrexclude = new java.util.ArrayList<String>();
+	static {
+		attrexclude.add("getClass");
+		attrexclude.add("getAccessModifier");
+		attrexclude.add("getHeader");
+	}
 	
 	int nbNode=0;
 	private boolean classdefok = true;
@@ -43,18 +60,6 @@ public class XmlCodePrinter extends CodePrinter {
 		Document document = null;
 		DocumentBuilderFactory fabrique = null;
 		List<File> result = new ArrayList<File>();
-		String[] letableau2 = {"gool.ast.type.TypeClass"};
-		nodeexclude.put("gool.ast.constructs.ClassDef", letableau2);
-		String[] letableau3 = {"gool.ast.constructs.ClassDef"};
-		nodeexclude.put("gool.ast.constructs.Constructor", letableau3);
-		String[] letableau4 = {"gool.ast.constructs.Constant"};
-		nodeexclude.put("gool.ast.type.TypeClass", letableau4);
-		
-		
-		System.out.println(pclass.getClass().getName());
-		if (nodeexclude.containsKey(pclass.getClass().getName())) {
-			System.out.println("Ok");
-		}
 		
 		try {
 			//creat document structure
@@ -123,8 +128,9 @@ public class XmlCodePrinter extends CodePrinter {
 		for (Method meth: meths) {
 			Class<?> laCl = meth.getReturnType();
 			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl) && (meth.getParameterTypes().length==0)) {
-				nbNode++;
-				System.out.println(laCl.getName() + "\n" + nbNode);
+//				Debug for recursion
+//				nbNode++;
+//				Log.d(laCl.getName() + "\n" + nbNode);
 				try {
 					gool.ast.constructs.Node newNode = (gool.ast.constructs.Node)meth.invoke(node);
 					boolean test = (newNode==node)?true:false;
@@ -136,7 +142,8 @@ public class XmlCodePrinter extends CodePrinter {
 					}
 					if (test) {
 						Element newElement2 = document.createElement(node.getClass().getName().substring(9));
-						newElement2.setTextContent(node.toString());
+						newElement2.setTextContent("recursion risk detected!");
+						
 						newElement.appendChild(newElement2);
 					} else {
 						Element el = NodeToElement(newNode, document);
@@ -165,7 +172,8 @@ public class XmlCodePrinter extends CodePrinter {
 			}
 			else if (meth.getName().startsWith("get") && !meth.getName().equals("getCode")  && (meth.getParameterTypes().length==0)) {
 				try {
-					newElement.setAttribute(meth.getName().substring(3), meth.invoke(node)==null?"null":meth.invoke(node).toString());
+					if (!attrexclude.contains(meth.getName()))
+						newElement.setAttribute(meth.getName().substring(3), meth.invoke(node)==null?"null":meth.invoke(node).toString());
 				}  catch (Exception e) {
 					Log.e(e);
 					System.exit(1);

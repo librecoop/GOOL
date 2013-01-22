@@ -1004,7 +1004,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if(context!=null) {
 			dec = context.getDeclaration(n.getName().toString(), getTypeMirror(n));
 			if (dec == null) {
-				Log.e(String.format("No declaration found for '%s' in curent context", n.getName().toString()));
+				Log.e(String.format("No declaration found for '%s' of type '%s' in curent context", n.getName(), getTypeMirror(n)));
 				dec = new VarDeclaration(goolType(n, context), n.getName().toString());
 			}
 		}
@@ -1150,7 +1150,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier().toString(), getTypeMirror(n));
 		if (dec == null) {
-			Log.e(String.format("No declaration found for '%s' in curent context", n.getIdentifier().toString()));
+			Log.e(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
 			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
 		}
 		MemberSelect f = new MemberSelect(target, dec);
@@ -1173,6 +1173,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		context = new Context(classDef, context);
 		//Create a variable called 'this' of type 'Classtree' to prevent errors
 		context.addDeclaration(new VarDeclaration(TypeObject.INSTANCE, "this"), "this", getTypeMirror(n));
+		context.addDeclaration(new VarDeclaration(TypeObject.INSTANCE, "super"), "super", null);
 		
 		//Enums are just classes with a particular flag, which we set up if necessary
 		//We said that before, with DECLARED types
@@ -1294,7 +1295,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			} else if (member instanceof Field) {
 				classDef.addField((Field) member);
 			} else if (member instanceof VarDeclaration) {
-				classDef.addField(new Field(Arrays.asList(Modifier.PRIVATE),
+				classDef.addField(new Field(new ArrayList<Modifier>(), //Arrays.asList(Modifier.PRIVATE),
 						(VarDeclaration) member));
 			} else if (member != null) {
 				Log.i(String.format(
@@ -1571,7 +1572,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 	
 	public void setTypes(javax.lang.model.util.Types types) {
-		Context.types = types;
+		Context.setTypes(types);
 	}
 	
 }
@@ -1588,7 +1589,11 @@ class Context {
 	
 	private ClassDef classDef;
 	
-	static public javax.lang.model.util.Types types;
+	static private javax.lang.model.util.Types types;
+	
+	static public void setTypes(javax.lang.model.util.Types types) {
+		Context.types = types;
+	}
 
 	private HashMap<String,HashMap<TypeMirror,Dec>> map;
 	
@@ -1613,6 +1618,16 @@ class Context {
 	}
 	
 	public Dec getDeclaration(String name, TypeMirror type) {
+		Dec ret = getDeclarationHere(name, type);
+		if (ret != null)
+			return ret;
+		if (parent != null)
+			return parent.getDeclaration(name, type);
+		else
+			return null;
+	}
+	
+	public Dec getDeclarationHere(String name, TypeMirror type) {
 		HashMap<TypeMirror,Dec> identifier = map.get(name);
 		if (identifier != null) {
 			for (Entry<TypeMirror,Dec> e : identifier.entrySet()) {
@@ -1620,10 +1635,7 @@ class Context {
 						return e.getValue();
 			}
 		}
-		if (parent != null)
-			return parent.getDeclaration(name, type);
-		else
-			return null;
+		return null;
 	}
 	
 	public Context getClassContext() {
@@ -1643,6 +1655,8 @@ class Context {
 	}
 	
 	private boolean isTypeMirrorCompatible(TypeMirror declaration, TypeMirror instance) {
+		if (declaration == null || instance == null)
+			return true;
 		if (declaration instanceof ExecutableType && instance instanceof ExecutableType) {
 			return types.isSubsignature((ExecutableType)declaration, (ExecutableType)instance);
 		} else {
