@@ -21,7 +21,6 @@ import gool.parser.java.JavaParser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +44,11 @@ public class GOOLCompiler {
 			GOOLCompiler gc = new GOOLCompiler();
 
 			
-//			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);			
-//			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
-//			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);			
+			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
 			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
-//			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
 		} catch (Exception e) {
 			Log.e(e);
 		}

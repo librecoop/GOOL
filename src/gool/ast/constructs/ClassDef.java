@@ -10,8 +10,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import logger.Log;
-
 /**
  * This captures classes in the intermediate language. For each object member of
  * ClassDef the compiler will have to generate a separate file containing the

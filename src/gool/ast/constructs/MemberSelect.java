@@ -1,6 +1,5 @@
 package gool.ast.constructs;
 
-import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
 public class MemberSelect extends VarAccess{

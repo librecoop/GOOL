@@ -3,8 +3,6 @@ package gool.ast.constructs;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
-import java.util.Arrays;
-
 
 /**
  * This class captures function invocation. Hence is is an OOTExpr.

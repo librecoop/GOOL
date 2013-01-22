@@ -39,7 +39,6 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
-import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeInt;
@@ -53,8 +52,6 @@ import gool.generator.common.CommonCodeGenerator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
 

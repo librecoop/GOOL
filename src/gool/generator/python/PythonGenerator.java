@@ -159,6 +159,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 			else
 				textualOp = "/";
 			break;
+		case PLUS :
+			if(binaryOp.getLeft().getType().getName().equals("str") && !binaryOp.getRight().getType().getName().equals("str")) {	
+				return String.format("(%s %s str(%s))", binaryOp.getLeft(), "+", binaryOp.getRight());
+			}
+			else if(binaryOp.getRight().getType().getName().equals("str") && !binaryOp.getLeft().getType().getName().equals("str")) {	
+				return String.format("(str(%s) %s %s)", binaryOp.getLeft(), "+", binaryOp.getRight());
+			}
 		default :
 			textualOp = binaryOp.getTextualoperator();
 		}
