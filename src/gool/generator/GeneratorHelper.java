@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
  * It has a method starting the entire process
  * As well as some ancillary methods
  */
-public final class GeneratorHelper {
+public class GeneratorHelper {
 	public static Logger logger = Logger.getLogger(GeneratorHelper.class.getName());
 	public static String joinParams(List<?> parameters) {
 		if (parameters == null) {
