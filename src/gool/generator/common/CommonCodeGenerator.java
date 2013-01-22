@@ -42,6 +42,7 @@ import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -547,6 +548,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 	
 	@Override
+	public String getCode(TypeFile typeFile){
+		return "File";
+	}
+	
+	@Override
 	public String getCode(TypePackage typePackage){
 		return typePackage.getTextualtype();
 	}
@@ -564,7 +570,4 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		//For now if one wants to print the type of a Method, this returns just the name of the method.
 		return typeMethod.getTextualtype();
 	}
-
-
-	
 }

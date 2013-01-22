@@ -629,7 +629,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		// TODO Auto-generated method stub
 		return "noprint";
 	}
 	

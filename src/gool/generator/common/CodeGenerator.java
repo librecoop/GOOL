@@ -70,6 +70,7 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -302,6 +303,8 @@ public interface CodeGenerator {
 
 	String getCode(TypeEntry typeEntry);
 
+	String getCode(TypeFile typeFile);
+	
 	/**
 	 * Produces code for an integer type in the target language.
 	 * 
@@ -404,6 +407,5 @@ public interface CodeGenerator {
 
 	String getCode(CompoundAssign compoundAssign);
 	
-	String printClass(ClassDef pclass);
-	
+	String printClass(ClassDef pclass);	
 }
