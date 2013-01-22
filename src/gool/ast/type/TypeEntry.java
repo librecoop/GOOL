@@ -1,6 +1,5 @@
 package gool.ast.type;
 
-import logger.Log;
 import gool.ast.constructs.ClassDef;
 import gool.generator.GoolGeneratorController;
 

@@ -7,8 +7,6 @@ import gool.executor.common.SpecificCompiler;
 import java.util.HashMap;
 import java.util.Map;
 
-import logger.Log;
-
 /**
  * Platforms are PrimitiveTypes.
  * They specify the Target language for a piece of the abstract GOOL.

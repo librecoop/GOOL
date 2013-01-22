@@ -55,8 +55,6 @@ import gool.generator.GeneratorHelper;
 import java.lang.reflect.Array;
 import java.util.Collection;
 
-import logger.Log;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
