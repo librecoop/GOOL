@@ -14,6 +14,7 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.Expression;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
@@ -94,6 +95,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 		indentation = "    ";
 	}
 	
+	private ClassDef currentClass;
+	
 	private ArrayList<String> comments = new ArrayList<String>();
 	
 	private ArrayList<String> paramsMethCurrent = new ArrayList<String>();
@@ -130,8 +133,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(ArrayNew arrayNew) {
-		return String.format("%s[%s]", arrayNew.getType(), StringUtils
-				.join(arrayNew.getDimesExpressions(), ", "));
+		String ret = arrayNew.getType() + "()";
+		for (Expression e : arrayNew.getDimesExpressions())
+			ret = String.format("[%s]*%s", ret, e);
+		return "(" + ret + ")";
 	}
 	
 	@Override
@@ -159,6 +164,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 			else
 				textualOp = "/";
 			break;
+		case PLUS :
+			if(binaryOp.getLeft().getType().getName().equals("str") && !binaryOp.getRight().getType().getName().equals("str")) {	
+				return String.format("(%s %s str(%s))", binaryOp.getLeft(), "+", binaryOp.getRight());
+			}
+			else if(binaryOp.getRight().getType().getName().equals("str") && !binaryOp.getLeft().getType().getName().equals("str")) {	
+				return String.format("(str(%s) %s %s)", binaryOp.getLeft(), "+", binaryOp.getRight());
+			}
 		default :
 			textualOp = binaryOp.getTextualoperator();
 		}
@@ -397,6 +409,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if(varAccess.getType() == null || varAccess.getType().getName().isEmpty()) {
 			return name;
 		}
+		if (name.equals("super") && currentClass != null)
+			return String.format("super(%s, self)", currentClass.getName());
 		if (name.equals("this"))
 			return "self";
 
@@ -406,7 +420,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (paramsMethCurrent.contains(name))
 			return name;
 		else
-			return name;
+			return "self." + name;
 			
 	}
 
@@ -643,7 +657,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
-		comment ("Unrecognized by GOOL, passed on: " + unknownExpression.getTextual());
+		comment ("Unrecognized by GOOL, expression passed on");
 		return unknownExpression.getTextual();
 	}
 
@@ -661,6 +675,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String printClass(ClassDef classDef) {
+		currentClass = classDef;
+		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
 		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
@@ -685,8 +701,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		String dynamicAttributs = "";
 		for(Field f : classDef.getFields()) {
 			// renaming private fields
-			if (f.getModifiers().contains(Modifier.PRIVATE))
+			if (f.getModifiers().contains(Modifier.PRIVATE)) {
 				f.setName("__" + f.getName());
+			}
 			// static fields are declared in the class, dynamic ones in the constructor
 			if (f.getModifiers().contains(Modifier.STATIC))
 				code = code.append(formatIndented("%1", f));
