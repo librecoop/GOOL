@@ -20,32 +20,22 @@
 #if($class.Ppackage)package ${class.PackageName};#end
 
 ## Print out the imports
-#includes ($Helper.printDependencies($class))
-##Print out fixed import for text view
-import android.util.Log;
-
-## Declare the class with the format: 
+ import android.widget.TextView;
+ 
+ ## Declare the class with the format: 
 ## [modifiers] interface/class [extends ...] [implements ...]
-#join($class.Modifiers " ") #if($class.isInterface()) interface#else class#end $class.Name #if($class.ParentClass)extends $class.ParentClass#end#interfaces($class.Interfaces) {
+public class PrintOut {
 
-## Declare its fields
-#foreach( $field in $class.Fields )
-## The following will call field.toString() 
-## which will trigger JavaGenerator.getCode(field)
-## which will generate the code for the field declaration and initialization.
-    $field;
-#end
+	private static TextView systemOutTextBox;	
 
-## Declare its methods
-#foreach( $method in $class.Methods )
-    ${method.Header}#if($class.isInterface());#else {
-#if($method.isConstructor)
-	#foreach( $parentCall in $method.ParentCalls )
-		$parentCall
-	#end
-#end        
-        ${method.Block}
-    }#end
+	public static TextView getSystemOutTextBox() {
+		return systemOutTextBox;
+	}
 
-#end
-}
+	public static void setSystemOutTextBox(TextView systemOutTextBox) {
+		PrintOut.systemOutTextBox = systemOutTextBox;
+	}	
+	
+	}
+
+

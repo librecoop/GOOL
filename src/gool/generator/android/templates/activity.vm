@@ -34,13 +34,11 @@ public class ${class.Name}Activity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		systemOutTextBox = new TextView(this);
-		setContentView(getSystemOutTextBox());
-		${class.Name}.EntryMethod(systemOutTextBox, null);	
+		setContentView(systemOutTextBox);
+		PrintOut.setSystemOutTextBox(systemOutTextBox);
+		${class.Name}.EntryMethod(null);	
 		 
-	}
-	public TextView getSystemOutTextBox() {
-		return systemOutTextBox;
-	}
+	}	
 }
 
 

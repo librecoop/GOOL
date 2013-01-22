@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-
-
 import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
@@ -151,7 +149,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	 * tests on HelloWorld.
 	 */
 	public String getCode(MainMeth mainMeth) {
-		return "public static void EntryMethod(TextView systemOutTextBox, String[] args)";
+		return "public static void EntryMethod(String[] args)";
 	}
 
 	@Override
@@ -228,7 +226,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("systemOutTextBox.append(%s+\"\\n\"); ",
+		return String.format("PrintOut.getSystemOutTextBox().append(%s+\"\\n\"); ",
 		 StringUtils.join(
 				systemOutPrintCall.getParameters(), ",")) + 
 				String.format(" Log.i(\"JUnitSysOut\",String.valueOf(%s)) ",

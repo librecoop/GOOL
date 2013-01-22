@@ -71,7 +71,10 @@ public class AndroidCodePrinter extends CodePrinter {
 		PrintWriter writer = new PrintWriter(classFile);
 		writer.println(code);
 		writer.close();
-		// This part checks whether the class contains a main method/entry point
+		/*
+		 *  This part checks whether the class contains a main method/entry point
+		 *  as well as creating the class that will be equivalent to sysOut.
+		 */
 		if (pclass.isMainClass()) { // Check if class contains main method and
 									// if yes create activity class as well
 			/**
@@ -88,6 +91,25 @@ public class AndroidCodePrinter extends CodePrinter {
 			writer.close();
 			// Put the generated class into the result list
 			result.add(activityFile);
+			/*
+			 * After this it checks whether a PrintOut class has been made yet and
+			 * if not creates it. The reason why it is done here is because most of the
+			 * time there will only be one main class and this step won't be repeated
+			 * Unnecessarily 
+			 */
+			File printOutFile = new File(dir, "PrintOut.java");
+			if(!printOutFile.exists()) {
+					
+			System.out.println(String
+					.format("Writing to file %s", printOutFile));
+			writer = new PrintWriter(printOutFile);
+			String printOutFileCode = processTemplate("printout.vm", pclass);
+			writer.println(printOutFileCode);
+			writer.close();
+			// Put the generated class into the result list
+			result.add(printOutFile);
+			}
+			
 
 		}
 
