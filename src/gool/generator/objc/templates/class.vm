@@ -29,6 +29,7 @@ $method.Block
 	#if(${method.isMainMethod()})
 ${method.Header}{
 ${method.Block}
+return 0;
 }
 	#end
 #end
