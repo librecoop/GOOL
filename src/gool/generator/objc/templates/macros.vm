@@ -20,6 +20,7 @@
 #end
 
 #macro ( includes $dependencies )
-#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))#import ${dep};#end
+#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))#import "${dep}";
+#end
 #end
 #end
