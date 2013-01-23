@@ -182,6 +182,7 @@ public class XmlCodePrinter extends CodePrinter {
 					} else {
 						Element el = NodeToElement(newNode, document);
 						if (el != null) {
+							el.setAttribute("getterName", meth.getName());
 							newElement.appendChild(el);
 						}
 					}
@@ -197,8 +198,10 @@ public class XmlCodePrinter extends CodePrinter {
 							.invoke(node);
 					for (Object o : listObj) {
 						Element el = NodeToElement(o, document);
-						if (el != null)
+						if (el != null) {
+							el.setAttribute("getterName", meth.getName());
 							newElement.appendChild(el);
+						}
 					}
 				} catch (Exception e) {
 					Log.e(e);
