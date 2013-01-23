@@ -223,6 +223,20 @@ public class XmlCodePrinter extends CodePrinter {
 					System.exit(1);
 				}
 			}
+			// generate XML attribute for iser
+						else if (meth.getName().startsWith("is")
+								&& !meth.getName().equals("getCode")
+								&& (meth.getParameterTypes().length == 0)) {
+							try {
+								if (!attrexclude.contains(meth.getName()))
+									newElement.setAttribute(meth.getName().substring(2),
+											meth.invoke(node) == null ? "null" : meth
+													.invoke(node).toString());
+							} catch (Exception e) {
+								Log.e(e);
+								System.exit(1);
+							}
+						}
 		}
 		return newElement;
 	}
