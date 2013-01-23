@@ -20,7 +20,10 @@
 #end
 
 #macro ( includes $dependencies )
-#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))#import "${dep}";
+#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))#import "${dep}"
 #end
 #end
 #end
+
+#macro ( type $type )
+$Helper.removePointer($type)#end
