@@ -39,6 +39,7 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
+import gool.ast.file.FileGetNameCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -65,6 +66,7 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -196,6 +198,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassNew classNew) {
+		if(classNew.getType() instanceof TypeFile) {
+			return String.format("%s", classNew.getParameters().isEmpty()?"\"\"":classNew.getParameters().get(0));
+		}
 		return String.format("%s(%s)", classNew.getName(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
@@ -229,6 +234,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 			value = "None";
 		}
 		return printWithComment(String.format("%s = %s\n", field.getName(), value));
+	}
+
+	@Override
+	public String getCode(FileGetNameCall fileGetNameCall) {
+		return String.format("%s", fileGetNameCall.getExpression());
 	}
 
 	@Override
@@ -518,6 +528,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return "noprint";
 		}
 		if(typeDependency.getType() instanceof TypeEntry)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeFile)
 			return "noprint";
 		return super.getCode(typeDependency);
 	}

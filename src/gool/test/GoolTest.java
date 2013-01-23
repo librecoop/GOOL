@@ -189,6 +189,17 @@ public class GoolTest {
 	}
 
 	@Test
+	public void simpleFile() throws Exception {
+		String input = 
+				"import gool.imports.java.io.File;\n" + 
+				TestHelper
+				.surroundWithClassMain(
+						"File f = new File();f.getName();",
+						MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "");
+	}
+	
+	@Test
 	public void mapWithoutTypes() throws Exception {
 		try {
 			String input = 

@@ -20,6 +20,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
@@ -44,6 +45,7 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
+import gool.ast.file.FileGetNameCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -166,6 +168,10 @@ public interface CodeGenerator {
 
 	String getCode(FieldAccess sfa);
 
+	String getCode(FileMethCall fileMethCall);	
+	
+	String getCode(FileGetNameCall fileGetNameCall);
+	
 	String getCode(For forr);
 
 	String getCode(GoolCall goolCall);
@@ -407,5 +413,5 @@ public interface CodeGenerator {
 
 	String getCode(CompoundAssign compoundAssign);
 	
-	String printClass(ClassDef pclass);	
+	String printClass(ClassDef pclass);
 }

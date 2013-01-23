@@ -15,6 +15,7 @@ import gool.ast.constructs.Constructor;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
@@ -38,6 +39,7 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
+import gool.ast.file.FileGetNameCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
@@ -274,7 +276,17 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(FieldAccess sfa) {
 		return sfa.getTarget() + "." + sfa.getMember();
 	}
+	
+	@Override
+	public String getCode(FileMethCall fileMethCall) {
+		return "==FileMethCall==";
+	}
 
+	@Override
+	public String getCode(FileGetNameCall fileGetNameCall) {
+		return String.format("%s.getName()", fileGetNameCall.getExpression());
+	}
+	
 	@Override
 	public String getCode(For forInstruction) {
 //		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
