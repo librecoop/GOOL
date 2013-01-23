@@ -1514,8 +1514,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		if (!(target instanceof Parameterizable)) {
-				target = new MethCall(goolType(((MethodSymbol) method)
-						.getReturnType(), context), target);
+			System.out.println(method.getClass());
+			target = new MethCall(goolType(((MethodSymbol) method)
+					.getReturnType(), context), target);
 		}
 		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
