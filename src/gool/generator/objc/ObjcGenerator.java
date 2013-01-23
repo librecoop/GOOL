@@ -21,6 +21,7 @@ import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
@@ -470,11 +471,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		for(Expression e : classNew.getParameters()) {
 			if(!b){
-				init += String.format("WithParam%s:%s ", numP.toString(), e.toString());
+				init += String.format("WithParam%s%s:%s ", numP.toString(), GeneratorHelperObjc.type(e.getType()), e.toString());
 				b = true;
 			}
 			else
-				init += String.format("andParam%s:%s ", numP.toString(), e.toString());
+				init += String.format("andParam%s%s:%s ", numP.toString(), GeneratorHelperObjc.type(e.getType()), e.toString());
 			numP++;
 		}
 		
@@ -489,11 +490,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	
 		for(Expression e : methodCall.getParameters()) {
 			if(!b){
-				arg += String.format("Param%s:%s ", numP.toString(), e.toString());
+				arg += String.format("Param%s%s:%s ", numP.toString(), e.getType(), e.toString());
 				b = true;
 			}
 			else
-				arg += String.format("andParam%s:%s ", numP.toString(), e.toString());
+				arg += String.format("andParam%s%s:%s ", numP.toString(), e.getType(), e.toString());
 			
 			numP++;
 		}
@@ -519,11 +520,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 		for(VarDeclaration e : meth.getParams()) {
 			if(!b){
-				arg += String.format("Param%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+				arg += String.format("Param%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
 				b = true;
 			}
 			else
-				arg += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+				arg += String.format("andParam%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
 			numP++;
 		}
 		
@@ -538,11 +539,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		for(VarDeclaration e : cons.getParams()) {
 			if(!b){
-				param += String.format("WithParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+				param += String.format("WithParam%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
 				b = true;
 			}
 			else
-				param += String.format("andParam%s:(%s)%s ", numP.toString(), e.getType(), e.getName());
+				param += String.format("andParam%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
 			numP++;
 		}
 
@@ -556,6 +557,32 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			out = String.format("%s = %s", out, field.getDefaultValue());
 		}
 		return out;
+	}
+	
+	@Override
+	public String getCode(TypeDependency typeDependency) {
+		if (typeDependency.getType() instanceof TypeList) {
+			return "Foundation/Foundation.h";
+		}
+		if (typeDependency.getType() instanceof TypeMap) {
+			return "Foundation/Foundation.h";
+		}
+		if (typeDependency.getType() instanceof TypeEntry) {
+			return "Foundation/Foundation.h";
+		}
+		if (typeDependency.getType() instanceof TypeFile) {
+			return "Foundation/Foundation.h";
+		}
+		if (typeDependency.getType() instanceof TypeString) {
+			return "Foundation/Foundation.h";
+		}
+		if (typeDependency.getType() instanceof TypeBool) {
+			return "noprint";
+		}
+		if (typeDependency.getType() instanceof TypeInt) {
+			return "noprint";
+		}
+		return removePointer(super.getCode(typeDependency)).concat(".h");
 	}
 
 }
