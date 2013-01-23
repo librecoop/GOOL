@@ -1496,6 +1496,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			target = new SystemOutPrintCall();
 		}
 		else if (n.getMethodSelect().toString().equals("super")) {
+			Log.e("nbArg : "+n.getArguments().size());
 			target = new ParentCall(goolType(((MethodSymbol) method)
 					.getReturnType(), context));
 		}

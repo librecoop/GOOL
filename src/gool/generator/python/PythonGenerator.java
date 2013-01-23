@@ -303,7 +303,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		if (lrc.getType().getTypeArguments().contains("[Int]"))		
+		if (!lrc.getType().getTypeArguments().contains("[Int]"))		
 		return String.format("%s.remove(%s)", lrc.getExpression(), StringUtils
 				.join(lrc.getParameters(), ", "));
 		else
@@ -822,7 +822,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 				String superPrefix = "";
 				if (methodsNames.get(method).equals(method.getName())) {
 					superPrefix = formatIndented (
-							"if not GoolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
+							"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
 							printMethParamsTypes(method),
 							classDef.getName(),
 							method.isConstructor()?"__init__":method.getName());
