@@ -6,6 +6,7 @@ import gool.ast.constructs.Expression;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.VarAccess;
 import gool.ast.type.IType;
+import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
@@ -70,7 +71,7 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 	}
 	
 	public static String staticString(Expression e){
-		return ((e.getType() instanceof TypeString) 
+		return ((e.getType() instanceof PrimitiveType) 
 				&& !(e instanceof VarAccess) 
 				&& !(e instanceof MethCall)) 
 				&& !(e instanceof ArrayAccess) 
