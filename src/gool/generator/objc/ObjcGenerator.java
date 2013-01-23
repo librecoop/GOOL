@@ -1,5 +1,6 @@
 package gool.generator.objc;
 
+import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
@@ -56,6 +57,7 @@ import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
@@ -98,7 +100,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
 		return String
-					.format("for(%s%s %s in %s){%s}",
+					.format("for(%s %s in %s){\n\t%s}",
 							enhancedForLoop.getVarDec().getType(),enhancedForLoop.getVarDec().getName(),
 							(enhancedForLoop.getExpression().getType() instanceof TypeMap) ? String
 									.format("%s.entrySet()",
@@ -130,10 +132,10 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			String str[] = new String[lac.getParameters().size()];
 			for (int i = 2; i <= lac.getParameters().size(); i++) {
 				nsObject = GeneratorHelperObjc.staticString(lac.getParameters().get(0));
-				str[i] = (String) String.format("[%s addObject:%s%s]%n",
+				str[i] = (String) String.format("[%s addObject:%s%s]\n",
 						lac.getExpression(),nsObject, lac.getParameters().get(i));
 			}
-			return String.format("%s%n%s", s, str);
+			return String.format("%s\n%s", s, str);
 		}
 	}
 
@@ -156,10 +158,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		/*if(assign.getLValue() instanceof ArrayAccess)
 			return getCode((ArrayAccess)assign.getLValue(),assign.getValue());*/
-		 if (assign.getValue().getType() instanceof TypeString)
-			return assign.getLValue() + " = @" + assign.getValue();
-		else 
-			return super.getCode(assign);	
+		return assign.getLValue() + " = " + GeneratorHelperObjc.staticString(assign.getValue()) + assign.getValue();
 	}
 
 	@Override
@@ -173,9 +172,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String initialValue = "";
 		String type = varDec.getType().toString();
 		if (varDec.getInitialValue() != null) {
-			if (varDec.getType() instanceof TypeString)
+			if (varDec.getInitialValue().getType() instanceof TypeNull)
+				initialValue = " = nil"; //TODO pas normal, nil est mit dans le type de la valeur initital et pas dans la valeur initiale
+			else if (varDec.getInitialValue().getType() instanceof TypeString)
 				initialValue = " = @" + varDec.getInitialValue();
-			else if(varDec.getType() instanceof TypeChar)
+			else if(varDec.getInitialValue().getType() instanceof TypeChar)
 				initialValue = " = '" + varDec.getInitialValue() + "'";
 			else
 				initialValue = " = " + varDec.getInitialValue();
@@ -298,11 +299,17 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(SystemOutPrintCall systemOutPrintCall){
 		String nsString = GeneratorHelperObjc.staticString(systemOutPrintCall.getParameters().get(0));
 		String out = null;
+		String format = null;
 		
 		if(systemOutPrintCall.getParameters().get(0).getType() instanceof TypeClass)
 			out = "["+ systemOutPrintCall.getParameters().get(0) + " toString]";
 		
-		return String.format("NSLog(@\"%s\",%s%s)",GeneratorHelperObjc.format(systemOutPrintCall.getParameters().get(0)),nsString,out == null ? GeneratorHelper.joinParams(systemOutPrintCall.getParameters()) : out);
+		
+		format = (systemOutPrintCall.getParameters().get(0) instanceof ArrayAccess) && ((ArrayAccess)systemOutPrintCall.getParameters().get(0)).getExpression().getType() instanceof TypeArray ? 
+				GeneratorHelperObjc.format(((TypeArray)((ArrayAccess)systemOutPrintCall.getParameters().get(0)).getExpression().getType()).getElementType()) : 
+				GeneratorHelperObjc.format(systemOutPrintCall.getParameters().get(0));
+				
+		return String.format("NSLog(@\"%s\",%s%s)",format,nsString,out == null ? GeneratorHelper.joinParams(systemOutPrintCall.getParameters()) : out);
 	}
 	
 	@Override
@@ -320,8 +327,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			if(binaryOp.getRight().getType() instanceof TypeClass)
 				right = "["+ right + " toString]";
 			
-			String fleft = GeneratorHelperObjc.format(binaryOp.getLeft());
-			String fright = GeneratorHelperObjc.format(binaryOp.getRight());
+			String fleft = (binaryOp.getLeft() instanceof ArrayAccess) && ((ArrayAccess)binaryOp.getLeft()).getExpression().getType() instanceof TypeArray ? 
+					GeneratorHelperObjc.format(((TypeArray)((ArrayAccess)binaryOp.getLeft()).getExpression().getType()).getElementType()) : 
+					GeneratorHelperObjc.format(binaryOp.getLeft());
+			String fright = (binaryOp.getRight() instanceof ArrayAccess) && ((ArrayAccess)binaryOp.getRight()).getExpression().getType() instanceof TypeArray ? 
+					GeneratorHelperObjc.format(((TypeArray)((ArrayAccess)binaryOp.getRight()).getExpression().getType()).getElementType()) : 
+					GeneratorHelperObjc.format(binaryOp.getRight());
 			
 			return String.format("[NSString stringWithFormat:@\"%s%s\",%s%s,%s%s]",fleft,fright,nsStringLeft,left,nsStringRight,right);
 		}
@@ -432,7 +443,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MemberSelect memberSelect) {
 		String target = memberSelect.getTarget().toString().equals("this") ? "self" : memberSelect.getTarget().toString();
-		String sep = (memberSelect.getType() instanceof TypeClass) ? "->" : ".";
+		//TODO normalement ReferenceType et pas negatif
+		String sep;
+		if(memberSelect.getType() instanceof TypeMethod)  sep = " ";
+		else if(!(memberSelect.getType() instanceof PrimitiveType)) sep = "->";
+		else sep = ".";
+		
 		return String.format("%s%s%s", target, sep,
 				memberSelect.getIdentifier());
 	}
@@ -572,6 +588,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		}
 		return removePointer(super.getCode(typeDependency)).concat(".h");
 	}
+	
 	
 	@Override
 	public String getCode(TypeClass typeClass) {

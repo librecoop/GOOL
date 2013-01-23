@@ -30,30 +30,36 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 			return "Bool";
 		}
 		else{
-			return "PROBLEM";
+			return "/* Unrecognized by gool */";
 		}
 	}
 	
 	public static String format(Expression e){
-		if(e.getType().equals(TypeString.INSTANCE)){
+		return format(e.getType());
+	}
+	
+	public static String format(IType t) {
+		if(t.equals(TypeString.INSTANCE)){
 			return "%@";
 		}
-		else if(e.getType().equals(TypeInt.INSTANCE)){
+		else if(t.equals(TypeInt.INSTANCE)){
 			return "%d";
 		}
-		else if(e.getType().equals(TypeChar.INSTANCE)){
+		else if(t.equals(TypeChar.INSTANCE)){
 			return "%c";
 		}
-		else if(e.getType().equals(TypeDecimal.INSTANCE)){
+		else if(t.equals(TypeDecimal.INSTANCE)){
 			return "%f";
 		}
-		else if(e.getType().equals(TypeBool.INSTANCE)){
+		else if(t.equals(TypeBool.INSTANCE)){
 			return "%d";
 		}
-		else if(e.getType() instanceof TypeClass){
+		else if(t instanceof TypeClass){
 			return "%@";
 		}
-		return null;
+		else{
+			return "/* Unrecognized by gool : " + t + " */";
+		}
 	}
 	
 	public static String evalIntExpr(Expression e){
@@ -70,6 +76,5 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 				&& !(e instanceof ArrayAccess) 
 				&& !(e.toString().contains("[NSString stringWithFormat"))
 				? "@" : "";
-	}
-	
+	}	
 }
