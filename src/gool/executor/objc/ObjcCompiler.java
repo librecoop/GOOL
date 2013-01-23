@@ -1,5 +1,9 @@
 package gool.executor.objc;
 
+import gool.Settings;
+import gool.executor.Command;
+import gool.executor.common.SpecificCompiler;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -10,14 +14,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import gool.Settings;
-import gool.executor.Command;
-import gool.executor.common.SpecificCompiler;
-import gool.executor.cpp.CppCompiler;
-
 public class ObjcCompiler extends SpecificCompiler{
 
-	private static Logger logger = Logger.getLogger(CppCompiler.class.getName());
+	private static Logger logger = Logger.getLogger(ObjcCompiler.class.getName());
 	@SuppressWarnings("unused")
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
@@ -36,7 +35,7 @@ public class ObjcCompiler extends SpecificCompiler{
 		}
 		
 		logger.info("--->" + mainFile);
-		String execFileName = mainFile.getName().replace(".m",".bin");
+		String execFileName = mainFile.getName().replace(".m","");
 		params.addAll(Arrays.asList(Settings.get("objc_compiler_cmd")) );
 		
 		for (File file : files) {
