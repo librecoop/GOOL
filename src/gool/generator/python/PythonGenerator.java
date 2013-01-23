@@ -187,7 +187,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
 			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "False");
 		} else {
-			return super.getCode(constant);
+			String ret = super.getCode(constant);
+			if (constant.getType() == TypeString.INSTANCE && ret.contains("\\u")) {
+				return "u" + ret;
+			} else {
+				return ret;
+			}
 		}
 	}
 
