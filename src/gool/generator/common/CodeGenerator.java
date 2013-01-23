@@ -46,6 +46,7 @@ import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.file.FileGetNameCall;
+import gool.ast.file.FileMkdirCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -73,6 +74,7 @@ import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -168,9 +170,11 @@ public interface CodeGenerator {
 
 	String getCode(FieldAccess sfa);
 
+	String getCode(FileGetNameCall fileGetNameCall);
+	
 	String getCode(FileMethCall fileMethCall);	
 	
-	String getCode(FileGetNameCall fileGetNameCall);
+	String getCode(FileMkdirCall fileMkdirCall);
 	
 	String getCode(For forr);
 
@@ -310,6 +314,8 @@ public interface CodeGenerator {
 	String getCode(TypeEntry typeEntry);
 
 	String getCode(TypeFile typeFile);
+	
+	String getCode(TypeFileReader typeFileReader);
 	
 	/**
 	 * Produces code for an integer type in the target language.

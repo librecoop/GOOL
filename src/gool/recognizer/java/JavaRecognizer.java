@@ -49,6 +49,7 @@ import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.file.FileGetNameCall;
+import gool.ast.file.FileMkdirCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -77,6 +78,7 @@ import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -557,6 +559,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("File", tmpOtd);
 		string2otdMap.put("java.io.File", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.File", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeFileReader();
+			}
+		};
+		string2otdMap.put("FileReader", tmpOtd);
+		string2otdMap.put("java.io.FileReader", tmpOtd);
+		string2otdMap.put("gool.imports.java.io.FileReader", tmpOtd);
 	}
 
 	private IType string2IType(String typeName, Context context) {
@@ -1146,6 +1157,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			if(type instanceof TypeFile) {
 				if (identifier.equals("getName")) {
 					return new FileGetNameCall(target);
+				}
+				if (identifier.equals("mkdir")) {
+					return new FileMkdirCall(target);
 				}
 			}
 		}

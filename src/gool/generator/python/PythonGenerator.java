@@ -40,6 +40,7 @@ import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.file.FileGetNameCall;
+import gool.ast.file.FileMkdirCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -67,6 +68,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -198,9 +200,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassNew classNew) {
-		if(classNew.getType() instanceof TypeFile) {
+		if(classNew.getType() instanceof TypeFile || classNew.getType() instanceof TypeFileReader) {
 			return String.format("%s", classNew.getParameters().isEmpty()?"\"\"":classNew.getParameters().get(0));
 		}
+
 		return String.format("%s(%s)", classNew.getName(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
@@ -241,6 +244,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("%s", fileGetNameCall.getExpression());
 	}
 
+	@Override
+	public String getCode(FileMkdirCall fileMkdirCall) {
+		return String.format("goolHelper.mkdir(%s)", fileMkdirCall.getExpression());
+	}
+	
 	@Override
 	public String getCode(For forr) {
 		return formatIndented("%swhile %s:%1",
@@ -530,6 +538,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if(typeDependency.getType() instanceof TypeEntry)
 			return "noprint";
 		if(typeDependency.getType() instanceof TypeFile)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeFileReader)
 			return "noprint";
 		return super.getCode(typeDependency);
 	}

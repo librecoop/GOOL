@@ -40,11 +40,13 @@ import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.file.FileGetNameCall;
+import gool.ast.file.FileMkdirCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -278,13 +280,18 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 	
 	@Override
+	public String getCode(FileGetNameCall fileGetNameCall) {
+		return String.format("%s.getName()", fileGetNameCall.getExpression());
+	}
+	
+	@Override
 	public String getCode(FileMethCall fileMethCall) {
 		return "==FileMethCall==";
 	}
 
 	@Override
-	public String getCode(FileGetNameCall fileGetNameCall) {
-		return String.format("%s.getName()", fileGetNameCall.getExpression());
+	public String getCode(FileMkdirCall fileMkdirCall) {
+		return String.format("%s.mkdir()", fileMkdirCall.getExpression());
 	}
 	
 	@Override
@@ -562,6 +569,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(TypeFile typeFile){
 		return "File";
+	}
+	
+	@Override
+	public String getCode(TypeFileReader typeFileReader){
+		return "FileReader";
 	}
 	
 	@Override

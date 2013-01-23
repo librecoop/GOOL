@@ -10,4 +10,8 @@ public class File {
 	public String getName() {
 		return "";
 	}
+	
+	public boolean mkdir() {
+		return false;
+	}
 }
