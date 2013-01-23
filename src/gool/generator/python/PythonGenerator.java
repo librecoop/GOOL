@@ -10,6 +10,7 @@ import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
 import gool.ast.constructs.CompoundAssign;
 import gool.ast.constructs.Constant;
+import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
@@ -19,6 +20,7 @@ import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
 import gool.ast.constructs.If;
+import gool.ast.constructs.InitCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
@@ -185,7 +187,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
 			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "False");
 		} else {
-			return super.getCode(constant);
+			String ret = super.getCode(constant);
+			if (constant.getType() == TypeString.INSTANCE && ret.contains("\\u")) {
+				return "u" + ret;
+			} else {
+				return ret;
+			}
 		}
 	}
 
@@ -792,7 +799,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 								first?"":"el", printMethParamsTypes(m2), newName);  
 						first = false;
 					}
-					if (! method.getModifiers().contains(Modifier.PRIVATE)) {
+					if (! method.getModifiers().contains(Modifier.PRIVATE) && ! method.isConstructor()) {
 						block += formatIndented("else:\n%-1super(%s, self).%s(args*)",
 								classDef.getName(), method.isConstructor()?"__init__":method.getName());
 					}
@@ -833,17 +840,30 @@ public class PythonGenerator extends CommonCodeGenerator {
 				String superPrefix = "";
 				if (methodsNames.get(method).equals(method.getName())) {
 					superPrefix = formatIndented (
-							"if not GoolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
+							"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
 							printMethParamsTypes(method),
 							classDef.getName(),
 							method.isConstructor()?"__init__":method.getName());
 					if (! method.getParams().isEmpty())
 						superPrefix += printMethParamsNames(method).substring(2) + " = args\n";
+					superPrefix += "# end of GOOL header\n";
 				}
-				if (method.isConstructor() && methodsNames.get(method).equals(method.getName()))
-					code = code.append(formatIndented("%1", printMeth(method, superPrefix + dynamicAttributs)));
-				else
-					code = code.append(formatIndented("%1", printMeth(method, superPrefix)));
+				String initCalls = "";
+				if (method.isConstructor()) {
+					for (InitCall init : ((Constructor)method).getInitCalls()) {
+						for (VarDeclaration param : method.getParams()) {
+							paramsMethCurrent.add(param.getName());
+						}
+						initCalls += String.format("super(%s, self).__init__(%s)\n",
+								classDef.getName(),
+								StringUtils.join(init.getParameters(), ", "));
+					}					
+				}
+				if (method.isConstructor() && methodsNames.get(method).equals(method.getName())) {
+					code = code.append(formatIndented("%1", printMeth(method, superPrefix + initCalls + dynamicAttributs)));
+				} else {
+					code = code.append(formatIndented("%1", printMeth(method, superPrefix + initCalls)));
+				}
 			}
 		}
 		
