@@ -56,7 +56,8 @@ public class GoolTest {
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms = Arrays.asList(
 			JavaPlatform.getInstance(), CppPlatform.getInstance(),
-			CSharpPlatform.getInstance(), AndroidPlatform.getInstance()
+			CSharpPlatform.getInstance()
+			, AndroidPlatform.getInstance()
 			);
 
 	// private List<Platform> platforms =
@@ -315,10 +316,10 @@ public class GoolTest {
 				+ "import gool.imports.java.io.BufferedWriter;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								" try{BufferedReader br = new BufferedReader(new FileReader(\"a.txt\")); "
-								+" String testString = br.readLine(); "
+								" try{ \n BufferedReader br = new BufferedReader(new FileReader(\""+Settings.get("read_file_path")+"\")); \n"
+								+" String testString = br.readLine(); \n"
 										+" { \n System.out.println(testString);\n }"
-								+"BufferedWriter bw = new BufferedWriter(new FileWriter(\"b.txt\",true)); "
+								+"BufferedWriter bw = new BufferedWriter(new FileWriter(\""+Settings.get("write_file_path")+"\",true)); "
 								+"bw.write(testString); bw.close();"
 								+"}catch(Exception e){e.printStackTrace();}",
 								MAIN_CLASS_NAME);

@@ -17,3 +17,4 @@ android_out_dir_final=../GOOLOUTPUTANDROID/
 android_in_dir=../GOOLINPUTANDROID/src/
 android_sdk_path=
 read_file_path=/home/wherevever/a.txt
+write_file_path=/home/whereevever/b.txt
