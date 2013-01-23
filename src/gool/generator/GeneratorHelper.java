@@ -2,6 +2,7 @@ package gool.generator;
 
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
+import gool.ast.type.IType;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
@@ -83,6 +84,18 @@ public class GeneratorHelper {
 					currentPrinter.print(classDef));
 		}
 		return compilationUnits;
+	}
+	
+	
+	//TODO =>  use in OBJC macro for delete pointer in param list for the name of a function. 
+	//Should be use in the OBJCGeneratorHelper
+	public static String removePointer(String s){
+		return s.replaceAll("[\\s*]+$", "");
+	}
+	
+	//idem
+	public static String removePointer(IType type) {
+		return removePointer(type.toString());
 	}
 
 

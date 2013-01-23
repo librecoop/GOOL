@@ -98,7 +98,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
 		return String
-					.format("for(%s %s in %s){%s}",
+					.format("for(%s%s %s in %s){%s}",
 							enhancedForLoop.getVarDec().getType(),enhancedForLoop.getVarDec().getName(),
 							(enhancedForLoop.getExpression().getType() instanceof TypeMap) ? String
 									.format("%s.entrySet()",
@@ -115,7 +115,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListAddCall lac) {
-		String nsObject = ((lac.getParameters().get(0).getType() instanceof PrimitiveType) && !(lac.getParameters().get(0) instanceof VarAccess) && !(lac.getParameters().get(0) instanceof MethCall) ? "@" : "" );
+		String nsObject = GeneratorHelperObjc.staticString(lac.getParameters().get(0));
 		if (lac.getParameters().size() == 1) {
 			if(lac.getParameters().get(0).getType() instanceof PrimitiveType && !(lac.getParameters().get(0).getType() instanceof TypeString)){
 				String nsNumber = "[[NSNumber alloc]initWith" + GeneratorHelperObjc.type(lac.getParameters().get(0).getType()) + ":" + lac.getParameters().get(0) + "]";
@@ -129,7 +129,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 					StringUtils.join(lac.getParameters(), ", "));
 			String str[] = new String[lac.getParameters().size()];
 			for (int i = 2; i <= lac.getParameters().size(); i++) {
-				nsObject = ((lac.getParameters().get(i).getType() instanceof PrimitiveType) ? "@" : "" );
+				nsObject = GeneratorHelperObjc.staticString(lac.getParameters().get(0));
 				str[i] = (String) String.format("[%s addObject:%s%s]%n",
 						lac.getExpression(),nsObject, lac.getParameters().get(i));
 			}
@@ -139,7 +139,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		String nsObject = ((lcc.getParameters().get(0).getType() instanceof PrimitiveType) ? "@" : "" );
+		String nsObject = GeneratorHelperObjc.staticString(lcc.getParameters().get(0));
 		return String.format("[%s containsObject:%s%s]", lcc.getExpression(),nsObject,
 				lcc.getParameters().get(0));
 	}
@@ -151,8 +151,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(Assign assign) {
-		/*Assignation et accès a une table ... langage stupide*/
+	public String getCode(Assign assign) {		
+		/*Assignation et accès a une table ... */
 		
 		/*if(assign.getLValue() instanceof ArrayAccess)
 			return getCode((ArrayAccess)assign.getLValue(),assign.getValue());*/
@@ -164,6 +164,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(VarDeclaration varDec) {
+		
+		/*
+		 * TODO
+		 * Si une variable se nomme id .... fail		
+		 */
+		
 		String initialValue = "";
 		String type = varDec.getType().toString();
 		if (varDec.getInitialValue() != null) {
@@ -174,10 +180,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			else
 				initialValue = " = " + varDec.getInitialValue();
 		}
-		if(varDec.getType() instanceof TypeClass 
-				|| ( (varDec.getType() instanceof TypeArray) 
-						&& (((TypeArray)varDec.getType()).getElementType() instanceof TypeClass ))  )
-			type += " *";
 		
 		if(varDec.getType() instanceof TypeArray)
 			return String.format("%s %s[%s]", type, varDec.getName(), ((ArrayNew)varDec.getInitialValue()).getDimesExpressions().get(0));
@@ -206,7 +208,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		String nsObject = ((lrc.getParameters().get(0).getType() instanceof PrimitiveType) ? "@" : "" );
+		String nsObject = GeneratorHelperObjc.staticString(lrc.getParameters().get(0));
 		return String.format("[%s removeObject:%s%s]", lrc.getExpression(),nsObject,
 				lrc.getParameters().get(0));
 	}
@@ -294,9 +296,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall){
-		String nsString = (systemOutPrintCall.getParameters().get(0).getType().equals(TypeString.INSTANCE) 
-				&& !(systemOutPrintCall.getParameters().get(0) instanceof VarAccess) 
-				&& !systemOutPrintCall.getParameters().get(0).toString().contains("[NSString stringWithFormat:@") ? "@" : "");
+		String nsString = GeneratorHelperObjc.staticString(systemOutPrintCall.getParameters().get(0));
 		String out = null;
 		
 		if(systemOutPrintCall.getParameters().get(0).getType() instanceof TypeClass)
@@ -312,14 +312,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
 			
-			String nsStringLeft =  (binaryOp.getLeft().getType().equals(TypeString.INSTANCE) 
-					&& !(binaryOp.getLeft() instanceof VarAccess) 
-					&& !left.contains("[NSString stringWithFormat:@") 
-					? "@" : "");
-			String nsStringRight =  (binaryOp.getRight().getType().equals(TypeString.INSTANCE) 
-					&& !(binaryOp.getRight() instanceof VarAccess) 
-					&& !right.contains("[NSString stringWithFormat:@") 
-					? "@" : "");
+			String nsStringLeft =  GeneratorHelperObjc.staticString(binaryOp.getLeft());
+			String nsStringRight =  GeneratorHelperObjc.staticString(binaryOp.getRight());
 			
 			if(binaryOp.getLeft().getType() instanceof TypeClass)
 				left = "["+ left + " toString]";
@@ -437,7 +431,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
-		return String.format("%s %s", memberSelect.getTarget(),
+		String target = memberSelect.getTarget().toString().equals("this") ? "self" : memberSelect.getTarget().toString();
+		String sep = (memberSelect.getType() instanceof TypeClass) ? "->" : ".";
+		return String.format("%s%s%s", target, sep,
 				memberSelect.getIdentifier());
 	}
 
@@ -467,16 +463,15 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String init = new String("init");
 		
 		boolean b = false;
-		Integer numP = 1;
 		
 		for(Expression e : classNew.getParameters()) {
+			String nsString = GeneratorHelperObjc.staticString(e);
 			if(!b){
-				init += String.format("WithParam%s%s:%s ", numP.toString(), GeneratorHelperObjc.type(e.getType()), e.toString());
+				init += String.format("With%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
 				b = true;
 			}
 			else
-				init += String.format("andParam%s%s:%s ", numP.toString(), GeneratorHelperObjc.type(e.getType()), e.toString());
-			numP++;
+				init += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
 		}
 		
 		return String.format("[[%s alloc]%s]", removePointer(classNew.getType()), init);
@@ -486,17 +481,14 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(MethCall methodCall) {
 		String arg = new String();
 		boolean b = false;
-		Integer numP = 1;
 	
 		for(Expression e : methodCall.getParameters()) {
 			if(!b){
-				arg += String.format("Param%s%s:%s ", numP.toString(), e.getType(), e.toString());
+				arg += String.format("%s:%s ", removePointer(e.getType()), e.toString());
 				b = true;
 			}
 			else
-				arg += String.format("andParam%s%s:%s ", numP.toString(), e.getType(), e.toString());
-			
-			numP++;
+				arg += String.format("and%s:%s ", removePointer(e.getType()), e.toString());
 		}
 		
 		if(methodCall.getTarget() instanceof VarAccess){
@@ -510,7 +502,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String ret = new String();
 		String arg = new String();
 		String mod = (meth.getModifiers().contains(Modifier.STATIC) ? "+" : "-");
-		Integer numP = 1;
 		boolean b = false;
 
 		if (!(meth.getType() instanceof TypeNone))
@@ -520,12 +511,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 		for(VarDeclaration e : meth.getParams()) {
 			if(!b){
-				arg += String.format("Param%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
+				arg += String.format("%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
 				b = true;
 			}
 			else
-				arg += String.format("andParam%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
-			numP++;
+				arg += String.format("and%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
 		}
 		
 		return String.format("%s %s %s%s", mod, ret, meth.getName(),arg);
@@ -535,16 +525,14 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(Constructor cons) {
 		String param = new String();
 		boolean b = false;
-		Integer numP = 1;
 		
 		for(VarDeclaration e : cons.getParams()) {
 			if(!b){
-				param += String.format("WithParam%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
+				param += String.format("With%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
 				b = true;
 			}
 			else
-				param += String.format("andParam%s%s:(%s)%s ", numP.toString(), e.getType(), e.getType(), e.getName());
-			numP++;
+				param += String.format("and%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
 		}
 
 		return String.format("- (id)init%s", param);
@@ -584,5 +572,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		}
 		return removePointer(super.getCode(typeDependency)).concat(".h");
 	}
+	
+	@Override
+	public String getCode(TypeClass typeClass) {
+		String pointer = typeClass.isEnum() ? "" : "*";
+		return super.getCode(typeClass) + pointer;
+	}
+
 
 }

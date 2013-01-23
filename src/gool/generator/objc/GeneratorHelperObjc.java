@@ -1,7 +1,10 @@
 package gool.generator.objc;
 
+import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Expression;
+import gool.ast.constructs.MethCall;
+import gool.ast.constructs.VarAccess;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
@@ -58,6 +61,15 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 			return "(" + evalIntExpr(((BinaryOperation) e).getLeft()) + ((BinaryOperation) e).getTextualoperator() + evalIntExpr(((BinaryOperation) e).getRight()) + ")";
 		else 
 			return e.toString();
+	}
+	
+	public static String staticString(Expression e){
+		return ((e.getType() instanceof TypeString) 
+				&& !(e instanceof VarAccess) 
+				&& !(e instanceof MethCall)) 
+				&& !(e instanceof ArrayAccess) 
+				&& !(e.toString().contains("[NSString stringWithFormat"))
+				? "@" : "";
 	}
 	
 }
