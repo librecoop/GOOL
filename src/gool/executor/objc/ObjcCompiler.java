@@ -37,7 +37,11 @@ public class ObjcCompiler extends SpecificCompiler{
 		
 		logger.info("--->" + mainFile);
 		String execFileName = mainFile.getName().replace(".m",".bin");
-		params.addAll(Arrays.asList(Settings.get("objc_compiler_cmd"), "-o", execFileName) );
+		params.addAll(Arrays.asList(Settings.get("objc_compiler_cmd")) );
+		
+		for (File file : files) {
+			params.add(file.toString());
+		}
 		
 		/*
 		 * Add the needed dependencies to be able to compile programs.
@@ -51,10 +55,8 @@ public class ObjcCompiler extends SpecificCompiler{
 		for (File dependency : getDependencies()) {
 			params.add(dependency.getAbsolutePath());
 		}
-
-		for (File file : files) {
-			params.add(file.toString());
-		} 
+		
+		params.addAll(Arrays.asList(Settings.get("objc_compiler_lib"), "-o", execFileName));
 
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);

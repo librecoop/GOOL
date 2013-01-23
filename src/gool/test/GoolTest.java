@@ -4,6 +4,7 @@ import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
+import gool.generator.objc.ObjcPlatform;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,7 @@ public class GoolTest {
 	
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
-	 Arrays.asList(JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance());
+	 Arrays.asList(JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance(), ObjcPlatform.getInstance());
 //	private List<Platform> platforms = Arrays.asList(CppPlatform.getInstance());
 
 	@BeforeClass
