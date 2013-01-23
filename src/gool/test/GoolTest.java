@@ -308,14 +308,19 @@ public class GoolTest {
 
 	@Test
 	public void fileTest() throws Exception {
-		String readFile = Settings.get("read_file_path");
+		//String readFile = Settings.get("read_file_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
+				+ "import gool.imports.java.io.FileWriter;\n"
+				+ "import gool.imports.java.io.BufferedWriter;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								" try{BufferedReader br = new BufferedReader(new FileReader(\""+readFile+"\")); "
-								+" String testString = br.readLine(); \n  while(testString != null) "
-								+" { \n System.out.println(testString);\n testString = br.readLine();}}catch(Exception e){e.printStackTrace();}",
+								" try{BufferedReader br = new BufferedReader(new FileReader(\"a.txt\")); "
+								+" String testString = br.readLine(); "
+										+" { \n System.out.println(testString);\n }"
+								+"BufferedWriter bw = new BufferedWriter(new FileWriter(\"b.txt\",true)); "
+								+"bw.write(testString); bw.close();"
+								+"}catch(Exception e){e.printStackTrace();}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "TestReadLn");
 	}

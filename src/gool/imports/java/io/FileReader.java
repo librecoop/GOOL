@@ -7,4 +7,10 @@ public class FileReader {
 	public FileReader(File arg) {
 			// TODO Auto-generated method stub
 		}
+	public FileReader(String arg,Boolean arg2) {
+		// TODO Auto-generated method stub
+	}
+	public FileReader(File arg,Boolean arg2) {
+			// TODO Auto-generated method stub
+		}
 }

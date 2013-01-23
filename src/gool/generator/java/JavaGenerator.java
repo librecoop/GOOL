@@ -398,7 +398,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s.write()", bufferedWriterWriteCall.getExpression());
+		return String.format("%s.write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(bufferedWriterWriteCall.getParameters(), ","));
 	}
 
 	@Override
