@@ -12,6 +12,7 @@ import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
+import gool.ast.constructs.Language;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
@@ -64,11 +65,14 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
+import gool.methods.MethodManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.MethodGenerator;
 
 public class ObjcGenerator extends CommonCodeGenerator {
 
@@ -267,7 +271,15 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MethCall methodCall) {
 		String arg = new String();
+		String specificName;
 		boolean b = false;
+		
+		if(methodCall.getGeneralName() != null){
+			specificName = MethodManager.getSpecificName(methodCall.getGeneralName(),methodCall.getLibrary(),Language.OBJC);
+			if(specificName.equals("")){
+				return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", methodCall.getGeneralName(), methodCall.getLibrary());
+			}
+		}
 	
 		for(Expression e : methodCall.getParameters()) {
 			String nsString = GeneratorHelperObjc.staticStringMini(e);

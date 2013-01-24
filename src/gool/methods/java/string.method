@@ -5,7 +5,6 @@ compareWithoutCase	=	compareToIgnoreCase(String) : int
 concatenation		=	concat(String) : String
 contains			=	contains(String) : boolean
 copy				=	copyValueOf(char[]) : String
-copy				=	copyValueOf(char[], int, int) : String
 endSuffixe			=	endsWith(String) : boolean
 equalWithCase		=	equals(Object) : boolean
 equalWithoutCase	=	equalsIgnoreCase(String) : boolean
