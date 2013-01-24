@@ -39,8 +39,6 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
-import gool.ast.file.FileGetNameCall;
-import gool.ast.file.FileMkdirCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -63,6 +61,7 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
@@ -200,10 +199,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassNew classNew) {
-		if(classNew.getType() instanceof TypeFile || classNew.getType() instanceof TypeFileReader) {
-			return String.format("%s", classNew.getParameters().isEmpty()?"\"\"":classNew.getParameters().get(0));
-		}
-
 		return String.format("%s(%s)", classNew.getName(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
@@ -237,16 +232,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 			value = "None";
 		}
 		return printWithComment(String.format("%s = %s\n", field.getName(), value));
-	}
-
-	@Override
-	public String getCode(FileGetNameCall fileGetNameCall) {
-		return String.format("%s", fileGetNameCall.getExpression());
-	}
-
-	@Override
-	public String getCode(FileMkdirCall fileMkdirCall) {
-		return String.format("goolHelper.mkdir(%s)", fileMkdirCall.getExpression());
 	}
 	
 	@Override
@@ -550,6 +535,21 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
+	public String getCode(TypeFile typeFile){
+		return "goolHelperIO.File";
+	}
+	
+	@Override
+	public String getCode(TypeFileReader typeFileReader){
+		return "goolHelperIO.FileReader";
+	}
+	
+	@Override
+	public String getCode(TypeBufferedReader tbr) {
+		return "goolHelperIO.BufferedReader";
+	}
+	
+	@Override
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
@@ -700,7 +700,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\n\n");
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		for (String dependency : customDependencies.keySet()) {

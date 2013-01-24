@@ -20,7 +20,6 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
-import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
@@ -34,8 +33,8 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Package;
+import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
@@ -45,8 +44,6 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
-import gool.ast.file.FileGetNameCall;
-import gool.ast.file.FileMkdirCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -69,7 +66,9 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
@@ -87,7 +86,6 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
-import gool.ast.type.TypeChar;
 
 import java.util.Collection;
 
@@ -169,12 +167,6 @@ public interface CodeGenerator {
 	String getCode(Field field);
 
 	String getCode(FieldAccess sfa);
-
-	String getCode(FileGetNameCall fileGetNameCall);
-	
-	String getCode(FileMethCall fileMethCall);	
-	
-	String getCode(FileMkdirCall fileMkdirCall);
 	
 	String getCode(For forr);
 
@@ -296,6 +288,8 @@ public interface CodeGenerator {
 	 */
 	String getCode(TypeBool typeBool);
 
+	String getCode(TypeBufferedReader typeBufferedReader);
+	
 	String getCode(TypeByte typeByte);
 
 	/**

@@ -48,8 +48,6 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
-import gool.ast.file.FileGetNameCall;
-import gool.ast.file.FileMkdirCall;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
@@ -1152,14 +1150,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				}
 				if (identifier.equals("getValue")) {
 					return new MapEntryGetValueCall(target);
-				}
-			}
-			if(type instanceof TypeFile) {
-				if (identifier.equals("getName")) {
-					return new FileGetNameCall(target);
-				}
-				if (identifier.equals("mkdir")) {
-					return new FileMkdirCall(target);
 				}
 			}
 		}
