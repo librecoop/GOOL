@@ -291,6 +291,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 					arg += String.format("%s:%s%s ", partName, nsString, e.toString());
 				}
 				
+				if(specificName != "")
+					arg = specificName;
+				
 				if(methodCall.getTarget() instanceof MemberSelect){
 					return String.format("[%s %s]", ((MemberSelect)methodCall.getTarget()).getTarget(), arg);
 				}
