@@ -74,4 +74,9 @@ public class MethodManager {
 		return "src/gool/methods/" + language.toLowerCase()+"/"+methodLibrary.toLowerCase()+".method";
 	}
 	
+	@SuppressWarnings("unused")
+	private static String getCommentFileName(String methodLibrary){
+		return "src/gool/methods/comment."+methodLibrary.toLowerCase()+".method";
+	}
+	
 }

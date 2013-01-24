@@ -109,7 +109,6 @@ import javax.lang.model.type.TypeMirror;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.apache.commons.lang.StringUtils;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ArrayAccessTree;
