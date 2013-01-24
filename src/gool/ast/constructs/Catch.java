@@ -15,6 +15,8 @@ public class Catch extends Block {
 	 * The list of statements.
 	 */
 	private List<Statement> statements = new ArrayList<Statement>();
+	private Block b; 
+	private VarDeclaration singleParameter; //Currently only supports one parameter
 
 	/**
 	 * Creates a new block with the specified expression.R
@@ -24,6 +26,11 @@ public class Catch extends Block {
 	 */
 	public Catch(Statement statement) {
 		statements.add(statement);
+	}
+	
+	public Catch(Block block) {
+		this.b=block;
+		
 	}
 
 	public Catch() {
@@ -68,5 +75,22 @@ public class Catch extends Block {
 	public void addStatements(List<Statement> statements) {
 		this.statements.addAll(statements);
 	}
+	
+	public Block getBlock()
+	{
+		
+		return b;
+	}
+
+	public VarDeclaration getSingleParameter() {
+		return singleParameter;
+	}
+
+	public void setSingleParameter(VarDeclaration singleParameter) {
+		this.singleParameter = singleParameter;
+	}
+	
+	
+
 
 }

@@ -31,6 +31,7 @@ import gool.ast.constructs.Expression;
 import gool.ast.constructs.ExpressionUnknown;
 import gool.ast.constructs.Field;
 
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.For;
 import gool.ast.constructs.Node;
 import gool.ast.constructs.If;
@@ -717,7 +718,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitCatch(CatchTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+		Block block = new Block();
+		
+		for (StatementTree stmt : n.getBlock().getStatements()) {
+			Statement statement = (Statement) stmt.accept(this, context);
+			if (statement != null) {
+				block.addStatement(statement);
+			}
+		}
+		Catch returnCatch = new Catch(block);
+		//Below adds the single parameter to the catch block
+		VarDeclaration tempVarDeclaration = new VarDeclaration((Dec) n.getParameter().accept(this,
+				context));
+		returnCatch.setSingleParameter(tempVarDeclaration);
+		return returnCatch;
 	}
 	
 	@Override
@@ -788,8 +802,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				block.addStatement(statement);
 			}
 		}
-		//visitBlock(node.getBlock(), p);
-		return new Try(block);
+		
+		List<Catch> catches = new ArrayList<Catch>();
+		for(CatchTree catchTree:node.getCatches()) {
+			catches.add((Catch) visitCatch(catchTree, p));
+		}
+		
+		
+		return new Try(block, catches);
 	}
 
 	@Override

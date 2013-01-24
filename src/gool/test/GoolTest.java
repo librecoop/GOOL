@@ -70,7 +70,10 @@ public class GoolTest {
 	@Test
 	public void helloWorld() throws Exception {
 		String input = TestHelper.surroundWithClassMain(
-				"System.out.println(\"Hello World\");", MAIN_CLASS_NAME);
+				"try {\n "
+				+"System.out.println(\"Hello World\");" 
+						+"\n} catch(Exception testExcep) {\n System.out.println(testExcep.toString());\n }" 
+				, MAIN_CLASS_NAME);
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
 	}

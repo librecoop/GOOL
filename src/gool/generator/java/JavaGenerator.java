@@ -6,8 +6,10 @@ import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.bufferedwriter.BufferedWriterCloseCall;
 import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Block;
 import gool.ast.constructs.BufferedReaderMethCall;
 import gool.ast.constructs.BufferedWriterMethCall;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -17,6 +19,8 @@ import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.FileMethCall;
+import gool.ast.constructs.Statement;
+import gool.ast.constructs.Try;
 
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
@@ -437,6 +441,43 @@ public class JavaGenerator extends CommonCodeGenerator {
 	public String getCode(FileExistsCall fileExistsCall) {
 		// TODO Auto-generated method stub
 		return String.format("%s.exists()", fileExistsCall.getExpression());
+	}
+	
+	@Override
+	public String getCode(Try t ) {
+		StringBuilder result = new StringBuilder();
+		result.append("try{\n");
+		for (Statement statement : t.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("\n}"); //closing bracket
+		for (Catch c : t.getCatches()) {
+			result.append(getCode(c));		
+			
+		}
+		return result.toString();
+	}
+	
+	@Override
+	public String getCode(Catch c ) {
+		StringBuilder result = new StringBuilder();
+		result.append("\n catch(");
+		result.append(c.getSingleParameter());
+		result.append(") {\n");
+		for (Statement statement : c.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		
+		result.append("\n}");
+		return result.toString();
 	}
 	
 }

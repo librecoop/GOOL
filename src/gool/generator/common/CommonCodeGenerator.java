@@ -517,30 +517,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 	@Override
 	public String getCode(Try t ) {
-		StringBuilder result = new StringBuilder();
-		result.append("try{\n");
-		for (Statement statement : t.getBlock().getStatements()) {
-			result.append(statement);
-			if (!(statement instanceof Block)) {
-				result.append(";").append("\n");
-			}
-			
-		}
-		result.append("}\n");
-		result.append("catch(Exception e)\n");
-		result.append("{\n");
-		result.append("e.printStackTrace(); \n");
-		result.append("} \n");
-		return result.toString();
+		
+		return "Handled in subclass";
 	}
 	
 	@Override
 	public String getCode(Catch catchExpression ) {
-		StringBuilder result = new StringBuilder();
-		result.append("catch(Exception e)\n");
-		result.append("{\n");
-		result.append("e.printStackTrace()\n");
-		result.append("}\n");
-		return result.toString();
+		return "Handled in subclass";
 	}
 }
