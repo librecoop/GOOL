@@ -23,6 +23,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
@@ -35,6 +36,10 @@ import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarDeclaration;
+import gool.ast.file.FileDeleteCall;
+import gool.ast.file.FileExistsCall;
+import gool.ast.file.FileIsDirectoryCall;
+import gool.ast.file.FileIsFileCall;
 
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -609,6 +614,33 @@ public class CppGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(ExceptionMethCall exceptionMethCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	@Override
+	public String getCode(FileMethCall fileMethCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileIsDirectoryCall fileIsDirectoryCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileIsFileCall fileIsFileCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileDeleteCall fileDeleteCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileExistsCall fileExistsCall) {
 		// TODO Auto-generated method stub
 		return null;
 	}

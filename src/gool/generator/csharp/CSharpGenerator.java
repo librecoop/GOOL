@@ -17,6 +17,7 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
@@ -25,6 +26,10 @@ import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
+import gool.ast.file.FileDeleteCall;
+import gool.ast.file.FileExistsCall;
+import gool.ast.file.FileIsDirectoryCall;
+import gool.ast.file.FileIsFileCall;
 
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -511,5 +516,30 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		return null;
 	}
 	
+	@Override
+	public String getCode(FileMethCall fileMethCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileIsDirectoryCall fileIsDirectoryCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileIsFileCall fileIsFileCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileDeleteCall fileDeleteCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getCode(FileExistsCall fileExistsCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

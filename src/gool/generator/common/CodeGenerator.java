@@ -29,6 +29,7 @@ import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.BufferedWriterMethCall;
 import gool.ast.constructs.Catch;
 import gool.ast.constructs.ExceptionMethCall;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
@@ -54,6 +55,10 @@ import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.exception.ExceptionPrintStackTraceCall;
+import gool.ast.file.FileDeleteCall;
+import gool.ast.file.FileExistsCall;
+import gool.ast.file.FileIsDirectoryCall;
+import gool.ast.file.FileIsFileCall;
 
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -426,6 +431,7 @@ public interface CodeGenerator {
 	
 	String getCode(TypeFile typeFile);
 	
+	
 	String getCode(TypeFileReader typeFileReader);
 	
 	String getCode(TypeBufferedReader typeBufferedReader);
@@ -444,6 +450,7 @@ public interface CodeGenerator {
 	
 	String getCode(BufferedReaderCloseCall bufferedReaderCloseCall);
 
+	
 	String getCode(TypeException typeException);
 
 	String getCode(ExceptionPrintStackTraceCall exceptionPrintStackTraceCall);
@@ -452,13 +459,12 @@ public interface CodeGenerator {
 
 	
 	
-
 	String getCode(BufferedWriterMethCall bufferedWriterMethCall);
 
 	String getCode(BufferedWriterWriteCall bufferedWriterWriteCall);
 	
-
 	String getCode(BufferedWriterCloseCall bufferedWriterCloseCall);
+
 	
 	String getCode(Try t);
 	
@@ -466,4 +472,9 @@ public interface CodeGenerator {
 
 	
 	
+	String getCode(FileMethCall fileMethCall);
+	String getCode(FileIsDirectoryCall fileIsDirectoryCall);
+	String getCode(FileIsFileCall fileIsFileCall);
+	String getCode(FileDeleteCall fileDeleteCall);
+	String getCode(FileExistsCall fileExistsCall);
 }

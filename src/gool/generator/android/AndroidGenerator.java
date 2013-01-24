@@ -19,12 +19,17 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
+import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.TypeDependency;
+import gool.ast.file.FileDeleteCall;
+import gool.ast.file.FileExistsCall;
+import gool.ast.file.FileIsDirectoryCall;
+import gool.ast.file.FileIsFileCall;
 
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -387,5 +392,32 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(ExceptionMethCall exceptionMethCall) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+
+	@Override
+	public String getCode(FileMethCall fileMethCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s", fileMethCall.getExpression());
+	}
+	@Override
+	public String getCode(FileIsDirectoryCall fileIsDirectoryCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.isDirectory()", fileIsDirectoryCall.getExpression());
+	}
+	@Override
+	public String getCode(FileIsFileCall fileIsFileCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.isFile()", fileIsFileCall.getExpression());
+	}
+	@Override
+	public String getCode(FileDeleteCall fileDeleteCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.delete()", fileDeleteCall.getExpression());
+	}
+	@Override
+	public String getCode(FileExistsCall fileExistsCall) {
+		// TODO Auto-generated method stub
+		return String.format("%s.exists()", fileExistsCall.getExpression());
 	}
 }

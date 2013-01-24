@@ -55,6 +55,10 @@ import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.exception.ExceptionPrintStackTraceCall;
+import gool.ast.file.FileDeleteCall;
+import gool.ast.file.FileExistsCall;
+import gool.ast.file.FileIsDirectoryCall;
+import gool.ast.file.FileIsFileCall;
 
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -1201,6 +1205,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				}
 				if (identifier.equals("close")) {
 					return new BufferedWriterCloseCall(target);
+				}
+			}
+			if (type instanceof TypeFile) {
+				if (identifier.equals("isFile")) {
+					return new FileIsFileCall(target);
+				}
+				if (identifier.equals("isDirectory")) {
+					return new FileIsDirectoryCall(target);
+				}
+				if (identifier.equals("delete")) {
+					return new FileDeleteCall(target);
+				}
+				if (identifier.equals("exists")) {
+					return new FileExistsCall(target);
 				}
 			}
 		}

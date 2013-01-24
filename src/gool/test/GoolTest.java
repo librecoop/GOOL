@@ -310,16 +310,20 @@ public class GoolTest {
 	@Test
 	public void fileTest() throws Exception {
 		//String readFile = Settings.get("read_file_path");
+		String readFile = Settings.get("read_file_path");
+		String writeFile = Settings.get("read_write_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
 				+ "import gool.imports.java.io.FileWriter;\n"
 				+ "import gool.imports.java.io.BufferedWriter;\n"
+				+ "import gool.imports.java.io.File;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								" try{ \n BufferedReader br = new BufferedReader(new FileReader(\""+Settings.get("read_file_path")+"\")); \n"
+								" try{ \n BufferedReader br = new BufferedReader(new FileReader(\""+readFile+"\")); \n"
 								+" String testString = br.readLine(); \n"
 										+" { \n System.out.println(testString);\n }"
-								+"BufferedWriter bw = new BufferedWriter(new FileWriter(\""+Settings.get("write_file_path")+"\",true)); "
+								+"File b = new File (\""+writeFile+"\");if(b.isFile()==true && b.exists() == true) b.delete();"
+								+"BufferedWriter bw = new BufferedWriter(new FileWriter(b,true)); "
 								+"bw.write(testString); bw.close();"
 								+"}catch(Exception e){e.printStackTrace();}",
 								MAIN_CLASS_NAME);
