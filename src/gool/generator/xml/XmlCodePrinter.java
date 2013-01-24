@@ -26,12 +26,12 @@ import gool.generator.java.JavaGenerator;
 public class XmlCodePrinter extends CodePrinter {
 
 	/**
-	 * list every type child node for every node with recursion risk.
+	 * list every risked methods for every node with recursion risk.
 	 */
-	private static final java.util.HashMap<String, String[]> nodeexclude = new java.util.HashMap<String, String[]>();
+	private static final java.util.HashMap<String, String[]> methexclude = new java.util.HashMap<String, String[]>();
 	static {
-		String[] letableau4 = { "gool.ast.constructs.Constant" };
-		nodeexclude.put("gool.ast.type.TypeClass", letableau4);
+		String[] letableau = { "getClassReference" };
+		methexclude.put("gool.ast.type.TypeClass", letableau);
 	}
 
 	/**
@@ -42,6 +42,7 @@ public class XmlCodePrinter extends CodePrinter {
 		attrexclude.add("getClass");
 		attrexclude.add("getAccessModifier");
 		attrexclude.add("getHeader");
+		attrexclude.add("getBlock");
 	}
 
 	/**
@@ -65,6 +66,8 @@ public class XmlCodePrinter extends CodePrinter {
 		Document document = null;
 		DocumentBuilderFactory fabrique = null;
 		List<File> result = new ArrayList<File>();
+//		Debugging info
+//		nbNode = 0;
 
 		try {
 			// creat document structure
@@ -157,20 +160,20 @@ public class XmlCodePrinter extends CodePrinter {
 			Class<?> laCl = meth.getReturnType();
 			// check if the method return type is a node.
 			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl)
-					&& (meth.getParameterTypes().length == 0)) {
-				// Debug for recursion
-				// nbNode++;
-				// Log.d(laCl.getName() + "\n" + nbNode);
+					&& (meth.getParameterTypes().length == 0) /*&& nbNode<1000*/) {
+//				 Debug for recursion
+//				 nbNode++;
+//				 Log.d(laCl.getName() + "\n" + nbNode);
 				try {
 					gool.ast.constructs.Node newNode = (gool.ast.constructs.Node) meth
 							.invoke(node);
 					// detect recursion risk.
 					boolean recursionRisk = (newNode == node) ? true : false;
-					if (nodeexclude.containsKey(node.getClass().getName())) {
-						for (String cla : nodeexclude.get(node.getClass()
+					if (methexclude.containsKey(node.getClass().getName())) {
+						for (String exmeth : methexclude.get(node.getClass()
 								.getName())) {
 							if (newNode == null
-									|| newNode.getClass().getName().equals(cla))
+									|| meth.getName().equals(exmeth))
 								recursionRisk = true;
 						}
 					}
@@ -224,19 +227,19 @@ public class XmlCodePrinter extends CodePrinter {
 				}
 			}
 			// generate XML attribute for iser
-						else if (meth.getName().startsWith("is")
-								&& !meth.getName().equals("getCode")
-								&& (meth.getParameterTypes().length == 0)) {
-							try {
-								if (!attrexclude.contains(meth.getName()))
-									newElement.setAttribute(meth.getName().substring(2),
-											meth.invoke(node) == null ? "null" : meth
-													.invoke(node).toString());
-							} catch (Exception e) {
-								Log.e(e);
-								System.exit(1);
-							}
-						}
+			else if (meth.getName().startsWith("is")
+						&& !meth.getName().equals("getCode")
+						&& (meth.getParameterTypes().length == 0)) {
+				try {
+					if (!attrexclude.contains(meth.getName()))
+						newElement.setAttribute(meth.getName().substring(2),
+							meth.invoke(node) == null ? "null" : meth
+											.invoke(node).toString());
+					} catch (Exception e) {
+					Log.e(e);
+					System.exit(1);
+				}
+			}
 		}
 		return newElement;
 	}
