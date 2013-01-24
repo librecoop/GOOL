@@ -56,6 +56,7 @@ public class XmlCodePrinter extends CodePrinter {
 	private boolean classdefok = true;
 
 	public XmlCodePrinter(File outputDir) {
+		//Chose you're favorite Generator for recognized.
 		super(new JavaGenerator(), outputDir);
 	}
 
