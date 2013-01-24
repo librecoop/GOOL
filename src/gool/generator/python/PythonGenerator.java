@@ -4,7 +4,6 @@ import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
-import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
@@ -36,9 +35,7 @@ import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
-import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
-import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -883,24 +880,6 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "str";
-	}
-
-	@Override
-	public String getCode(Throw throwStatement) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(Catch catchStatement) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(Try tryStatement) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

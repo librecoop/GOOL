@@ -229,6 +229,7 @@ public class XmlCodePrinter extends CodePrinter {
 			}
 			// generate XML attribute for iser
 			else if (meth.getName().startsWith("is")
+						&& !meth.getName().equals("getCode")
 						&& (meth.getParameterTypes().length == 0)) {
 				try {
 					if (!attrexclude.contains(meth.getName()))
