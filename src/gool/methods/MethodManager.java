@@ -22,9 +22,11 @@ public class MethodManager {
 			InputStreamReader ipsr=new InputStreamReader(ips);
 			BufferedReader br=new BufferedReader(ipsr);
 			String ligne;
+			formatedName.replaceAll("\\s","");
 			while ((ligne=br.readLine())!=null){
+				ligne.replaceAll("\\s","");
 				if(ligne.contains(formatedName)){
-					res = ligne.replaceAll("\\s","");
+					res = ligne;
 					res = res.substring(0,res.indexOf("="));
 					break;
 				}

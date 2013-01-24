@@ -72,8 +72,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.MethodGenerator;
-
 public class ObjcGenerator extends CommonCodeGenerator {
 
 	private String removePointer(IType type) {
@@ -279,16 +277,35 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			if(specificName.equals("")){
 				return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", methodCall.getGeneralName(), methodCall.getLibrary());
 			}
-		}
-	
-		for(Expression e : methodCall.getParameters()) {
-			String nsString = GeneratorHelperObjc.staticStringMini(e);
-			if(!b){
-				arg += String.format("%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
-				b = true;
+			else {
+				specificName = specificName.substring(0,specificName.indexOf("("));
+				for(Expression e : methodCall.getParameters()) {
+					String nsString = GeneratorHelperObjc.staticStringMini(e);
+					String partName = "";
+					if(specificName.indexOf("/")==-1)
+						partName = specificName;
+					else {
+						partName = specificName.substring(0, specificName.indexOf("/")); 
+						specificName = specificName.substring(specificName.indexOf("/")+1);
+					}
+					arg += String.format("%s:%s%s ", partName, nsString, e.toString());
+				}
+				
+				if(methodCall.getTarget() instanceof MemberSelect){
+					return String.format("[%s %s]", ((MemberSelect)methodCall.getTarget()).getTarget(), arg);
+				}
 			}
-			else
-				arg += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
+		}
+		else {
+			for(Expression e : methodCall.getParameters()) {
+				String nsString = GeneratorHelperObjc.staticStringMini(e);
+				if(!b){
+					arg += String.format("%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
+					b = true;
+				}
+				else
+					arg += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
+			}
 		}
 		
 		if(methodCall.getTarget() instanceof VarAccess){
