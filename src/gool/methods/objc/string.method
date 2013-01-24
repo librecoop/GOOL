@@ -15,7 +15,7 @@ firstIndexChar		=
 firstIndexCharFrom	=	
 firstIndexStr		=	
 firstIndexStrFrom	=	
-empty				=	
+empty				=	$([lenght()]==0):boolean
 lastIndexChar		=	
 lastIndexCharFrom	=	
 lastIndexStr		=	
