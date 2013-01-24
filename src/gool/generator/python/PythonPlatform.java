@@ -27,6 +27,10 @@ public class PythonPlatform extends Platform {
 		byte[] buffer = new byte[1024];
 		int noOfBytes;
 		goolHelperIn = PythonPlatform.class.getResourceAsStream("goolHelper.py");
+		File dir = new File(outputDir);
+		if (! dir.exists()) {
+			dir.mkdirs();
+		}
 		try {
 			goolHelperOut = new FileOutputStream (outputDir+"/goolHelper.py");
 			while ((noOfBytes = goolHelperIn.read(buffer)) != -1)

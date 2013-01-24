@@ -282,6 +282,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		while ((keyword = reader.readLine()) != null) {
 			addForbiddenKeyword(keyword);
 		}
+		reader.close();
 	}
 	
 	public final void setCurrentCompilationUnit(
