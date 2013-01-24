@@ -7,6 +7,7 @@ package gool.generator.cpp;
 
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -24,7 +25,9 @@ import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.list.ListAddCall;
@@ -562,6 +565,24 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		if (classDef.getPpackage() != null)
 			sb = sb.append("}");
 		return sb.toString();
+	}
+
+	@Override
+	public String getCode(Throw throwStatement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Catch catchStatement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Try tryStatement) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

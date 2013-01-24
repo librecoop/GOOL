@@ -6,6 +6,7 @@ import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
@@ -38,7 +39,9 @@ import gool.ast.constructs.Package;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -403,5 +406,11 @@ public interface CodeGenerator {
 	String getCode(TypeVar typeVar);
 
 	String getCode(CompoundAssign compoundAssign);
+
+	String getCode(Throw throwStatement);
+
+	String getCode(Catch catchStatement);
+
+	String getCode(Try tryStatement);
 	
 }
