@@ -41,6 +41,7 @@ import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -242,6 +243,9 @@ public class JavaGenerator extends CommonCodeGenerator {
 		}
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "java.util.Map";
+		}
+		if (typeDependency.getType() instanceof TypeFile) {
+			return "java.io.File";
 		}
 		return super.getCode(typeDependency);
 	}
