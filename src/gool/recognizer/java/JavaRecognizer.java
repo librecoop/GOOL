@@ -27,6 +27,7 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.For;
 import gool.ast.constructs.If;
 import gool.ast.constructs.InitCall;
+import gool.ast.constructs.Language;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
@@ -87,6 +88,7 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
+import gool.methods.MethodManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1481,6 +1483,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().
 			target = (Expression) n.getMethodSelect().accept(this, context);
+		}
+		
+		if(method.owner.toString().equals("java.lang.String")){
+			String general = MethodManager.getGeneralName(method.type.getReturnType().toString(), method.name.toString(), method.type.getParameterTypes(), "String", Language.JAVA);
+			target = new MethCall(goolType(((MethodSymbol) method).getReturnType(), context)
+					, target, general, "String");
 		}
 
 		if (!(target instanceof Parameterizable)) {

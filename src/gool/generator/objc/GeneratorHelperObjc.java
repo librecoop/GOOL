@@ -70,6 +70,13 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 			return e.toString();
 	}
 	
+	public static String staticStringMini(Expression e){
+		return ((e.getType() instanceof TypeString) 
+				&& !(e instanceof VarAccess)
+				&& !(e instanceof MethCall))
+				? "@" : "";
+	}
+	
 	public static String staticString(Expression e){
 		return ((e.getType() instanceof PrimitiveType) 
 				&& !(e instanceof VarAccess) 
@@ -77,5 +84,12 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 				&& !(e instanceof ArrayAccess) 
 				&& !(e.toString().contains("[NSString stringWithFormat"))
 				? "@" : "";
-	}	
+	}
+	
+	public static String initWithObject(Expression e){
+		if(e.getType() instanceof PrimitiveType && !(e.getType() instanceof TypeString))
+			return "[[NSNumber alloc]initWith" + GeneratorHelperObjc.type(e.getType()) + ":" + e + "]";
+		else 
+			return GeneratorHelperObjc.staticString(e) + e;
+	}
 }
