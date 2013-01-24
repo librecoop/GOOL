@@ -61,5 +61,9 @@ public class HashMap<K, T> implements Iterable<HashMap.Entry<K, T>> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/*public boolean containsValue(Object a){
+		return false;
+	}*/
 
 }
