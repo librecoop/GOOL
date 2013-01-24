@@ -47,6 +47,7 @@ import gool.ast.type.TypeMap;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
+import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.HashMap;
@@ -55,7 +56,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class JavaGenerator extends CommonCodeGenerator {
+public class JavaGenerator extends CommonCodeGenerator {//implements CodeGeneratorNoVelocity {
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 
@@ -302,7 +303,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 
 	
-	@Override
+//	@Override
 	public String printClass(ClassDef classDef) {
 		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
 		// print the package containing the class

@@ -404,6 +404,4 @@ public interface CodeGenerator {
 
 	String getCode(CompoundAssign compoundAssign);
 	
-	String printClass(ClassDef pclass);
-	
 }

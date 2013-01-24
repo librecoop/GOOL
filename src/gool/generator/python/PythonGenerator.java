@@ -78,6 +78,7 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
+import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
 
-public class PythonGenerator extends CommonCodeGenerator {
+public class PythonGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
 	
 	public PythonGenerator() {
 		super();
