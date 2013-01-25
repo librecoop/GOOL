@@ -1,7 +1,7 @@
 import os
 
 class File:
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args):
 		if len(args) == 1 and isinstance(args[0], str):
 			self.inializeFromStr(args[0])
 
@@ -14,4 +14,3 @@ class File:
 			return True
 		return False
 
-class FileReader

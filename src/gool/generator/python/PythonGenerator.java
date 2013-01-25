@@ -71,12 +71,14 @@ import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
+import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
@@ -468,6 +470,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
+		Log.e("ble : "+name);
 		if(varAccess.getType() == null || varAccess.getType().getName().isEmpty()) {
 			return name;
 		}
@@ -587,6 +590,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return "noprint";
 		if(typeDependency.getType() instanceof TypeFileReader)
 			return "noprint";
+		if(typeDependency.getType() instanceof TypeScanner)
+			return "noprint";
 		return super.getCode(typeDependency);
 	}
 
@@ -608,6 +613,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeBufferedReader tbr) {
 		return "goolHelperIO.BufferedReader";
+	}
+	
+
+	@Override
+	public String getCode(TypeScanner typeScanner) {
+		return "goolHelperUtil.Scanner";
 	}
 	
 	@Override
@@ -761,7 +772,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\n\n");
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\nimport goolHelperUtil\n\n");
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		for (String dependency : customDependencies.keySet()) {
@@ -901,5 +912,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeChar typeChar) {
 		return "str";
 	}
+
+	@Override
+	public String getCode(TypeInputStream typeInputStream) {
+		return "noprint";
+	}
+
 
 }

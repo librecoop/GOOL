@@ -48,6 +48,19 @@ public class PythonPlatform extends Platform {
 			Log.e(e);
 			System.exit(1);
 		}
+		
+		goolHelperIn = PythonPlatform.class.getResourceAsStream("goolHelperUtil.py");
+		try {
+			goolHelperOut = new FileOutputStream (outputDir+"/goolHelperUtil.py");
+			while ((noOfBytes = goolHelperIn.read(buffer)) != -1)
+				goolHelperOut.write(buffer, 0, noOfBytes);
+			goolHelperOut.close();
+			goolHelperIn.close();
+		} catch (IOException e){
+			Log.e(e);
+			System.exit(1);
+		}
+
 	}
 
 	@Override

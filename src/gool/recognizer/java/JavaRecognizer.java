@@ -85,6 +85,7 @@ import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypePackage;
+import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
@@ -566,6 +567,17 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("FileReader", tmpOtd);
 		string2otdMap.put("java.io.FileReader", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.FileReader", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			
+			@Override
+			public IType getType() {
+				return new TypeScanner();
+			}
+		};
+		string2otdMap.put("Scanner", tmpOtd);
+		string2otdMap.put("java.util.Scanner", tmpOtd);
+		string2otdMap.put("gool.imports.java.util.Scanner", tmpOtd);
 	}
 
 	private IType string2IType(String typeName, Context context) {
