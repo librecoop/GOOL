@@ -128,10 +128,17 @@ public class CSharpGenerator extends CommonCodeGenerator {
 			return String.format("%s" , GeneratorHelper
 					.joinParams(classNew.getParameters()));			
 		}
+		//Checks whether the FileStream is of type write or read as c# is the same type of object.
 		else if (classNew.getType() instanceof TypeFileWriter) {
 			return String.format("new %s( %s, FileMode.Create )", classNew.getName(), GeneratorHelper
-					.joinParams(classNew.getParameters()));			
+						.joinParams(classNew.getParameters()));					
+								
 		}
+		else if (classNew.getType() instanceof TypeFileReader) {
+			return String.format("new %s( %s, FileMode.Open )", classNew.getName(), GeneratorHelper
+					.joinParams(classNew.getParameters()));	
+		}
+		
 		else {
 		return String.format("new %s( %s )", classNew.getName(), GeneratorHelper
 				.joinParams(classNew.getParameters()));
@@ -228,6 +235,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeFileWriter ) {
 			return "System.IO";
 		}
+		if (typeDependency.getType() instanceof TypeFileReader ) {
+			return "System.IO";
+		}
 		if (typeDependency.getType() instanceof TypeException ) {
 			return "System";
 		}
@@ -235,6 +245,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 			return "System.IO";
 		}
 		if (typeDependency.getType() instanceof TypeBufferedWriter ) {
+			return "System.IO";
+		}
+		if (typeDependency.getType() instanceof TypeBufferedReader ) {
 			return "System.IO";
 		}
 		
@@ -486,14 +499,12 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(TypeFileReader typeFileReader) {
-		//TODO Auto-generated method stub
-		return null;
+		return "FileStream";
 	}
 
 	@Override
 	public String getCode(TypeBufferedReader typeBufferedReader) {
-		//TODO Auto-generated method stub
-		return null;
+		return "StreamReader";
 	}
 
 	@Override
@@ -508,8 +519,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s.ReadLine()", bufferedReaderReadLineCall.getExpression());
 	}
 	
 
