@@ -55,7 +55,7 @@ public class GoolTest {
 
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms = Arrays.asList(
-			JavaPlatform.getInstance(), CppPlatform.getInstance(),
+			JavaPlatform.getInstance(),// CppPlatform.getInstance(),
 			CSharpPlatform.getInstance()
 			//, AndroidPlatform.getInstance()
 			);
@@ -322,8 +322,8 @@ public class GoolTest {
 				+ "import gool.imports.java.io.File;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.isFile()==true && b.exists() == true) \n {b.delete();} \n"
-										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b,true)); \n"
+								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
+										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
 										+"bw.write(\"TestReadLn\"); \n bw.close(); \n"
 										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
 										+" String testString = br.readLine(); \n"
