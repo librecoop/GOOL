@@ -262,7 +262,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 	
 	static {
-		TypeException.addException("Exception", null);
+		//TODO: add more children
+		new TypeException("Throwable", TypeException.Kind.GLOBAL, 
+			new TypeException("Error" /* ... */),
+			new TypeException("Exception",
+				new TypeException("RuntimeException",
+					new TypeException("ArithmeticException", TypeException.Kind.ARITHMETIC)
+					/* ... */
+				),
+				new TypeException("ClassNotFoundException")
+				/* ... */
+			)
+		);
 	}
 
 	/**
