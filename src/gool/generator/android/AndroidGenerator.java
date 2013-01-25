@@ -25,6 +25,7 @@ import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.file.FileDeleteCall;
 import gool.ast.file.FileExistsCall;
@@ -419,5 +420,11 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(FileExistsCall fileExistsCall) {
 		// TODO Auto-generated method stub
 		return String.format("%s.exists()", fileExistsCall.getExpression());
+	}
+
+	@Override
+	public String getCode(Try t) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

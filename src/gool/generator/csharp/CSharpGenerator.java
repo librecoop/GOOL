@@ -25,6 +25,7 @@ import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.file.FileDeleteCall;
 import gool.ast.file.FileExistsCall;
@@ -445,7 +446,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		return "FileStream";
+		return "String";
 	}
 	
 	@Override
@@ -462,14 +463,12 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFileWriter typeFileWriter) {
-		//TODO Auto-generated method stub
-		return null;
+		return "FileStream";
 	}
 
 	@Override
 	public String getCode(TypeBufferedWriter typeBufferedWriter) {
-		//TODO Auto-generated method stub
-		return null;
+		return "StreamWriter";
 	}
 
 	@Override
@@ -493,15 +492,13 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s.Write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(bufferedWriterWriteCall.getParameters(), ","));
 	}
 	
 
 	@Override
-	public String getCode(BufferedWriterCloseCall bufferedWriCloseCall) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getCode(BufferedWriterCloseCall bufferedWriterCloseCall) {
+		return String.format("%s.Close()", bufferedWriterCloseCall.getExpression());
 	}
 	
 	@Override
@@ -533,11 +530,15 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(FileDeleteCall fileDeleteCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("File.Delete(%s)", fileDeleteCall.getExpression());
 	}
 	@Override
 	public String getCode(FileExistsCall fileExistsCall) {
+		return String.format("File.Exists(%s)", fileExistsCall.getExpression());
+	}
+
+	@Override
+	public String getCode(Try t) {
 		// TODO Auto-generated method stub
 		return null;
 	}

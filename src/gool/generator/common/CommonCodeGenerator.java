@@ -515,11 +515,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public String getCode(Try t ) {
-		
-		return "Handled in subclass";
-	}
+	
 	
 	@Override
 	public String getCode(Catch catchExpression ) {

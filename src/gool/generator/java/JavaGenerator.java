@@ -370,76 +370,76 @@ public class JavaGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.readLine()", bufferedReaderReadLineCall.getExpression());
 	}
 
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.read()", bufferedReaderReadCall.getExpression());
 	}
 	@Override
 	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.close()", bufferedReaderCloseCall.getExpression());
 	}
 	
 	@Override
 	public String getCode(
 			ExceptionPrintStackTraceCall exceptionPrintStackTraceCall) {
-		// TODO Auto-generated method stub
+		
 		return "e.printStackTrace()";
 	}
 
 	@Override
 	public String getCode(ExceptionMethCall exceptionMethCall) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public String getCode(BufferedWriterMethCall bufferedWriterMethCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s", bufferedWriterMethCall.getExpression());
 	}
 	
 
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(bufferedWriterWriteCall.getParameters(), ","));
 	}
 
 	@Override
 	public String getCode(BufferedWriterCloseCall bufferedWriterCloseCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.close()", bufferedWriterCloseCall.getExpression());
 	}
 	
 	
 	@Override
 	public String getCode(FileMethCall fileMethCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s", fileMethCall.getExpression());
 	}
 	@Override
 	public String getCode(FileIsDirectoryCall fileIsDirectoryCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.isDirectory()", fileIsDirectoryCall.getExpression());
 	}
 	@Override
 	public String getCode(FileIsFileCall fileIsFileCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.isFile()", fileIsFileCall.getExpression());
 	}
 	@Override
 	public String getCode(FileDeleteCall fileDeleteCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.delete()", fileDeleteCall.getExpression());
 	}
 	@Override
 	public String getCode(FileExistsCall fileExistsCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.exists()", fileExistsCall.getExpression());
 	}
 	

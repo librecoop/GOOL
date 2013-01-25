@@ -34,6 +34,7 @@ import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.file.FileDeleteCall;
@@ -641,6 +642,12 @@ public class CppGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(FileExistsCall fileExistsCall) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Try t) {
 		// TODO Auto-generated method stub
 		return null;
 	}
