@@ -990,11 +990,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 
 		// TODO identifiers. Create a specific node to access to class literal (i.e. when calling static members).
-		String test1 = n.getName().toString();
-		String t2 = type.getName();
-		Log.d("testN : "+test1+"\n");
-		Log.d("testType : "+t2+"\n");
-		Log.d("test cntext : "+(context==null?"null":context.getClassDef().getName().toString()));
+
 		if (type.getName().equals(n.getName().toString())) {
 			return new Constant(type, n.getName().toString());
 		}
@@ -1496,7 +1492,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			target = new SystemOutPrintCall();
 		}
 		else if (n.getMethodSelect().toString().equals("super")) {
-			Log.e("nbArg : "+n.getArguments().size());
 			target = new ParentCall(goolType(((MethodSymbol) method)
 					.getReturnType(), context));
 		}
