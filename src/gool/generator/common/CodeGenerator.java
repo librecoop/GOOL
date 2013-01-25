@@ -33,8 +33,8 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Package;
+import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
@@ -66,11 +66,14 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -83,7 +86,6 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
-import gool.ast.type.TypeChar;
 
 import java.util.Collection;
 
@@ -165,7 +167,7 @@ public interface CodeGenerator {
 	String getCode(Field field);
 
 	String getCode(FieldAccess sfa);
-
+	
 	String getCode(For forr);
 
 	String getCode(GoolCall goolCall);
@@ -286,6 +288,8 @@ public interface CodeGenerator {
 	 */
 	String getCode(TypeBool typeBool);
 
+	String getCode(TypeBufferedReader typeBufferedReader);
+	
 	String getCode(TypeByte typeByte);
 
 	/**
@@ -304,6 +308,8 @@ public interface CodeGenerator {
 	String getCode(TypeEntry typeEntry);
 
 	String getCode(TypeFile typeFile);
+	
+	String getCode(TypeFileReader typeFileReader);
 	
 	/**
 	 * Produces code for an integer type in the target language.

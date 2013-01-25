@@ -3,16 +3,16 @@ package gool.ast.type;
 import gool.ast.constructs.ClassDef;
 import gool.generator.GoolGeneratorController;
 
-public class TypeFile extends ReferenceType {
+public class TypeFileReader extends ReferenceType {
 
 	/**
 	 * The class where the list was defined.
 	 */
 	private ClassDef classDef;
 	
-	public TypeFile(){}
+	public TypeFileReader(){}
 
-	public TypeFile(IType elementType) {
+	public TypeFileReader(IType elementType) {
 		this();
 		addArgument(elementType);
 	}

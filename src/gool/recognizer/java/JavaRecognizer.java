@@ -70,11 +70,14 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -93,13 +96,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -112,7 +112,6 @@ import javax.lang.model.type.TypeMirror;
 
 import logger.Log;
 
-import com.sun.mirror.util.Types;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.ArrayTypeTree;
@@ -164,7 +163,6 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.WildcardTree;
-import com.sun.source.util.JavacTask;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
@@ -435,7 +433,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 			//TODO: sort out imports
 			//Add the encountered type as a dependency of the current class, which is context.getClassDef().
-			if (!type.toString().startsWith("java.lang")) {
+			if (!type.toString().startsWith("java.lang") && !type.toString().startsWith("java.lang")) {
 				if (!goolType.toString().equalsIgnoreCase("gool")
 						&& !context.getClassDef().getType().equals(goolType)) {
 					context.getClassDef().addDependency(
@@ -521,7 +519,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("Integer", tmpOtd);
 		string2otdMap.put("java.lang.Integer", tmpOtd);
 		
-		
 		//NEXT We recognize that the abstact Java was using some well-known class
 		//Which we want to treat in a particular manner
 		//I.e. for which we have a specific representation in the abstract GOOL.
@@ -531,7 +528,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				return new TypeList();
 			}
 		};
-				string2otdMap.put("List", tmpOtd);
+		string2otdMap.put("List", tmpOtd);
 		string2otdMap.put("ArrayList", tmpOtd);
 		string2otdMap.put("java.util.ArrayList", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.ArrayList", tmpOtd);
@@ -553,6 +550,30 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("Entry", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.Map.Entry", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeFile();
+			}
+		};
+		string2otdMap.put("File", tmpOtd);
+		string2otdMap.put("java.io.File", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeFileReader();
+			}
+		};
+		string2otdMap.put("FileReader", tmpOtd);
+		string2otdMap.put("java.io.FileReader", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeBufferedReader();
+			}
+		};
+		string2otdMap.put("BufferedReader", tmpOtd);
+		string2otdMap.put("java.io.BufferedReader", tmpOtd);
 	}
 
 	private IType string2IType(String typeName, Context context) {

@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import logger.Log;
 
@@ -20,24 +22,38 @@ public class PythonPlatform extends Platform {
 	
 	protected PythonPlatform() {
 		super("PYTHON");
+		
 		// create goolHelper.py by copying the resource
 		FileOutputStream goolHelperOut;
-		InputStream goolHelperIn;
 		byte[] buffer = new byte[1024];
+
+		List<String> goolHelperIn = new ArrayList<String>();
 		int noOfBytes;
-		goolHelperIn = PythonPlatform.class.getResourceAsStream("goolHelper.py");
-		File dir = new File(outputDir);
-		if (! dir.exists()) {
-			dir.mkdirs();
+		
+		//Helpers to create
+		goolHelperIn.add("goolHelper.py");
+		goolHelperIn.add("goolHelperIO.py");
+		
+		//Test output folder exists
+		File folder = new File(outputDir);
+		if(!folder.exists()) {
+			folder.mkdir();
 		}
-		try {
-			goolHelperOut = new FileOutputStream (outputDir+"/goolHelper.py");
-			while ((noOfBytes = goolHelperIn.read(buffer)) != -1)
-				goolHelperOut.write(buffer, 0, noOfBytes);
-			goolHelperOut.close();
-			goolHelperIn.close();
-		} catch (IOException e){
-			Log.e(e);
+		
+		//Print helpers
+		for(String in : goolHelperIn) {
+			InputStream helper = PythonPlatform.class.getResourceAsStream(in);
+			try {
+				goolHelperOut = new FileOutputStream (outputDir+"/"+in);
+				while ((noOfBytes = helper.read(buffer)) != -1) {
+					goolHelperOut.write(buffer, 0, noOfBytes);
+				}
+				goolHelperOut.close();
+				helper.close();
+			} catch (IOException e){
+				Log.e(e);
+				System.exit(1);
+			}
 		}
 	}
 

@@ -64,10 +64,13 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -256,7 +259,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		}
 		return printWithComment(String.format("%s = %s\n", field.getName(), value));
 	}
-
+	
 	@Override
 	public String getCode(For forr) {
 		return formatIndented("%swhile %s:%1",
@@ -581,6 +584,10 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		}
 		if(typeDependency.getType() instanceof TypeEntry)
 			return "noprint";
+		if(typeDependency.getType() instanceof TypeFile)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeFileReader)
+			return "noprint";
 		return super.getCode(typeDependency);
 	}
 
@@ -589,6 +596,21 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		return String.format("(%s, %s)",typeEntry.getKeyType(), typeEntry.getElementType() );
 	}
 
+	@Override
+	public String getCode(TypeFile typeFile){
+		return "goolHelperIO.File";
+	}
+	
+	@Override
+	public String getCode(TypeFileReader typeFileReader){
+		return "goolHelperIO.FileReader";
+	}
+	
+	@Override
+	public String getCode(TypeBufferedReader tbr) {
+		return "goolHelperIO.BufferedReader";
+	}
+	
 	@Override
 	public String getCode(TypeInt typeInt) {
 		return "int";
@@ -688,7 +710,9 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 
 	public String getCode(CustomDependency customDependency) {		
-
+		if (customDependency.getName().startsWith("java.io")) {
+			return "goolHelperIO";
+		}
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));
@@ -740,7 +764,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\n\n");
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		for (String dependency : customDependencies.keySet()) {
