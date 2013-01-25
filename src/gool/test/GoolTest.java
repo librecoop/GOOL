@@ -202,12 +202,12 @@ public class GoolTest {
 	@Test
 	public void simpleReadFile() throws Exception {
 		String input = 
-				"import gool.imports.java.io.File;\nimport gool.imports.java.io.FileReader;\n" + 
+				"import java.io.File;\nimport java.io.FileReader;\nimport java.io.BufferedReader;\n" + 
 				TestHelper
 				.surroundWithClassMain(
-						"File t = new File(\"TestFolder\");FileReader f = new FileReader(new File(\"TestFolder\"));",
+						"File t = new File(\"goolHelper.py\");FileReader f = new FileReader(t);System.out.println(f.read());BufferedReader g = new BufferedReader(f); System.out.println(g.readLine());",
 						MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "");
+		compareResultsDifferentPlatforms(input, "def test_args(args,*types):");
 	}
 	
 	@Test

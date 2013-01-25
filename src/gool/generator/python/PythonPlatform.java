@@ -42,8 +42,10 @@ public class PythonPlatform extends Platform {
 		
 		//Print helpers
 		for(String in : goolHelperIn) {
-			InputStream helper = PythonPlatform.class.getResourceAsStream(in);
+			InputStream helper;
 			try {
+				helper = PythonPlatform.class.getResource(in).openStream();
+	
 				goolHelperOut = new FileOutputStream (outputDir+"/"+in);
 				while ((noOfBytes = helper.read(buffer)) != -1) {
 					goolHelperOut.write(buffer, 0, noOfBytes);

@@ -34,10 +34,13 @@ class FileReader(object):
 	def inializeFromFile(self, filee):
 			self.file = open(filee.getName(), 'r')
 
-	def read():
+	def read(self):
 		return self.file.read(1)
 
-	def close():
+	def getFile(self):
+		return self.file
+
+	def close(self):
 		return self.file.close()
 
 class BufferedReader(object):
@@ -47,13 +50,13 @@ class BufferedReader(object):
 				self.inializeFromStr(args[0])
 
 	def inializeFromStr(self, reader):
-			self.file = open(reader.getAbsolutePath(), 'r')
+			self.reader = reader
 
-	def read():
-		return self.file.read(1)
+	def read(self):
+		return self.reader.read()
 
-	def readLine():
-		return self.file.readLine()
+	def readLine(self):
+		return self.reader.getFile().readline()
 
-	def close():
-		return self.file.close()
+	def close(self):
+		return self.reader.close()
