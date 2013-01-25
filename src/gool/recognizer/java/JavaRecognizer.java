@@ -43,6 +43,7 @@ import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
@@ -734,7 +735,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitThrow(ThrowTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
+		Expression expression = (Expression) node.accept(this, p);
+		return new Throw(expression);
 	}
 
 	@Override
