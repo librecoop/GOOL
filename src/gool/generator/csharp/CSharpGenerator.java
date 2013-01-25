@@ -44,10 +44,12 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
 import gool.ast.type.TypeObject;
+import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
@@ -467,5 +469,18 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		
 		return sb.toString() + "}";
 	}
+
+	@Override
+	public String getCode(TypeScanner typeScanner) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(TypeInputStream typeInputStream) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

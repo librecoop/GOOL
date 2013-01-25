@@ -39,9 +39,12 @@ import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
 import gool.ast.type.TypeArray;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
+import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -273,7 +276,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(FieldAccess sfa) {
 		return sfa.getTarget() + "." + sfa.getMember();
 	}
-
+	
 	@Override
 	public String getCode(For forInstruction) {
 //		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
@@ -547,6 +550,21 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 	
 	@Override
+	public String getCode(TypeFile typeFile){
+		return "File";
+	}
+	
+	@Override
+	public String getCode(TypeFileReader typeFileReader){
+		return "FileReader";
+	}
+	
+	@Override
+	public String getCode(TypeBufferedReader tbr) {
+		return "BufferedReader";
+	}
+	
+	@Override
 	public String getCode(TypePackage typePackage){
 		return typePackage.getTextualtype();
 	}
@@ -564,7 +582,4 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		//For now if one wants to print the type of a Method, this returns just the name of the method.
 		return typeMethod.getTextualtype();
 	}
-
-
-	
 }

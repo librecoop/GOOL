@@ -192,6 +192,28 @@ public class GoolTest {
 	}
 
 	@Test
+	public void simpleCreateDir() throws Exception {
+		String input = 
+				"import gool.imports.java.io.File;\n" + 
+				TestHelper
+				.surroundWithClassMain(
+						"File f = new File(\"TestFolder\"); if(f.mkdir()) {System.out.println(\"Done\");}",
+						MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "Done");
+	}
+	
+	@Test
+	public void simpleReadFile() throws Exception {
+		String input = 
+				"import gool.imports.java.io.File;\nimport gool.imports.java.io.FileReader;\n" + 
+				TestHelper
+				.surroundWithClassMain(
+						"File t = new File(\"TestFolder\");FileReader f = new FileReader(new File(\"TestFolder\"));",
+						MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "");
+	}
+	
+	@Test
 	public void mapWithoutTypes() throws Exception {
 		try {
 			String input = 

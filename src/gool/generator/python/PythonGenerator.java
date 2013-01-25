@@ -64,16 +64,21 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
+import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
@@ -257,7 +262,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		return printWithComment(String.format("%s = %s\n", field.getName(), value));
 	}
-
+	
 	@Override
 	public String getCode(For forr) {
 		return formatIndented("%swhile %s:%1",
@@ -384,6 +389,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapMethCall mapMethCall) {
+		//TODO: unbalanced parenthesis in produced code
 		return String.format("%s[%s])", mapMethCall.getExpression(),
 				mapMethCall.getParameters().get(0));
 	}
@@ -410,6 +416,26 @@ public class PythonGenerator extends CommonCodeGenerator {
 		for (VarDeclaration p : meth.getParams()) {
 			paramsMethCurrent.add(p.getName());
 		}
+		if (methodsNames.get(meth).equals(meth.getName())) {
+			prefix = formatIndented (
+					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
+					printMethParamsTypes(meth),
+					currentClass.getName(),
+					meth.isConstructor()?"__init__":meth.getName());
+			if (! meth.getParams().isEmpty())
+				prefix += printMethParamsNames(meth).substring(2) + " = args\n";
+			prefix += "# end of GOOL header\n";
+		}
+		if (meth.isConstructor()) {
+			for (InitCall init : ((Constructor)meth).getInitCalls()) {
+				for (VarDeclaration param : meth.getParams()) {
+					paramsMethCurrent.add(param.getName());
+				}
+				prefix += String.format("super(%s, self).__init__(%s)\n",
+						currentClass.getName(),
+						StringUtils.join(init.getParameters(), ", "));
+			}					
+		}
 		if (prefix == "" && meth.getBlock().getStatements().isEmpty())
 			prefix = "pass";
 		return formatIndented("%sdef %s(self%s):%1",
@@ -420,8 +446,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	}
 	
 	private String printMethParamsNames(Meth meth) {
-		if (meth.getParams().isEmpty())
-			return "";
 		String ret = "";
 		for (VarDeclaration p : meth.getParams()) {
 			ret += ", " + p.getName();
@@ -441,17 +465,18 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Meth meth) {
 		return printMeth(meth, "");
 	}
-	
-	@Override
-	public String getCode(MethCall methodCall) {
-		return String.format("%s (%s)",
-				methodCall.getTarget().toString(),
-				StringUtils.join(methodCall.getParameters(), ", "));
-	}
+
+//	@Override
+//	public String getCode(MethCall methodCall) {
+//		return String.format("%s (%s)",
+//				methodCall.getTarget().toString(),
+//				StringUtils.join(methodCall.getParameters(), ", "));
+//	}
 
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
+		Log.e("ble : "+name);
 		if(varAccess.getType() == null || varAccess.getType().getName().isEmpty()) {
 			return name;
 		}
@@ -473,8 +498,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MemberSelect memberSelect) {
 		String target = memberSelect.getTarget().toString();
-		if (target.equals("this"))
-			target = "self";
+//		if (target.equals("this"))
+//			target = "self";
 		return String.format("%s.%s", target, memberSelect.getIdentifier());
 	}
 	
@@ -486,7 +511,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(NewInstance newInstance) {
-		return String.format("%s = %s( %s )", newInstance.getVariable(),
+		return String.format("%s = %s(%s)", newInstance.getVariable(),
 				newInstance.getVariable().getType().toString().replaceAll(
 						"\\*$", ""), StringUtils.join(newInstance
 						.getParameters(), ", "));
@@ -494,12 +519,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ParentCall parentCall) {
-		String out = parentCall.getTarget() + "(";
-		if (parentCall.getParameters() != null) {
-			out += StringUtils.join(parentCall.getParameters(), ", ");
-		}
-		out += ")";
-		return out;
+		return String.format("super(%s, self).__init__(%s)",
+				currentClass, StringUtils.join(parentCall.getParameters(), ", "));
+//		String out = parentCall.getTarget() + "(";
+//		if (parentCall.getParameters() != null) {
+//			out += StringUtils.join(parentCall.getParameters(), ", ");
+//		}
+//		out += ")";
+//		return out;
 	}
 
 	@Override
@@ -565,6 +592,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		if(typeDependency.getType() instanceof TypeEntry)
 			return "noprint";
+		if(typeDependency.getType() instanceof TypeFile)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeFileReader)
+			return "noprint";
+		if(typeDependency.getType() instanceof TypeScanner)
+			return "noprint";
 		return super.getCode(typeDependency);
 	}
 
@@ -573,6 +606,27 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("(%s, %s)",typeEntry.getKeyType(), typeEntry.getElementType() );
 	}
 
+	@Override
+	public String getCode(TypeFile typeFile){
+		return "goolHelperIO.File";
+	}
+	
+	@Override
+	public String getCode(TypeFileReader typeFileReader){
+		return "goolHelperIO.FileReader";
+	}
+	
+	@Override
+	public String getCode(TypeBufferedReader tbr) {
+		return "goolHelperIO.BufferedReader";
+	}
+	
+
+	@Override
+	public String getCode(TypeScanner typeScanner) {
+		return "goolHelperUtil.Scanner";
+	}
+	
 	@Override
 	public String getCode(TypeInt typeInt) {
 		return "int";
@@ -682,7 +736,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		// TODO Auto-generated method stub
 		return "noprint";
 	}
 	
@@ -725,7 +778,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\n\n");
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\nimport goolHelperUtil\n\n");
 		
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		for (String dependency : customDependencies.keySet()) {
@@ -843,32 +896,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 					code = code.append(formatIndented("\n%-1# used in wrapper '%s'",
 							method.isConstructor()?"__init__":method.getName()));
 				}
-				String superPrefix = "";
-				if (methodsNames.get(method).equals(method.getName())) {
-					superPrefix = formatIndented (
-							"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
-							printMethParamsTypes(method),
-							classDef.getName(),
-							method.isConstructor()?"__init__":method.getName());
-					if (! method.getParams().isEmpty())
-						superPrefix += printMethParamsNames(method).substring(2) + " = args\n";
-					superPrefix += "# end of GOOL header\n";
-				}
-				String initCalls = "";
-				if (method.isConstructor()) {
-					for (InitCall init : ((Constructor)method).getInitCalls()) {
-						for (VarDeclaration param : method.getParams()) {
-							paramsMethCurrent.add(param.getName());
-						}
-						initCalls += String.format("super(%s, self).__init__(%s)\n",
-								classDef.getName(),
-								StringUtils.join(init.getParameters(), ", "));
-					}					
-				}
 				if (method.isConstructor() && methodsNames.get(method).equals(method.getName())) {
-					code = code.append(formatIndented("%1", printMeth(method, superPrefix + initCalls + dynamicAttributs)));
+					code = code.append(formatIndented("%1", printMeth(method, dynamicAttributs)));
 				} else {
-					code = code.append(formatIndented("%1", printMeth(method, superPrefix + initCalls)));
+					code = code.append(formatIndented("%1", method));
 				}
 			}
 		}
@@ -887,5 +918,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(TypeChar typeChar) {
 		return "str";
 	}
+
+	@Override
+	public String getCode(TypeInputStream typeInputStream) {
+		return "noprint";
+	}
+
 
 }
