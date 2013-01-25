@@ -21,12 +21,15 @@ public class PythonPlatform extends Platform {
 	protected PythonPlatform() {
 		super("PYTHON");
 		// create goolHelper.py by copying the resource
-		// TODO: do not work if outputDir dosen't exist
 		FileOutputStream goolHelperOut;
 		InputStream goolHelperIn;
 		byte[] buffer = new byte[1024];
 		int noOfBytes;
 		goolHelperIn = PythonPlatform.class.getResourceAsStream("goolHelper.py");
+		File dir = new File(outputDir);
+		if (! dir.exists()) {
+			dir.mkdirs();
+		}
 		try {
 			goolHelperOut = new FileOutputStream (outputDir+"/goolHelper.py");
 			while ((noOfBytes = goolHelperIn.read(buffer)) != -1)
@@ -35,7 +38,6 @@ public class PythonPlatform extends Platform {
 			goolHelperIn.close();
 		} catch (IOException e){
 			Log.e(e);
-			System.exit(1);
 		}
 	}
 

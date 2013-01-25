@@ -282,6 +282,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		while ((keyword = reader.readLine()) != null) {
 			addForbiddenKeyword(keyword);
 		}
+		reader.close();
 	}
 	
 	public final void setCurrentCompilationUnit(
@@ -1004,7 +1005,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if(context!=null) {
 			dec = context.getDeclaration(n.getName().toString(), getTypeMirror(n));
 			if (dec == null) {
-				Log.e(String.format("No declaration found for '%s' of type '%s' in curent context", n.getName(), getTypeMirror(n)));
+				Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getName(), getTypeMirror(n)));
 				dec = new VarDeclaration(goolType(n, context), n.getName().toString());
 			}
 		}
@@ -1150,7 +1151,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier().toString(), getTypeMirror(n));
 		if (dec == null) {
-			Log.e(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
+			Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
 			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
 		}
 		MemberSelect f = new MemberSelect(target, dec);
@@ -1513,8 +1514,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		if (!(target instanceof Parameterizable)) {
-				target = new MethCall(goolType(((MethodSymbol) method)
-						.getReturnType(), context), target);
+			target = new MethCall(goolType(((MethodSymbol) method)
+					.getReturnType(), context), target);
 		}
 		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
