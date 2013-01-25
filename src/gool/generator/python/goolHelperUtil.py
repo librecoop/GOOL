@@ -6,5 +6,5 @@ class Scanner(object):
 	def inializeFromStr(self):
         	super(test, self).__init__()
 
-	def nextLine(self)
+	def nextLine(self):
 		return raw_input()

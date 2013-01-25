@@ -153,6 +153,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
+			if(statement.toString().contains("goolHelperUtil.Scanner(System.in"))
+			Log.e("mon stat :"+statement.toString());
 			result.append(printWithComment(statement));
 		}
 		return result.toString();
@@ -227,6 +229,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ClassNew classNew) {
+		if(classNew.getName().equals("goolHelperUtil.Scanner"))
+			return String.format("%s()", classNew.getName());
 		return String.format("%s(%s)", classNew.getName(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
@@ -476,7 +480,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
-		Log.e("ble : "+name);
 		if(varAccess.getType() == null || varAccess.getType().getName().isEmpty()) {
 			return name;
 		}
