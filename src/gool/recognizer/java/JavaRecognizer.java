@@ -77,6 +77,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -257,6 +258,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		operatorMap.put(Kind.MULTIPLY_ASSIGNMENT, Operator.MULT);
 		operatorMap.put(Kind.OR_ASSIGNMENT, Operator.OR);
 		operatorMap.put(Kind.PLUS_ASSIGNMENT, Operator.PLUS);
+	}
+	
+	static {
+		TypeException.addException("Exception", null);
 	}
 
 	/**
