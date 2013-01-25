@@ -191,7 +191,7 @@ public class GoolTest {
 	@Test
 	public void simpleCreateDir() throws Exception {
 		String input = 
-				"import gool.imports.java.io.File;\n" + 
+				"import java.io.File;\n" + 
 				TestHelper
 				.surroundWithClassMain(
 						"File f = new File(\"TestFolder\"); if(f.mkdir()) {System.out.println(\"Done\");}",

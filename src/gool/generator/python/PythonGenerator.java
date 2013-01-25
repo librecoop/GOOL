@@ -648,7 +648,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 
 	public String getCode(CustomDependency customDependency) {		
-
+		if (customDependency.getName().startsWith("java.io")) {
+			return "goolHelperIO";
+		}
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));

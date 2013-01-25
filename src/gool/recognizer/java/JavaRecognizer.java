@@ -70,6 +70,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
@@ -556,7 +557,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("File", tmpOtd);
 		string2otdMap.put("java.io.File", tmpOtd);
-		string2otdMap.put("gool.imports.java.io.File", tmpOtd);
 		
 		tmpOtd = new Otd() {
 			public IType getType() {
@@ -565,7 +565,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("FileReader", tmpOtd);
 		string2otdMap.put("java.io.FileReader", tmpOtd);
-		string2otdMap.put("gool.imports.java.io.FileReader", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeBufferedReader();
+			}
+		};
+		string2otdMap.put("BufferedReader", tmpOtd);
+		string2otdMap.put("java.io.BufferedReader", tmpOtd);
 	}
 
 	private IType string2IType(String typeName, Context context) {
