@@ -64,6 +64,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
@@ -112,16 +113,24 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	/**
 	 * Produces code for an object instantiation.
+	 * Special cases for new string and IO where the java and c# arguments differ
 	 * 
 	 * @param classNew
 	 *            the object instantiation node.
-	 * @return the formatted object instantiation. For a string instantiation it behaves differently
-	 * as c# does not have a new String constructor
+	 * @return the formatted object instantiation. 
 	 */
 	public String getCode(ClassNew classNew) {
 		if(classNew.getType() instanceof TypeString) {
 			return String.format("%s" , GeneratorHelper
 					.joinParams(classNew.getParameters()));
+		}
+		else if (classNew.getType() instanceof TypeFile) {
+			return String.format("%s" , GeneratorHelper
+					.joinParams(classNew.getParameters()));			
+		}
+		else if (classNew.getType() instanceof TypeFileWriter) {
+			return String.format("new %s( %s, FileMode.Create )", classNew.getName(), GeneratorHelper
+					.joinParams(classNew.getParameters()));			
 		}
 		else {
 		return String.format("new %s( %s )", classNew.getName(), GeneratorHelper
@@ -216,6 +225,22 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeClass ) {
 			return "noprint";
 		}
+		if (typeDependency.getType() instanceof TypeFileWriter ) {
+			return "System.IO";
+		}
+		if (typeDependency.getType() instanceof TypeException ) {
+			return "System";
+		}
+		if (typeDependency.getType() instanceof TypeFile) {
+			return "System.IO";
+		}
+		if (typeDependency.getType() instanceof TypeBufferedWriter ) {
+			return "System.IO";
+		}
+		
+		
+		
+		
 		return super.getCode(typeDependency);
 	}
 	
@@ -456,7 +481,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		return "String";
+		return "string";
 	}
 	
 	@Override
