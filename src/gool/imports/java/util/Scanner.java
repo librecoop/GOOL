@@ -15,5 +15,9 @@ public class Scanner {
 	public String nextLine(){
 		return null;
 	}
+	
+	public String nextInt(){
+		return null;
+	}
 
 }

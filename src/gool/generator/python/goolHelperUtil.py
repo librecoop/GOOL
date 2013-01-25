@@ -8,3 +8,6 @@ class Scanner(object):
 
 	def nextLine(self):
 		return raw_input()
+
+	def nextInt(self):
+		return raw_input()
