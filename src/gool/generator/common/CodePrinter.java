@@ -155,7 +155,8 @@ public abstract class CodePrinter {
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
 			return writer.toString();
-			
+		} catch (ResourceNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 
 			throw new VelocityException(e.getLocalizedMessage(), e);
@@ -182,9 +183,13 @@ public abstract class CodePrinter {
 		 * which may decide that the currentPrinter need be changed
 		 * since platforms are decided on a per class basis
 		 */
-//		String code = pclass.getCode();
-		String code = generator.printClass(pclass);
-
+		String code;
+		if (generator instanceof CodeGeneratorNoVelocity) {
+			code = ((CodeGeneratorNoVelocity)generator).printClass(pclass);
+		} else {
+				code = pclass.getCode();
+		}
+		
 		// file separator is just a slash in Unix
 		// so the second argument to File() is just the directory 
 		// that corresponds to the package name

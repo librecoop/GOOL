@@ -60,6 +60,7 @@ import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
+import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class CppGenerator extends CommonCodeGenerator {
+public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());

@@ -22,8 +22,8 @@ public class PythonPlatform extends Platform {
 	
 	protected PythonPlatform() {
 		super("PYTHON");
-		// create goolHelper*.py by copying the resource
-		// TODO: do not work if outputDir dosen't exist
+		
+		// create goolHelper.py by copying the resource
 		FileOutputStream goolHelperOut;
 		byte[] buffer = new byte[1024];
 

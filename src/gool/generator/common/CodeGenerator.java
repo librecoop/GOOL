@@ -412,6 +412,4 @@ public interface CodeGenerator {
 	String getCode(TypeVar typeVar);
 
 	String getCode(CompoundAssign compoundAssign);
-	
-	String printClass(ClassDef pclass);
 }
