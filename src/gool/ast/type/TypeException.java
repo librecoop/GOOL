@@ -1,6 +1,9 @@
 package gool.ast.type;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import logger.Log;
 
@@ -18,45 +21,51 @@ public class TypeException extends IType {
 		CUSTOM,
 		/** Language defined exceptions that does not belong to another kind */
 		DEFAULT,
+		/** Highest exception, all exceptions inherit from it */
+		GLOBAL,
 		/** Input/Output related exception */
-		IO;
+		IO,
+		/** Arithmetic related exception */
+		ARITHMETIC,
 	}
 	
-	final private String name;
+	private String name;
 	
-	final private TypeException parent;
+	private List<TypeException> children;	
 	
-	final private Kind kind;
-	
-	private String packageName;
-	
+	private Kind kind;
+		
 	static private HashMap<String,TypeException> exceptions = new HashMap<String,TypeException>();
 
-	private TypeException(String name, TypeException parent, String packageName, Kind kind) {
-		this.name = name;
-		this.parent = parent;
-		this.kind = kind;
-		this.packageName=packageName;
+	public TypeException(String name, Kind kind, TypeException... children) {
+		this(name, children);
+		tryToSetKind(kind);
 	}
 	
-	static public void add(String name, TypeException parent, String packageName) {
-		add(name, parent, packageName, Kind.UNDEFINED);
-	}
-	
-	static public void add(String name, TypeException parent, String packageName, Kind kind) {
-		if (! exceptions.containsKey(name)) {
-			exceptions.put(name, new TypeException(name, parent, packageName, kind));
-		} else {
-			Log.e(String.format("Exception '%s' already defined", name));
+	/**
+	 * Propagate the kind so we don't have to write it when it's the same as
+	 * the one of the parent.
+	 * DO NOT USE
+	 * @param kind
+	 */
+	public void tryToSetKind(Kind kind) {
+		if (this.kind == Kind.CUSTOM) {
+			this.kind = kind;
+			for (TypeException child : children) {
+				child.tryToSetKind(kind);
+			}
 		}
+	}
+
+	public TypeException(String name, TypeException... children) {
+		this.name = name;
+		this.kind = Kind.CUSTOM;
+		this.children = Arrays.asList(children);
+		exceptions.put(name, this);
 	}
 	
 	static public TypeException get(String name) {
 		return exceptions.get(name);
-	}
-
-	public TypeException getParent() {
-		return parent;
 	}
 
 	@Override
@@ -66,10 +75,6 @@ public class TypeException extends IType {
 
 	public Kind getKind() {
 		return kind;
-	}
-	
-	public String getPackageName() {
-		return packageName;
 	}
 
 	@Override
