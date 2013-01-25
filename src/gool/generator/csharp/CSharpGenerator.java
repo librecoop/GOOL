@@ -6,7 +6,9 @@ import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.bufferedwriter.BufferedWriterCloseCall;
 import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Block;
 import gool.ast.constructs.BufferedWriterMethCall;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
@@ -24,6 +26,7 @@ import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Statement;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
@@ -112,11 +115,18 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	 * 
 	 * @param classNew
 	 *            the object instantiation node.
-	 * @return the formatted object instantiation.
+	 * @return the formatted object instantiation. For a string instantiation it behaves differently
+	 * as c# does not have a new String constructor
 	 */
 	public String getCode(ClassNew classNew) {
+		if(classNew.getType() instanceof TypeString) {
+			return String.format("%s" , GeneratorHelper
+					.joinParams(classNew.getParameters()));
+		}
+		else {
 		return String.format("new %s( %s )", classNew.getName(), GeneratorHelper
 				.joinParams(classNew.getParameters()));
+		}
 	}
 
 	@Override
@@ -539,8 +549,39 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Try t) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder result = new StringBuilder();
+		result.append("try{\n");
+		for (Statement statement : t.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("\n}"); //closing bracket
+		for (Catch c : t.getCatches()) {
+			result.append(getCode(c));		
+			
+		}
+		return result.toString();
+	}
+	
+	@Override
+	public String getCode(Catch c ) {
+		StringBuilder result = new StringBuilder();
+		result.append("\n catch(");
+		result.append(c.getSingleParameter());
+		result.append(") {\n");
+		for (Statement statement : c.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		
+		result.append("\n}");
+		return result.toString();
 	}
 	
 }
