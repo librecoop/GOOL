@@ -1,5 +1,6 @@
 package gool.generator;
 
+import gool.GOOLCompiler;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
 import gool.generator.android.AndroidCodePrinter;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * This class helps generate the concrete target
@@ -26,6 +28,8 @@ import org.apache.commons.lang.StringUtils;
  * As well as some ancillary methods
  */
 public final class GeneratorHelper {
+	
+	private static Logger logger = Logger.getLogger(GeneratorHelper.class);
 
 	public static String joinParams(List<?> parameters) {
 		if (parameters == null) {
@@ -93,6 +97,7 @@ public final class GeneratorHelper {
 			List<File> newFileList = currentPrinter.createAndroidProject(compilationUnits.get(platform));
 			compilationUnits.put(platform, newFileList);
 		}
+		logger.info("FINISH:  GOOL to platform as mention above");
 		return compilationUnits;
 	}
 

@@ -1,5 +1,6 @@
 package gool.parser.java;
 
+import gool.GOOLCompiler;
 import gool.Settings;
 import gool.ast.constructs.ClassDef;
 import gool.generator.GoolGeneratorController;
@@ -20,6 +21,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.util.JavacTask;
@@ -30,6 +32,8 @@ import com.sun.source.util.Trees;
  * For this purpose it relies on Sun's Java parser.
  */
 public class JavaParser {
+	
+	private static Logger logger = Logger.getLogger(JavaParser.class);
 
 	/**
 	 * Parsing concrete Java into abstract GOOL is done in three steps.
@@ -48,6 +52,7 @@ public class JavaParser {
 	public static Collection<ClassDef> parseGool(Platform defaultPlatform,
 			Iterable<? extends JavaFileObject> compilationUnits,
 			List<File> dependencies, JavaRecognizer visitor) throws Exception {
+		logger.info("START: concrete JAVA to GOOL for "+defaultPlatform.getName());
 		if (visitor == null) {
 			throw new IllegalArgumentException("The gool visitor is null.");
 		}
@@ -113,7 +118,7 @@ public class JavaParser {
 		for (ClassDef classDef : visitor.getGoolClasses()) {
 			classDef.getPlatform().registerCustomDependency(classDef.toString(),classDef);
 		}
-		
+		logger.info("FINISH: concrete JAVA to GOOL for "+defaultPlatform.getName());
 		return visitor.getGoolClasses();
 	}
 
@@ -126,6 +131,7 @@ public class JavaParser {
 	public static Collection<ClassDef> parseGool(Platform defaultPlatform,
 			Iterable<? extends JavaFileObject> compilationUnits)
 			throws Exception {
+		
 		return parseGool(defaultPlatform, compilationUnits, null, new JavaRecognizer());
 	}
 	

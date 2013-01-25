@@ -37,7 +37,7 @@ public class GoolTest {
 				this.input = "package com.test; " + input;
 			}
 			String result = compileAndRun(platform);
-			logger.info(platform + " Result: " + result);
+			logger.info(platform.getName() +" Expected Value:"+expected+ ", Result: " + result);
 			Assert.assertEquals(String.format("The platform %s", platform),
 					expected, result);
 		}
@@ -76,6 +76,7 @@ public class GoolTest {
 						+"\n "//}  //catch(Exception testExcep) {\n System.out.println(testExcep.toString());\n }" 
 				, MAIN_CLASS_NAME);
 		String expected = "Hello World";
+		logger.info("START: HELLO WORLD test, expected value: "+expected);
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -352,7 +353,9 @@ public class GoolTest {
 	private void compareResultsDifferentPlatforms(GoolTestExecutor executor)
 			throws Exception {
 		for (Platform platform : platforms) {
+			logger.info("START: platform: " +platform.getName());
 			executor.compare(platform);
+			logger.info("FINISH platform: " +platform.getName());
 		}
 	}
 }

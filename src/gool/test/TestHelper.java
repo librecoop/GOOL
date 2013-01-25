@@ -30,8 +30,9 @@ public final class TestHelper {
 	public static String generateCompileRun(Platform platform, String input,
 			String mainClassName) throws Exception, FileNotFoundException {
 		GOOLCompiler gc = new GOOLCompiler();
+		logger.info("START: complete concrete JAVA to platform: " +platform.getName());
 		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, input); 
-		logger.info("--2-->"+files);
+		logger.info("FINISH: complete concrete JAVA to platform: " +platform.getName()+ " Output files created:\n"+files);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
 

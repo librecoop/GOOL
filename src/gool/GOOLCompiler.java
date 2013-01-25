@@ -71,6 +71,7 @@ public class GOOLCompiler {
 			Platform destPlatform, String input) throws Exception {
 		Collection<ClassDef> classDefs = concreteJavaToAbstractGool(
 				destPlatform, input);
+		logger.info("START: GOOL to "+destPlatform.getName());
 		return abstractGool2Target(classDefs);
 	}
 
@@ -79,6 +80,7 @@ public class GOOLCompiler {
 			throws Exception {
 		Collection<ClassDef> classDefs = concreteJavaToAbstractGool(
 				destPlatform, inputFiles);
+		logger.info("START: GOOL to "+destPlatform.getName());
 		return abstractGool2Target(classDefs);
 	}
 

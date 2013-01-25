@@ -129,6 +129,6 @@ public abstract class Platform extends PrimitiveType {
 	public String callGetCode() {
 		return codePrinter.getCodeGenerator().getCode(this);
 	}
-
-
+	
+	
 }

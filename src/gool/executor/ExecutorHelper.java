@@ -3,6 +3,7 @@ package gool.executor;
 import gool.ast.constructs.ClassDef;
 import gool.executor.common.SpecificCompiler;
 import gool.generator.common.Platform;
+import gool.test.TestHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,9 +17,11 @@ import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public final class ExecutorHelper {
-
+	
+	private static Logger logger = Logger.getLogger(ExecutorHelper.class);
 
 	public static Iterable<? extends JavaFileObject> getJavaFileObjects(
 			Collection<? extends File> inputFiles) {
@@ -43,11 +46,13 @@ public final class ExecutorHelper {
 
 	public static String compileAndRun(Platform platform,
 			Map<Platform, List<File>> files) throws FileNotFoundException {
+		logger.info("START: compile for platform: " +platform.getName());
 		StringBuilder result = new StringBuilder();
 
 		List<File> compiledFiles = ExecutorHelper.compile(files);
 		System.out.println(compiledFiles);
 		result.append(platform.getCompiler().run(compiledFiles.get(0)));
+		logger.info("FINISH: compile for platform: " +platform.getName());
 		return result.toString();
 	}
 
