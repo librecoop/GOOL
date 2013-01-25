@@ -11,6 +11,7 @@ import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.Platform;
+import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 import gool.generator.xml.XmlPlatform;
 import gool.parser.java.JavaParser;
@@ -39,8 +40,8 @@ public class GOOLCompiler {
 			Collection<File> files = getFilesInFolder(folder, "java");
 			Log.i(files.toString());
 			GOOLCompiler gc = new GOOLCompiler();
-
-//			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);			
+			
+//			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
 			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);

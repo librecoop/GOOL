@@ -1319,7 +1319,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				classDef.addField(new Field(new ArrayList<Modifier>(), //Arrays.asList(Modifier.PRIVATE),
 						(VarDeclaration) member));
 			} else if (member != null) {
-				Log.i(String.format(
+				Log.e(String.format(
 						"Unrecognized member for class %s: %s ", classDef
 								.getName(), member));
 			}
@@ -1534,8 +1534,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		if (!(target instanceof Parameterizable)) {
-				target = new MethCall(goolType(((MethodSymbol) method)
-						.getReturnType(), context), target);
+			System.out.println(method.getClass());
+			target = new MethCall(goolType(((MethodSymbol) method)
+					.getReturnType(), context), target);
 		}
 		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
