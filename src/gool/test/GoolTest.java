@@ -57,7 +57,7 @@ public class GoolTest {
 	private List<Platform> platforms = Arrays.asList(
 			JavaPlatform.getInstance(), CppPlatform.getInstance(),
 			CSharpPlatform.getInstance()
-			, AndroidPlatform.getInstance()
+			//, AndroidPlatform.getInstance()
 			);
 
 	// private List<Platform> platforms =
@@ -314,7 +314,7 @@ public class GoolTest {
 	public void fileTest() throws Exception {
 		//String readFile = Settings.get("read_file_path");
 		String readFile = Settings.get("read_file_path");
-		String writeFile = Settings.get("read_write_path");
+		String writeFile = Settings.get("write_file_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
 				+ "import gool.imports.java.io.FileWriter;\n"
@@ -322,13 +322,15 @@ public class GoolTest {
 				+ "import gool.imports.java.io.File;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								" try{ \n BufferedReader br = new BufferedReader(new FileReader(\""+readFile+"\")); \n"
-								+" String testString = br.readLine(); \n"
+								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.isFile()==true && b.exists() == true) \n {b.delete();} \n"
+										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b,true)); \n"
+										+"bw.write(\"TestReadLn\"); \n bw.close(); \n"
+										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
+										+" String testString = br.readLine(); \n"
 										+" { \n System.out.println(testString);\n }"
-								+"File b = new File (\""+writeFile+"\");if(b.isFile()==true && b.exists() == true) b.delete();"
-								+"BufferedWriter bw = new BufferedWriter(new FileWriter(b,true)); "
-								+"bw.write(testString); bw.close();"
-								+"}catch(Exception e){e.printStackTrace();}",
+								
+								
+								+"} catch(Exception ex) \n {ex.toString();}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "TestReadLn");
 	}
