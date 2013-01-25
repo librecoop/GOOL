@@ -8,13 +8,12 @@ public class BufferedReader {
 	{
 		return null;
 	}
-	public String read()
+	public int read()
 	{
-		return null;
+		return 0;
 	}
 	
-	public String close()
+	public void close()
 	{
-		return null;
 	}
 }

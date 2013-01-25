@@ -4,6 +4,8 @@ import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterFlushCall;
+import gool.ast.bufferedwriter.BufferedWriterNewLineCall;
 import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
@@ -414,6 +416,16 @@ public class JavaGenerator extends CommonCodeGenerator {
 	public String getCode(BufferedWriterCloseCall bufferedWriterCloseCall) {
 		
 		return String.format("%s.close()", bufferedWriterCloseCall.getExpression());
+	}
+	@Override
+	public String getCode(BufferedWriterFlushCall bufferedWriterFlushCall) {
+		
+		return String.format("%s.flush()", bufferedWriterFlushCall.getExpression());
+	}
+	@Override
+	public String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall) {
+		
+		return String.format("%s.newLine()", bufferedWriterNewLineCall.getExpression());
 	}
 	
 	

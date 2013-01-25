@@ -4,6 +4,8 @@ import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterFlushCall;
+import gool.ast.bufferedwriter.BufferedWriterNewLineCall;
 import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
@@ -465,6 +467,11 @@ public interface CodeGenerator {
 	
 	String getCode(BufferedWriterCloseCall bufferedWriterCloseCall);
 
+	String getCode(BufferedWriterFlushCall bufferedWriterFlushCall);
+	
+	String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall);
+	
+	
 	
 	String getCode(Try t);
 	

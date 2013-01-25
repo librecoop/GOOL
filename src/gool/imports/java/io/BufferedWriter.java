@@ -5,12 +5,22 @@ public class BufferedWriter {
 		// TODO Auto-generated method stub
 	}
 	
-	public String write(String arg)
+	public void write(String arg)
 	{
-		return null;
 	}
-	public String close()
+	public void write(Integer arg)
 	{
-		return null;
+	}
+	public void close()
+	{
+		
+	}
+	public void flush()
+	{
+		
+	}
+	public void newLine()
+	{
+		
 	}
 }

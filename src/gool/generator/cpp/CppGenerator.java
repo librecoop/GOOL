@@ -9,6 +9,8 @@ import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterFlushCall;
+import gool.ast.bufferedwriter.BufferedWriterNewLineCall;
 import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.BufferedWriterMethCall;
@@ -613,6 +615,17 @@ public class CppGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public String getCode(BufferedWriterFlushCall bufferedWriterFlushCall) {
+		
+		return null;
+	}
+	@Override
+	public String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall) {
+		
+		return null;
+	}
+	
 	@Override
 	public String getCode(ExceptionMethCall exceptionMethCall) {
 		// TODO Auto-generated method stub

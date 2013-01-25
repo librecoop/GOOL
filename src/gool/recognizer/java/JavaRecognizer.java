@@ -10,6 +10,8 @@ import gool.ast.bufferedreader.BufferedReaderCloseCall;
 import gool.ast.bufferedreader.BufferedReaderReadCall;
 import gool.ast.bufferedreader.BufferedReaderReadLineCall;
 import gool.ast.bufferedwriter.BufferedWriterCloseCall;
+import gool.ast.bufferedwriter.BufferedWriterFlushCall;
+import gool.ast.bufferedwriter.BufferedWriterNewLineCall;
 import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
@@ -1225,6 +1227,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				}
 				if (identifier.equals("close")) {
 					return new BufferedWriterCloseCall(target);
+				}
+				if (identifier.equals("flush")) {
+					return new BufferedWriterFlushCall(target);
+				}
+				if (identifier.equals("newLine")) {
+					return new BufferedWriterNewLineCall(target);
 				}
 			}
 			if (type instanceof TypeFile) {
