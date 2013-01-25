@@ -16,8 +16,16 @@ public class Scanner {
 		return null;
 	}
 	
-	public String nextInt(){
-		return null;
+	public int nextInt(){
+		return 0;
+	}
+	
+	public double nextDouble(){
+		return 0;
+	}
+	
+	public byte nextByte(){
+		return 0;
 	}
 
 }

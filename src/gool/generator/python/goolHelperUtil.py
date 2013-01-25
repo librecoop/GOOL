@@ -11,3 +11,9 @@ class Scanner(object):
 
 	def nextInt(self):
 		return raw_input()
+
+	def nextDouble(self):
+		return raw_input()
+	
+	def nexByte(self):
+		return raw_input()
