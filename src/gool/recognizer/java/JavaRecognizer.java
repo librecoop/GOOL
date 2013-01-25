@@ -12,6 +12,7 @@ import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
@@ -43,6 +44,7 @@ import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -661,7 +663,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitCatch(CatchTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+		VarDeclaration parameter = (VarDeclaration) n.getParameter().accept(this, context);
+		Block block = (Block) n.getBlock().accept(this, context);
+		return new Catch(parameter, block);
 	}
 	
 	@Override
@@ -730,7 +734,17 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitTry(TryTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
+		List<? extends CatchTree> javaCatches = node.getCatches();
+		List<Catch> catches = new ArrayList<Catch>();
+		for (CatchTree javaCatche: javaCatches) {
+			Catch catchstatelent = (Catch) (javaCatche.accept(this, p));
+			catches.add (catchstatelent);
+		}
+		Block block = (Block) node.getBlock().accept(this, p);
+		Block finilyBlock = new Block();
+		if (node.getFinallyBlock() != null)
+			finilyBlock = (Block) node.getFinallyBlock().accept(this, p);
+		return new Try(catches, block, finilyBlock);
 	}
 
 	@Override
