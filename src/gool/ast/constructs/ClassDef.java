@@ -3,6 +3,8 @@ package gool.ast.constructs;
 import gool.ast.type.IType;
 import gool.ast.type.TypeClass;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGeneratorNoVelocity;
+import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
 import java.util.ArrayList;
@@ -274,7 +276,7 @@ public class ClassDef extends Dependency {
 	}
 
 	/**
-	 * Gets the list of interfaces implemented by the clas.
+	 * Gets the list of interfaces implemented by the class.
 	 * 
 	 * @return a list of interfaces implemented by the class.
 	 */
@@ -287,14 +289,19 @@ public class ClassDef extends Dependency {
 	 * related to the class' platform.
 	 * 
 	 * Instead of concatenating strings, the code generation is implemented
-	 * using velocity templates.
+	 * using velocity templates, unless the generator implements the interface
+	 * CodeGeneratorNoVelocity.
 	 * 
 	 * @return the generated target code.
 	 * @throws Exception
 	 *             when velocity fails to render or find the relevant template.
 	 */
 	public String getCode() {
-		return getPlatform().getCodePrinter().processTemplate("class.vm", this);
+		CodePrinter printer = getPlatform().getCodePrinter();
+		if(printer.getCodeGenerator() instanceof CodeGeneratorNoVelocity)
+			return ((CodeGeneratorNoVelocity)printer.getCodeGenerator()).printClass(this);
+		else
+			return printer.processTemplate("class.vm", this);
 	}
 
 	public final void addField(String fieldName, IType type) {

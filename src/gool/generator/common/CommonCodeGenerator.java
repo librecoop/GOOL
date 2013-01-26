@@ -68,14 +68,16 @@ import org.apache.commons.lang.StringUtils;
 public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	/**
-	 * String used to produce one level of indentation
+	 * String used to produce one level of indentation.
+	 * Can be overwritten in the constructor of the concrete generator.
 	 */
 	protected String indentation = "\t";
 	
 	/**<pre>
 	 * Produce indented code in a manner similar to printf but with custom conversions.
 	 * %%  a single "%"
-	 * %s  Print an argument as a string, without indentation or newlines added. 
+	 * %s  Print an argument as a string, without indentation or newlines added.
+	 *     Similar to the corresponding flag of <i>String.format</i>.
 	 * %<i>n</i>  (where <i>n</i> is a digit)
 	 *     Print an argument as a bloc indented <i>n</i> times from the current indentation level.
 	 *     Newlines are inserted before and after the bloc.
@@ -279,8 +281,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(For forInstruction) {
-//		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
-//				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
 		return formatIndented("for (%s ; %s ; %s) {%1}", forInstruction.getInitializer(), forInstruction
 				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
 	}
@@ -301,12 +301,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(If pif) {
-//		String out = String.format("if ( %s ) {\n%s;\n}\n", pif.getCondition(),
-//				pif.getThenStatement());
-//		if (pif.getElseStatement() != null) {
-//			out = String.format("%s else {\n%s\n}\n", out, pif
-//					.getElseStatement());
-//		}
 		String out = formatIndented ("if (%s) {%1}", pif.getCondition(), pif.getThenStatement());
 		if (pif.getElseStatement() != null){
 			if (pif.getElseStatement() instanceof If)

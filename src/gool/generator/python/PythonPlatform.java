@@ -54,7 +54,6 @@ public class PythonPlatform extends Platform {
 				helper.close();
 			} catch (IOException e){
 				Log.e(e);
-				System.exit(1);
 			}
 		}
 	}
