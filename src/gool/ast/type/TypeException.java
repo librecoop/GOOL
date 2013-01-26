@@ -13,20 +13,16 @@ public class TypeException extends IType {
 
 	/**
 	 * Define when the exception is used.
-	 * Apart from CUSTOM and DEFAULT, only one instance should exist for each kind
 	 */
 	public enum Kind {
-		//TODO: add more stuff...
 		/** User defined exceptions */
 		CUSTOM,
 		/** Language defined exceptions that does not belong to another kind */
 		DEFAULT,
 		/** Highest exception, all exceptions inherit from it */
 		GLOBAL,
-		/** Input/Output related exception */
-		IO,
-		/** Arithmetic related exception */
-		ARITHMETIC,
+		/* exceptions related to some domain */
+		ARITHMETIC, COLLECTION, CAST, ENUM, ARGUMENT, THREAD, ARRAY, NULL, SECURITY, TYPE, UNSUPORTED, ARRAYSIZE, STATE, CLASSNOTFOUND, ACCESS, NEW, INTERUPT, NOSUCHFIELD, NOSUCHMETH,
 	}
 	
 	private String name;
@@ -44,15 +40,17 @@ public class TypeException extends IType {
 	
 	/**
 	 * Propagate the kind so we don't have to write it when it's the same as
-	 * the one of the parent.
-	 * DO NOT USE
+	 * the one of the parent. Kind.GLOBAL is not propagated.
+	 * DO NOT USE!
 	 * @param kind
 	 */
 	public void tryToSetKind(Kind kind) {
 		if (this.kind == Kind.CUSTOM) {
 			this.kind = kind;
-			for (TypeException child : children) {
-				child.tryToSetKind(kind);
+			if (kind != Kind.GLOBAL) {
+				for (TypeException child : children) {
+					child.tryToSetKind(kind);
+				}
 			}
 		}
 	}

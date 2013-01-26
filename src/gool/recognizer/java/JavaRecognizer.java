@@ -261,18 +261,41 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 	
 	static {
-		//TODO: add more children
-		new TypeException("Throwable", TypeException.Kind.GLOBAL, 
-			new TypeException("Error" /* ... */),
-			new TypeException("Exception",
-				new TypeException("RuntimeException",
-					new TypeException("ArithmeticException", TypeException.Kind.ARITHMETIC)
-					/* ... */
-				),
-				new TypeException("ClassNotFoundException")
-				/* ... */
-			)
+		// register standard exceptions
+		// TODO: only exception from java.lang are registered
+		new TypeException("Exception", TypeException.Kind.GLOBAL,
+			new TypeException("RuntimeException", TypeException.Kind.GLOBAL,
+				new TypeException("ArithmeticException", TypeException.Kind.ARITHMETIC),
+			    new TypeException("ArrayStoreException", TypeException.Kind.COLLECTION),
+			    new TypeException("ClassCastException", TypeException.Kind.CAST),
+			    new TypeException("EnumConstantNotPresentException", TypeException.Kind.ENUM),
+			    new TypeException("IllegalArgumentException", TypeException.Kind.ARGUMENT,
+			        new TypeException("IllegalThreadStateException"),
+			        new TypeException("NumberFormatException")
+			    ),
+			    new TypeException("IllegalMonitorStateException", TypeException.Kind.THREAD),
+			    new TypeException("IllegalStateException", TypeException.Kind.STATE),
+			    new TypeException("IndexOutOfBoundsException", TypeException.Kind.ARRAY,
+			        new TypeException("ArrayIndexOutOfBoundsException"),
+			        new TypeException("StringIndexOutOfBoundsException")
+			    ),
+			    new TypeException("NegativeArraySizeException", TypeException.Kind.ARRAYSIZE),
+			    new TypeException("NullPointerException", TypeException.Kind.NULL),
+			    new TypeException("SecurityException", TypeException.Kind.SECURITY),
+			    new TypeException("TypeNotPresentException", TypeException.Kind.TYPE),
+			    new TypeException("UnsupportedOperationException", TypeException.Kind.UNSUPORTED)
+			), // RuntimeException
+			new TypeException("ClassNotFoundException", TypeException.Kind.CLASSNOTFOUND),
+			new TypeException("CloneNotSupportedException", TypeException.Kind.DEFAULT),
+			new TypeException("IllegalAccessException", TypeException.Kind.ACCESS),
+			new TypeException("InstantiationException", TypeException.Kind.NEW),
+			new TypeException("InterruptedException", TypeException.Kind.INTERUPT),
+			new TypeException("NoSuchFieldException", TypeException.Kind.NOSUCHFIELD),
+			new TypeException("NoSuchMethodException", TypeException.Kind.NOSUCHMETH)
 		);
+		
+		// User defined exceptions
+		
 	}
 
 	/**
