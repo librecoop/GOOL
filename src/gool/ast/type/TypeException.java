@@ -1,13 +1,11 @@
 package gool.ast.type;
 
-import java.util.ArrayList;
+import gool.ast.constructs.Node;
+import gool.generator.GoolGeneratorController;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import logger.Log;
-
-import gool.generator.GoolGeneratorController;
 
 public class TypeException extends IType {
 
@@ -22,44 +20,44 @@ public class TypeException extends IType {
 		/** Highest exception, all exceptions inherit from it */
 		GLOBAL,
 		/* exceptions related to some domain */
-		ARITHMETIC, COLLECTION, CAST, ENUM, ARGUMENT, THREAD, ARRAY, NULL, SECURITY, TYPE, UNSUPORTED, ARRAYSIZE, STATE, CLASSNOTFOUND, ACCESS, NEW, INTERUPT, NOSUCHFIELD, NOSUCHMETH,
-	}
-	
-	private String name;
-	
-	private List<TypeException> children;	
-	
-	private Kind kind;
-		
-	static private HashMap<String,TypeException> exceptions = new HashMap<String,TypeException>();
-
-	public TypeException(String name, Kind kind, TypeException... children) {
-		this(name, children);
-		tryToSetKind(kind);
+		ARITHMETIC, COLLECTION, CAST, ENUM, ARGUMENT, THREAD, ARRAY, SECURITY,
+		TYPE, UNSUPORTED, ARRAYSIZE, STATE, CLASSNOTFOUND, ACCESS, NEWINSTANCE,
+		INTERUPT, NOSUCHFIELD, NOSUCHMETH, NULLREFERENCE,
 	}
 	
 	/**
-	 * Propagate the kind so we don't have to write it when it's the same as
-	 * the one of the parent. Kind.GLOBAL is not propagated.
-	 * DO NOT USE!
-	 * @param kind
+	 * The name of the exception in the source language
 	 */
-	public void tryToSetKind(Kind kind) {
-		if (this.kind == Kind.CUSTOM) {
-			this.kind = kind;
-			if (kind != Kind.GLOBAL) {
-				for (TypeException child : children) {
-					child.tryToSetKind(kind);
-				}
-			}
-		}
-	}
-
-	public TypeException(String name, TypeException... children) {
+	private String name;
+	
+	/**
+	 * The kind of exception, 'CUSTOM' for non language specified exceptions
+	 */
+	private Kind kind;
+	
+	/**
+	 * The 'object' describing the exception, usually a ClassDef
+	 */
+	private Node descriptor;
+	
+	/**
+	 * All exceptions know to GOOL, language defined like custom ones
+	 */
+	static private HashMap<String,TypeException> exceptions = new HashMap<String,TypeException>();
+	
+	public TypeException(String name, Kind kind, Node descriptor) {
 		this.name = name;
-		this.kind = Kind.CUSTOM;
-		this.children = Arrays.asList(children);
-		exceptions.put(name, this);
+		this.kind = kind;
+		this.descriptor = descriptor;
+	}
+	
+	static public void add(TypeException exception) {
+		exceptions.put(exception.getName(), exception);
+	}
+	
+	static public void add (TypeException... args) {
+		for (TypeException exception : args)
+			exceptions.put(exception.getName(), exception);
 	}
 	
 	static public TypeException get(String name) {
@@ -75,8 +73,12 @@ public class TypeException extends IType {
 		return kind;
 	}
 
+	public Node getDescriptor() {
+		return descriptor;
+	}
+
 	@Override
 	public String callGetCode() {
-		return null; //GoolGeneratorController.generator().getCode(this);
+		return GoolGeneratorController.generator().getCode(this);
 	}
 }

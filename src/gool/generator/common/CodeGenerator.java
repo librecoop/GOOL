@@ -73,6 +73,7 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -412,5 +413,7 @@ public interface CodeGenerator {
 	String getCode(Catch catchStatement);
 
 	String getCode(Try tryStatement);
+
+	String getCode(TypeException typeException);
 	
 }
