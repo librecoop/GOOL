@@ -611,7 +611,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				return new TypeException();
 			}
 		};
-		string2otdMap.put("Exception", tmpOtd);
+//		string2otdMap.put("Exception", tmpOtd);
 		string2otdMap.put("java.lang.Exception", tmpOtd);
 	}
 	

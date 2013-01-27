@@ -2,7 +2,8 @@
 #macro ( includes $dependencies )
 #foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))\#include "${dep}"
 #end#end#end
-
+##Standard inclusion of iostream to every CPP program
+#\#include<iostream>
 ##
 ## -----------
 ##
