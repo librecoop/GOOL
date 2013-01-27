@@ -90,6 +90,9 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	}
 
 	public String getCode(ClassNew classNew) {
+		if (classNew.getType().toString().equals("File"))
+			return String.format("openFileInput (%s)", StringUtils
+					.join(classNew.getParameters(), ", "));
 		return String.format("new %s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
@@ -331,46 +334,46 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return "InputStream";
 		
 	}
 	@Override
 	public String getCode(TypeFileReader typeFileReader) {
-		//TODO Auto-generated method stub
-		return null;
+		
+		return "InputStreamReader";
 	}
 	@Override
 	public String getCode(TypeBufferedReader typeBufferedReader) {
-		//TODO Auto-generated method stub
+	
 		return "BufferedReader";
 	}
 	
 	@Override
 	public String getCode(TypeFileWriter typeFileWriter) {
-		//TODO Auto-generated method stub
-		return null;
+		
+		return "FileWriter";
 	}
 	@Override
 	public String getCode(TypeBufferedWriter typeBufferedWriter) {
-		//TODO Auto-generated method stub
+		
 		return "BufferedWriter";
 	}
 
 	@Override
 	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return String.format("%s.readLine()", bufferedReaderReadLineCall.getExpression());
 	}
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
 		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s.read()", bufferedReaderReadCall.getExpression());
 	}
 	@Override
 	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
 		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s.close()", bufferedReaderCloseCall.getExpression());
 	}
 	
 	@Override

@@ -328,13 +328,13 @@ public class GoolTest {
 										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
 										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.close(); \n"
 										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
-										+" String testString = br.readLine();int testread = br.read(); \n"
-										+"  \n System.out.println(testString+testread);\n "
+										+" String testString = br.readLine();char c = (char)br.read(); \n"
+										+"  \n System.out.println(testString+c);\n "
 								
 								
 								+"} catch(Exception ex) \n {ex.toString();}",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "line165");
+		compareResultsDifferentPlatforms(input, "line1A");
 	}
 
 	@Test
