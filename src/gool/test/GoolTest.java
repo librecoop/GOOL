@@ -315,7 +315,7 @@ public class GoolTest {
 	@Test
 	public void fileTest() throws Exception {
 		//String readFile = Settings.get("read_file_path");
-		String readFile = Settings.get("read_file_path");
+		//String readFile = Settings.get("read_file_path");
 		String writeFile = Settings.get("write_file_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
@@ -326,15 +326,15 @@ public class GoolTest {
 						.surroundWithClassMain(
 								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
 										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
-										+"bw.write(\"TestReadLn\"); \n bw.close(); \n"
+										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.close(); \n"
 										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
-										+" String testString = br.readLine(); \n"
-										+"  \n System.out.println(testString);\n "
+										+" String testString = br.readLine();char c = (char)br.read(); \n"
+										+"  \n System.out.println(testString+c);\n "
 								
 								
 								+"} catch(Exception ex) \n {ex.toString();}",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "TestReadLn");
+		compareResultsDifferentPlatforms(input, "line1A");
 	}
 
 	@Test

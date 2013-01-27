@@ -527,18 +527,17 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s.Read()", bufferedReaderReadCall.getExpression());
 	}
 	
 	@Override
 	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s.Close()", bufferedReaderCloseCall.getExpression());
 	}
 	
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
+		
 		return String.format("%s.Write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(bufferedWriterWriteCall.getParameters(), ","));
 	}
 	
@@ -551,12 +550,12 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(BufferedWriterFlushCall bufferedWriterFlushCall) {
 		
-		return null;
+		return String.format("%s.Flush()", bufferedWriterFlushCall.getExpression());
 	}
 	@Override
 	public String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall) {
 		
-		return null;
+		return String.format("%s.write(\"\n\")", bufferedWriterNewLineCall.getExpression());
 	}
 	
 	@Override
@@ -578,13 +577,11 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(FileIsDirectoryCall fileIsDirectoryCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("Directory.Exists(%s)", fileIsDirectoryCall.getExpression());
 	}
 	@Override
 	public String getCode(FileIsFileCall fileIsFileCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("File.Exists(%s)", fileIsFileCall.getExpression());
 	}
 	@Override
 	public String getCode(FileDeleteCall fileDeleteCall) {
