@@ -120,12 +120,10 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * The names in this list are not prefixed with 'self.'
 	 * Emptied  every time we start to print a new method.
 	 */
-	//TODO: find a way to refer to declaration instead of identifiers
 	private ArrayList<String> localIndentifiers = new ArrayList<String>();
 	
 	/**
 	 * Register a comment to be printed alongside the statement being parsed.
-	 * If the exact same comment is already registered, it is not duplicated.
 	 * @param newcomment string without '#' nor newline
 	 */
 	private void comment(String newcomment) {
@@ -136,8 +134,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	
 	/**
 	 * Print a statement with optional comments taken from the 'PytonGenerator.comments'.
-	 * A one-line comment about a one-line statement is put at the end of the
-	 * line, otherwise they are added before the statement.
+	 * If only one comment is present, it is put at the end of the line, otherwise
+	 * they are added before the statement.
 	 * 'PytonGenerator.comments' is emptied.
 	 * @param statement
 	 * @return the corresponding python code 
@@ -154,7 +152,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	}
 
 	/**
-	 * Holds the names of every method as they appear is the output code.
+	 * Holds the names of every method as they are outputed.
 	 * Used to rename methods.
 	 */
 	private static Map<Meth, String> methodsNames = new HashMap<Meth, String>();

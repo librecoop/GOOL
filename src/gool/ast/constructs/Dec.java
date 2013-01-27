@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import logger.Log;
-
 
 /**
  * This interface accounts for all declarations in abstract GOOL.
@@ -59,26 +57,6 @@ public abstract class Dec extends Statement {
 	
 	public void addModifiers(Collection<Modifier> modifiers) {
 		this.modifiers.addAll(modifiers);
-	}
-	
-	/**
-	 * Update all fields of the objects with the ones of the source object.
-	 * The destination and the source must belong to the exact same class.<br>
-	 * All subclasses should override it.
-	 * @param source The object to copy
-	 * @return <i>true</i> if the update was successful, <i>false</i> if the
-	 * 		classes of the 2 objects are not the same.
-	 */
-	public boolean updateFrom(Dec source) {
-		if (! this.getClass().equals(source.getClass())) {
-			Log.e(String.format("Impossible to update '%s' from class '%s' to '%s'.",
-					this.getName(), source.getClass().getSimpleName(), this.getClass().getSimpleName()));
-			return false;
-		}
-		this.setModifiers(source.getModifiers());
-		this.setName(source.getName());
-		this.setType(source.getType());
-		return true;
 	}
 	
 	public Modifier getAccessModifier() {
