@@ -91,8 +91,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	public String getCode(ClassNew classNew) {
 		if (classNew.getType().toString().equals("File"))
-			return String.format("openFileInput (%s)", StringUtils
-					.join(classNew.getParameters(), ", "));
+			return String.format("getFileStreamPath (%s)", StringUtils.join(classNew.getParameters(), ", "));
 		return String.format("new %s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
@@ -335,13 +334,13 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeFile typeFile) {
 		
-		return "InputStream";
+		return "File";
 		
 	}
 	@Override
 	public String getCode(TypeFileReader typeFileReader) {
 		
-		return "InputStreamReader";
+		return "FileReader";
 	}
 	@Override
 	public String getCode(TypeBufferedReader typeBufferedReader) {
@@ -367,25 +366,23 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.read()", bufferedReaderReadCall.getExpression());
 	}
 	@Override
 	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
-		// TODO Auto-generated method stub
+	
 		return String.format("%s.close()", bufferedReaderCloseCall.getExpression());
 	}
 	
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s.write()", bufferedWriterWriteCall.getExpression());
 	}
 	
 	@Override
-	public String getCode(BufferedWriterCloseCall bufferedWriCloseCall) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getCode(BufferedWriterCloseCall bufferedWriterCloseCall) {
+		return String.format("%s.close()", bufferedWriterCloseCall.getExpression());
 	}
 	@Override
 	public String getCode(BufferedWriterFlushCall bufferedWriterFlushCall) {
@@ -413,27 +410,27 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(FileMethCall fileMethCall) {
-		// TODO Auto-generated method stub
-		return String.format("%s", fileMethCall.getExpression());
+	
+		return null;
 	}
 	@Override
 	public String getCode(FileIsDirectoryCall fileIsDirectoryCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.isDirectory()", fileIsDirectoryCall.getExpression());
 	}
 	@Override
 	public String getCode(FileIsFileCall fileIsFileCall) {
-		// TODO Auto-generated method stub
+	
 		return String.format("%s.isFile()", fileIsFileCall.getExpression());
 	}
 	@Override
 	public String getCode(FileDeleteCall fileDeleteCall) {
-		// TODO Auto-generated method stub
+	
 		return String.format("%s.delete()", fileDeleteCall.getExpression());
 	}
 	@Override
 	public String getCode(FileExistsCall fileExistsCall) {
-		// TODO Auto-generated method stub
+		
 		return String.format("%s.exists()", fileExistsCall.getExpression());
 	}
 

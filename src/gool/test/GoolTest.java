@@ -315,7 +315,7 @@ public class GoolTest {
 	@Test
 	public void fileTest() throws Exception {
 		//String readFile = Settings.get("read_file_path");
-		String readFile = Settings.get("read_file_path");
+		//String readFile = Settings.get("read_file_path");
 		String writeFile = Settings.get("write_file_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
