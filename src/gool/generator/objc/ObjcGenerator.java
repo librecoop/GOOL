@@ -179,7 +179,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		/*return String.format("[[%s objectForKey:@%s]isEqualToString:@" + "("
 				+ "null" + ")" + "]", mapContainsKeyCall.getExpression(),
 				mapContainsKeyCall.getParameters());*/ // TODO
-		return " /* MapContainsKeyCall non implémenté */ ";
+		return " /* MapContainsKeyCall non impl��ment�� */ ";
 	}
 
 	@Override
