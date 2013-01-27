@@ -15,7 +15,7 @@ firstIndexChar		=
 firstIndexCharFrom	=	
 firstIndexStr		=	
 firstIndexStrFrom	=	
-empty				=	
+empty				=	{return$s[$arg$slength] == 0} : boolean
 lastIndexChar		=	
 lastIndexCharFrom	=	
 lastIndexStr		=	

@@ -12,6 +12,7 @@ import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
+import gool.generator.objc.ObjcCodePrinter;
 import gool.generator.objc.ObjcPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.parser.java.JavaParser;

@@ -1,16 +1,22 @@
 package gool.generator.objc;
 
+import gool.generator.GeneratorHelper;
 import gool.generator.common.CodePrinter;
+import gool.generator.common.exception.VelocityException;
+import gool.methods.MethodManager;
 
 import gool.ast.constructs.ClassDef;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 
 /**
  * Provides the basic functionality to generate Objective C code from a list of
@@ -51,13 +57,6 @@ public class ObjcCodePrinter extends CodePrinter {
 		writer.println(headerFile);
 		writer.close();
 		
-//		String mainString = processTemplate("main.vm", pclass);
-//		File mainFile = new File(dir, "main.m");
-//		
-//		writer = new PrintWriter(mainFile);
-//		writer.println(mainString);
-//		writer.close();
-		
 		if (pclass.isEnum() || pclass.isInterface()) {
 			List<File> r = new ArrayList<File>();
 			r.add(classFile);
@@ -67,4 +66,13 @@ public class ObjcCodePrinter extends CodePrinter {
 		}
 
 	}
+	
+	
+	public List<File> printPersonalLib(){
+		for (String s : MethodManager.methPerso.keySet()) {
+			
+		}
+		return null;
+	}
+	
 }

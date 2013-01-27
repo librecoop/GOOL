@@ -54,7 +54,7 @@ public abstract class CodePrinter {
 	/**
 	 * the Velocity template engine.
 	 */
-	private VelocityEngine engine;
+	protected VelocityEngine engine;
 
 	/**
 	 * The selected code generator.
@@ -161,7 +161,7 @@ public abstract class CodePrinter {
 			throw new VelocityException(e.getLocalizedMessage(), e);
 		}
 	}
-
+	
 	/**
 	 * This is the main entry point of this class. It generates the code for a
 	 * GOOL class and its corresponding dependent classes.

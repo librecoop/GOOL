@@ -4,3 +4,4 @@
 bin/
 gool.jar
 src/properties
+.settings/org.eclipse.jdt.core.prefs
