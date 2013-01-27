@@ -1298,6 +1298,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				dec = new Meth(goolType(tree, context), ((MethodTree) tree).getName().toString());
 				mods = (Collection<Modifier>)((MethodTree) tree).getModifiers().accept(this, context);
 			} else if (tree instanceof VariableTree) {
+				//dec = new VarDeclaration(goolType(tree, context), ((VariableTree) tree).getName().toString());
 				dec = new Field(((VariableTree) tree).getName().toString(), goolType(tree, context), null);
 				mods = (Collection<Modifier>)((VariableTree) tree).getModifiers().accept(this, context);
 			}
@@ -1630,13 +1631,19 @@ class Context {
 	}
 	
 	public void addDeclaration(Dec dec, String name, TypeMirror type) {
+		Dec old = getDeclarationHere(name, type);
+		if (old != null) {
+			Log.i(String.format("Updating the definition the %s '%s' of type %s",
+					old.getClass().getSimpleName(), name, type));
+			if (old.updateFrom(dec))
+				return;
+		}
 		HashMap<TypeMirror,Dec> identifier = map.get(name);
 		if (identifier == null) {
 			identifier = new HashMap<TypeMirror,Dec>();
 			map.put(name, identifier);
 		}
 		identifier.put(type, dec);
-
 	}
 	
 	public Dec getDeclaration(String name, TypeMirror type) {

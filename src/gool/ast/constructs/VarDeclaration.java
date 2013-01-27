@@ -25,6 +25,14 @@ public class VarDeclaration extends Dec {
 	public Expression getInitialValue() {
 		return initialValue;
 	}
+	
+	@Override
+	public boolean updateFrom(Dec source) {
+		if (! super.updateFrom(source))
+			return false;
+		this.initialValue = ((VarDeclaration)source).getInitialValue();
+		return true;
+	}
 
 	@Override
 	public String callGetCode() {

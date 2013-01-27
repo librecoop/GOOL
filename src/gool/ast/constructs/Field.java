@@ -49,6 +49,14 @@ public final class Field extends Dec {
 	public Expression getDefaultValue() {
 		return defaultValue;
 	}
+	
+	@Override
+	public boolean updateFrom(Dec source) {
+		if (! super.updateFrom(source))
+			return false;
+		this.defaultValue = ((Field)source).getDefaultValue();
+		return true;
+	}
 
 	@Override
 	public String callGetCode() {

@@ -108,6 +108,19 @@ public class Meth extends Dec {
 	}
 
 	@Override
+	public boolean updateFrom(Dec source) {
+		if (! super.updateFrom(source))
+			return false;
+		this.block = ((Meth)source).getBlock();
+		this.classDef = ((Meth)source).getClassDef();
+		this.genericTypes = ((Meth)source).getGenericTypes();
+		this.inherited = ((Meth)source).isInherited();
+		this.parameters = ((Meth)source).getParams();
+		return true;
+	}
+
+	
+	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
