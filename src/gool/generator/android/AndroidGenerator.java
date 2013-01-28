@@ -95,7 +95,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	public String getCode(ClassNew classNew) {
 		if (classNew.getType().toString().equals("File"))
-			return String.format("getFileStreamPath (%s)", StringUtils.join(classNew.getParameters(), ", "));
+			return String.format("new %s (Environment.getExternalStorageDirectory(),%s)",classNew.getType(), StringUtils.join(classNew.getParameters(), ", "));
 		return String.format("new %s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
