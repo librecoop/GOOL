@@ -75,6 +75,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -83,6 +84,7 @@ import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypePackage;
+import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
@@ -313,6 +315,10 @@ public interface CodeGenerator {
 	String getCode(TypeFileReader typeFileReader);
 	
 	String getCode(TypeFileWriter typeFileWriter);
+
+	String getCode(TypeScanner typeScanner);
+	
+	String getCode(TypeInputStream typeInputStream);
 	
 	/**
 	 * Produces code for an integer type in the target language.

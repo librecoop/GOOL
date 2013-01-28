@@ -24,6 +24,7 @@ import gool.ast.constructs.InitCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
+import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
@@ -70,12 +71,14 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
+import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
@@ -102,6 +105,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		indentation = "    ";
 	}
 	
+
 	/**
 	 * The class currently printed.
 	 * Updated every time we start to print a new class.
@@ -181,6 +185,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
+			if(statement.toString().contains("goolHelperUtil.Scanner(System.in"))
+			Log.e("mon stat :"+statement.toString());
 			result.append(printWithComment(statement));
 		}
 		return result.toString();
@@ -264,6 +270,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(ClassNew classNew) {
+		if(classNew.getName().equals("goolHelperUtil.Scanner"))
+			return String.format("%s()", classNew.getName());
 		return String.format("%s(%s)", classNew.getName(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
@@ -276,7 +284,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		// foreach-style loops defines a local variable, we register it
+		// foreach-style loops define a local variable, we register it
 		localIndentifiers.add(enhancedForLoop.getVarDec().getName());
 		if(enhancedForLoop.getExpression().getType() instanceof TypeMap)
 			return formatIndented("for %s in %s.iteritems():%1", enhancedForLoop.getVarDec().getName(),
@@ -376,8 +384,12 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
+		if (!lrc.getType().getTypeArguments().contains("[Int]"))		
 		return String.format("%s.remove(%s)", lrc.getExpression(), StringUtils
 				.join(lrc.getParameters(), ", "));
+		else
+			return String.format("%s.pop(%s)", lrc.getExpression(), StringUtils
+					.join(lrc.getParameters(), ", "));
 	}
 
 	@Override
@@ -475,7 +487,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (methodsNames.get(meth).equals(meth.getName())) {
 			prefix = formatIndented (
 					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
-					printMethParamsTypes(meth),
+					printMethParamsTypes(meth, ", "),
 					currentClass.getName(),
 					meth.isConstructor()?"__init__":meth.getName());
 			if (! meth.getParams().isEmpty())
@@ -523,10 +535,10 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * @param meth
 	 * @return the corresponding string
 	 */
-	private String printMethParamsTypes(Meth meth) {
+	private String printMethParamsTypes(Meth meth, String separator) {
 		String ret = "";
 		for (VarDeclaration p : meth.getParams()) {
-			ret += ", " + p.getType();
+			ret += separator + p.getType();
 		}
 		return ret;
 	}
@@ -562,6 +574,16 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			
 	}
 	
+	@Override
+	public String getCode(MemberSelect memberSelect) {
+		String name = memberSelect.getIdentifier();
+		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)
+				&& ! name.startsWith("__")) {
+			name = "__" + name;
+		}		
+		return String.format("%s.%s", memberSelect.getTarget(), name);
+	}
+
 	@Override
 	public String getCode(Modifier modifier) {
 		// there are no modifiers in Python
@@ -653,6 +675,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			return "noprint";
 		if(typeDependency.getType() instanceof TypeFileWriter)
 			return "noprint";
+		if(typeDependency.getType() instanceof TypeScanner)
+			return "noprint";
 		return super.getCode(typeDependency);
 	}
 
@@ -680,6 +704,12 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(TypeBufferedReader tbr) {
 		return "goolHelperIO.BufferedReader";
+	}
+	
+
+	@Override
+	public String getCode(TypeScanner typeScanner) {
+		return "goolHelperUtil.Scanner";
 	}
 	
 	@Override
@@ -846,7 +876,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\n\n");
+		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\nimport goolHelperUtil\n\n");
 		
 		// Printing the imports.
 		// This is not the best way to write it in Python, but doing it right
@@ -930,7 +960,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 						methodsNames.put(m2, newName);
 						
 						block += formatIndented("%sif goolHelper.test_args(args%s):\n%-1self.%s(*args)\n",
-								first?"":"el", printMethParamsTypes(m2), newName);  
+								first?"":"el", printMethParamsTypes(m2, ", "), newName);  
 						first = false;
 					}
 					if (! method.getModifiers().contains(Modifier.PRIVATE) && ! method.isConstructor()) {
@@ -1008,5 +1038,11 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		// does not support unicode is Python 2.x
 		return "str";
 	}
+
+	@Override
+	public String getCode(TypeInputStream typeInputStream) {
+		return "noprint";
+	}
+
 
 }

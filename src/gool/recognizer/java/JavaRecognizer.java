@@ -87,6 +87,7 @@ import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypePackage;
+import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
@@ -567,6 +568,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("FileReader", tmpOtd);
 		string2otdMap.put("java.io.FileReader", tmpOtd);
+
+		string2otdMap.put("gool.imports.java.io.FileReader", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			
+			@Override
+			public IType getType() {
+				return new TypeScanner();
+			}
+		};
+		string2otdMap.put("Scanner", tmpOtd);
+		string2otdMap.put("java.util.Scanner", tmpOtd);
+		string2otdMap.put("gool.imports.java.util.Scanner", tmpOtd);
+
 		
 		tmpOtd = new Otd() {
 			public IType getType() {
@@ -1021,11 +1036,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 
 		// TODO identifiers. Create a specific node to access to class literal (i.e. when calling static members).
-		String test1 = n.getName().toString();
-		String t2 = type.getName();
-		Log.d("testN : "+test1+"\n");
-		Log.d("testType : "+t2+"\n");
-		Log.d("test cntext : "+(context==null?"null":context.getClassDef().getName().toString()));
+
 		if (type.getName().equals(n.getName().toString())) {
 			return new Constant(type, n.getName().toString());
 		}

@@ -47,7 +47,8 @@ public class GOOLCompiler {
 //			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
 			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
-			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
+//			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
+
 		} catch (Exception e) {
 			Log.e(e);
 		}

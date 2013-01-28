@@ -33,6 +33,7 @@ public class PythonPlatform extends Platform {
 		//Helpers to create
 		goolHelperIn.add("goolHelper.py");
 		goolHelperIn.add("goolHelperIO.py");
+		goolHelperIn.add("goolHelperUtil.py");
 		
 		//Test output folder exists
 		File folder = new File(outputDir);
@@ -56,6 +57,7 @@ public class PythonPlatform extends Platform {
 				Log.e(e);
 			}
 		}
+		
 	}
 
 	@Override

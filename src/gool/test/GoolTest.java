@@ -1,6 +1,9 @@
 package gool.test;
 
 import gool.generator.common.Platform;
+import gool.generator.cpp.CppPlatform;
+import gool.generator.csharp.CSharpPlatform;
+import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 
 import java.util.Arrays;
@@ -40,7 +43,7 @@ public class GoolTest {
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
 
-	 Arrays.asList((Platform)/*JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
+	 Arrays.asList((Platform)/*JavaPlatform.getInstance(),CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
 
 	@BeforeClass
 	public static void init() {
@@ -341,6 +344,21 @@ public class GoolTest {
 						"int total = 1 ^ 0; System.out.println(total);",
 						MAIN_CLASS_NAME);
 		String expected = "";
+		compareResultsDifferentPlatforms(input, expected);
+	}
+	
+	@Test
+	public void simpleHeritage() throws Exception{
+
+		String input = "class Test {public static void main(String[] args){CinemaT p = new CinemaT(\"Nef\",\"numSalle\"); p.display();}}";
+		input += "\n"
+				+ "class Cinema {"+
+						"protected String nomCine; public Cinema(String nomC){this.nomCine = nomC;} public void display(){System.out.println(this.nomCine);}}";
+
+		input += "\n" +
+				"class CinemaT extends Cinema {"	+	
+				"protected String numS; public CinemaT(String nomC, String num){super(nomC); this.numS = num;}}";
+		String expected = "Nef";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
