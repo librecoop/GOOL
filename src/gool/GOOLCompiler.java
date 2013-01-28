@@ -16,7 +16,6 @@ import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.parser.java.JavaParser;
-import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;

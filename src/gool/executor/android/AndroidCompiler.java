@@ -1,11 +1,9 @@
 package gool.executor.android;
 
 import gool.Settings;
-import gool.ast.system.SystemOutPrintCall;
 import gool.executor.Command;
 import gool.executor.CommandException;
 import gool.executor.common.SpecificCompiler;
-import gool.test.GoolTest;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +13,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class AndroidCompiler extends SpecificCompiler {

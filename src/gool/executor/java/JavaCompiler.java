@@ -2,7 +2,6 @@ package gool.executor.java;
 
 import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
-import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 public class JavaCompiler extends SpecificCompiler {
 	

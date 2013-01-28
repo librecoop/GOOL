@@ -4,15 +4,12 @@ package gool.generator.android;
 import gool.Settings;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
-import gool.executor.Command;
 import gool.generator.common.CodePrinter;
-import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

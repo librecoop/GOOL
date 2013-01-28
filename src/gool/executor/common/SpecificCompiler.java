@@ -1,7 +1,6 @@
 package gool.executor.common;
 
 import gool.ast.constructs.ClassMain;
-import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;

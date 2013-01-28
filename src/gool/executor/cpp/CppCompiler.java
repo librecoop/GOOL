@@ -3,7 +3,6 @@ package gool.executor.cpp;
 import gool.Settings;
 import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
-import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
