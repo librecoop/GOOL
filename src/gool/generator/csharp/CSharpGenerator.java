@@ -21,6 +21,7 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
+import gool.ast.constructs.Expression;
 import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Meth;
@@ -79,7 +80,9 @@ import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -537,8 +540,18 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
-		
-		return String.format("%s.Write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(bufferedWriterWriteCall.getParameters(), ","));
+		List<String> tempList = new ArrayList<String>(); 
+		for(Expression expression: bufferedWriterWriteCall.getParameters()) {
+			if(expression instanceof Constant && expression.getType() instanceof TypeInt) {
+				char tempChar = (char) Integer.parseInt(expression.toString());
+				tempList.add("\""+String.valueOf(tempChar)+"\"");
+			}
+			else {
+				tempList.add(expression.toString());
+			}
+		}
+		//StringUtils.join(bufferedWriterWriteCall.getParameters(), ",");
+		return String.format("%s.Write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(tempList, ","));
 	}
 	
 

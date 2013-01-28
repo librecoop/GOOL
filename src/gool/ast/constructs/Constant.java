@@ -53,6 +53,7 @@ public class Constant extends Expression {
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
-	}
+	}	
+	
 	
 }

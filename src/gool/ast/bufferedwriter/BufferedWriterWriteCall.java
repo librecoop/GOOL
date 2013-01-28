@@ -7,13 +7,13 @@ import gool.generator.GoolGeneratorController;
 
 public class BufferedWriterWriteCall extends BufferedWriterMethCall {
 
-	public BufferedWriterWriteCall (Expression target) {
+	public BufferedWriterWriteCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}
-	
+
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }
