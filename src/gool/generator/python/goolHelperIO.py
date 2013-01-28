@@ -1,7 +1,7 @@
 import os
 
 class File(object):
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args):
 		if len(args) == 1 and isinstance(args[0], str):
 			self.inializeFromStr(args[0])
 
@@ -9,7 +9,7 @@ class File(object):
 		self.pathname = pathname
 
 	def getAbsolutePath(self):
-		os.path.abspath(self.pathname)
+		return os.path.abspath(self.pathname)
 
 	def getName(self):
 		return self.pathname
@@ -21,7 +21,7 @@ class File(object):
 		return False
 
 class FileReader(object):
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args):
 		if len(args) == 1:
 			if isinstance(args[0], str):
 				self.inializeFromStr(args[0])
@@ -32,11 +32,12 @@ class FileReader(object):
 			self.file = open(pathname, 'r')
 
 	def inializeFromFile(self, filee):
-			self.file = open(filee.getName(), 'r')
+			self.file = open(filee.getAbsolutePath(), 'r')
 
-	def read(self):
+	def read(self, *args, **kwargs):
 		return self.file.read(1)
 
+	def read
 	def getFile(self):
 		return self.file
 
@@ -44,7 +45,7 @@ class FileReader(object):
 		return self.file.close()
 
 class FileWriter(object):
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args):
 		if len(args) == 1:
 			if isinstance(args[0], str):
 				self.inializeFromStr(args[0])
@@ -52,12 +53,12 @@ class FileWriter(object):
 				self.inializeFromFile(args[0])
 
 	def inializeFromStr(self, pathname):
-			self.file = open(pathname, 'w')
+			self.file = open(pathname, 'a')
 
 	def inializeFromFile(self, filee):
-			self.file = open(filee.getName(), 'w')
+			self.file = open(filee.getAbsoluteName(), 'a')
 
-	def write(self, *args, **kwargs):
+	def write(self, *args):
 		nbArgs = len(args)
 		if nbArgs == 1:
 			self.writeStr(args[0])
@@ -75,7 +76,7 @@ class FileWriter(object):
 
 
 class BufferedReader(object):
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args):
 		if len(args) == 1:
 			if isinstance(args[0], FileReader):
 				self.inializeFromStr(args[0])

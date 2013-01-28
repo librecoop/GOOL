@@ -83,7 +83,6 @@ public class JavaGenerator extends CommonCodeGenerator implements CodeGeneratorN
 	}
 
 	public String getCode(CustomDependency customDependency) {
-		
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			System.out.println(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Java for the GOOL type '%s'.", customDependency.getName()));
