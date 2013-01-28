@@ -56,6 +56,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
@@ -599,6 +600,10 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		return null;
 	}
 
+	@Override
+	public String getCode(TypeException typeException) {
+		return "";
+	}
 
 }
 

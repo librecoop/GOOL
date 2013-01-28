@@ -1055,7 +1055,6 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	}
 
 	public String getCode(Throw throwStatement) {
-		
 		return String.format("raise %s", throwStatement.getExpression());
 	}
 

@@ -584,9 +584,5 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return typeMethod.getTextualtype();
 	}
 
-	@Override
-	public String getCode(TypeException typeException) {
-		return "";
-	}
 	
 }
