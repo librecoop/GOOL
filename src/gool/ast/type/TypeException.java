@@ -40,20 +40,14 @@ public class TypeException extends IType {
 	private Kind kind;
 	
 	/**
-	 * The 'object' describing the exception, usually a ClassDef
-	 */
-	private Node descriptor;
-	
-	/**
 	 * All exceptions know to GOOL, language defined like custom ones
 	 */
 	static private HashMap<String,TypeException> exceptions = new HashMap<String,TypeException>();
 	
-	public TypeException(String name, String module, Kind kind, Node descriptor) {
+	public TypeException(String name, String module, Kind kind) {
 		this.name = name;
 		this.module = module;
 		this.kind = kind;
-		this.descriptor = descriptor;
 	}
 	
 	static public void add(TypeException exception) {
@@ -77,10 +71,6 @@ public class TypeException extends IType {
 
 	public Kind getKind() {
 		return kind;
-	}
-
-	public Node getDescriptor() {
-		return descriptor;
 	}
 
 	@Override
