@@ -575,6 +575,16 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	}
 	
 	@Override
+	public String getCode(MemberSelect memberSelect) {
+		String name = memberSelect.getIdentifier();
+		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)
+				&& ! name.startsWith("__")) {
+			name = "__" + name;
+		}		
+		return String.format("%s.%s", memberSelect.getTarget(), name);
+	}
+
+	@Override
 	public String getCode(Modifier modifier) {
 		// there are no modifiers in Python
 		return "";
