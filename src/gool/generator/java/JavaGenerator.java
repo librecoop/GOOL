@@ -50,6 +50,7 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
+import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.HashMap;
@@ -58,7 +59,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class JavaGenerator extends CommonCodeGenerator {
+public class JavaGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 

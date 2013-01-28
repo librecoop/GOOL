@@ -37,6 +37,7 @@ public class PythonCompiler extends SpecificCompiler {
 		
 		List<String> params = new ArrayList<String>();
 		params.add("python");
+		params.add("-B"); // do not produce compiled files
 		params.add(file.getAbsolutePath());
 		return Command.exec(getOutputDir(), params, env);
 	}

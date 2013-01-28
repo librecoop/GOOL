@@ -18,6 +18,7 @@ import java.util.Set;
 import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.exception.ResourceNotFoundException;
 
 /**
  * This class helps generate the concrete target
@@ -81,8 +82,15 @@ public final class GeneratorHelper {
 			}
 
 			//Just compile each abstract GOOL class and add it to the map.
-			compilationUnits.get(platform).addAll(
-					currentPrinter.print(classDef));
+			try {
+				compilationUnits.get(platform).addAll(currentPrinter.print(classDef));
+			} catch (ResourceNotFoundException e) {
+				Log.e(String.format(
+						"Impossible to produce file '%s': platforms should" +
+						" either implements CodeGeneratorNoVelocity" +
+						" or have a 'class.vm' template.",
+						currentPrinter.getFileName(classDef.getName())));
+			}
 		}
 		return compilationUnits;
 	}

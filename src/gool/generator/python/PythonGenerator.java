@@ -83,6 +83,7 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
+import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.ArrayList;
@@ -96,27 +97,52 @@ import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
 
-public class PythonGenerator extends CommonCodeGenerator {
+public class PythonGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
 	
 	public PythonGenerator() {
 		super();
+		// As a tradition, Python is indented with 4 spaces
 		indentation = "    ";
 	}
 	
 
-	
+	/**
+	 * The class currently printed.
+	 * Updated every time we start to print a new class.
+	 */
 	private ClassDef currentClass;
 	
+	/**
+	 * Used to store comments.
+	 * Used by the 'comment' and 'printWithComment' methods.
+	 */
 	private ArrayList<String> comments = new ArrayList<String>();
 	
-	private ArrayList<String> paramsMethCurrent = new ArrayList<String>();
+	/**
+	 * The local variables (and parameters) of the method currently printed.
+	 * The names in this list are not prefixed with 'self.'
+	 * Emptied  every time we start to print a new method.
+	 */
+	private ArrayList<String> localIndentifiers = new ArrayList<String>();
 	
+	/**
+	 * Register a comment to be printed alongside the statement being parsed.
+	 * @param newcomment string without '#' nor newline
+	 */
 	private void comment(String newcomment) {
 		String com = "# " + newcomment + "\n";
 		if (! comments.contains(com))
 			comments.add(com);
 	}
 	
+	/**
+	 * Print a statement with optional comments taken from the 'PytonGenerator.comments'.
+	 * If only one comment is present, it is put at the end of the line, otherwise
+	 * they are added before the statement.
+	 * 'PytonGenerator.comments' is emptied.
+	 * @param statement
+	 * @return the corresponding python code 
+	 */
 	private String printWithComment(Object statement) {
 		String sttmnt = statement.toString().replaceFirst("\\s*\\z", "");
 		if (comments.size() == 1 && ! sttmnt.contains("\n")) {
@@ -128,6 +154,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return sttmnt;
 	}
 
+	/**
+	 * Holds the names of every method as they are outputed.
+	 * Used to rename methods.
+	 */
 	private static Map<Meth, String> methodsNames = new HashMap<Meth, String>();
 	
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
@@ -143,6 +173,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(ArrayNew arrayNew) {
+		// a newly declared array is a list of nulls
+		// or a list of list ... of nulls for multidimensional arrays
 		String ret = "None";
 		for (Expression e : arrayNew.getDimesExpressions())
 			ret = String.format("[%s]*%s", ret, e);
@@ -172,6 +204,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			break;
 		case DIV :
 			if (binaryOp.getType().equals(TypeInt.INSTANCE))
+				// for compatibility with different versions of Python
 				textualOp = "//";
 			else
 				textualOp = "/";
@@ -182,7 +215,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 			}
 			else if(binaryOp.getRight().getType().getName().equals("str") && !binaryOp.getLeft().getType().getName().equals("str")) {	
 				return String.format("(str(%s) %s %s)", binaryOp.getLeft(), "+", binaryOp.getRight());
+			} else {
+				textualOp = binaryOp.getTextualoperator();
 			}
+			break;
 		default :
 			textualOp = binaryOp.getTextualoperator();
 		}
@@ -197,6 +233,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? "True" : "False");
 		} else {
 			String ret = super.getCode(constant);
+			// unicode strings have to be prefixed with a 'u'
 			if (constant.getType() == TypeString.INSTANCE && ret.contains("\\u")) {
 				return "u" + ret;
 			} else {
@@ -205,6 +242,10 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 	}
 
+	/**
+	 * Types to witch a cast is necessary.
+	 * As Python is dynamically typed, it only need type casting for conversions.
+	 */
 	static private ArrayList<Class<? extends IType>> castableTypes = new ArrayList<Class<? extends IType>>();
 	static {
 		castableTypes.add(  TypeArray.class);
@@ -237,12 +278,14 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Comment comment) {
+		// only works with comments that are alone on their line(s)
 		return comment.getValue().replaceAll("(^ *)([^ ])", "$1# $2");
 	}
 	
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		this.paramsMethCurrent.add(enhancedForLoop.getVarDec().getName());
+		// foreach-style loops defines a local variable, we register it
+		localIndentifiers.add(enhancedForLoop.getVarDec().getName());
 		if(enhancedForLoop.getExpression().getType() instanceof TypeMap)
 			return formatIndented("for %s in %s.iteritems():%1", enhancedForLoop.getVarDec().getName(),
 				enhancedForLoop.getExpression() ,enhancedForLoop.getStatements());
@@ -269,6 +312,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(For forr) {
+		// there is no 'for(;;)' construct in Python
 		return formatIndented("%swhile %s:%1",
 				printWithComment(forr.getInitializer()),forr.getCondition(),
 				forr.getWhileStatement().toString() + printWithComment(forr.getUpdater()));
@@ -279,6 +323,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		String out = formatIndented ("if %s:%1", pif.getCondition(), pif.getThenStatement());
 		if (pif.getElseStatement() != null){
 			if (pif.getElseStatement() instanceof If) {
+				// the concatenation with the next 'if' produces a 'elif'
 				out += formatIndented ("el%s", pif.getElseStatement());
 			} else {
 				out += formatIndented ("else:%1", pif.getElseStatement());
@@ -289,6 +334,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(Collection<Modifier> modifiers) {
+		// there are no modifiers in Python
 		return "";
 	}
 
@@ -325,6 +371,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
+		// An empty list is a list whose boolean value is false.
+		// It is the official recommended 'pythonic' way to do it.
 		return String.format("(not %s)", liec.getExpression());
 	}
 
@@ -351,6 +399,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
+		// the 'main' is not a method in python
 		return mainMeth.getBlock().toString();
 	}
 
@@ -362,6 +411,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
+		// a map entry is simply a tuple of the form (key, value)
 		return String.format("%s[0]", mapEntryGetKeyCall.getExpression());
 	}
 
@@ -388,6 +438,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
+		// c.f. getCode(ListIsEmptyCall)
 		return String.format("(not %s)", mapIsEmptyCall.getExpression());
 	}
 
@@ -406,7 +457,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
-		return String.format("%s.pop(%s)", mapRemoveCall.getExpression(),
+		// we don't use 'dict[key]' for compatibility with the java API
+		// if the key does'nt exists
+		return String.format("%s.pop(%s, None)", mapRemoveCall.getExpression(),
 				StringUtils.join(mapRemoveCall.getParameters(), ", "));
 	}
 
@@ -415,11 +468,22 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return String.format("len(%s)", mapSizeCall.getExpression());
 	}
 
-	private String printMeth(Meth meth, String prefix){
-		paramsMethCurrent.clear();
+	/**
+	 * Helper method to produce the code of a method
+	 * @param meth
+	 * 		the method to output
+	 * @param prefix
+	 * 		code to add at the beginning of the method
+	 * @return the Python code of the method
+	 */
+	private String printMeth(Meth meth, String prefix) {
+		// register parameters as local identifiers
+		localIndentifiers.clear();
 		for (VarDeclaration p : meth.getParams()) {
-			paramsMethCurrent.add(p.getName());
+			localIndentifiers.add(p.getName());
 		}
+		// all methods that aren't used by a wrapper have a header to
+		// allow inheritance when multiple methods have the same name
 		if (methodsNames.get(meth).equals(meth.getName())) {
 			prefix = formatIndented (
 					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
@@ -432,14 +496,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		if (meth.isConstructor()) {
 			for (InitCall init : ((Constructor)meth).getInitCalls()) {
+				//TODO: is'nt this already done at the start of the method?
 				for (VarDeclaration param : meth.getParams()) {
-					paramsMethCurrent.add(param.getName());
+					localIndentifiers.add(param.getName());
 				}
 				prefix += String.format("super(%s, self).__init__(%s)\n",
 						currentClass.getName(),
 						StringUtils.join(init.getParameters(), ", "));
 			}					
 		}
+		// Python dosn't allow a empty block (it messes the indentation)
 		if (prefix == "" && meth.getBlock().getStatements().isEmpty())
 			prefix = "pass";
 		return formatIndented("%sdef %s(self%s):%1",
@@ -449,6 +515,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 				prefix + meth.getBlock());
 	}
 	
+	/**
+	 * Produces the comma-separated list of the names of the parameters of a
+	 * method, with a leading comma.
+	 * @param meth
+	 * @return the corresponding string
+	 */
 	private String printMethParamsNames(Meth meth) {
 		String ret = "";
 		for (VarDeclaration p : meth.getParams()) {
@@ -457,6 +529,12 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return ret;
 	}
 	
+	/**
+	 * Produces the comma-separated list of the types of the parameters of a
+	 * method, with a leading comma.
+	 * @param meth
+	 * @return the corresponding string
+	 */
 	private String printMethParamsTypes(Meth meth) {
 		String ret = "";
 		for (VarDeclaration p : meth.getParams()) {
@@ -470,66 +548,51 @@ public class PythonGenerator extends CommonCodeGenerator {
 		return printMeth(meth, "");
 	}
 
-//	@Override
-//	public String getCode(MethCall methodCall) {
-//		return String.format("%s (%s)",
-//				methodCall.getTarget().toString(),
-//				StringUtils.join(methodCall.getParameters(), ", "));
-//	}
-
 	@Override
 	public String getCode(VarAccess varAccess) {
 		String name = varAccess.getDec().getName();
+		// packages names are not modified
+		// is'nt there a better test?
 		if(varAccess.getType() == null || varAccess.getType().getName().isEmpty()) {
 			return name;
 		}
+		// this method seems to be called before dealing with any class
+		// so we have to check for 'null'
 		if (name.equals("super") && currentClass != null)
 			return String.format("super(%s, self)", currentClass.getName());
 		if (name.equals("this"))
 			return "self";
 
 		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)
-				&& ! name.startsWith("__"))
+				&& ! name.startsWith("__")) {
 			name = "__" + name;
-		if (paramsMethCurrent.contains(name))
+		}
+		if (localIndentifiers.contains(name))
 			return name;
 		else
 			return "self." + name;
 			
 	}
-
-	@Override
-	public String getCode(MemberSelect memberSelect) {
-		String target = memberSelect.getTarget().toString();
-//		if (target.equals("this"))
-//			target = "self";
-		return String.format("%s.%s", target, memberSelect.getIdentifier());
-	}
 	
 	@Override
 	public String getCode(Modifier modifier) {
-		// TODO Auto-generated method stub
+		// there are no modifiers in Python
 		return "";
 	}
 
 	@Override
 	public String getCode(NewInstance newInstance) {
-		return String.format("%s = %s(%s)", newInstance.getVariable(),
-				newInstance.getVariable().getType().toString().replaceAll(
-						"\\*$", ""), StringUtils.join(newInstance
-						.getParameters(), ", "));
+		return String.format("%s = %s(%s)",
+				newInstance.getVariable(),
+				// why would there be any trailing '\'?
+				newInstance.getVariable().getType().toString().replaceFirst("\\*$", ""),
+				StringUtils.join(newInstance.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(ParentCall parentCall) {
 		return String.format("super(%s, self).__init__(%s)",
 				currentClass, StringUtils.join(parentCall.getParameters(), ", "));
-//		String out = parentCall.getTarget() + "(";
-//		if (parentCall.getParameters() != null) {
-//			out += StringUtils.join(parentCall.getParameters(), ", ");
-//		}
-//		out += ")";
-//		return out;
 	}
 
 	@Override
@@ -544,6 +607,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
+		//TODO: what about the new 'print is a function' standard?
 		return String.format("print %s", StringUtils.join(
 				systemOutPrintCall.getParameters(), ","));
 	}
@@ -606,6 +670,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
+		// it's just a tuple
 		return String.format("(%s, %s)",typeEntry.getKeyType(), typeEntry.getElementType() );
 	}
 
@@ -632,6 +697,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(TypeInt typeInt) {
+		// should we use 'long' instead (infinite precision)?
 		return "int";
 	}
 
@@ -662,6 +728,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeString typeString) {
+		// does not support unicode is Python 2.x
 		return "str";
 	}
 
@@ -674,18 +741,19 @@ public class PythonGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
 		switch (unaryOperation.getOperator()){
-// BUG : python is call-by-value, increment and decrement do not update the variable
-// TODO: find a way to express this in python
-//		case POSTFIX_INCREMENT:
-//			comment("GOOL warning: post-incrementation became pre-incrementation");
-//			// no break: follow to the next case
-//		case PREFIX_INCREMENT:
-//			return String.format("goolHelper.increment(%s)", unaryOperation.getExpression());
-//		case POSTFIX_DECREMENT:
-//			comment("GOOL warning: post-decrementation became pre-decrementation");
-//			// no break: follow to the next case
-//		case PREFIX_DECREMENT:
-//			return String.format("goolHelper.decrement(%s)", unaryOperation.getExpression());
+//TODO: Python is said to be 'call-by-assignment'.
+//      Increment and decrement helper functions do not update the variable.
+//      For now we only support incrementation and decrementation as statements
+//			case POSTFIX_INCREMENT:
+//				comment("GOOL warning: post-incrementation became pre-incrementation");
+//				// no break: follow to the next case
+//			case PREFIX_INCREMENT:
+//				return String.format("goolHelper.increment(%s)", unaryOperation.getExpression());
+//			case POSTFIX_DECREMENT:
+//				comment("GOOL warning: post-decrementation became pre-decrementation");
+//				// no break: follow to the next case
+//			case PREFIX_DECREMENT:
+//				return String.format("goolHelper.decrement(%s)", unaryOperation.getExpression());
 		case POSTFIX_INCREMENT:
 		case PREFIX_INCREMENT:
 			comment("GOOL warning: semantic may have changed");
@@ -695,7 +763,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 			comment("GOOL warning: semantic may have changed");
 			return unaryOperation.getExpression() + " -=1";
 		case NOT:
-			return "not " + unaryOperation.getExpression();
+			return String.format("(not %s)",  unaryOperation.getExpression());
 		case UNKNOWN:
 			comment("Unrecognized by GOOL, passed on: " + unaryOperation.getTextualoperator());
 			// no break: follow to the next case
@@ -706,13 +774,19 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(VarDeclaration varDec) {
+		// It's just an assignment. Even though it is not needed if there is no
+		// Initialization, we can't distinguish between no initialization and
+		// initialization to 'null'
+		// TODO: Can we make this distinction?
 		String value;
 		if(varDec.getInitialValue() != null) {
 			value = varDec.getInitialValue().toString();
 		} else { 
 			value = "None";
 		}
-		paramsMethCurrent.add(varDec.getName());
+		// even if the declaration were not to be outputted, we would still need
+		// to register the local identifier
+		localIndentifiers.add(varDec.getName());
 		return String.format("%s = %s", varDec.getName(), value);
 	}
 
@@ -723,13 +797,16 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeArray typeArray) {
+		// Should we use the 'array' module?
 		return "list";
 	}
 
 	@Override
 
 	public String getCode(CustomDependency customDependency) {		
-
+		if (customDependency.getName().startsWith("java.io")) {
+			return "goolHelperIO";
+		}
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
 			throw new IllegalArgumentException(String.format("There is no equivalent type in Python for the GOOL type '%s'.", customDependency.getName()));
@@ -747,6 +824,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 		String textualOp;
 		if (compoundAssign.getOperator() == Operator.DIV
 				&& compoundAssign.getType().equals(TypeInt.INSTANCE)) {
+			// for compatibility with different versions of Python
 			textualOp = "//";
 		} else {
 			textualOp = compoundAssign.getTextualoperator();
@@ -783,6 +861,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 		// do not change the "#!/usr/bin/env python" line!
 		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\nimport goolHelperUtil\n\n");
 		
+		// Printing the imports.
+		// This is not the best way to write it in Python, but doing it right
+		// would require a lot of renaming in other places.
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
 		for (String dependency : customDependencies.keySet()) {
 			if(!dependency.isEmpty() && !dependency.equals("noprint")) {
@@ -797,6 +878,9 @@ public class PythonGenerator extends CommonCodeGenerator {
 			}
 		}
 		
+		// We only produce new-style classes. Theses have to explicitly
+		// inherit from the 'object' class.
+		// Not needed in Python 3, but kept for compatibility.
 		code = code.append(String.format("\nclass %s(%s):\n", classDef.getName(),
 				(classDef.getParentClass() != null) ? classDef.getParentClass().getName()  : "object"));
 
@@ -812,7 +896,6 @@ public class PythonGenerator extends CommonCodeGenerator {
 			else
 				dynamicAttributs += String.format("self.%s", f);
 		}
-		//dynamicAttributs = dynamicAttributs.replaceFirst("\\s+\\z", "\n");
 
 		// renaming private methods
 		for (Meth meth : classDef.getMethods()){
@@ -820,6 +903,8 @@ public class PythonGenerator extends CommonCodeGenerator {
 				meth.setName("__" + meth.getName());
 		}
 		
+		// dealing with multiple methods having the same name,
+		// which is forbidden in Python
 		List<Meth> meths = new ArrayList<Meth>();
 		Meth mainMeth = null;
 		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
@@ -865,28 +950,35 @@ public class PythonGenerator extends CommonCodeGenerator {
 						block += formatIndented("else:\n%-1super(%s, self).%s(args*)",
 								classDef.getName(), method.isConstructor()?"__init__":method.getName());
 					}
+					// If all methods under the wrapper are statics of dynamics,
+					// the wrapper is of the same kind. If both exists, we can't
+					// properly deal with it so we output a warning in the code.
 					if (someStatics && someDynamics) {
 						code = code.append(formatIndented(
 								"%-1# GOOL warning: static and dynamic methods under a same wrapper\n" +
 								"%-1#               impossible to call static methods\n"));
 					} else if (someStatics) {
+						// '@static' would be more accurate, but we would have
+						// to replace 'self' with the name of the class.
 						code = code.append(formatIndented("%-1@classmethod\n"));
 					}
 					
 					String name = method.getName();
 					if(method.isConstructor()) {
 						name = "__init__";
+						// We add the declarations for dynamics attributes to
+						// the constructor if it is a wrapper.
 						block = dynamicAttributs + block;
 					}
 					
+					// We have to manually print the header as it is not a
+					// method known to GOOL.
 					code = code.append(formatIndented("%-1def %s(self, *args):%2", name, block));
 					
-				}
-				else {
+				} else {
 					if(method.isConstructor()) {
 						methodsNames.put(method, "__init__");
-					}
-					else {
+					} else {
 						methodsNames.put(method, method.getName());
 					}
 				}
@@ -895,10 +987,13 @@ public class PythonGenerator extends CommonCodeGenerator {
 		
 		for(Meth method : classDef.getMethods()) {
 			if (! method.isMainMethod()) {
+				// we add a comment for renamed methods
 				if (! methodsNames.get(method).equals(method.getName()) && ! methodsNames.get(method).equals("__init__")) {
 					code = code.append(formatIndented("\n%-1# used in wrapper '%s'",
 							method.isConstructor()?"__init__":method.getName()));
 				}
+				// We add the declarations for dynamic attributes to the constructor
+				// if there is no wrapper for it.
 				if (method.isConstructor() && methodsNames.get(method).equals(method.getName())) {
 					code = code.append(formatIndented("%1", printMeth(method, dynamicAttributs)));
 				} else {
@@ -908,7 +1003,11 @@ public class PythonGenerator extends CommonCodeGenerator {
 		}
 		
 		if (mainMeth != null) {
-			paramsMethCurrent.clear();
+			// As it is not a method, we have do do everything manually.
+			// The condition is not needed, but is customary.
+			// TODO: find a better way to deal with 'self'
+			// TODO: deal with command line arguments
+			localIndentifiers.clear();
 			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
 					mainMeth.getBlock().toString().replaceAll("([^\\w])self([^\\w])", "$1"+classDef.getName()+"$2")));
 		}
@@ -919,6 +1018,7 @@ public class PythonGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeChar typeChar) {
+		// does not support unicode is Python 2.x
 		return "str";
 	}
 

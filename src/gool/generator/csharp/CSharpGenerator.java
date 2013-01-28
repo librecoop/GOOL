@@ -53,6 +53,7 @@ import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
+import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 
 import java.util.HashMap;
@@ -64,7 +65,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * It generates specific C# code for certain GOOL nodes.
  */
-public class CSharpGenerator extends CommonCodeGenerator {
+public class CSharpGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(TypeBool typeBool) {
 		return "bool";

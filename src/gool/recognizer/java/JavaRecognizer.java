@@ -70,6 +70,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
+import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
@@ -280,6 +281,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		while ((keyword = reader.readLine()) != null) {
 			addForbiddenKeyword(keyword);
 		}
+		reader.close();
 	}
 	
 	public final void setCurrentCompilationUnit(
@@ -557,7 +559,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("File", tmpOtd);
 		string2otdMap.put("java.io.File", tmpOtd);
-		string2otdMap.put("gool.imports.java.io.File", tmpOtd);
 		
 		tmpOtd = new Otd() {
 			public IType getType() {
@@ -566,6 +567,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("FileReader", tmpOtd);
 		string2otdMap.put("java.io.FileReader", tmpOtd);
+
 		string2otdMap.put("gool.imports.java.io.FileReader", tmpOtd);
 		
 		tmpOtd = new Otd() {
@@ -578,6 +580,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("Scanner", tmpOtd);
 		string2otdMap.put("java.util.Scanner", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.Scanner", tmpOtd);
+
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeBufferedReader();
+			}
+		};
+		string2otdMap.put("BufferedReader", tmpOtd);
+		string2otdMap.put("java.io.BufferedReader", tmpOtd);
 	}
 
 	private IType string2IType(String typeName, Context context) {
@@ -1026,7 +1037,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if(context!=null) {
 			dec = context.getDeclaration(n.getName().toString(), getTypeMirror(n));
 			if (dec == null) {
-				Log.e(String.format("No declaration found for '%s' of type '%s' in curent context", n.getName(), getTypeMirror(n)));
+				Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getName(), getTypeMirror(n)));
 				dec = new VarDeclaration(goolType(n, context), n.getName().toString());
 			}
 		}
@@ -1172,7 +1183,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier().toString(), getTypeMirror(n));
 		if (dec == null) {
-			Log.e(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
+			Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
 			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
 		}
 		MemberSelect f = new MemberSelect(target, dec);
@@ -1535,7 +1546,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		if (!(target instanceof Parameterizable)) {
-			System.out.println(method.getClass());
 			target = new MethCall(goolType(((MethodSymbol) method)
 					.getReturnType(), context), target);
 		}
