@@ -325,7 +325,15 @@ public class CppGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeFileReader) {
 			return "fstream";
 		}
-		
+		if (typeDependency.getType() instanceof TypeBufferedWriter) {
+			return "fstream";
+		}
+		if (typeDependency.getType() instanceof TypeFileWriter) {
+			return "fstream";
+		}
+//		if (typeDependency.getType().toString().equalsIgnoreCase("")){
+//			return "";
+//		}
 		return removePointer(super.getCode(typeDependency)).concat(".h");
 	}
 
@@ -597,6 +605,7 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(TypeBufferedWriter typeBufferedWriter) {
 		//TODO Auto-generated method stub
 		return String.format("std::fstream");
+		//return String.format("fstream");
 	}
 
 	@Override
