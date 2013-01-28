@@ -351,8 +351,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-		logger.debug("X");
-		logger.debug(getTypeMirror(n));
+		System.out.println("X");
+		System.out.println(getTypeMirror(n));
 		return goolType(getTypeMirror(n), context);
 	}
 
@@ -403,12 +403,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
 		Symbol classSymbol = (Symbol) type.asElement();
-		logger.debug("XXX just before claiming a typeName from classsymbol XXX");
-		logger.debug("XXX type, classSymbol, kind XXX");
-		logger.debug(type);
-		logger.debug(classSymbol);
-		logger.debug(typeMirror.getKind());		
-		logger.debug("XXX");
+		System.out.println("XXX just before claiming a typeName from classsymbol XXX");
+		System.out.println("XXX type, classSymbol, kind XXX");
+		System.out.println(type);
+		System.out.println(classSymbol);
+		System.out.println(typeMirror.getKind());		
+		System.out.println("XXX");
 		String typeName;
 		IType goolType;
 		switch (typeMirror.getKind()) {
@@ -1134,10 +1134,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Expression target = (Expression) n.getExpression()
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
-		logger.debug("XX Entering MemberSelect with target-identifier XX");
-		logger.debug(target);
-		logger.debug(identifier);
-		logger.debug("XX");
+		System.out.println("XX Entering MemberSelect with target-identifier XX");
+		System.out.println(target);
+		System.out.println(identifier);
+		System.out.println("XX");
 		/*
 		 * TODO Currently we are assuming that the following methods are always the same as the methods
 		 * "toString" and "equals" belonging to the Object class.
@@ -1150,9 +1150,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 
 		IType type = target.getType();
-		logger.debug("X Target type X");
-		logger.debug(type);
-		logger.debug("X");
+		System.out.println("X Target type X");
+		System.out.println(type);
+		System.out.println("X");
 
 		if (type != null) {
 
@@ -1266,10 +1266,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//were not recognized
 		//i.e. it is not a library that requires a particular treatment
 		//it gets the standard treatment.
-		logger.debug("X Standard method call for X");
-		logger.debug(n);
+		System.out.println("X Standard method call for X");
+		System.out.println(n);
 		IType goolType = goolType(n, context);
-		logger.debug("X");
+		System.out.println("X");
 		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
 				.toString());
 		return f;
@@ -1285,7 +1285,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//Get the name of the class
 		JCClassDecl c = (JCClassDecl) n;
 		ClassDef classDef = new ClassDef(n.getSimpleName().toString());
-		System.out.println(String.format("Parsing class %s", n.getSimpleName()));
+		logger.info(String.format("Parsing class %s", n.getSimpleName()));
 		
 		//The new class will provide the context for the things parsed inside of it.
 		Context newContext = new Context(classDef, null);
@@ -1391,7 +1391,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				classDef.addField(new Field(Arrays.asList(Modifier.PRIVATE),
 						(VarDeclaration) member));
 			} else if (member != null) {
-				System.out.println(String.format(
+				logger.info(String.format(
 						"Unrecognized member for class %s: %s ", classDef
 								.getName(), member));
 			}
@@ -1596,8 +1596,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 						.getReturnType(), context));
 		} 
 		else {
-				logger.debug("YYYY from method to member select YYYY");
-				logger.debug(n.getMethodSelect().toString());
+			System.out.println("YYYY from method to member select YYYY");
+			System.out.println(n.getMethodSelect().toString());
 				//System.out.println("YYYYYYYYYYYY");
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().
