@@ -78,6 +78,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeIOException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -831,5 +832,11 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall) {
 		// TODO Auto-generated method stub
 		return String.format("%s<<std::endl;",bufferedWriterNewLineCall.getExpression());
+	}
+
+	@Override
+	public String getCode(TypeIOException typeIOException) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

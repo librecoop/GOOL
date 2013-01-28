@@ -94,6 +94,7 @@ import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeIOException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -614,6 +615,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 //		string2otdMap.put("Exception", tmpOtd);
 		string2otdMap.put("java.lang.Exception", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeIOException();
+			}
+		};
+		string2otdMap.put("IOException", tmpOtd);
+		string2otdMap.put("java.io.IOException", tmpOtd);
+		string2otdMap.put("gool.imports.java.io.IOException", tmpOtd);
 	}
 	
 

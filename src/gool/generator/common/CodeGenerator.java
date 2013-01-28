@@ -94,6 +94,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeIOException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -484,4 +485,5 @@ public interface CodeGenerator {
 	String getCode(FileIsFileCall fileIsFileCall);
 	String getCode(FileDeleteCall fileDeleteCall);
 	String getCode(FileExistsCall fileExistsCall);
+	String getCode(TypeIOException typeIOException);
 }

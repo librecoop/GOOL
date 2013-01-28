@@ -68,6 +68,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeIOException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -494,5 +495,11 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		
 		result.append("\n}");
 		return result.toString();
+	}
+
+	@Override
+	public String getCode(TypeIOException typeIOException) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
