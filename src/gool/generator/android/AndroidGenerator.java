@@ -13,7 +13,9 @@ import gool.ast.bufferedwriter.BufferedWriterFlushCall;
 import gool.ast.bufferedwriter.BufferedWriterNewLineCall;
 import gool.ast.bufferedwriter.BufferedWriterWriteCall;
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Block;
 import gool.ast.constructs.BufferedWriterMethCall;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
 import gool.ast.constructs.CustomDependency;
@@ -26,9 +28,11 @@ import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Statement;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
+import gool.ast.exception.ExceptionPrintStackTraceCall;
 import gool.ast.file.FileDeleteCall;
 import gool.ast.file.FileExistsCall;
 import gool.ast.file.FileIsDirectoryCall;
@@ -82,7 +86,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
 		if (!(binaryOp.getLeft() instanceof Constant) && binaryOp.getOperator() == Operator.EQUAL) {
-			return String.format("%s.equals(%s)", binaryOp.getLeft(), binaryOp
+			return String.format("%s==(%s)", binaryOp.getLeft(), binaryOp
 					.getRight());
 		} else {
 			return super.getCode(binaryOp);
@@ -268,6 +272,21 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "java.util.Map";
 		}
+		if (typeDependency.getType() instanceof TypeFile) {
+			return "java.io.File";
+		}
+		if (typeDependency.getType() instanceof TypeFileReader) {
+				return "java.io.FileReader";
+		}
+		if (typeDependency.getType() instanceof TypeBufferedReader) {
+			return "java.io.BufferedReader";
+		}
+		if (typeDependency.getType() instanceof TypeFileWriter) {
+			return "java.io.FileWriter";
+		}
+		if (typeDependency.getType() instanceof TypeBufferedWriter) {
+			return "java.io.BufferedWriter";
+		}
 		return super.getCode(typeDependency);
 	}
 
@@ -377,7 +396,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
-		return String.format("%s.write()", bufferedWriterWriteCall.getExpression());
+		return String.format("%s.write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(bufferedWriterWriteCall.getParameters(), ","));
 	}
 	
 	@Override
@@ -407,6 +426,13 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		return null;
 	}
 	
+	@Override
+	public String getCode(
+			ExceptionPrintStackTraceCall exceptionPrintStackTraceCall) {
+		
+		return "e.printStackTrace()";
+	}
+
 
 	@Override
 	public String getCode(FileMethCall fileMethCall) {
@@ -433,10 +459,40 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		
 		return String.format("%s.exists()", fileExistsCall.getExpression());
 	}
-
 	@Override
-	public String getCode(Try t) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getCode(Try t ) {
+		StringBuilder result = new StringBuilder();
+		result.append("try{\n");
+		for (Statement statement : t.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("\n}"); //closing bracket
+		for (Catch c : t.getCatches()) {
+			result.append(getCode(c));		
+			
+		}
+		return result.toString();
+	}
+	
+	@Override
+	public String getCode(Catch c ) {
+		StringBuilder result = new StringBuilder();
+		result.append("\n catch(");
+		result.append(c.getSingleParameter());
+		result.append(") {\n");
+		for (Statement statement : c.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		
+		result.append("\n}");
+		return result.toString();
 	}
 }
