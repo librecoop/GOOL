@@ -554,8 +554,8 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall) {
-		
-		return String.format("%s.write(\"\n\")", bufferedWriterNewLineCall.getExpression());
+		//return "Environment.NewLine";
+		return String.format("%s.WriteLine(\"\")", bufferedWriterNewLineCall.getExpression());
 	}
 	
 	@Override
