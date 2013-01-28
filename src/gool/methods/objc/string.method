@@ -3,23 +3,23 @@ unicodeAtIndex		=
 compareWithCase		=	compare(String) : int
 compareWithoutCase	=	caseInsensitiveCompare(String) : int
 concatenation		=	appendString(String) : string
-contains			=	
+contains			=	{return$s[$arg$srangeOfString:$arg].location == NSNotFound} : boolean
 copy				=	copy(String) : String
-endSuffixe			=	
+endSuffixe			=	hasSuffix(String) : boolean
 equalWithCase		=	isEqual(Object) : boolean
 equalWithoutCase	=	
 withFormat			=	stringWithFormat/format(String, Object...) : String
 toByte				=	dataUsingEncoding("NSUTF8StringEncoding") : byte[]
 toByteWithCharSet	=	
-firstIndexChar		=	
-firstIndexCharFrom	=	
-firstIndexStr		=	
-firstIndexStrFrom	=	
-empty				=	
-lastIndexChar		=	
-lastIndexCharFrom	=	
-lastIndexStr		=	
-lastIndexStrFrom	=	
+firstIndexChar		=	{NSRange$srange$s=[$arg$srangeOfString:[NSString$sstringWithFormat:@"%c",$arg]$soptions:0$srange:NSMakeRange(0,$arg$slength])];return$srange.location}: int 
+firstIndexCharFrom	=	{NSRange$srange$s=[$arg$srangeOfString:[NSString$sstringWithFormat:@"%c",$arg]$soptions:0$srange:NSMakeRange($arg,$arg$slength]-$arg)];return$srange.location} : int
+firstIndexStr		=	{NSRange$srange$s=[$arg$srangeOfString:$arg];return$srange.location} : int
+firstIndexStrFrom	=	{NSRange$srange$s=[$arg$srangeOfString:$arg$soptions:0$srange:NSMakeRange($arg,$arg$slength]-$arg)];return$srange.location} : int
+empty				=	{return$s[$arg$slength] == 0} : boolean
+lastIndexChar		=	{NSRange$srange$s=[$arg$srangeOfString:[NSString$sstringWithFormat:@"%c",$arg]$soptions:NSBackwardsSearch$srange:NSMakeRange(0,$arg$slength])];return$srange.location}: int 
+lastIndexCharFrom	=	{NSRange$srange$s=[$arg$srangeOfString:[NSString$sstringWithFormat:@"%c",$arg]$soptions:NSBackwardsSearch$srange:NSMakeRange($arg,$arg$slength]-$arg)];return$srange.location} : int
+lastIndexStr		=	{NSRange$srange$s=[$arg$srangeOfString:$arg$soptions:NSBackwardsSearch];return$srange.location} : int
+lastIndexStrFrom	=	{NSRange$srange$s=[$arg$srangeOfString:$arg$soptions:NSBackwardsSearch$srange:NSMakeRange($arg,$arg$slength]-$arg)];return$srange.location} : int
 lenght				=	length() : int
 matchesWithRegex	=	
 matchesRegionCase	=	

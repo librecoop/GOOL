@@ -179,7 +179,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		/*return String.format("[[%s objectForKey:@%s]isEqualToString:@" + "("
 				+ "null" + ")" + "]", mapContainsKeyCall.getExpression(),
 				mapContainsKeyCall.getParameters());*/ // TODO
-		return " /* MapContainsKeyCall non implémenté */ ";
+		return " /* MapContainsKeyCall non impl��ment�� */ ";
 	}
 
 	@Override
@@ -274,8 +274,15 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		if(methodCall.getGeneralName() != null){
 			specificName = MethodManager.getSpecificName(methodCall.getGeneralName(),methodCall.getLibrary(),Language.OBJC);
-			if(specificName.equals("")){
+			if(MethodManager.isAbsent(specificName)){
 				return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", methodCall.getGeneralName(), methodCall.getLibrary());
+			}
+			else if(MethodManager.isMethPerso(specificName)){
+				MethodManager.addMeth(methodCall.getGeneralName(), specificName, methodCall.getLibrary(), ((MemberSelect)methodCall.getTarget()).getTarget().toString());
+				return String.format("[%sOBJC %s:%s]",
+						methodCall.getLibrary().toLowerCase(),
+						methodCall.getGeneralName(),
+						((MemberSelect)methodCall.getTarget()).getTarget());
 			}
 			else {
 				specificName = specificName.substring(0,specificName.indexOf("("));
