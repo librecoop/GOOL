@@ -226,7 +226,11 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(ClassNew classNew) {
-		return String.format("%s(%s)", classNew.getName(), StringUtils
+		String c = classNew.getName();
+		//To translate Exception type. 
+		if (classNew.getType() instanceof TypeException)
+			c = ((TypeException)classNew.getType()).toString();
+		return String.format("%s(%s)", c, StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
 
@@ -889,8 +893,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(Throw throwStatement) {
-		// TODO Auto-generated method stub
-		return "";
+		
+		return String.format("raise %s", throwStatement.getExpression());
 	}
 
 	@Override
@@ -921,8 +925,6 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			retour = "LookupError";
 		} else if (typeException.getKind() == TypeException.Kind.CAST) {
 			retour = "ValueError";
-		} else if (typeException.getKind() == TypeException.Kind.ACCESS) {
-			retour = "tralala";
 //		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
 //			retour = "BaseException";
 //		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {

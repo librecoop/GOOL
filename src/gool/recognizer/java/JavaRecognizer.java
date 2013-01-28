@@ -768,7 +768,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitThrow(ThrowTree node, Context p) {
-		Expression expression = (Expression) node.accept(this, p);
+		Expression expression = (Expression) node.getExpression().accept(this, p);
 		return new Throw(expression);
 	}
 
