@@ -311,6 +311,11 @@ public class GoolTest {
 		String expected = "";
 		compareResultsDifferentPlatforms(input, "expected");
 	}
+	
+	/**
+	 * First test using a file as a FileWriter constructor argument
+	 * 
+	 */
 
 	@Test
 	public void fileTest() throws Exception {
@@ -326,9 +331,41 @@ public class GoolTest {
 						.surroundWithClassMain(
 								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
 										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
-										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.close(); \n"
+										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
+										+"BufferedReader br = new BufferedReader(new FileReader(b)); \n"
+										+" String testString = br.readLine();char c = (char)br.read(); \n"
+										+"br.close();\n"
+										+"  \n System.out.println(testString+c);\n "
+								
+								
+								+"} catch(Exception ex) \n {ex.toString();}",
+								MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "line1A");
+	}
+	
+	/**
+	 * Second test using a string as a FileWriter constructor argument
+	 * 
+	 */
+
+	@Test
+	public void fileTestSecond() throws Exception {
+		//String readFile = Settings.get("read_file_path");
+		//String readFile = Settings.get("read_file_path");
+		String writeFile = Settings.get("write_file_path");
+		String input = "import gool.imports.java.io.BufferedReader;\n"
+				+ "import gool.imports.java.io.FileReader;\n"
+				+ "import gool.imports.java.io.FileWriter;\n"
+				+ "import gool.imports.java.io.BufferedWriter;\n"
+				+ "import gool.imports.java.io.File;\n"
+				+ TestHelper
+						.surroundWithClassMain(
+								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
+										+"BufferedWriter bw = new BufferedWriter(new FileWriter(\""+writeFile+"\")); \n"
+										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
 										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
 										+" String testString = br.readLine();char c = (char)br.read(); \n"
+										+"br.close();\n"
 										+"  \n System.out.println(testString+c);\n "
 								
 								
