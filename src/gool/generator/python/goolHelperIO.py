@@ -34,10 +34,9 @@ class FileReader(object):
 	def inializeFromFile(self, filee):
 			self.file = open(filee.getAbsolutePath(), 'r')
 
-	def read(self, *args, **kwargs):
+	def read(self, *args):
 		return self.file.read(1)
 
-	def read
 	def getFile(self):
 		return self.file
 
