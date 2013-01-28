@@ -109,6 +109,7 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
+import gool.test.GoolTest;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -126,6 +127,8 @@ import java.util.Set;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+
+import org.apache.log4j.Logger;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ArrayAccessTree;
@@ -198,6 +201,7 @@ import com.sun.tools.javac.tree.JCTree.JCModifiers;
  * The class Context is necessary for that and is declared at the bottom of this file.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
+	private static Logger logger = Logger.getLogger(JavaRecognizer.class);
 	
 	/**
 	 * The Sun's abstract Java AST that we will now convert to abstract GOOL.
@@ -349,8 +353,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-		System.out.println("X");
-		System.out.println(getTypeMirror(n));
+		logger.debug("X");
+		logger.debug(getTypeMirror(n));
 		return goolType(getTypeMirror(n), context);
 	}
 
@@ -401,12 +405,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
 		Symbol classSymbol = (Symbol) type.asElement();
-		System.out.println("XXX just before claiming a typeName from classsymbol XXX");
-		System.out.println("XXX type, classSymbol, kind XXX");
-		System.out.println(type);
-		System.out.println(classSymbol);
-		System.out.println(typeMirror.getKind());		
-		System.out.println("XXX");
+		logger.debug("XXX just before claiming a typeName from classsymbol XXX");
+		logger.debug("XXX type, classSymbol, kind XXX");
+		logger.debug(type);
+		logger.debug(classSymbol);
+		logger.debug(typeMirror.getKind());		
+		logger.debug("XXX");
 		String typeName;
 		IType goolType;
 		switch (typeMirror.getKind()) {
@@ -1123,10 +1127,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Expression target = (Expression) n.getExpression()
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
-		System.out.println("XX Entering MemberSelect with target-identifier XX");
-		System.out.println(target);
-		System.out.println(identifier);
-		System.out.println("XX");
+		logger.debug("XX Entering MemberSelect with target-identifier XX");
+		logger.debug(target);
+		logger.debug(identifier);
+		logger.debug("XX");
 		/*
 		 * TODO Currently we are assuming that the following methods are always the same as the methods
 		 * "toString" and "equals" belonging to the Object class.
@@ -1139,9 +1143,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 
 		IType type = target.getType();
-		System.out.println("X Target type X");
-		System.out.println(type);
-		System.out.println("X");
+		logger.debug("X Target type X");
+		logger.debug(type);
+		logger.debug("X");
 
 		if (type != null) {
 
@@ -1255,10 +1259,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//were not recognized
 		//i.e. it is not a library that requires a particular treatment
 		//it gets the standard treatment.
-		System.out.println("X Standard method call for X");
-		System.out.println(n);
+		logger.debug("X Standard method call for X");
+		logger.debug(n);
 		IType goolType = goolType(n, context);
-		System.out.println("X");
+		logger.debug("X");
 		MemberSelect f = new MemberSelect(goolType, target, n.getIdentifier()
 				.toString());
 		return f;
@@ -1585,8 +1589,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 						.getReturnType(), context));
 		} 
 		else {
-				System.out.println("YYYY from method to member select YYYY");
-				System.out.println(n.getMethodSelect().toString());
+				logger.debug("YYYY from method to member select YYYY");
+				logger.debug(n.getMethodSelect().toString());
 				//System.out.println("YYYYYYYYYYYY");
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().

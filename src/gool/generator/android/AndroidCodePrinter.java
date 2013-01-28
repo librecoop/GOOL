@@ -6,6 +6,7 @@ import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
 import gool.executor.Command;
 import gool.generator.common.CodePrinter;
+import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,8 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class AndroidCodePrinter extends CodePrinter {
+	private static Logger logger = Logger.getLogger(AndroidCodePrinter.class);
 
 	/**
 	 * Provides the basic functionality to generate Android code from a list of
@@ -67,7 +70,7 @@ public class AndroidCodePrinter extends CodePrinter {
 		dir.mkdirs();
 		// Create the file for the class, fill it in, close it
 		File classFile = new File(dir, getFileName(pclass.getName()));
-		System.out.println(String.format("Writing to file %s", classFile));
+		logger.info(String.format("Writing to file %s", classFile));
 		PrintWriter writer = new PrintWriter(classFile);
 		writer.println(code);
 		writer.close();
@@ -83,7 +86,7 @@ public class AndroidCodePrinter extends CodePrinter {
 			 */
 			File activityFile = new File(dir, getFileName(pclass.getName())
 					.replace(".java", "Activity.java"));
-			System.out.println(String
+			logger.info(String
 					.format("Writing to file %s", activityFile));
 			writer = new PrintWriter(activityFile);
 			String activityClassCode = processTemplate("activity.vm", pclass);
@@ -100,7 +103,7 @@ public class AndroidCodePrinter extends CodePrinter {
 			File printOutFile = new File(dir, "PrintOut.java");
 			if(!printOutFile.exists()) {
 					
-			System.out.println(String
+			logger.info(String
 					.format("Writing to file %s", printOutFile));
 			writer = new PrintWriter(printOutFile);
 			String printOutFileCode = processTemplate("printout.vm", pclass);
@@ -217,7 +220,7 @@ public class AndroidCodePrinter extends CodePrinter {
 									// directory
 			if (!destination.exists()) {
 				destination.mkdir();
-				System.out.println("Copied directory: " + source + "  to "
+				logger.info("Copied directory: " + source + "  to "
 						+ destination);
 			}
 
@@ -248,13 +251,13 @@ public class AndroidCodePrinter extends CodePrinter {
 
 				is.close();
 				os.close();
-				System.out.println("Copied file from " + source + " to "
+				logger.info("Copied file from " + source + " to "
 						+ destination);
 			} catch (FileNotFoundException e) {
-				System.out.println("Could not find file " + e);
+				logger.warn("Could not find file " + e);
 
 			} catch (IOException ioe) {
-				System.out.println("Input output exception");
+				logger.info("Input output exception");
 			}
 		}
 

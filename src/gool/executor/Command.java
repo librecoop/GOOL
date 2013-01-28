@@ -1,5 +1,7 @@
 package gool.executor;
 
+import gool.test.GoolTest;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Operating System command execution helper.
  */
 public final class Command {
+	private static Logger logger = Logger.getLogger(Command.class);
 	
 	private Command() {
 	}
@@ -40,7 +44,7 @@ public final class Command {
 	 */
 	public static String exec(File workingDir, List<String> params, Map<String, String> env) {
 		try {
-			System.out.println(StringUtils.join(params.toArray(), " "));
+			logger.debug(StringUtils.join(params.toArray(), " "));
 			StringBuffer buffer = new StringBuffer();
 
 			ProcessBuilder pb = new ProcessBuilder(params);

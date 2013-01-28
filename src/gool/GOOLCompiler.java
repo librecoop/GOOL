@@ -42,10 +42,10 @@ public class GOOLCompiler {
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = Arrays.asList(folder.listFiles());
-			logger.info(files);
+			logger.debug(files);
 			GOOLCompiler gc = new GOOLCompiler();
 			Map<Platform, List<File>> f = gc.concreteJavaToConcretePlatform(JavaPlatform.getInstance(), files);
-			logger.info(f);
+			logger.debug(f);
 			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(),
 					files);
 			gc.concreteJavaToConcretePlatform(CppPlatform.getInstance(), files);

@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 public final class Settings {
 
 	private static Properties properties;
-	private static Logger logger = Logger.getLogger(GoolTest.class);
+	private static Logger logger = Logger.getLogger(Settings.class);
 	private static String androidPackage;
 	private static String androidMainActivity;
 

@@ -50,7 +50,7 @@ public final class ExecutorHelper {
 		StringBuilder result = new StringBuilder();
 
 		List<File> compiledFiles = ExecutorHelper.compile(files);
-		System.out.println(compiledFiles);
+		logger.debug(compiledFiles);
 		result.append(platform.getCompiler().run(compiledFiles.get(0)));
 		logger.info("FINISH: compile for platform: " +platform.getName());
 		return result.toString();
@@ -67,7 +67,7 @@ public final class ExecutorHelper {
 	
 		for (Entry<Platform, List<File>> item : files.entrySet()) {
 			SpecificCompiler compiler = item.getKey().getCompiler();
-			System.out.println("---3-->" + compiler);
+			logger.debug("---3-->" + compiler);
 			File outputFile = compiler.compileToExecutable(item.getValue(), null, null, null);	
 			result.add(outputFile);
 		}

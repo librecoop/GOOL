@@ -3,6 +3,7 @@ package gool.executor.cpp;
 import gool.Settings;
 import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
+import gool.test.GoolTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class CppCompiler extends SpecificCompiler {
+	private static Logger logger = Logger.getLogger(CppCompiler.class);
 
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
@@ -29,7 +33,7 @@ public class CppCompiler extends SpecificCompiler {
 		if (mainFile == null) {
 			mainFile = files.get(0);
 		}
-		System.out.println("--->" + mainFile);
+		logger.debug("--->" + mainFile);
 		String execFileName = mainFile.getName().replace(".cpp",".bin");
 		params.addAll(Arrays.asList(Settings.get("cpp_compiler_cmd"), "-I", Settings.get("boost_lib_dir"), "-o", execFileName) );
 

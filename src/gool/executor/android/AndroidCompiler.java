@@ -5,6 +5,7 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.executor.Command;
 import gool.executor.CommandException;
 import gool.executor.common.SpecificCompiler;
+import gool.test.GoolTest;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class AndroidCompiler extends SpecificCompiler {
+	private static Logger logger = Logger.getLogger(AndroidCompiler.class);
 
 	public AndroidCompiler(File androidOutputDir, List<File> deps) {
 		super(androidOutputDir, deps);
@@ -74,7 +77,7 @@ public class AndroidCompiler extends SpecificCompiler {
 			waitTime++;
 			}
 			while(returnString.equals("")||waitTime>20);
-			System.out.println("Waited "+waitTime/2+" seconds for logcat output:" + returnString);
+			logger.info("Waited "+waitTime/2+" seconds for logcat output:" + returnString);
 			return returnString;
 		} catch (IOException e) {
 			throw new CommandException(e);
@@ -167,6 +170,6 @@ public class AndroidCompiler extends SpecificCompiler {
 		paramsToRunApk.add(mainActivity);
 		String runApkResult = Command.exec(
 				new File(Settings.get("android_sdk_path")), paramsToRunApk);
-		System.out.println(runApkResult);
+		logger.debug(runApkResult);
 	}
 }
