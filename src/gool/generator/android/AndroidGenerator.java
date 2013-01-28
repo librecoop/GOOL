@@ -273,7 +273,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 			return "java.util.Map";
 		}
 		if (typeDependency.getType() instanceof TypeFile) {
-			return "java.io.File";
+			return "java.io.File;" +"\n import android.os.Environment\n";
 		}
 		if (typeDependency.getType() instanceof TypeFileReader) {
 				return "java.io.FileReader";

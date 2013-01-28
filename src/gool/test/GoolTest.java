@@ -55,9 +55,9 @@ public class GoolTest {
 
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms = Arrays.asList(
-			JavaPlatform.getInstance(),// CppPlatform.getInstance(),
+			JavaPlatform.getInstance(), //CppPlatform.getInstance(),
 			CSharpPlatform.getInstance()
-			//, AndroidPlatform.getInstance()
+			, AndroidPlatform.getInstance()
 			);
 
 	// private List<Platform> platforms =
@@ -387,11 +387,11 @@ public class GoolTest {
 				+ TestHelper
 						.surroundWithClassMain(
 								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
-										+"BufferedWriter bw = new BufferedWriter(new FileWriter(\""+writeFile+"\")); \n"
+										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
 										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
-										+"BufferedWriter bw2 = new BufferedWriter(new FileWriter(\""+writeFile+"\", true)); \n"
+										+"BufferedWriter bw2 = new BufferedWriter(new FileWriter(b, true)); \n"
 										+"bw2.write(\"write2\");  \n bw2.flush(); \n bw2.close(); \n"
-										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
+										+"BufferedReader br = new BufferedReader(new FileReader(b)); \n"
 										+" String testString = br.readLine(); \n"
 										+" testString = testString + br.readLine(); \n"
 										+"br.close();\n"
