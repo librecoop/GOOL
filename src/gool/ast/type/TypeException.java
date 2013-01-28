@@ -19,6 +19,8 @@ public class TypeException extends IType {
 		DEFAULT,
 		/** Highest exception, all exceptions inherit from it */
 		GLOBAL,
+		/** Type unrecognized*/
+		UNRECOGNIZED,
 		/* exceptions related to some domain */
 		ARITHMETIC, COLLECTION, CAST, ENUM, ARGUMENT, THREAD, ARRAY, SECURITY,
 		TYPE, UNSUPORTED, ARRAYSIZE, STATE, CLASSNOTFOUND, ACCESS, NEWINSTANCE,

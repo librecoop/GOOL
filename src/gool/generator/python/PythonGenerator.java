@@ -905,7 +905,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		for (Catch c: tryStatement.getCatches()) {
 			retour += c;
 		}
-		retour += formatIndented("finally:%1", tryStatement.getFinilyBlock());
+		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
+			retour += formatIndented("finally:%1", tryStatement.getFinilyBlock());
 		return retour;
 	}
 
@@ -920,8 +921,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			retour = "LookupError";
 		} else if (typeException.getKind() == TypeException.Kind.CAST) {
 			retour = "ValueError";
-//		} else if (typeException.getKind() == TypeException.Kind.ENUM) {
-//			retour = "BaseException";
+		} else if (typeException.getKind() == TypeException.Kind.ACCESS) {
+			retour = "tralala";
 //		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
 //			retour = "BaseException";
 //		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
