@@ -98,9 +98,6 @@ public class GoolTest {
 
 	@Test
 	public void mapAddGet() throws Exception {
-		// String input =
-		// TestHelper.surroundWithClassMain("HashMap<String, Integer > m = new HashMap<String, Integer>();",
-		// "Test");
 		String input = 
 				"import gool.imports.java.util.HashMap;\n" + 
 
@@ -208,6 +205,17 @@ public class GoolTest {
 						"File t = new File(\"goolHelper.py\");FileReader f = new FileReader(t);System.out.println(f.read());BufferedReader g = new BufferedReader(f); System.out.println(g.readLine());",
 						MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "def test_args(args,*types):");
+	}
+	
+	@Test
+	public void simpleWriteFile() throws Exception {
+		String input = 
+				"import java.io.File;\nimport java.io.FileReader;\nimport java.io.BufferedReader;\nimport java.io.FileWriter;\n" + 
+				TestHelper
+				.surroundWithClassMain(
+						"File t = new File(\"test.txt\");FileWriter fw = new FileWriter(t);fw.write(\"kllkl\");fw.close();FileReader f = new FileReader(t);System.out.println(f.read());BufferedReader g = new BufferedReader(f); System.out.println(g.readLine());g.close();",
+						MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "kllkl");
 	}
 	
 	@Test

@@ -74,6 +74,7 @@ import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -310,6 +311,8 @@ public interface CodeGenerator {
 	String getCode(TypeFile typeFile);
 	
 	String getCode(TypeFileReader typeFileReader);
+	
+	String getCode(TypeFileWriter typeFileWriter);
 	
 	/**
 	 * Produces code for an integer type in the target language.

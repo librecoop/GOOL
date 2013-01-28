@@ -78,6 +78,7 @@ import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -566,6 +567,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("FileReader", tmpOtd);
 		string2otdMap.put("java.io.FileReader", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeFileWriter();
+			}
+		};
+		string2otdMap.put("FileWriter", tmpOtd);
+		string2otdMap.put("java.io.FileWriter", tmpOtd);
 		
 		tmpOtd = new Otd() {
 			public IType getType() {

@@ -43,6 +43,37 @@ class FileReader(object):
 	def close(self):
 		return self.file.close()
 
+class FileWriter(object):
+	def __init__(self, *args, **kwargs):
+		if len(args) == 1:
+			if isinstance(args[0], str):
+				self.inializeFromStr(args[0])
+			elif isinstance(args[0], File):
+				self.inializeFromFile(args[0])
+
+	def inializeFromStr(self, pathname):
+			self.file = open(pathname, 'w')
+
+	def inializeFromFile(self, filee):
+			self.file = open(filee.getName(), 'w')
+
+	def write(self, *args, **kwargs):
+		nbArgs = len(args)
+		if nbArgs == 1:
+			self.writeStr(args[0])
+		elif nbArgs==3 and isinstance(args[0], str) and isinstance(args[1], int) and isinstance(args[2], int):
+			self.writeStr(args[0][args[1]:args[2]])
+
+	def writeStr(self, string):
+		self.file.write(string)
+
+	def getFile(self):
+		return self.file
+
+	def close(self):
+		return self.file.close()
+
+
 class BufferedReader(object):
 	def __init__(self, *args, **kwargs):
 		if len(args) == 1:

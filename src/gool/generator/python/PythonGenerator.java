@@ -24,9 +24,7 @@ import gool.ast.constructs.InitCall;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MapEntryMethCall;
 import gool.ast.constructs.MapMethCall;
-import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
-import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.NewInstance;
 import gool.ast.constructs.Operator;
@@ -71,6 +69,7 @@ import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -652,6 +651,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			return "noprint";
 		if(typeDependency.getType() instanceof TypeFileReader)
 			return "noprint";
+		if(typeDependency.getType() instanceof TypeFileWriter)
+			return "noprint";
 		return super.getCode(typeDependency);
 	}
 
@@ -671,6 +672,11 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		return "goolHelperIO.FileReader";
 	}
 	
+	@Override
+	public String getCode(TypeFileWriter typeFileWriter){
+		return "goolHelperIO.FileWriter";
+	}
+
 	@Override
 	public String getCode(TypeBufferedReader tbr) {
 		return "goolHelperIO.BufferedReader";

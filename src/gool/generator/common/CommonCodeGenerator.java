@@ -45,6 +45,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
+import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -551,6 +552,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(TypeFileReader typeFileReader){
 		return "FileReader";
+	}
+	
+	@Override
+	public String getCode(TypeFileWriter typeFileWriter){
+		return "FileWriter";
 	}
 	
 	@Override
