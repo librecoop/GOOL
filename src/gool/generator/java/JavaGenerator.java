@@ -1,6 +1,7 @@
 package gool.generator.java;
 
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -14,7 +15,9 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -356,6 +359,24 @@ public class JavaGenerator extends CommonCodeGenerator implements CodeGeneratorN
 
 	@Override
 	public String getCode(TypeInputStream typeInputStream) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Throw throwStatement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Catch catchStatement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Try tryStatement) {
 		// TODO Auto-generated method stub
 		return null;
 	}

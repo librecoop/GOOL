@@ -4,6 +4,7 @@ import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
@@ -34,7 +35,9 @@ import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -72,6 +75,8 @@ import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInputStream;
+import gool.ast.type.TypeException;
+import gool.ast.type.TypeException.Kind;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -270,9 +275,14 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(ClassNew classNew) {
+
 		if(classNew.getName().equals("goolHelperUtil.Scanner"))
 			return String.format("%s()", classNew.getName());
-		return String.format("%s(%s)", classNew.getName(), StringUtils
+		String c = classNew.getName();
+		//To translate Exception type. 
+		if (classNew.getType() instanceof TypeException)
+			c = ((TypeException)classNew.getType()).toString();
+		return String.format("%s(%s)", c, StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
 
@@ -1044,5 +1054,47 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		return "noprint";
 	}
 
+	public String getCode(Throw throwStatement) {
+		
+		return String.format("raise %s", throwStatement.getExpression());
+	}
+
+	@Override
+	public String getCode(Catch catchStatement) {
+		return formatIndented("except %s as %s:%1", catchStatement.getParameter().getType(), 
+				catchStatement.getParameter().getName(), catchStatement.getBlock());
+	}
+
+	@Override
+	public String getCode(Try tryStatement) {
+		String retour = formatIndented("try:%1", tryStatement.getBlock());
+		for (Catch c: tryStatement.getCatches()) {
+			retour += c;
+		}
+		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
+			retour += formatIndented("finally:%1", tryStatement.getFinilyBlock());
+		return retour;
+	}
+
+	@Override
+	public String getCode(TypeException typeException) {
+		String retour = "";
+		if (typeException.getKind() == TypeException.Kind.GLOBAL || typeException.getKind() == TypeException.Kind.DEFAULT) {
+			retour = "BaseException";
+		} else if (typeException.getKind() == TypeException.Kind.ARITHMETIC) {
+			retour = "ArithmeticError";
+		} else if (typeException.getKind() == TypeException.Kind.COLLECTION) {
+			retour = "LookupError";
+		} else if (typeException.getKind() == TypeException.Kind.CAST) {
+			retour = "ValueError";
+//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
+//			retour = "BaseException";
+//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
+//			retour = "BaseException";
+//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
+//			retour = "BaseException";
+		}
+		return retour;
+	}
 
 }

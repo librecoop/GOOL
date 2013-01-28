@@ -12,6 +12,7 @@ import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
@@ -42,7 +43,9 @@ import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -79,6 +82,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -176,6 +180,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
 import com.sun.tools.javac.tree.TreeInfo;
+import com.sun.tools.javac.util.Name;
 
 
 
@@ -255,6 +260,40 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		operatorMap.put(Kind.MULTIPLY_ASSIGNMENT, Operator.MULT);
 		operatorMap.put(Kind.OR_ASSIGNMENT, Operator.OR);
 		operatorMap.put(Kind.PLUS_ASSIGNMENT, Operator.PLUS);
+	}
+	
+	static {
+		// register standard exceptions
+		// TODO: only exception from java.lang are registered for now
+		TypeException.add(
+				new TypeException("Exception", "java.lang", TypeException.Kind.GLOBAL, null),
+				new TypeException("RuntimeException", "java.lang", TypeException.Kind.GLOBAL, null),
+				new TypeException("ArithmeticException", "java.lang", TypeException.Kind.ARITHMETIC, null),
+				new TypeException("ArrayStoreException", "java.lang", TypeException.Kind.COLLECTION, null),
+				new TypeException("ClassCastException", "java.lang", TypeException.Kind.CAST, null),
+				new TypeException("EnumConstantNotPresentException", "java.lang", TypeException.Kind.ENUM, null),
+				new TypeException("IllegalArgumentException", "java.lang", TypeException.Kind.ARGUMENT, null),
+				new TypeException("IllegalThreadStateException", "java.lang", TypeException.Kind.ARGUMENT, null),
+				new TypeException("NumberFormatException", "java.lang", TypeException.Kind.ARGUMENT, null),
+				new TypeException("IllegalMonitorStateException", "java.lang", TypeException.Kind.THREAD, null),
+				new TypeException("IllegalStateException", "java.lang", TypeException.Kind.STATE, null),
+				new TypeException("IndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY, null),
+				new TypeException("ArrayIndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY, null),
+				new TypeException("StringIndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY, null),
+				new TypeException("NegativeArraySizeException", "java.lang", TypeException.Kind.ARRAYSIZE, null),
+				new TypeException("NullPointerException", "java.lang", TypeException.Kind.NULLREFERENCE, null),
+				new TypeException("SecurityException", "java.lang", TypeException.Kind.SECURITY, null),
+				new TypeException("TypeNotPresentException", "java.lang", TypeException.Kind.TYPE, null),
+				new TypeException("UnsupportedOperationException", "java.lang", TypeException.Kind.UNSUPORTED, null),
+				new TypeException("ClassNotFoundException", "java.lang", TypeException.Kind.CLASSNOTFOUND, null),
+				new TypeException("CloneNotSupportedException", "java.lang", TypeException.Kind.DEFAULT, null),
+				new TypeException("IllegalAccessException", "java.lang", TypeException.Kind.ACCESS, null),
+				new TypeException("InstantiationException", "java.lang", TypeException.Kind.NEWINSTANCE, null),
+				new TypeException("InterruptedException", "java.lang", TypeException.Kind.INTERUPT, null),
+				new TypeException("NoSuchFieldException", "java.lang", TypeException.Kind.NOSUCHFIELD, null),
+				new TypeException("NoSuchMethodException", "java.lang", TypeException.Kind.NOSUCHMETH, null)
+		);
+
 	}
 
 	/**
@@ -614,6 +653,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return TypeBool.INSTANCE;
 		} else if (typeName.equalsIgnoreCase("Byte")) {
 			return TypeByte.INSTANCE;
+		} else if (TypeException.contains(typeName)) {
+			return TypeException.get(typeName);
 		} else {
 			return new TypeClass(typeName);
 		}
@@ -706,7 +747,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitCatch(CatchTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+		VarDeclaration parameter = (VarDeclaration) n.getParameter().accept(this, context);
+		Block block = (Block) n.getBlock().accept(this, context);
+		return new Catch(parameter, block);
 	}
 	
 	@Override
@@ -770,12 +813,23 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitThrow(ThrowTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
+		Expression expression = (Expression) node.getExpression().accept(this, p);
+		return new Throw(expression);
 	}
 
 	@Override
 	public Object visitTry(TryTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
+		List<? extends CatchTree> javaCatches = node.getCatches();
+		List<Catch> catches = new ArrayList<Catch>();
+		for (CatchTree javaCatche: javaCatches) {
+			Catch catchstatelent = (Catch) (javaCatche.accept(this, p));
+			catches.add (catchstatelent);
+		}
+		Block block = (Block) node.getBlock().accept(this, p);
+		Block finilyBlock = new Block();
+		if (node.getFinallyBlock() != null)
+			finilyBlock = (Block) node.getFinallyBlock().accept(this, p);
+		return new Try(catches, block, finilyBlock);
 	}
 
 	@Override
