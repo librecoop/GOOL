@@ -284,7 +284,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		// foreach-style loops defines a local variable, we register it
+		// foreach-style loops define a local variable, we register it
 		localIndentifiers.add(enhancedForLoop.getVarDec().getName());
 		if(enhancedForLoop.getExpression().getType() instanceof TypeMap)
 			return formatIndented("for %s in %s.iteritems():%1", enhancedForLoop.getVarDec().getName(),
@@ -487,7 +487,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (methodsNames.get(meth).equals(meth.getName())) {
 			prefix = formatIndented (
 					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
-					printMethParamsTypes(meth),
+					printMethParamsTypes(meth, ", "),
 					currentClass.getName(),
 					meth.isConstructor()?"__init__":meth.getName());
 			if (! meth.getParams().isEmpty())
@@ -535,10 +535,10 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * @param meth
 	 * @return the corresponding string
 	 */
-	private String printMethParamsTypes(Meth meth) {
+	private String printMethParamsTypes(Meth meth, String separator) {
 		String ret = "";
 		for (VarDeclaration p : meth.getParams()) {
-			ret += ", " + p.getType();
+			ret += separator + p.getType();
 		}
 		return ret;
 	}
@@ -943,7 +943,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 						methodsNames.put(m2, newName);
 						
 						block += formatIndented("%sif goolHelper.test_args(args%s):\n%-1self.%s(*args)\n",
-								first?"":"el", printMethParamsTypes(m2), newName);  
+								first?"":"el", printMethParamsTypes(m2, ", "), newName);  
 						first = false;
 					}
 					if (! method.getModifiers().contains(Modifier.PRIVATE) && ! method.isConstructor()) {
