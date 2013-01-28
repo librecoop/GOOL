@@ -71,6 +71,8 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
+import gool.ast.type.TypeException.Kind;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -888,19 +890,46 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(Throw throwStatement) {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override
 	public String getCode(Catch catchStatement) {
-		// TODO Auto-generated method stub
-		return null;
+		return formatIndented("except %s as %s:%1", catchStatement.getParameter().getType(), 
+				catchStatement.getParameter().getName(), catchStatement.getBlock());
 	}
 
 	@Override
 	public String getCode(Try tryStatement) {
-		// TODO Auto-generated method stub
-		return null;
+		String retour = formatIndented("try:%1", tryStatement.getBlock());
+		for (Catch c: tryStatement.getCatches()) {
+			retour += c;
+		}
+		retour += formatIndented("finally:%1", tryStatement.getFinilyBlock());
+		return retour;
+	}
+
+	@Override
+	public String getCode(TypeException typeException) {
+		String retour = "";
+		if (typeException.getKind() == TypeException.Kind.GLOBAL || typeException.getKind() == TypeException.Kind.DEFAULT) {
+			retour = "BaseException";
+		} else if (typeException.getKind() == TypeException.Kind.ARITHMETIC) {
+			retour = "ArithmeticError";
+		} else if (typeException.getKind() == TypeException.Kind.COLLECTION) {
+			retour = "LookupError";
+		} else if (typeException.getKind() == TypeException.Kind.CAST) {
+			retour = "ValueError";
+//		} else if (typeException.getKind() == TypeException.Kind.ENUM) {
+//			retour = "BaseException";
+//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
+//			retour = "BaseException";
+//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
+//			retour = "BaseException";
+//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
+//			retour = "BaseException";
+		}
+		return retour;
 	}
 
 }

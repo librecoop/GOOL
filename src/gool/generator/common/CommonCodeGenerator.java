@@ -568,7 +568,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(TypeException typeException) {
-		
+		return "";
 	}
 	
 }

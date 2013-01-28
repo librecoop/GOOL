@@ -30,6 +30,8 @@ public class TypeException extends IType {
 	 */
 	private String name;
 	
+	private String module;
+	
 	/**
 	 * The kind of exception, 'CUSTOM' for non language specified exceptions
 	 */
@@ -45,19 +47,21 @@ public class TypeException extends IType {
 	 */
 	static private HashMap<String,TypeException> exceptions = new HashMap<String,TypeException>();
 	
-	public TypeException(String name, Kind kind, Node descriptor) {
+	public TypeException(String name, String module, Kind kind, Node descriptor) {
 		this.name = name;
+		this.module = module;
 		this.kind = kind;
 		this.descriptor = descriptor;
 	}
 	
 	static public void add(TypeException exception) {
 		exceptions.put(exception.getName(), exception);
+		exceptions.put(exception.getModule() + "." + exception.getName(), exception);
 	}
 	
 	static public void add (TypeException... args) {
 		for (TypeException exception : args)
-			exceptions.put(exception.getName(), exception);
+			add(exception);
 	}
 	
 	static public TypeException get(String name) {
@@ -80,5 +84,13 @@ public class TypeException extends IType {
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
+	}
+
+	public static boolean contains(String typeName) {
+		return exceptions.containsKey(typeName);
+	}
+
+	public String getModule() {
+		return module;
 	}
 }

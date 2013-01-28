@@ -265,32 +265,32 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// register standard exceptions
 		// TODO: only exception from java.lang are registered for now
 		TypeException.add(
-				new TypeException("Exception", TypeException.Kind.GLOBAL, null),
-				new TypeException("RuntimeException", TypeException.Kind.GLOBAL, null),
-				new TypeException("ArithmeticException", TypeException.Kind.ARITHMETIC, null),
-				new TypeException("ArrayStoreException", TypeException.Kind.COLLECTION, null),
-				new TypeException("ClassCastException", TypeException.Kind.CAST, null),
-				new TypeException("EnumConstantNotPresentException", TypeException.Kind.ENUM, null),
-				new TypeException("IllegalArgumentException", TypeException.Kind.ARGUMENT, null),
-				new TypeException("IllegalThreadStateException", TypeException.Kind.ARGUMENT, null),
-				new TypeException("NumberFormatException", TypeException.Kind.ARGUMENT, null),
-				new TypeException("IllegalMonitorStateException", TypeException.Kind.THREAD, null),
-				new TypeException("IllegalStateException", TypeException.Kind.STATE, null),
-				new TypeException("IndexOutOfBoundsException", TypeException.Kind.ARRAY, null),
-				new TypeException("ArrayIndexOutOfBoundsException", TypeException.Kind.ARRAY, null),
-				new TypeException("StringIndexOutOfBoundsException", TypeException.Kind.ARRAY, null),
-				new TypeException("NegativeArraySizeException", TypeException.Kind.ARRAYSIZE, null),
-				new TypeException("NullPointerException", TypeException.Kind.NULLREFERENCE, null),
-				new TypeException("SecurityException", TypeException.Kind.SECURITY, null),
-				new TypeException("TypeNotPresentException", TypeException.Kind.TYPE, null),
-				new TypeException("UnsupportedOperationException", TypeException.Kind.UNSUPORTED, null),
-				new TypeException("ClassNotFoundException", TypeException.Kind.CLASSNOTFOUND, null),
-				new TypeException("CloneNotSupportedException", TypeException.Kind.DEFAULT, null),
-				new TypeException("IllegalAccessException", TypeException.Kind.ACCESS, null),
-				new TypeException("InstantiationException", TypeException.Kind.NEWINSTANCE, null),
-				new TypeException("InterruptedException", TypeException.Kind.INTERUPT, null),
-				new TypeException("NoSuchFieldException", TypeException.Kind.NOSUCHFIELD, null),
-				new TypeException("NoSuchMethodException", TypeException.Kind.NOSUCHMETH, null)
+				new TypeException("Exception", "java.lang", TypeException.Kind.GLOBAL, null),
+				new TypeException("RuntimeException", "java.lang", TypeException.Kind.GLOBAL, null),
+				new TypeException("ArithmeticException", "java.lang", TypeException.Kind.ARITHMETIC, null),
+				new TypeException("ArrayStoreException", "java.lang", TypeException.Kind.COLLECTION, null),
+				new TypeException("ClassCastException", "java.lang", TypeException.Kind.CAST, null),
+				new TypeException("EnumConstantNotPresentException", "java.lang", TypeException.Kind.ENUM, null),
+				new TypeException("IllegalArgumentException", "java.lang", TypeException.Kind.ARGUMENT, null),
+				new TypeException("IllegalThreadStateException", "java.lang", TypeException.Kind.ARGUMENT, null),
+				new TypeException("NumberFormatException", "java.lang", TypeException.Kind.ARGUMENT, null),
+				new TypeException("IllegalMonitorStateException", "java.lang", TypeException.Kind.THREAD, null),
+				new TypeException("IllegalStateException", "java.lang", TypeException.Kind.STATE, null),
+				new TypeException("IndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY, null),
+				new TypeException("ArrayIndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY, null),
+				new TypeException("StringIndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY, null),
+				new TypeException("NegativeArraySizeException", "java.lang", TypeException.Kind.ARRAYSIZE, null),
+				new TypeException("NullPointerException", "java.lang", TypeException.Kind.NULLREFERENCE, null),
+				new TypeException("SecurityException", "java.lang", TypeException.Kind.SECURITY, null),
+				new TypeException("TypeNotPresentException", "java.lang", TypeException.Kind.TYPE, null),
+				new TypeException("UnsupportedOperationException", "java.lang", TypeException.Kind.UNSUPORTED, null),
+				new TypeException("ClassNotFoundException", "java.lang", TypeException.Kind.CLASSNOTFOUND, null),
+				new TypeException("CloneNotSupportedException", "java.lang", TypeException.Kind.DEFAULT, null),
+				new TypeException("IllegalAccessException", "java.lang", TypeException.Kind.ACCESS, null),
+				new TypeException("InstantiationException", "java.lang", TypeException.Kind.NEWINSTANCE, null),
+				new TypeException("InterruptedException", "java.lang", TypeException.Kind.INTERUPT, null),
+				new TypeException("NoSuchFieldException", "java.lang", TypeException.Kind.NOSUCHFIELD, null),
+				new TypeException("NoSuchMethodException", "java.lang", TypeException.Kind.NOSUCHMETH, null)
 		);
 
 	}
@@ -607,6 +607,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return TypeBool.INSTANCE;
 		} else if (typeName.equalsIgnoreCase("Byte")) {
 			return TypeByte.INSTANCE;
+		} else if (TypeException.contains(typeName)) {
+			return TypeException.get(typeName);
 		} else {
 			return new TypeClass(typeName);
 		}
