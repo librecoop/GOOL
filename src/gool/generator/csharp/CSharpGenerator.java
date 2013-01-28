@@ -95,12 +95,13 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(TypeBool typeBool) {
 		return "bool";
 	}
-	
+
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		if (!(binaryOp.getLeft() instanceof Constant) && binaryOp.getOperator() == Operator.EQUAL) {
-			return String.format("%s.Equals(%s)", binaryOp.getLeft(), binaryOp
-					.getRight());
+		if (!(binaryOp.getLeft() instanceof Constant)
+				&& binaryOp.getOperator() == Operator.EQUAL) {
+			return String.format("%s.Equals(%s)", binaryOp.getLeft(),
+					binaryOp.getRight());
 		} else {
 			return super.getCode(binaryOp);
 		}
@@ -117,12 +118,12 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	}
 
 	/**
-	 * Produces code for an object instantiation.
-	 * Special cases for new string and IO where the java and c# arguments differ
+	 * Produces code for an object instantiation. Special cases for new string
+	 * and IO where the java and c# arguments differ
 	 * 
 	 * @param classNew
 	 *            the object instantiation node.
-	 * @return the formatted object instantiation. 
+	 * @return the formatted object instantiation.
 	 */
 	public String getCode(ClassNew classNew) {
 		if(classNew.getType() instanceof TypeString) {
@@ -134,9 +135,23 @@ public class CSharpGenerator extends CommonCodeGenerator {
 					.joinParams(classNew.getParameters()));			
 		}
 		//Checks whether the FileStream is of type write or read as c# is the same type of object.
+		//Also depending on arguments map it to the correct Mode append or overwrite 
+		//Be careful with below if statement order is important to prevent checking the 2nd parameter if there is none!
 		else if (classNew.getType() instanceof TypeFileWriter) {
-			return String.format("new %s( %s, FileMode.Create )", classNew.getName(), GeneratorHelper
-						.joinParams(classNew.getParameters()));					
+			if(classNew.getParameters().size() == 2)  {
+				if(classNew.getParameters().get(1).toString().equals("true") ) {
+					return String.format("new %s( %s, FileMode.Append )", classNew.getName(), classNew.getParameters().get(0));
+				}
+				else {
+					return String.format("new %s( %s, FileMode.Create )", classNew.getName(), classNew.getParameters().get(0));
+				}
+				
+			}
+			else {					
+				return String.format("new %s( %s, FileMode.Create )", classNew.getName(), GeneratorHelper
+						.joinParams(classNew.getParameters()));
+			}
+						
 								
 		}
 		else if (classNew.getType() instanceof TypeFileReader) {
@@ -154,7 +169,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(TypeString typeString) {
 		return "string";
 	}
-	
+
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "char";
@@ -168,32 +183,32 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ListAddCall lac) {
 		String method = lac.getParameters().size() > 1 ? "Insert" : "Add";
-		return String.format("%s.%s(%s)", lac.getExpression(), method, GeneratorHelper
-				.joinParams(lac.getParameters()));
+		return String.format("%s.%s(%s)", lac.getExpression(), method,
+				GeneratorHelper.joinParams(lac.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		return String.format("%s.Remove(%s)", lrc.getExpression(), GeneratorHelper
-				.joinParams(lrc.getParameters()));
+		return String.format("%s.Remove(%s)", lrc.getExpression(),
+				GeneratorHelper.joinParams(lrc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("%s.RemoveAt(%s)", lrc.getExpression(), GeneratorHelper
-				.joinParams(lrc.getParameters()));
+		return String.format("%s.RemoveAt(%s)", lrc.getExpression(),
+				GeneratorHelper.joinParams(lrc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s.Contains(%s)", lcc.getExpression(), GeneratorHelper
-				.joinParams(lcc.getParameters()));
+		return String.format("%s.Contains(%s)", lcc.getExpression(),
+				GeneratorHelper.joinParams(lcc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s[%s]", lgc.getExpression(), GeneratorHelper
-				.joinParams(lgc.getParameters()));
+		return String.format("%s[%s]", lgc.getExpression(),
+				GeneratorHelper.joinParams(lgc.getParameters()));
 	}
 
 	@Override
@@ -214,7 +229,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeDependency typeDependency) {
 		if (typeDependency.getType() instanceof TypeList) {
-			if (((TypeList)typeDependency.getType()).getElementType() == null) {
+			if (((TypeList) typeDependency.getType()).getElementType() == null) {
 				return "System.Collections";
 			}
 			return "System.Collections.Generic";
@@ -234,34 +249,31 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeInt) {
 			return "noprint";
 		}
-		if (typeDependency.getType() instanceof TypeClass ) {
+		if (typeDependency.getType() instanceof TypeClass) {
 			return "noprint";
 		}
-		if (typeDependency.getType() instanceof TypeFileWriter ) {
+		if (typeDependency.getType() instanceof TypeFileWriter) {
 			return "System.IO";
 		}
-		if (typeDependency.getType() instanceof TypeFileReader ) {
+		if (typeDependency.getType() instanceof TypeFileReader) {
 			return "System.IO";
 		}
-		if (typeDependency.getType() instanceof TypeException ) {
+		if (typeDependency.getType() instanceof TypeException) {
 			return "System";
 		}
 		if (typeDependency.getType() instanceof TypeFile) {
 			return "System.IO";
 		}
-		if (typeDependency.getType() instanceof TypeBufferedWriter ) {
+		if (typeDependency.getType() instanceof TypeBufferedWriter) {
 			return "System.IO";
 		}
-		if (typeDependency.getType() instanceof TypeBufferedReader ) {
+		if (typeDependency.getType() instanceof TypeBufferedReader) {
 			return "System.IO";
 		}
-		
-		
-		
-		
+
 		return super.getCode(typeDependency);
 	}
-	
+
 	@Override
 	public String getCode(ClassDef classDef) {
 		if (classDef.getPpackage() == null) {
@@ -290,8 +302,8 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("Console.WriteLine(%s)", GeneratorHelper
-				.joinParams(systemOutPrintCall.getParameters()));
+		return String.format("Console.WriteLine(%s)",
+				GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
 	}
 
 	@Override
@@ -319,8 +331,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 		customizeModifiers(meth);
 
-		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()), meth
-				.getType(), name, GeneratorHelper.joinParams(meth.getParams()));
+		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()),
+				meth.getType(), name,
+				GeneratorHelper.joinParams(meth.getParams()));
 	}
 
 	private void customizeModifiers(Meth meth) {
@@ -343,7 +356,10 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		if (meth.getModifiers().contains(Modifier.PUBLIC) && meth.isInherited()) {
 			if (name.equals("toString") && meth.getParams().isEmpty()) {
 				return "ToString";
-			} else if (name.equals("equals") && meth.getParams().size()==1&&meth.getParams().get(0).getType().equals(TypeObject.INSTANCE)) {
+			} else if (name.equals("equals")
+					&& meth.getParams().size() == 1
+					&& meth.getParams().get(0).getType()
+							.equals(TypeObject.INSTANCE)) {
 				return "Equals";
 			} else if (name.equals("hashCode") && meth.getParams().isEmpty()) {
 				return "GetHashCode";
@@ -391,7 +407,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
-		return String.format("%s[%s] = %s", mapPutCall.getExpression(), mapPutCall.getParameters().get(0), mapPutCall.getParameters().get(1));
+		return String.format("%s[%s] = %s", mapPutCall.getExpression(),
+				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
+						.get(1));
 	}
 
 	@Override
@@ -401,21 +419,21 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		return String.format("(%s.GetIterator() == 0)", mapGetIteratorCall
-				.getExpression());
+		return String.format("(%s.GetIterator() == 0)",
+				mapGetIteratorCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String.format("%s[%s]", mapGetCall.getExpression(), GeneratorHelper
-				.joinParams(mapGetCall.getParameters()));
+		return String.format("%s[%s]", mapGetCall.getExpression(),
+				GeneratorHelper.joinParams(mapGetCall.getParameters()));
 	}
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
-		return String.format("%s.ContainsKey(%s)", mapContainsKeyCall
-				.getExpression(), GeneratorHelper.joinParams(mapContainsKeyCall
-				.getParameters()));
+		return String.format("%s.ContainsKey(%s)",
+				mapContainsKeyCall.getExpression(),
+				GeneratorHelper.joinParams(mapContainsKeyCall.getParameters()));
 	}
 
 	@Override
@@ -426,9 +444,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return String.format("foreach(%s in %s){%s}", enhancedForLoop
-				.getVarDec(), enhancedForLoop.getExpression(), enhancedForLoop
-				.getStatements());
+		return String.format("foreach(%s in %s){%s}",
+				enhancedForLoop.getVarDec(), enhancedForLoop.getExpression(),
+				enhancedForLoop.getStatements());
 	}
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
@@ -436,15 +454,14 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(CustomDependency customDependency) {
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			throw new IllegalArgumentException(
-					String
-							.format(
-									"There is no equivalent type in C# for the GOOL type '%s'.",
-									customDependency.getName()));
+					String.format(
+							"There is no equivalent type in C# for the GOOL type '%s'.",
+							customDependency.getName()));
 		}
 
 		Dependency dependency = customDependencies.get(customDependency
 				.getName());
-		
+
 		if (dependency instanceof ClassDef) { // It is already a package.
 			// Return only the package. C# does not support individual class
 			// importation.
@@ -477,8 +494,8 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		return String.format("%s.Equals(%s)", equalsCall.getTarget(), GeneratorHelper
-				.joinParams(equalsCall.getParameters()));
+		return String.format("%s.Equals(%s)", equalsCall.getTarget(),
+				GeneratorHelper.joinParams(equalsCall.getParameters()));
 	}
 
 	@Override
@@ -501,7 +518,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(TypeFile typeFile) {
 		return "string";
 	}
-	
+
 	@Override
 	public String getCode(TypeFileReader typeFileReader) {
 		return "FileStream";
@@ -524,53 +541,60 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
-		return String.format("%s.ReadLine()", bufferedReaderReadLineCall.getExpression());
+		return String.format("%s.ReadLine()",
+				bufferedReaderReadLineCall.getExpression());
 	}
-	
 
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
-		return String.format("%s.Read()", bufferedReaderReadCall.getExpression());
+		return String.format("%s.Read()",
+				bufferedReaderReadCall.getExpression());
 	}
-	
+
 	@Override
 	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
-		return String.format("%s.Close()", bufferedReaderCloseCall.getExpression());
+		return String.format("%s.Close()",
+				bufferedReaderCloseCall.getExpression());
 	}
-	
+
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
-		List<String> tempList = new ArrayList<String>(); 
-		for(Expression expression: bufferedWriterWriteCall.getParameters()) {
-			if(expression instanceof Constant && expression.getType() instanceof TypeInt) {
+		List<String> tempList = new ArrayList<String>();
+		for (Expression expression : bufferedWriterWriteCall.getParameters()) {
+			if (expression instanceof Constant
+					&& expression.getType() instanceof TypeInt) {
 				char tempChar = (char) Integer.parseInt(expression.toString());
-				tempList.add("\""+String.valueOf(tempChar)+"\"");
-			}
-			else {
+				tempList.add("\"" + String.valueOf(tempChar) + "\"");
+			} else {
 				tempList.add(expression.toString());
 			}
 		}
-		//StringUtils.join(bufferedWriterWriteCall.getParameters(), ",");
-		return String.format("%s.Write(%s)", bufferedWriterWriteCall.getExpression(),StringUtils.join(tempList, ","));
+		// StringUtils.join(bufferedWriterWriteCall.getParameters(), ",");
+		return String.format("%s.Write(%s)",
+				bufferedWriterWriteCall.getExpression(),
+				StringUtils.join(tempList, ","));
 	}
-	
 
 	@Override
 	public String getCode(BufferedWriterCloseCall bufferedWriterCloseCall) {
-		return String.format("%s.Close()", bufferedWriterCloseCall.getExpression());
+		return String.format("%s.Close()",
+				bufferedWriterCloseCall.getExpression());
 	}
-	
+
 	@Override
 	public String getCode(BufferedWriterFlushCall bufferedWriterFlushCall) {
-		
-		return String.format("%s.Flush()", bufferedWriterFlushCall.getExpression());
+
+		return String.format("%s.Flush()",
+				bufferedWriterFlushCall.getExpression());
 	}
+
 	@Override
 	public String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall) {
-		//return "Environment.NewLine";
-		return String.format("%s.WriteLine(\"\")", bufferedWriterNewLineCall.getExpression());
+		// return "Environment.NewLine";
+		return String.format("%s.WriteLine(\"\")",
+				bufferedWriterNewLineCall.getExpression());
 	}
-	
+
 	@Override
 	public String getCode(BufferedWriterMethCall bufferedWriterMethCall) {
 		// TODO Auto-generated method stub
@@ -582,24 +606,29 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public String getCode(FileMethCall fileMethCall) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
 	public String getCode(FileIsDirectoryCall fileIsDirectoryCall) {
-		return String.format("Directory.Exists(%s)", fileIsDirectoryCall.getExpression());
+		return String.format("Directory.Exists(%s)",
+				fileIsDirectoryCall.getExpression());
 	}
+
 	@Override
 	public String getCode(FileIsFileCall fileIsFileCall) {
 		return String.format("File.Exists(%s)", fileIsFileCall.getExpression());
 	}
+
 	@Override
 	public String getCode(FileDeleteCall fileDeleteCall) {
 		return String.format("File.Delete(%s)", fileDeleteCall.getExpression());
 	}
+
 	@Override
 	public String getCode(FileExistsCall fileExistsCall) {
 		return String.format("File.Exists(%s)", fileExistsCall.getExpression());
@@ -614,18 +643,18 @@ public class CSharpGenerator extends CommonCodeGenerator {
 			if (!(statement instanceof Block)) {
 				result.append(";").append("\n");
 			}
-			
+
 		}
-		result.append("\n}"); //closing bracket
+		result.append("\n}"); // closing bracket
 		for (Catch c : t.getCatches()) {
-			result.append(getCode(c));		
-			
+			result.append(getCode(c));
+
 		}
 		return result.toString();
 	}
-	
+
 	@Override
-	public String getCode(Catch c ) {
+	public String getCode(Catch c) {
 		StringBuilder result = new StringBuilder();
 		result.append("\n catch(");
 		result.append(c.getSingleParameter());
@@ -635,11 +664,11 @@ public class CSharpGenerator extends CommonCodeGenerator {
 			if (!(statement instanceof Block)) {
 				result.append(";").append("\n");
 			}
-			
+
 		}
-		
+
 		result.append("\n}");
 		return result.toString();
 	}
-	
+
 }

@@ -375,13 +375,33 @@ public class GoolTest {
 	}
 
 	@Test
-	public void simpleFileTest() throws Exception {
-		String input = "import gool.imports.java.io.File;\n"
-				+ TestHelper.surroundWithClassMain(
-						"File f = new File(\"../../../a.txt\");", MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "");
+	public void fileTestAppend() throws Exception {
+		//String readFile = Settings.get("read_file_path");
+		//String readFile = Settings.get("read_file_path");
+		String writeFile = Settings.get("write_file_path");
+		String input = "import gool.imports.java.io.BufferedReader;\n"
+				+ "import gool.imports.java.io.FileReader;\n"
+				+ "import gool.imports.java.io.FileWriter;\n"
+				+ "import gool.imports.java.io.BufferedWriter;\n"
+				+ "import gool.imports.java.io.File;\n"
+				+ TestHelper
+						.surroundWithClassMain(
+								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
+										+"BufferedWriter bw = new BufferedWriter(new FileWriter(\""+writeFile+"\")); \n"
+										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
+										+"BufferedWriter bw2 = new BufferedWriter(new FileWriter(\""+writeFile+"\", true)); \n"
+										+"bw2.write(\"write2\");  \n bw2.flush(); \n bw2.close(); \n"
+										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
+										+" String testString = br.readLine(); \n"
+										+" testString = testString + br.readLine(); \n"
+										+"br.close();\n"
+										+"  \n System.out.println(testString);\n "
+								
+								
+								+"} catch(Exception ex) \n {ex.toString();}",
+								MAIN_CLASS_NAME);
+		compareResultsDifferentPlatforms(input, "line1Awrite2");
 	}
-
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected));
