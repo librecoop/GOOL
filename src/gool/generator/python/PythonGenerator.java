@@ -900,7 +900,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\nimport goolHelperUtil\n\n");
+		StringBuilder code = new StringBuilder (
+				"#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelper.IO\nimport goolHelper.Util\n\n");
 		
 		// Printing the imports.
 		// This is not the best way to write it in Python, but doing it right

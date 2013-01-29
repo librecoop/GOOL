@@ -16,20 +16,22 @@ import logger.Log;
 
 public class PythonCodePrinter extends CodePrinter {
 	
-	public PythonCodePrinter(File outputDir) {
-		super(new PythonGenerator(), outputDir);
-		//Helpers to create
-		// create goolHelper.py by copying the resource
+	private void createGoolHelperModule(File outputDir) {
 		FileOutputStream goolHelperOut;
 		byte[] buffer = new byte[1024];
-
-		List<String> goolHelperIn = new ArrayList<String>();
 		int noOfBytes;
-		goolHelperIn.add("goolHelper.py");
-		goolHelperIn.add("goolHelperIO.py");
-		goolHelperIn.add("goolHelperUtil.py");
 
-		//Print helpers
+		// Helpers to create by copying the resource
+		List<String> goolHelperIn = new ArrayList<String>();
+		goolHelperIn.add("goolHelper/__init__.py");
+		goolHelperIn.add("goolHelper/IO.py");
+		goolHelperIn.add("goolHelper/Util.py");
+		
+		// create the directory
+		if (! new File(outputDir+"/goolHelper").mkdirs())
+			Log.e(String.format("Impossible to create the module '%s/goolHelper'", outputDir));
+
+		// Print helpers
 		for(String in : goolHelperIn) {
 			InputStream helper;
 			try {
@@ -45,6 +47,12 @@ public class PythonCodePrinter extends CodePrinter {
 				Log.e(e);
 			}
 		}
+		
+	}
+	
+	public PythonCodePrinter(File outputDir) {
+		super(new PythonGenerator(), outputDir);
+		createGoolHelperModule(outputDir);
 	}
 	
 	@Override
