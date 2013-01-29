@@ -587,7 +587,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (localIndentifiers.contains(name)) {
 			return name;
 		} else {
-			if (currentMeth.isMainMethod())
+			if (currentMeth!=null && currentMeth.isMainMethod())
 				return currentClass.getName() + "." + name;
 			else
 				return "self." + name;
@@ -600,7 +600,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)) {
 			name = name.replaceFirst("^__", "");
 			// we are cheating Python to access private members out of their parent class
-			if (currentMeth.isMainMethod())
+			if (currentMeth != null && currentMeth.isMainMethod())
 				name = String.format("_%s__%s", currentClass.getName(), name);
 			else
 				name = "__" + name;
@@ -1094,38 +1094,27 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(TypeException typeException) {
-		String retour = "";
 		switch (typeException.getKind()) {
 		case GLOBAL:
-			retour = "BaseException";
-			break;
+			return "BaseException";
 		case ARITHMETIC:
-			retour = "ArithmeticError";
-			break;
+			return "ArithmeticError";
 		case COLLECTION:
-			retour = "LookupError";
-			break;
+			return "LookupError";
 		case CAST:
-			retour = "ValueError";
-			break;
+			return "ValueError";
 		case ARGUMENT:
-			retour = "AttributeError";
-			break;
+			return "AttributeError";
 		case ARRAY:
-			retour = "IndexError";
-			break;
+			return "IndexError";
 		case TYPE:
-			retour = "TypeError";
-			break;
+			return "TypeError";
 		// in Python, 'None' is an object but it does'nt have many methods
 		case NULLREFERENCE:
-			retour = "AttributeError";
-			break;
+			return "AttributeError";
 		default:
-			retour = typeException.getName();
-			break;
+			return typeException.getName();
 		}
-		return retour;
 	}
 
 }
