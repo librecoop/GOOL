@@ -1078,20 +1078,35 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(TypeException typeException) {
 		String retour = "";
-		if (typeException.getKind() == TypeException.Kind.GLOBAL || typeException.getKind() == TypeException.Kind.DEFAULT) {
+		switch (typeException.getKind()) {
+		case GLOBAL:
 			retour = "BaseException";
-		} else if (typeException.getKind() == TypeException.Kind.ARITHMETIC) {
+			break;
+		case ARITHMETIC:
 			retour = "ArithmeticError";
-		} else if (typeException.getKind() == TypeException.Kind.COLLECTION) {
+			break;
+		case COLLECTION:
 			retour = "LookupError";
-		} else if (typeException.getKind() == TypeException.Kind.CAST) {
+			break;
+		case CAST:
 			retour = "ValueError";
-//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
-//			retour = "BaseException";
-//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
-//			retour = "BaseException";
-//		} else if (typeException.getKind() == TypeException.Kind.GLOBAL) {
-//			retour = "BaseException";
+			break;
+		case ARGUMENT:
+			retour = "AttributeError";
+			break;
+		case ARRAY:
+			retour = "IndexError";
+			break;
+		case TYPE:
+			retour = "TypeError";
+			break;
+		// in Python, 'None' is an object but it does'nt have many methods
+		case NULLREFERENCE:
+			retour = "AttributeError";
+			break;
+		default:
+			retour = typeException.getName();
+			break;
 		}
 		return retour;
 	}

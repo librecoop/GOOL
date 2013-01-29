@@ -43,11 +43,13 @@ public class GOOLCompiler {
 			Log.i(files.toString());
 			GOOLCompiler gc = new GOOLCompiler();
 			
+
 		//	gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
+
 			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
-//			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
+			//gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
 
 		} catch (Exception e) {
 			Log.e(e);
