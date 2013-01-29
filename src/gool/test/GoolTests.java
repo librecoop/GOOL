@@ -36,12 +36,14 @@ public class GoolTests {
 	//Platforms to be tested
 	private static List<Platform> platforms = Arrays.asList((Platform)JavaPlatform.getInstance(),/*CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
 
+	private String name;
 	private Platform platform;
 	private File dir;	//Folder for the test
 	private Asserts asserts;	//Asserts object containing information on the result expected
 
 
-	public GoolTests(Platform p, File dir, Asserts a) {
+	public GoolTests(String name, Platform p, File dir, Asserts a) {
+		this.name = name;
 		this.dir = dir;
 		asserts = a;
 		platform = p;
