@@ -23,6 +23,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.FileMethCall;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
@@ -651,6 +652,8 @@ public class CSharpGenerator extends CommonCodeGenerator {
 			result.append(getCode(c));
 
 		}
+		result.append(t.getFinallyBlock());
+		
 		return result.toString();
 	}
 
@@ -676,6 +679,21 @@ public class CSharpGenerator extends CommonCodeGenerator {
 	public String getCode(TypeIOException typeIOException) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getCode(Finally f) {
+		StringBuilder result = new StringBuilder();
+		result.append("\n finally {\n");
+		for (Statement statement : f.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("\n}");
+		return result.toString();
 	}
 
 }
