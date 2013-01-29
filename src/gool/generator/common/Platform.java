@@ -96,6 +96,10 @@ public abstract class Platform extends PrimitiveType {
 		return codePrinter;
 	}
 	
+	public void reInitializeCodePrinter() {
+		codePrinter = initializeCodeWriter();
+	}
+	
 	public void setCompiler(SpecificCompiler compiler) {
 		this.compiler = compiler;
 	}
@@ -129,6 +133,4 @@ public abstract class Platform extends PrimitiveType {
 	public String callGetCode() {
 		return codePrinter.getCodeGenerator().getCode(this);
 	}
-
-
 }

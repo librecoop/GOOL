@@ -1,7 +1,5 @@
 package gool.ast.type;
 
-import java.io.InputStream;
-
 import gool.ast.constructs.ClassDef;
 import gool.generator.GoolGeneratorController;
 

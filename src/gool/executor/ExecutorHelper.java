@@ -15,6 +15,8 @@ import java.util.Map.Entry;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
+import logger.Log;
+
 import org.apache.commons.lang.StringUtils;
 
 public final class ExecutorHelper {
@@ -46,7 +48,7 @@ public final class ExecutorHelper {
 		StringBuilder result = new StringBuilder();
 
 		List<File> compiledFiles = ExecutorHelper.compile(files);
-		System.out.println(compiledFiles);
+		Log.i(compiledFiles.toString());
 		result.append(platform.getCompiler().run(compiledFiles.get(0)));
 		return result.toString();
 	}
