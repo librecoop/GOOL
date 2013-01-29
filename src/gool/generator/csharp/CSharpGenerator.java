@@ -272,6 +272,9 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeBufferedReader) {
 			return "System.IO";
 		}
+		if (typeDependency.getType() instanceof TypeIOException) {
+			return "System.IO";
+		}
 
 		return super.getCode(typeDependency);
 	}
@@ -680,8 +683,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeIOException typeIOException) {
-		// TODO Auto-generated method stub
-		return null;
+		return "IOException";
 	}
 
 	@Override

@@ -289,6 +289,9 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeBufferedWriter) {
 			return "java.io.BufferedWriter";
 		}
+		if (typeDependency.getType() instanceof TypeIOException) {
+			return "java.io.IOException";
+		}
 		return super.getCode(typeDependency);
 	}
 
@@ -504,8 +507,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeIOException typeIOException) {
-		// TODO Auto-generated method stub
-		return null;
+		return "IOException";
 	}
 
 	@Override

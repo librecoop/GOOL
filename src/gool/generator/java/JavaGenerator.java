@@ -517,7 +517,7 @@ public class JavaGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(TypeIOException typeIOException) {
-		// TODO Auto-generated method stub
+		
 		return "IOException";
 	}
 	

@@ -57,7 +57,7 @@ public class GoolTest {
 	private List<Platform> platforms = Arrays.asList(
 			JavaPlatform.getInstance(), //CppPlatform.getInstance(),
 			CSharpPlatform.getInstance()
-			, AndroidPlatform.getInstance()
+			//, AndroidPlatform.getInstance()
 			);
 
 	// private List<Platform> platforms =
@@ -70,12 +70,14 @@ public class GoolTest {
 	@Test
 	public void helloWorld() throws Exception {
 		String input = TestHelper.surroundWithClassMain(
-				//"try {\n " +
+				"try {\n " +
 				"String myString = new String(\"ja\"); \n" +
 				"System.out.println(\"Hello World\");" 
-						+"\n "//}  //catch(Exception testExcep) {\n System.out.println(testExcep.toString());\n }" 
+				+"throw new Exception(\"throwing...\");\n"
+						+"\n }  catch(Exception testExcep) {\n System.out.println(testExcep.toString());\n }"
+				+" finally {\n System.out.println(\"Finally1\");\n System.out.println(\"Finally2\");\n}"
 				, MAIN_CLASS_NAME);
-		String expected = "Hello World";
+		String expected = "Hello WorldFinally1Finally2";
 		logger.info("START: HELLO WORLD test, expected value: "+expected);
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -327,6 +329,7 @@ public class GoolTest {
 				+ "import gool.imports.java.io.FileWriter;\n"
 				+ "import gool.imports.java.io.BufferedWriter;\n"
 				+ "import gool.imports.java.io.File;\n"
+				+ "import gool.imports.java.io.IOException;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
@@ -338,7 +341,7 @@ public class GoolTest {
 										+"  \n System.out.println(testString+c);\n "
 								
 								
-								+"} catch(Exception ex) \n {ex.toString();}",
+								+"} catch(IOException iox) \n { iox.toString();} \n catch(Exception ex) \n {ex.toString();}\n",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1A");
 	}
