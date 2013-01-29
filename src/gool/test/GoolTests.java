@@ -50,7 +50,7 @@ public class GoolTests {
 	}
 	
 	//Create the list of tests
-	@Parameters(name="{1}") //Available to properly name tests in JUnit 4.11
+	@Parameters(name="{0}") //Available to properly name tests in JUnit 4.11
 	public static Collection<Object[]> data() {
 		Map<File, Asserts> tests = new HashMap<File, Asserts>();
 		String test_dir = Settings.get("test_dir");	//Directory containing the tests
@@ -74,7 +74,7 @@ public class GoolTests {
 			int i=0;
 			for(Map.Entry<File, Asserts> test : tests.entrySet()) {
 				for(Platform platform : platforms) {
-					data[i++] = new Object[] { platform, test.getKey(), test.getValue() };
+					data[i++] = new Object[] { test.getKey().getName() + " / " + platform.getName(), platform, test.getKey(), test.getValue() };
 				}
 			}
 			
