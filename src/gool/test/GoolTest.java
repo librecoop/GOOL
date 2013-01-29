@@ -1,6 +1,7 @@
 package gool.test;
 
 import gool.generator.common.Platform;
+import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public class GoolTest {
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms =
 
-	 Arrays.asList((Platform)/*JavaPlatform.getInstance(),CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
+	 Arrays.asList((Platform)JavaPlatform.getInstance(),/*CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
 
 	@BeforeClass
 	public static void init() {

@@ -1,6 +1,7 @@
 package gool.test;
 
 import gool.GOOLCompiler;
+
 import gool.Settings;
 import gool.executor.ExecutorHelper;
 import gool.generator.common.Platform;
@@ -36,8 +37,8 @@ public class GoolTests {
 	//Platforms to be tested
 	private static List<Platform> platforms = Arrays.asList((Platform)JavaPlatform.getInstance(),/*CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
 
-	private String name;
-	private Platform platform;
+	private String name;	//Name of the test
+	private Platform platform;	//Platform for the test
 	private File dir;	//Folder for the test
 	private Asserts asserts;	//Asserts object containing information on the result expected
 
@@ -96,8 +97,7 @@ public class GoolTests {
 		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, inputFiles);
 
 		String result = ExecutorHelper.compileAndRun(platform, files);
-		
-		Assert.assertEquals(String.format("%s / plaftform: %s", dir.getName(), platform.getName()), asserts.getOutput(), result);
+		Assert.assertEquals(name, asserts.getOutput(), result);
 	}
 	
 	@After
@@ -152,6 +152,8 @@ class Asserts {
 			output = core.get("output", String.class);
 			if(output == null) {
 				output = "";
+			} else {
+				output = output.substring(1, output.length()-1);
 			}
 		} catch (InvalidFileFormatException e) {
 			Log.e(e);
