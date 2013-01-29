@@ -6,42 +6,102 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.util.List;
 
 public class MethodManager {
 	
-	private static class MethDef{
-		@SuppressWarnings("unused")
+	public static class Param{
 		public String name;
-		@SuppressWarnings("unused")
+		public String type;
+		
+		public String getName() {
+			return name;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public Param(String name, String type){
+			this.name = name;
+			this.type = type;
+		}
+	}
+	
+	public static class MethDef{
+		public String name;
+		public ArrayList<Param> param;
 		public String corps;
-		@SuppressWarnings("unused")
 		public String returnType;
-		@SuppressWarnings("unused")
 		public String comment;
 		
-		public MethDef(String name, String corps, String returnType, String comment) {
+		public String getName() {
+			return name;
+		}
+
+		public ArrayList<Param> getParam() {
+			return param;
+		}
+
+		public String getCorps() {
+			return corps;
+		}
+
+		public String getReturnType() {
+			return returnType;
+		}
+
+		public String getComment() {
+			return comment;
+		}
+		
+		public MethDef(String name, ArrayList<Param> param, String corps, String returnType, String comment) {
 			this.name = name;
 			this.corps = corps;
 			this.returnType = returnType;
 			this.comment = comment;
+			this.param = param;
 		}
+		
+		@Override
+		public int hashCode() {
+			return this.name.length()+this.corps.length();
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			MethDef m = (MethDef)obj;
+			return m.name.equals(this.name);
+		}		
 	}
 	
-	public static HashMap<String, MethDef> methPerso = new HashMap<String, MethDef>();
+	public static HashMap<String, HashSet<MethDef>> methPerso = new HashMap<String, HashSet<MethDef>>();
 	
-	public static void addMeth(String name, String corps, String library, String arg){
-		String retType = corps.substring(corps.indexOf(":")+1);
-		corps = corps.replaceAll("[$]arg", arg);
+	public static HashSet<MethDef> getMethInLib(String libName){
+		return methPerso.get(libName);
+	}
+	
+	public static void addMeth(String name, String corps, String library, ArrayList<String> typeParam){
+		String retType = corps.substring(corps.indexOf("#:")+2);
+		ArrayList<Param> param = new ArrayList<Param>();
+		for(int i=0;i<typeParam.size();i++){
+			param.add(new Param("p"+(i+1), typeParam.get(i)));
+		}
 		corps = corps.replaceAll("[$]s", " ");
 		corps = corps.replaceAll("[{}]", "");
-		corps = corps.substring(0,corps.indexOf(":"));
-		methPerso.put(library, new MethDef(name, corps, retType, "test comment"));
+		corps = corps.replaceAll("[;]", ";\n\t\t");
+		corps = corps.substring(0,corps.indexOf("#"));
+		
+		if(methPerso.get(library) == null)
+			methPerso.put(library, new HashSet<MethDef>());
+		MethDef m = new MethDef(name, param, corps, retType, "test comment");
+		methPerso.get(library).add(m);		
 	}
 
 	public static String getGeneralName(String formatedName, String methodLibrary, Language l){
@@ -70,7 +130,7 @@ public class MethodManager {
 		return res;
 	}
 	
-	public static String getGeneralName(String retType, String name, List<Type> list, String methodLibrary, Language l){
+	public static String getGeneralName(String retType, String name, List<String> list, String methodLibrary, Language l){
 		String formatedName = String.format("%s(%s) : %s", name, StringUtils.join(list, ", "), retType);		
 		return MethodManager.getGeneralName(formatedName, methodLibrary, l);
 	}
@@ -108,13 +168,11 @@ public class MethodManager {
 		return name.matches("[{].*[}].*");
 	}
 	
-	private static String getFileName(String language, String methodLibrary){
+	public static String getFileName(String language, String methodLibrary){
 		return "src/gool/methods/" + language.toLowerCase()+"/"+methodLibrary.toLowerCase()+".method";
 	}
 	
-	@SuppressWarnings("unused")
-	private static String getCommentFileName(String methodLibrary){
+	public static String getCommentFileName(String methodLibrary){
 		return "src/gool/methods/comment."+methodLibrary.toLowerCase()+".method";
-	}
-	
+	}	
 }

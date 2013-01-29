@@ -11,20 +11,20 @@ equalWithoutCase	=
 withFormat			=	stringWithFormat/format(String, Object...) : String
 toByte				=	dataUsingEncoding("NSUTF8StringEncoding") : byte[]
 toByteWithCharSet	=	
-firstIndexChar		=	{NSRange$srange$s=[$1$srangeOfString:[NSString$sstringWithFormat:@"%c",$2]$soptions:0$srange:NSMakeRange(0,$1$slength])];return$srange.location}(String,int): int 
-firstIndexCharFrom	=	{NSRange$srange$s=[$1$srangeOfString:[NSString$sstringWithFormat:@"%c",$2]$soptions:0$srange:NSMakeRange($3,$1$slength]-$3)];return$srange.location}(String,int,int) : int
-firstIndexStr		=	{NSRange$srange$s=[$1$srangeOfString:$2];return$srange.location}(String,String) : int
-firstIndexStrFrom	=	{NSRange$srange$s=[$1$srangeOfString:$2$soptions:0$srange:NSMakeRange($3,$1$slength]-$3)];return$srange.location}(String,String,int) : int
+firstIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(0,p1$slength])];return$srange.location;}#(String,int)#: int 
+firstIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}(String,int,int) : int
+firstIndexStr		=	{NSRange$srange$s=[p1$srangeOfString:p2];return$srange.location}(String,String) : int
+firstIndexStrFrom	=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location}(String,String,int) : int
 empty				=	{return$s[$arg$slength] == 0} (String): boolean
-lastIndexChar		=	{NSRange$srange$s=[$1$srangeOfString:[NSString$sstringWithFormat:@"%c",$2]$soptions:NSBackwardsSearch$srange:NSMakeRange(0,$1$slength])];return$srange.location}(String,int): int 
-lastIndexCharFrom	=	{NSRange$srange$s=[$1$srangeOfString:[NSString$sstringWithFormat:@"%c",$2]$soptions:NSBackwardsSearch$srange:NSMakeRange($3,$1$slength]-$3)];return$srange.location} (String,int,int): int
-lastIndexStr		=	{NSRange$srange$s=[$1$srangeOfString:$2$soptions:NSBackwardsSearch];return$srange.location}(String,String) : int
-lastIndexStrFrom	=	{NSRange$srange$s=[$1$srangeOfString:$2$soptions:NSBackwardsSearch$srange:NSMakeRange($3,$1$slength]-$3)];return$srange.location}(String,String,int): int
+lastIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:NSBackwardsSearch$srange:NSMakeRange(0,p1$slength])];return$srange.location}(String,int): int 
+lastIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:NSBackwardsSearch$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location} (String,int,int): int
+lastIndexStr		=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:NSBackwardsSearch];return$srange.location}(String,String) : int
+lastIndexStrFrom	=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:NSBackwardsSearch$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location}(String,String,int): int
 lenght				=	length() : int
 matchesWithRegex	=	
 matchesRegionCase	=	
 matchesRegion		=	
-replaceChar			=	{retrun$s[$1$sstringByReplacingOccurrencesOfString:[NSString$sstringWithFormat:@"%c",$2]$swithString:[NSString$sstringWithFormat:@"%c",$3];}(String,char, char):String
+replaceChar			=	{retrun$s[p1$sstringByReplacingOccurrencesOfString:[NSString$sstringWithFormat:@"%c",p2]$swithString:[NSString$sstringWithFormat:@"%c",p3];}(String,char, char):String
 replaceString		=	stringByReplacingOccurrencesOfString/withString(String, String) : String
 replaceregex		=
 startPrefixe		=	hasPrefix(String):boolean
@@ -33,12 +33,12 @@ subStrWithEnd		=
 toChars				=	UTF8String():char *
 lowerCase			=	lowercaseString() : String
 upperCase			=	uppercaseString() : String
-valueOfBool			=	{return$s($1?@"true":@"false");}(boolean) : String
-valueOfChar			=	{return$s[NSString$sstringWithFormat:@"%c" ,$1];}(char): String
-valueOfCharArray	=	{return$s[NSString$sstringWithCString:$1$sencoding:NSASCIIStringEncoding];}(char[]) : String
-valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",$1]}(double):String
+valueOfBool			=	{return$s(p1?@"true":@"false");}(boolean) : String
+valueOfChar			=	{return$s[NSString$sstringWithFormat:@"%c" ,p1];}(char): String
+valueOfCharArray	=	{return$s[NSString$sstringWithCString:p1$sencoding:NSASCIIStringEncoding];}(char[]) : String
+valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",p1]}(double):String
 valueOfFloat		=	
-valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",$1]}(int):String
+valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",p1]}(int):String
 valueOfLong			=	
-valueOfObject		=	{return$s(id)(nil?nil:[$1description]);}(Object): Object
+valueOfObject		=	{return$s(id)(nil?nil:[p1description]);}(Object): Object
 

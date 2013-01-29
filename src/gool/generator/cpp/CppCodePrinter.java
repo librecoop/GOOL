@@ -73,5 +73,4 @@ public class CppCodePrinter extends CodePrinter {
 	public String getFileName(String className) {
 		return className + ".cpp";
 	}
-
 }

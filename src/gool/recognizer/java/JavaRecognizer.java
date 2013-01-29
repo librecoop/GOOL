@@ -1486,7 +1486,16 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		if(method.owner.toString().equals("java.lang.String")){
-			String general = MethodManager.getGeneralName(method.type.getReturnType().toString(), method.name.toString(), method.type.getParameterTypes(), "String", Language.JAVA);
+			ArrayList<String> type = new ArrayList<String>();
+			int index;
+			for (Type t : method.type.getParameterTypes()) {
+				index = t.toString().lastIndexOf(".");
+				if(index == -1) 
+					type.add(t.toString());
+				else
+					type.add(t.toString().substring(index+1));
+			}
+			String general = MethodManager.getGeneralName(method.type.getReturnType().toString(), method.name.toString(), type, "String", Language.JAVA);
 			target = new MethCall(goolType(((MethodSymbol) method).getReturnType(), context)
 					, target, general, "String");
 		}

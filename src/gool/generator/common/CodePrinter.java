@@ -7,6 +7,7 @@ import gool.ast.type.IType;
 import gool.generator.GeneratorHelper;
 import gool.generator.GoolGeneratorController;
 import gool.generator.common.exception.VelocityException;
+import gool.methods.MethodManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -161,6 +162,33 @@ public abstract class CodePrinter {
 			throw new VelocityException(e.getLocalizedMessage(), e);
 		}
 	}
+	
+	
+	public String processTemplate(String templateFilename, String className) {
+
+		try {
+			// Load the template into velocity
+			String templateFile = getTemplateDir() + templateFilename;
+			Template template = engine.getTemplate(templateFile);
+			logger.info(String.format("Loaded velocity template: %s",
+					templateFile));
+
+			VelocityContext context = new VelocityContext();
+			context.put("class", className);
+			context.put("macros", getTemplateDir() + "macros.vm");
+			context.put("Helper", GeneratorHelper.class);
+			context.put("MManager", MethodManager.class);
+
+			StringWriter writer = new StringWriter();
+			template.merge(context, writer);
+			return writer.toString();
+
+		} catch (Exception e) {
+
+			throw new VelocityException(e.getLocalizedMessage(), e);
+		}
+	}
+	
 
 	/**
 	 * This is the main entry point of this class. It generates the code for a
@@ -218,6 +246,11 @@ public abstract class CodePrinter {
 			}
 		}
 		return result;
+	}
+	
+	public List<File> printPersonalLib() throws FileNotFoundException {
+		ArrayList<File> r = new ArrayList<File>();
+		return r;
 	}
 
 	/**
