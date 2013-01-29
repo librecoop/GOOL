@@ -25,5 +25,10 @@
 #end
 #end
 
+#macro ( includesPerso $dep )
+#foreach( $d in $dep )#import "${d}.h"
+#end
+#end
+
 #macro ( type $type )
 $Helper.removePointer($type)#end

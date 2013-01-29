@@ -70,6 +70,8 @@ public class ObjcCodePrinter extends CodePrinter {
 			String classCode = processTemplate("classPerso.vm", s);
 			PrintWriter writer;
 			
+			System.out.println(MethodManager.getDependencies());
+			
 			File dir = new File(getOutputDir().getAbsolutePath());
 			dir.mkdirs();
 			

@@ -1,0 +1,14 @@
+
+#import "Foundation/Foundation.h"
+
+@interface ${class}OBJC {
+}
+
+#foreach($meth in $MManager.getMethInLib(${class}))
+	//$meth.comment
+	+($meth.getReturnType()) $meth.getName() #foreach($p in $meth.getParam())#if($velocityCount != 1)and$p.getType()#end:($p.getType())$p.getName() #end;
+#end
+
+
+
+@end

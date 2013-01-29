@@ -148,6 +148,7 @@ public abstract class CodePrinter {
 			context.put("class", classDef);
 			context.put("macros", getTemplateDir() + "macros.vm");
 			context.put("Helper", GeneratorHelper.class);
+			context.put("MManager", MethodManager.class);
 
 			// Go fill in template.
 			// A great quick introduction to velocity syntax is available
