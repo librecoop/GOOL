@@ -603,7 +603,7 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 			ret += "\n" + c;
 		}
 		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
-			ret += formatIndented("catch(...) // finaly\n{%1}\n", tryStatement.getFinilyBlock());
+			ret += formatIndented("catch(void *) // finaly\n{%1}\n", tryStatement.getFinilyBlock());
 		return ret;
 	}
 
