@@ -584,25 +584,37 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(Throw throwStatement) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("throw %s", throwStatement.getExpression());
 	}
 
 	@Override
 	public String getCode(Catch catchStatement) {
-		// TODO Auto-generated method stub
-		return null;
+		return formatIndented("catch (%s * %s)\n{%1}\n",
+				catchStatement.getParameter().getType(),
+				catchStatement.getParameter().getName(),
+				catchStatement.getBlock());
 	}
 
 	@Override
 	public String getCode(Try tryStatement) {
-		// TODO Auto-generated method stub
-		return null;
+		String ret = formatIndented("try\n{%1}", tryStatement.getBlock() +
+				(tryStatement.getFinilyBlock().getStatements().isEmpty()?"":"throw (void*)NULL; // if no exceptions, activate the 'finaly' block\n"));
+		for (Catch c: tryStatement.getCatches()) {
+			ret += "\n" + c;
+		}
+		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
+			ret += formatIndented("catch(...) // finaly\n{%1}\n", tryStatement.getFinilyBlock());
+		return ret;
 	}
 
 	@Override
 	public String getCode(TypeException typeException) {
-		return "";
+		switch (typeException.getKind()) {
+		case GLOBAL:
+			return "exception";
+		default:
+			return typeException.getName();
+		}
 	}
 
 }

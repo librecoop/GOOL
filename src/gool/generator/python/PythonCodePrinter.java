@@ -16,35 +16,45 @@ import logger.Log;
 
 public class PythonCodePrinter extends CodePrinter {
 	
-	public PythonCodePrinter(File outputDir) {
-		super(new PythonGenerator(), outputDir);
-		//Helpers to create
-		// create goolHelper.py by copying the resource
+	private void createGoolHelperModule(File outputDir) {
 		FileOutputStream goolHelperOut;
 		byte[] buffer = new byte[1024];
-
-		List<String> goolHelperIn = new ArrayList<String>();
 		int noOfBytes;
-		goolHelperIn.add("goolHelper.py");
-		goolHelperIn.add("goolHelperIO.py");
-		goolHelperIn.add("goolHelperUtil.py");
 
-		//Print helpers
-		for(String in : goolHelperIn) {
-			InputStream helper;
-			try {
-				helper = PythonPlatform.class.getResource(in).openStream();
-
-				goolHelperOut = new FileOutputStream (outputDir+"/"+in);
-				while ((noOfBytes = helper.read(buffer)) != -1) {
-					goolHelperOut.write(buffer, 0, noOfBytes);
+		// Helpers to create by copying the resource
+		List<String> goolHelperIn = new ArrayList<String>();
+		goolHelperIn.add("goolHelper/__init__.py");
+		goolHelperIn.add("goolHelper/IO.py");
+		goolHelperIn.add("goolHelper/Util.py");
+		
+		// create the directory
+		File dir = new File(outputDir+"/goolHelper");
+		if (! dir.isDirectory() && ! dir.mkdirs()) {
+			Log.e(String.format("Impossible to create the module '%s/goolHelper'", outputDir));
+		} else {
+			// Print helpers
+			for(String in : goolHelperIn) {
+				InputStream helper;
+				try {
+					helper = PythonPlatform.class.getResource(in).openStream();
+	
+					goolHelperOut = new FileOutputStream (outputDir+"/"+in);
+					while ((noOfBytes = helper.read(buffer)) != -1) {
+						goolHelperOut.write(buffer, 0, noOfBytes);
+					}
+					goolHelperOut.close();
+					helper.close();
+				} catch (IOException e){
+					Log.e(String.format("Impossible to create the file '%s'", in));
 				}
-				goolHelperOut.close();
-				helper.close();
-			} catch (IOException e){
-				Log.e(e);
 			}
 		}
+		
+	}
+	
+	public PythonCodePrinter(File outputDir) {
+		super(new PythonGenerator(), outputDir);
+		createGoolHelperModule(outputDir);
 	}
 	
 	@Override

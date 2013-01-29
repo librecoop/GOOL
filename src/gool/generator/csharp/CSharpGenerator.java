@@ -494,7 +494,7 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(Catch catchStatement) {
-		return formatIndented("catch (%s %s)\n{%1}",
+		return formatIndented("catch (%s %s)\n{%1}\n",
 				catchStatement.getParameter().getType(),
 				catchStatement.getParameter().getName(),
 				catchStatement.getBlock());

@@ -196,7 +196,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
-			if(statement.toString().contains("goolHelperUtil.Scanner(System.in"))
+			if(statement.toString().contains("goolHelper.Util.Scanner(System.in"))
 			Log.e("mon stat :"+statement.toString());
 			result.append(printWithComment(statement));
 		}
@@ -282,7 +282,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(ClassNew classNew) {
 
-		if(classNew.getName().equals("goolHelperUtil.Scanner"))
+		if(classNew.getName().equals("goolHelper.Util.Scanner"))
 			return String.format("%s()", classNew.getName());
 		return String.format("%s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
@@ -712,28 +712,28 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(TypeFile typeFile){
-		return "goolHelperIO.File";
+		return "goolHelper.IO.File";
 	}
 	
 	@Override
 	public String getCode(TypeFileReader typeFileReader){
-		return "goolHelperIO.FileReader";
+		return "goolHelper.IO.FileReader";
 	}
 	
 	@Override
 	public String getCode(TypeFileWriter typeFileWriter){
-		return "goolHelperIO.FileWriter";
+		return "goolHelper.IO.FileWriter";
 	}
 
 	@Override
 	public String getCode(TypeBufferedReader tbr) {
-		return "goolHelperIO.BufferedReader";
+		return "goolHelper.IO.BufferedReader";
 	}
 	
 
 	@Override
 	public String getCode(TypeScanner typeScanner) {
-		return "goolHelperUtil.Scanner";
+		return "goolHelper.Util.Scanner";
 	}
 	
 	@Override
@@ -846,7 +846,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	public String getCode(CustomDependency customDependency) {		
 		if (customDependency.getName().startsWith("java.io")) {
-			return "goolHelperIO";
+			return "goolHelper.IO";
 		}
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
@@ -900,7 +900,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\nimport goolHelperUtil\n\n");
+		StringBuilder code = new StringBuilder (
+				"#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelper.IO\nimport goolHelper.Util\n\n");
 		
 		// Printing the imports.
 		// This is not the best way to write it in Python, but doing it right
