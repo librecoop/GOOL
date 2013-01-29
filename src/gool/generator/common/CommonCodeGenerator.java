@@ -46,6 +46,7 @@ import gool.ast.type.TypeClass;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -582,4 +583,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		//For now if one wants to print the type of a Method, this returns just the name of the method.
 		return typeMethod.getTextualtype();
 	}
+
+	
 }

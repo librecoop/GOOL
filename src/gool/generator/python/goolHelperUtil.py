@@ -10,7 +10,7 @@ class Scanner(object):
 		return raw_input()
 
 	def nextInt(self):
-		return raw_input()
+		return int (raw_input())
 
 	def nextDouble(self):
 		return raw_input()

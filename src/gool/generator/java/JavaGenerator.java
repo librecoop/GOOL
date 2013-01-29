@@ -1,6 +1,7 @@
 package gool.generator.java;
 
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -14,7 +15,9 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -41,6 +44,7 @@ import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
@@ -359,4 +363,79 @@ public class JavaGenerator extends CommonCodeGenerator implements CodeGeneratorN
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getCode(Throw throwStatement) {
+		return String.format("throw %s", throwStatement.getExpression());
+	}
+
+	@Override
+	public String getCode(Catch catchStatement) {
+		return formatIndented("catch (%s %s) {%1}",
+				catchStatement.getParameter().getType(),
+				catchStatement.getParameter().getName(),
+				catchStatement.getBlock());
+	}
+
+	@Override
+	public String getCode(Try tryStatement) {
+		String ret = formatIndented("try {%1}", tryStatement.getBlock());
+		for (Catch c: tryStatement.getCatches()) {
+			ret += " " + c;
+		}
+		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
+			ret += formatIndented(" finally {%1}", tryStatement.getFinilyBlock());
+		return ret;
+	}
+
+	@Override
+	public String getCode(TypeException typeException) {
+		switch (typeException.getKind()) {
+		case GLOBAL:
+			return "Exception";
+		case ARITHMETIC:
+			return "ArithmeticException";
+		case COLLECTION:
+			return "ArrayStoreException";
+		case CAST:
+			return "ClassCastException";
+		case ENUM:
+			return "EnumConstantNotPresentException";
+		case ARGUMENT:
+			return "IllegalArgumentException";
+		case THREAD:
+			return "IllegalMonitorStateException";
+		case STATE:
+			return "IllegalStateException";
+		case ARRAY:
+			return "IndexOutOfBoundsException";
+		case ARRAYSIZE:
+			return "NegativeArraySizeException";
+		case NULLREFERENCE:
+			return "NullPointerException";
+		case SECURITY:
+			return "SecurityException";
+		case TYPE:
+			return "TypeNotPresentException";
+		case UNSUPORTED:
+			return "UnsupportedOperationException";
+		case CLASSNOTFOUND:
+			return "ClassNotFoundException";
+		case DEFAULT:
+			return "CloneNotSupportedException";
+		case ACCESS:
+			return "IllegalAccessException";
+		case NEWINSTANCE:
+			return "InstantiationException";
+		case INTERUPT:
+			return "InterruptedException";
+		case NOSUCHFIELD:
+			return "NoSuchFieldException";
+		case NOSUCHMETH:
+			return "NoSuchMethodException";
+		default:
+			return typeException.getName();
+		}
+	}
+	
 }

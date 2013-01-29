@@ -4,6 +4,7 @@ import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassFree;
 import gool.ast.constructs.ClassNew;
@@ -34,7 +35,9 @@ import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -72,6 +75,8 @@ import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInputStream;
+import gool.ast.type.TypeException;
+import gool.ast.type.TypeException.Kind;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -111,6 +116,12 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * Updated every time we start to print a new class.
 	 */
 	private ClassDef currentClass;
+	
+	/**
+	 * The class currently printed.
+	 * Updated every time we start to print a new method.
+	 */
+	private Meth currentMeth;
 	
 	/**
 	 * Used to store comments.
@@ -270,9 +281,10 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(ClassNew classNew) {
+
 		if(classNew.getName().equals("goolHelperUtil.Scanner"))
 			return String.format("%s()", classNew.getName());
-		return String.format("%s(%s)", classNew.getName(), StringUtils
+		return String.format("%s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
 
@@ -477,6 +489,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * @return the Python code of the method
 	 */
 	private String printMeth(Meth meth, String prefix) {
+		currentMeth = meth;
 		// register parameters as local identifiers
 		localIndentifiers.clear();
 		for (VarDeclaration p : meth.getParams()) {
@@ -563,24 +576,35 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (name.equals("this"))
 			return "self";
 
-		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)
-				&& ! name.startsWith("__")) {
-			name = "__" + name;
+		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)) {
+			name = name.replaceFirst("^__", "");
+			// we are cheating Python to access private members out of their parent class
+			if (currentMeth.isMainMethod())
+				name = String.format("_%s__%s", currentClass.getName(), name);
+			else
+				name = "__" + name;
 		}
-		if (localIndentifiers.contains(name))
+		if (localIndentifiers.contains(name)) {
 			return name;
-		else
-			return "self." + name;
-			
+		} else {
+			if (currentMeth!=null && currentMeth.isMainMethod())
+				return currentClass.getName() + "." + name;
+			else
+				return "self." + name;
+		}			
 	}
 	
 	@Override
 	public String getCode(MemberSelect memberSelect) {
 		String name = memberSelect.getIdentifier();
-		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)
-				&& ! name.startsWith("__")) {
-			name = "__" + name;
-		}		
+		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)) {
+			name = name.replaceFirst("^__", "");
+			// we are cheating Python to access private members out of their parent class
+			if (currentMeth != null && currentMeth.isMainMethod())
+				name = String.format("_%s__%s", currentClass.getName(), name);
+			else
+				name = "__" + name;
+		}
 		return String.format("%s.%s", memberSelect.getTarget(), name);
 	}
 
@@ -1020,13 +1044,15 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		}
 		
 		if (mainMeth != null) {
-			// As it is not a method, we have do do everything manually.
-			// The condition is not needed, but is customary.
-			// TODO: find a better way to deal with 'self'
-			// TODO: deal with command line arguments
+			/* As it is not a method, we have do do everything manually.
+			 * The condition is not needed, but is customary.
+			 * TODO: find a way to avoid regex (for now, it is matched in strings for example
+			 * TODO: deal with command line arguments
+			 */
 			localIndentifiers.clear();
+			currentMeth = mainMeth;
 			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
-					mainMeth.getBlock().toString().replaceAll("([^\\w])self([^\\w])", "$1"+classDef.getName()+"$2")));
+					mainMeth.getBlock()));
 		}
 
 		return code.toString();
@@ -1044,5 +1070,51 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		return "noprint";
 	}
 
+	public String getCode(Throw throwStatement) {
+		return String.format("raise %s", throwStatement.getExpression());
+	}
+
+	@Override
+	public String getCode(Catch catchStatement) {
+		localIndentifiers.add(catchStatement.getParameter().getName());
+		return formatIndented("except %s as %s:%1", catchStatement.getParameter().getType(), 
+				catchStatement.getParameter().getName(), catchStatement.getBlock());
+	}
+
+	@Override
+	public String getCode(Try tryStatement) {
+		String retour = formatIndented("try:%1", tryStatement.getBlock());
+		for (Catch c: tryStatement.getCatches()) {
+			retour += c;
+		}
+		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
+			retour += formatIndented("finally:%1", tryStatement.getFinilyBlock());
+		return retour;
+	}
+
+	@Override
+	public String getCode(TypeException typeException) {
+		switch (typeException.getKind()) {
+		case GLOBAL:
+			return "BaseException";
+		case ARITHMETIC:
+			return "ArithmeticError";
+		case COLLECTION:
+			return "LookupError";
+		case CAST:
+			return "ValueError";
+		case ARGUMENT:
+			return "AttributeError";
+		case ARRAY:
+			return "IndexError";
+		case TYPE:
+			return "TypeError";
+		// in Python, 'None' is an object but it does'nt have many methods
+		case NULLREFERENCE:
+			return "AttributeError";
+		default:
+			return typeException.getName();
+		}
+	}
 
 }

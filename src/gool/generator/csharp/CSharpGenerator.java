@@ -1,6 +1,7 @@
 package gool.generator.csharp;
 
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -16,7 +17,9 @@ import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -44,6 +47,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
@@ -105,7 +109,7 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * @return the formatted object instantiation.
 	 */
 	public String getCode(ClassNew classNew) {
-		return String.format("new %s( %s )", classNew.getName(), GeneratorHelper
+		return String.format("new %s( %s )", classNew.getType(), GeneratorHelper
 				.joinParams(classNew.getParameters()));
 	}
 
@@ -483,5 +487,54 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 		return null;
 	}
 
+	@Override
+	public String getCode(Throw throwStatement) {
+		return String.format("throw %s", throwStatement.getExpression());
+	}
 
+	@Override
+	public String getCode(Catch catchStatement) {
+		return formatIndented("catch (%s %s)\n{%1}",
+				catchStatement.getParameter().getType(),
+				catchStatement.getParameter().getName(),
+				catchStatement.getBlock());
+	}
+
+	@Override
+	public String getCode(Try tryStatement) {
+		String ret = formatIndented("try\n{%1}", tryStatement.getBlock());
+		for (Catch c: tryStatement.getCatches()) {
+			ret += "\n" + c;
+		}
+		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
+			ret += formatIndented(" finally\n{%1}", tryStatement.getFinilyBlock());
+		return ret;
+	}
+
+	@Override
+	public String getCode(TypeException typeException) {
+		switch (typeException.getKind()) {
+		case GLOBAL:
+			return "Exception";
+		case ARITHMETIC:
+			return "ArithmeticException";
+		case CAST:
+			return "InvalidCastException";
+		case ARGUMENT:
+			return "ArgumentException";
+		case NULLREFERENCE:
+			return "NullReferenceException";
+		case SECURITY:
+			return "SecurityException";
+		case UNSUPORTED:
+			return "InvalidOperationException";
+		case DEFAULT:
+			return "Exception";
+		case ACCESS:
+			return "AccessViolationException";
+		default:
+			return typeException.getName();
+		}
+	}
+	
 }

@@ -12,6 +12,7 @@ import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Comment;
@@ -42,7 +43,9 @@ import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
 import gool.ast.constructs.VarAccess;
@@ -79,6 +82,7 @@ import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -176,6 +180,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
 import com.sun.tools.javac.tree.TreeInfo;
+import com.sun.tools.javac.util.Name;
 
 
 
@@ -255,6 +260,40 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		operatorMap.put(Kind.MULTIPLY_ASSIGNMENT, Operator.MULT);
 		operatorMap.put(Kind.OR_ASSIGNMENT, Operator.OR);
 		operatorMap.put(Kind.PLUS_ASSIGNMENT, Operator.PLUS);
+	}
+	
+	static {
+		// register standard exceptions
+		// TODO: only exception from java.lang are registered for now
+		TypeException.add(
+				new TypeException("Exception", "java.lang", TypeException.Kind.GLOBAL),
+				new TypeException("RuntimeException", "java.lang", TypeException.Kind.GLOBAL),
+				new TypeException("ArithmeticException", "java.lang", TypeException.Kind.ARITHMETIC),
+				new TypeException("ArrayStoreException", "java.lang", TypeException.Kind.COLLECTION),
+				new TypeException("ClassCastException", "java.lang", TypeException.Kind.CAST),
+				new TypeException("EnumConstantNotPresentException", "java.lang", TypeException.Kind.ENUM),
+				new TypeException("IllegalArgumentException", "java.lang", TypeException.Kind.ARGUMENT),
+				new TypeException("IllegalThreadStateException", "java.lang", TypeException.Kind.ARGUMENT),
+				new TypeException("NumberFormatException", "java.lang", TypeException.Kind.ARGUMENT),
+				new TypeException("IllegalMonitorStateException", "java.lang", TypeException.Kind.THREAD),
+				new TypeException("IllegalStateException", "java.lang", TypeException.Kind.STATE),
+				new TypeException("IndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY),
+				new TypeException("ArrayIndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY),
+				new TypeException("StringIndexOutOfBoundsException", "java.lang", TypeException.Kind.ARRAY),
+				new TypeException("NegativeArraySizeException", "java.lang", TypeException.Kind.ARRAYSIZE),
+				new TypeException("NullPointerException", "java.lang", TypeException.Kind.NULLREFERENCE),
+				new TypeException("SecurityException", "java.lang", TypeException.Kind.SECURITY),
+				new TypeException("TypeNotPresentException", "java.lang", TypeException.Kind.TYPE),
+				new TypeException("UnsupportedOperationException", "java.lang", TypeException.Kind.UNSUPORTED),
+				new TypeException("ClassNotFoundException", "java.lang", TypeException.Kind.CLASSNOTFOUND),
+				new TypeException("CloneNotSupportedException", "java.lang", TypeException.Kind.DEFAULT),
+				new TypeException("IllegalAccessException", "java.lang", TypeException.Kind.ACCESS),
+				new TypeException("InstantiationException", "java.lang", TypeException.Kind.NEWINSTANCE),
+				new TypeException("InterruptedException", "java.lang", TypeException.Kind.INTERUPT),
+				new TypeException("NoSuchFieldException", "java.lang", TypeException.Kind.NOSUCHFIELD),
+				new TypeException("NoSuchMethodException", "java.lang", TypeException.Kind.NOSUCHMETH)
+		);
+
 	}
 
 	/**
@@ -614,6 +653,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return TypeBool.INSTANCE;
 		} else if (typeName.equalsIgnoreCase("Byte")) {
 			return TypeByte.INSTANCE;
+		} else if (TypeException.contains(typeName)) {
+			return TypeException.get(typeName);
 		} else {
 			return new TypeClass(typeName);
 		}
@@ -706,7 +747,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitCatch(CatchTree n, Context context) {
-		return new ExpressionUnknown(goolType(n,context),n.toString());
+		VarDeclaration parameter = (VarDeclaration) n.getParameter().accept(this, context);
+		Block block = (Block) n.getBlock().accept(this, context);
+		return new Catch(parameter, block);
 	}
 	
 	@Override
@@ -770,12 +813,23 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitThrow(ThrowTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
+		Expression expression = (Expression) node.getExpression().accept(this, p);
+		return new Throw(expression);
 	}
 
 	@Override
 	public Object visitTry(TryTree node, Context p) {
-		return new ExpressionUnknown(goolType(node,p),node.toString());
+		List<? extends CatchTree> javaCatches = node.getCatches();
+		List<Catch> catches = new ArrayList<Catch>();
+		for (CatchTree javaCatche: javaCatches) {
+			Catch catchstatelent = (Catch) (javaCatche.accept(this, p));
+			catches.add (catchstatelent);
+		}
+		Block block = (Block) node.getBlock().accept(this, p);
+		Block finilyBlock = new Block();
+		if (node.getFinallyBlock() != null)
+			finilyBlock = (Block) node.getFinallyBlock().accept(this, p);
+		return new Try(catches, block, finilyBlock);
 	}
 
 	@Override
@@ -1619,24 +1673,48 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	
 }
 
+/**
+ * Contains the informations passed down when visiting the Java tree.
+ * As for now, this means all definition from the current context and a link to
+ * the higher level one.
+ * A new context must be created when entering a class, a method or a bloc.
+ */
 class Context {
-	/**
+	/* * This javadoc seams out-dated: none of the original methods of this class where used...
+	 * 
 	 * When we hit an "import MyCustomClass" in Java, we make an "import MyCustomClass" in GOOL: it must be passed on. 
 	 * Later as we visit the Java tree downwards (from root to leafs), we propagate this context information.
 	 * This is because if something has been redefined in such a MyCustomClass.java, it must be treated differently 
 	 * from something of the same name without this context. 
 	 * For instance mycustom.List will be passed on, whereas List might have been translated.
 	 */
+	
+	/**
+	 * The link to the parent context (who's declarations are still in scope).
+	 */
 	private Context parent;
 	
+	/**
+	 * If this context was created at a class level, contains that class, null otherwise.
+	 */
 	private ClassDef classDef;
 	
+	/**
+	 * Information on types, necessary for comparing them
+	 */
 	static private javax.lang.model.util.Types types;
 	
+	/**
+	 * Provides the class with a way to compare types
+	 * @param types The 'javax.lang.model.util.Type' given by the parser
+	 */
 	static public void setTypes(javax.lang.model.util.Types types) {
 		Context.types = types;
 	}
 
+	/**
+	 * All the declaration defined at the current level sorted by identifier and type 
+	 */
 	private HashMap<String,HashMap<TypeMirror,Dec>> map;
 	
 	public Context(Context parent) {
@@ -1649,6 +1727,12 @@ class Context {
 		this.classDef = classDef;
 	}
 	
+	/**
+	 * Register a declaration in the context
+	 * @param dec The GOOL declaration to register
+	 * @param name The identifier associated with the declaration
+	 * @param type The type of the declaration as returned by the java parser
+	 */
 	public void addDeclaration(Dec dec, String name, TypeMirror type) {
 		HashMap<TypeMirror,Dec> identifier = map.get(name);
 		if (identifier == null) {
@@ -1659,6 +1743,13 @@ class Context {
 
 	}
 	
+	/**
+	 * Get a declaration from the current context or a parent.
+	 * @param name The identifier we are looking for
+	 * @param type The type of the declaration we are looking for. For a method,
+	 * 		the arguments types must be compatible, not equal.
+	 * @return The declaration, or null if no declaration was found.
+	 */
 	public Dec getDeclaration(String name, TypeMirror type) {
 		Dec ret = getDeclarationHere(name, type);
 		if (ret != null)
@@ -1669,6 +1760,13 @@ class Context {
 			return null;
 	}
 	
+	/**
+	 * Get a declaration from the current context but not a parent.
+	 * @param name The identifier we are looking for
+	 * @param type The type of the declaration we are looking for. For a method,
+	 * 		the arguments types must be compatible, not equal.
+	 * @return The declaration, or null if no declaration was found.
+	 */
 	public Dec getDeclarationHere(String name, TypeMirror type) {
 		HashMap<TypeMirror,Dec> identifier = map.get(name);
 		if (identifier != null) {
@@ -1680,6 +1778,10 @@ class Context {
 		return null;
 	}
 	
+	/**
+	 * Get the context associated with the class we are visiting
+	 * @return The top-level(?) context
+	 */
 	public Context getClassContext() {
 		if (classDef != null)
 			return this;
@@ -1689,6 +1791,10 @@ class Context {
 			return null;
 	}
 
+	/**
+	 * The definition of the class we are visiting
+	 * @return the ClassDef associated with the top-level(?) context
+	 */
 	public ClassDef getClassDef() {
 		if (classDef == null && parent != null)
 			return parent.getClassDef();
@@ -1696,6 +1802,15 @@ class Context {
 			return classDef;
 	}
 	
+	/**
+	 * Test if a instance and a declaration have compatible types.<br>
+	 * For fields-like types, the instance must be assignable to the declaration.
+	 * For methods types, it must be possible to call the declaration with
+	 * arguments who's types are the ones of the instance.<br>
+	 * @param declaration
+	 * @param instance
+	 * @return 'true' if the types are compatibles or either-one is null.
+	 */
 	private boolean isTypeMirrorCompatible(TypeMirror declaration, TypeMirror instance) {
 		if (declaration == null || instance == null)
 			return true;
