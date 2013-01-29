@@ -476,7 +476,10 @@ public class JavaGenerator extends CommonCodeGenerator {
 			result.append(getCode(c));		
 			
 		}
+		/* If a finally block exists add the code for it as well */
+		if(t.getFinallyBlock() != null) {
 		result.append(t.getFinallyBlock());
+		}
 		return result.toString();
 	}
 	

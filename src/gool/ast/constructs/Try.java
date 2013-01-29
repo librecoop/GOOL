@@ -37,6 +37,12 @@ public class Try extends Block {
 		this.catches = catches;
 		this.finallyBlock = finallyBlock;
 	}
+	
+	public Try(Block block, List<Catch> catches) {
+		this.b=block;
+		this.catches = catches;
+		
+	}
 
 	/**
 	 * Appends a statement to the end of the statements' list.

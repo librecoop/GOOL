@@ -832,16 +832,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				block.addStatement(statement);
 			}
 		}
-		
+
 		List<Catch> catches = new ArrayList<Catch>();
-		for(CatchTree catchTree:node.getCatches()) {
+		for (CatchTree catchTree : node.getCatches()) {
 			catches.add((Catch) visitCatch(catchTree, p));
 		}
-		
-		Finally tempFinally = (Finally) visitFinally(node.getFinallyBlock(), p);
-		
-		
-		return new Try(block, catches, tempFinally);
+
+		if (node.getFinallyBlock() != null) {
+			Finally tempFinally = (Finally) visitFinally(
+					node.getFinallyBlock(), p);
+			return new Try(block, catches, tempFinally);
+		} else {
+			return new Try(block, catches);
+		}
+
 	}
 
 	public Object visitFinally(BlockTree node, Context context) {
@@ -854,7 +858,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 		Finally returnFinally = new Finally(block);
-		
+
 		return returnFinally;
 
 	}
