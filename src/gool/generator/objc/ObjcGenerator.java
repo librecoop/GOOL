@@ -275,7 +275,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		if(methodCall.getGeneralName() != null){
 			specificName = MethodManager.getSpecificName(methodCall.getGeneralName(),methodCall.getLibrary(),Language.OBJC);
 			if(specificName.equals("")){
-				return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", methodCall.getGeneralName(), methodCall.getLibrary());
+				return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", methodCall.getGeneralName().replaceAll("\\s", ""), methodCall.getLibrary());
+			}
+			else if(specificName.matches("[{]*[}]")){
+				System.out.println("aze");
+				
 			}
 			else {
 				specificName = specificName.substring(0,specificName.indexOf("("));

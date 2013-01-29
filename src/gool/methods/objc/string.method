@@ -15,7 +15,7 @@ firstIndexChar		=
 firstIndexCharFrom	=	
 firstIndexStr		=	
 firstIndexStrFrom	=	
-empty				=	
+empty				=	{[length()] == 0}
 lastIndexChar		=	
 lastIndexCharFrom	=	
 lastIndexStr		=	
