@@ -278,11 +278,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 		if(classNew.getName().equals("goolHelperUtil.Scanner"))
 			return String.format("%s()", classNew.getName());
-		String c = classNew.getName();
-		//To translate Exception type. 
-		if (classNew.getType() instanceof TypeException)
-			c = ((TypeException)classNew.getType()).toString();
-		return String.format("%s(%s)", c, StringUtils
+		return String.format("%s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
 
@@ -1030,13 +1026,16 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		}
 		
 		if (mainMeth != null) {
-			// As it is not a method, we have do do everything manually.
-			// The condition is not needed, but is customary.
-			// TODO: find a better way to deal with 'self'
-			// TODO: deal with command line arguments
+			/* As it is not a method, we have do do everything manually.
+			 * The condition is not needed, but is customary.
+			 * TODO: find a way to avoid regex (for now, it is matched in strings for example
+			 * TODO: deal with command line arguments
+			 */
 			localIndentifiers.clear();
 			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
-					mainMeth.getBlock().toString().replaceAll("([^\\w])self([^\\w])", "$1"+classDef.getName()+"$2")));
+					mainMeth.getBlock().toString()
+					.replaceAll("([^\\w])self([^\\w])", "$1"+classDef.getName()+"$2")
+					.replaceAll("(\\w)\\.__", "$1._"+classDef.getName()+"__")));
 		}
 
 		return code.toString();
