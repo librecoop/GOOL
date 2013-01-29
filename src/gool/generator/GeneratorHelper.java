@@ -79,11 +79,13 @@ public class GeneratorHelper {
 				currentPrinter.getOutputDir().mkdirs();
 			}
 
+			compilationUnits.get(platform).addAll(
+					currentPrinter.printPersonalLib());
+			
 			//Just compile each abstract GOOL class and add it to the map.
 			compilationUnits.get(platform).addAll(
 					currentPrinter.print(classDef));
-			compilationUnits.get(platform).addAll(
-					currentPrinter.printPersonalLib());
+			
 		}
 		return compilationUnits;
 	}

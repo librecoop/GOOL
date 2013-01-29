@@ -592,7 +592,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 				initialValue = " = nil"; //TODO pas normal, nil est mit dans le type de la valeur initital et pas dans la valeur initiale
 			else if (varDec.getInitialValue().getType() instanceof TypeString)
 				initialValue = " = @" + varDec.getInitialValue();
-			else if(varDec.getInitialValue().getType() instanceof TypeChar)
+			else if(varDec.getInitialValue().getType() instanceof TypeChar && !(varDec.getInitialValue() instanceof MethCall))
 				initialValue = " = '" + varDec.getInitialValue() + "'";
 			else
 				initialValue = " = " + varDec.getInitialValue();
