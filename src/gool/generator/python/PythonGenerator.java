@@ -278,11 +278,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 		if(classNew.getName().equals("goolHelperUtil.Scanner"))
 			return String.format("%s()", classNew.getName());
-		String c = classNew.getName();
-		//To translate Exception type. 
-		if (classNew.getType() instanceof TypeException)
-			c = ((TypeException)classNew.getType()).toString();
-		return String.format("%s(%s)", c, StringUtils
+		return String.format("%s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
 
