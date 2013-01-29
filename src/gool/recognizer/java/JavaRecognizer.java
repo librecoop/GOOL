@@ -1673,24 +1673,48 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	
 }
 
+/**
+ * Contains the informations passed down when visiting the Java tree.
+ * As for now, this means all definition from the current context and a link to
+ * the higher level one.
+ * A new context must be created when entering a class, a method or a bloc.
+ */
 class Context {
-	/**
+	/* * This javadoc seams out-dated: none of the original methods of this class where used...
+	 * 
 	 * When we hit an "import MyCustomClass" in Java, we make an "import MyCustomClass" in GOOL: it must be passed on. 
 	 * Later as we visit the Java tree downwards (from root to leafs), we propagate this context information.
 	 * This is because if something has been redefined in such a MyCustomClass.java, it must be treated differently 
 	 * from something of the same name without this context. 
 	 * For instance mycustom.List will be passed on, whereas List might have been translated.
 	 */
+	
+	/**
+	 * The link to the parent context (who's declarations are still in scope).
+	 */
 	private Context parent;
 	
+	/**
+	 * If this context was created at a class level, contains that class, null otherwise.
+	 */
 	private ClassDef classDef;
 	
+	/**
+	 * Information on types, necessary for comparing them
+	 */
 	static private javax.lang.model.util.Types types;
 	
+	/**
+	 * Provides the class with a way to compare types
+	 * @param types The 'javax.lang.model.util.Type' given by the parser
+	 */
 	static public void setTypes(javax.lang.model.util.Types types) {
 		Context.types = types;
 	}
 
+	/**
+	 * All the declaration defined at the current level sorted by identifier and type 
+	 */
 	private HashMap<String,HashMap<TypeMirror,Dec>> map;
 	
 	public Context(Context parent) {
@@ -1703,6 +1727,12 @@ class Context {
 		this.classDef = classDef;
 	}
 	
+	/**
+	 * Register a declaration in the context
+	 * @param dec The GOOL declaration to register
+	 * @param name The identifier associated with the declaration
+	 * @param type The type of the declaration as returned by the java parser
+	 */
 	public void addDeclaration(Dec dec, String name, TypeMirror type) {
 		HashMap<TypeMirror,Dec> identifier = map.get(name);
 		if (identifier == null) {
@@ -1713,6 +1743,13 @@ class Context {
 
 	}
 	
+	/**
+	 * Get a declaration from the current context or a parent.
+	 * @param name The identifier we are looking for
+	 * @param type The type of the declaration we are looking for. For a method,
+	 * 		the arguments types must be compatible, not equal.
+	 * @return The declaration, or null if no declaration was found.
+	 */
 	public Dec getDeclaration(String name, TypeMirror type) {
 		Dec ret = getDeclarationHere(name, type);
 		if (ret != null)
@@ -1723,6 +1760,13 @@ class Context {
 			return null;
 	}
 	
+	/**
+	 * Get a declaration from the current context but not a parent.
+	 * @param name The identifier we are looking for
+	 * @param type The type of the declaration we are looking for. For a method,
+	 * 		the arguments types must be compatible, not equal.
+	 * @return The declaration, or null if no declaration was found.
+	 */
 	public Dec getDeclarationHere(String name, TypeMirror type) {
 		HashMap<TypeMirror,Dec> identifier = map.get(name);
 		if (identifier != null) {
@@ -1734,6 +1778,10 @@ class Context {
 		return null;
 	}
 	
+	/**
+	 * Get the context associated with the class we are visiting
+	 * @return The top-level(?) context
+	 */
 	public Context getClassContext() {
 		if (classDef != null)
 			return this;
@@ -1743,6 +1791,10 @@ class Context {
 			return null;
 	}
 
+	/**
+	 * The definition of the class we are visiting
+	 * @return the ClassDef associated with the top-level(?) context
+	 */
 	public ClassDef getClassDef() {
 		if (classDef == null && parent != null)
 			return parent.getClassDef();
@@ -1750,6 +1802,15 @@ class Context {
 			return classDef;
 	}
 	
+	/**
+	 * Test if a instance and a declaration have compatible types.<br>
+	 * For fields-like types, the instance must be assignable to the declaration.
+	 * For methods types, it must be possible to call the declaration with
+	 * arguments who's types are the ones of the instance.<br>
+	 * @param declaration
+	 * @param instance
+	 * @return 'true' if the types are compatibles or either-one is null.
+	 */
 	private boolean isTypeMirrorCompatible(TypeMirror declaration, TypeMirror instance) {
 		if (declaration == null || instance == null)
 			return true;
