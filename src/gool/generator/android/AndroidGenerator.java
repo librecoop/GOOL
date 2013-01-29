@@ -1,6 +1,8 @@
 package gool.generator.android;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +25,7 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
+import gool.ast.constructs.Expression;
 import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.Finally;
 import gool.ast.constructs.MainMeth;
@@ -98,6 +101,33 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(ClassNew classNew) {
 		if (classNew.getType().toString().equals("File"))
 			return String.format("new %s (Environment.getExternalStorageDirectory(),%s)",classNew.getType(), StringUtils.join(classNew.getParameters(), ", "));
+		if (classNew.getType().toString().equals ("FileReader"))
+		{
+			List<String> tempList = new ArrayList<String>();
+			for (Expression expression : classNew.getParameters()) {
+				if (expression.getType() instanceof TypeString) {
+					String tempString = "new File (Environment.getExternalStorageDirectory(),"+  expression.toString()+ ")";
+					tempList.add(String.valueOf(tempString));
+				} else {
+					tempList.add(expression.toString());
+				}
+			}
+			return String.format( "new %s (%s)", classNew.getType(),StringUtils.join(tempList, ","));
+		}
+			if (classNew.getType().toString().equals ("FileWriter"))
+			{
+				List<String> tempList2 = new ArrayList<String>();
+				for (Expression expression : classNew.getParameters()) {
+					if (expression.getType() instanceof TypeString) {
+						String tempString = "new File (Environment.getExternalStorageDirectory(),"+  expression.toString()+ ")";
+						tempList2.add(String.valueOf(tempString));
+					} else {
+						tempList2.add(expression.toString());
+					}
+				}
+			return String.format( "new %s (%s)", classNew.getType(),StringUtils.join(tempList2, ","));
+			}
+		
 		return String.format("new %s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
 	}
