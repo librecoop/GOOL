@@ -36,19 +36,21 @@ public class GoolTests {
 	//Platforms to be tested
 	private static List<Platform> platforms = Arrays.asList((Platform)JavaPlatform.getInstance(),/*CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
 
+	private String name;
 	private Platform platform;
 	private File dir;	//Folder for the test
 	private Asserts asserts;	//Asserts object containing information on the result expected
 
 
-	public GoolTests(Platform p, File dir, Asserts a) {
+	public GoolTests(String name, Platform p, File dir, Asserts a) {
+		this.name = name;
 		this.dir = dir;
 		asserts = a;
 		platform = p;
 	}
 	
 	//Create the list of tests
-	@Parameters(name="{1}") //Available to properly name tests in JUnit 4.11
+	@Parameters(name="{0}") //Available to properly name tests in JUnit 4.11
 	public static Collection<Object[]> data() {
 		Map<File, Asserts> tests = new HashMap<File, Asserts>();
 		String test_dir = Settings.get("test_dir");	//Directory containing the tests
@@ -72,7 +74,7 @@ public class GoolTests {
 			int i=0;
 			for(Map.Entry<File, Asserts> test : tests.entrySet()) {
 				for(Platform platform : platforms) {
-					data[i++] = new Object[] { platform, test.getKey(), test.getValue() };
+					data[i++] = new Object[] { test.getKey().getName() + " / " + platform.getName(), platform, test.getKey(), test.getValue() };
 				}
 			}
 			
