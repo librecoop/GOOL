@@ -55,7 +55,7 @@ class FileWriter(object):
 			self.file = open(pathname, 'a')
 
 	def inializeFromFile(self, filee):
-			self.file = open(filee.getAbsoluteName(), 'a')
+			self.file = open(filee.getAbsolutePath(), 'a')
 
 	def write(self, *args):
 		nbArgs = len(args)

@@ -1059,6 +1059,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(Catch catchStatement) {
+		localIndentifiers.add(catchStatement.getParameter().getName());
 		return formatIndented("except %s as %s:%1", catchStatement.getParameter().getType(), 
 				catchStatement.getParameter().getName(), catchStatement.getBlock());
 	}
