@@ -1,8 +1,8 @@
 package gool.generator.objc;
 
-import gool.generator.common.CodePrinter;
-
 import gool.ast.constructs.ClassDef;
+import gool.generator.common.CodePrinter;
+import gool.methods.MethodManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,13 +51,6 @@ public class ObjcCodePrinter extends CodePrinter {
 		writer.println(headerFile);
 		writer.close();
 		
-//		String mainString = processTemplate("main.vm", pclass);
-//		File mainFile = new File(dir, "main.m");
-//		
-//		writer = new PrintWriter(mainFile);
-//		writer.println(mainString);
-//		writer.close();
-		
 		if (pclass.isEnum() || pclass.isInterface()) {
 			List<File> r = new ArrayList<File>();
 			r.add(classFile);
@@ -67,4 +60,32 @@ public class ObjcCodePrinter extends CodePrinter {
 		}
 
 	}
+	
+	
+	public List<File> printPersonalLib() throws FileNotFoundException{
+		List<File> r = new ArrayList<File>();
+		
+		for (String s : MethodManager.methPerso.keySet()) {
+			String headerCode = processTemplate("headerPerso.vm", s);
+			String classCode = processTemplate("classPerso.vm", s);
+			PrintWriter writer;
+			
+			File dir = new File(getOutputDir().getAbsolutePath());
+			dir.mkdirs();
+			
+			File headerFile = new File(dir, s + "OBJC.h");
+			writer = new PrintWriter(headerFile);
+			writer.println(headerCode);
+			writer.close();
+			
+			File classFile = new File(dir, s + "OBJC.m");
+			writer = new PrintWriter(classFile);
+			writer.println(classCode);
+			writer.close();
+			
+			r.add(classFile);
+		}
+		return r;
+	}
+	
 }
