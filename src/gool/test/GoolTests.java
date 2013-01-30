@@ -5,6 +5,8 @@ import gool.GOOLCompiler;
 import gool.Settings;
 import gool.executor.ExecutorHelper;
 import gool.generator.common.Platform;
+import gool.generator.cpp.CppPlatform;
+import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 
@@ -35,7 +37,11 @@ import org.junit.runners.Parameterized.Parameters;
 public class GoolTests {
 	
 	//Platforms to be tested
-	private static List<Platform> platforms = Arrays.asList((Platform)JavaPlatform.getInstance(),/*CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
+	private static List<Platform> platforms = Arrays.asList(
+			JavaPlatform.getInstance(),
+//			CSharpPlatform.getInstance(),
+//			CppPlatform.getInstance(),
+			PythonPlatform.getInstance());
 
 	private String name;	//Name of the test
 	private Platform platform;	//Platform for the test

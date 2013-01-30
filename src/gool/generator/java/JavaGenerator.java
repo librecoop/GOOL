@@ -5,6 +5,7 @@ import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
+import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
@@ -343,11 +344,18 @@ public class JavaGenerator extends CommonCodeGenerator implements CodeGeneratorN
 			sb = sb.append(formatIndented("%-1%s;\n\n", field));
 		// print the methods
 		for (Meth meth : classDef.getMethods()){
-			// TODO: deal with constructors ?
-			if (classDef.isInterface())
+			if (classDef.isInterface()) {
 				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
-			else
-				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));
+			} else {
+				if (meth.isConstructor()) {
+					sb = sb.append(formatIndented("%-1%s {\n%-2%s;%2%-1}\n\n",
+							meth.getHeader(),
+							((Constructor)meth).getInitCalls().get(0),
+							meth.getBlock()));
+				} else {
+					sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));					
+				}
+			}
 		}
 		return sb.toString() + "}";
 	}
