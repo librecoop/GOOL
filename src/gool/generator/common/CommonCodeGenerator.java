@@ -68,7 +68,7 @@ import org.apache.commons.lang.StringUtils;
  * languages.
  */
 public abstract class CommonCodeGenerator implements CodeGenerator {
-	public int indentation=0;
+
 	
 	
 	@Override
@@ -119,13 +119,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Block block) {
-		String tab = new String();
-		for(int i=0;i<this.indentation+1;i++)
-			tab += "\t";
-	
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
-			result.append(tab);
 			result.append(statement);
 			
 			if (!(statement instanceof Block)) {
@@ -134,7 +129,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		}
 		return result.toString();
 	}
-
 	/**
 	 * Produces code for a cast expression.
 	 * 
@@ -227,14 +221,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(For forInstruction) {
-		String tab = new String();
-		for(int i=0;i<this.indentation;i++)
-			tab +="\t";
-		this.indentation++;
-		String out = String.format("for(%s;%s;%s){\n%s\n%s\t }", forInstruction.getInitializer(), forInstruction
-				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement(),tab);
-		this.indentation--;
-		return out;
+		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
+				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
 	}
 
 	@Override
@@ -253,17 +241,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(If pif) {
-		String tab = new String();
-		for(int i=0;i<this.indentation;i++)
-			tab +="\t";
-		this.indentation++;
-		String out = String.format("if ( %s ) {\n%s\n%s\t}\n", tab, pif.getCondition(),
-				pif.getThenStatement(),tab);
+		String out = String.format("if ( %s ) {\n%s;\n}\n", pif.getCondition(),
+				pif.getThenStatement());
 		if (pif.getElseStatement() != null) {
-			out = String.format("%s\t%s\t else {\n%s\n%s\t}\n", out, tab, pif
-					.getElseStatement(),tab);
+			out = String.format("%s else {\n%s\n}\n", out, pif
+					.getElseStatement());
 		}
-		this.indentation--;
 		return out;
 	}
 
@@ -450,14 +433,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(While whilee) {
-		String tab= new String();
-		for(int i=0;i<this.indentation;i++)
-			tab += "\t";
-		this.indentation++;
-		String out = String.format("while(%s){%s\n%s\n\t}", whilee.getCondition(), whilee
-				.getWhileStatement(),tab);
-		this.indentation--;
-		return out;
+		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
+				.getWhileStatement());
 	}
 	
 	@Override
