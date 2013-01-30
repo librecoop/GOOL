@@ -57,7 +57,7 @@ public class GoolTest {
 	private List<Platform> platforms = Arrays.asList(
 			JavaPlatform.getInstance(), //CppPlatform.getInstance(),
 			CSharpPlatform.getInstance()
-			//, AndroidPlatform.getInstance()
+			, AndroidPlatform.getInstance()
 			);
 
 	// private List<Platform> platforms =
@@ -73,7 +73,7 @@ public class GoolTest {
 				"try {\n " +
 				"String myString = new String(\"ja\"); \n" +
 				"System.out.println(\"Hello World\");" 
-				+"throw new Exception(\"throwing...\");\n"
+				//+"throw new Exception(\"throwing...\");\n"
 						+"\n }  catch(Exception testExcep) {\n System.out.println(testExcep.toString());\n }"
 				+" finally {\n System.out.println(\"Finally1\");\n System.out.println(\"Finally2\");\n}"
 				, MAIN_CLASS_NAME);
