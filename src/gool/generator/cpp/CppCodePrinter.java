@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,8 +25,8 @@ import org.apache.commons.lang.StringUtils;
 public class CppCodePrinter extends CodePrinter {
 	private static final String TEMPLATE_DIR = "gool/generator/cpp/templates/";
 
-	public CppCodePrinter(File outputDir) {
-		super(new CppGenerator(), outputDir);
+	public CppCodePrinter(File outputDir, Collection<File> myF) {
+		super(new CppGenerator(), outputDir, myF);
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 
 import logger.Log;
@@ -20,8 +20,12 @@ public class PythonPlatform extends Platform {
 
 	private final String outputDir = Settings.get("python_out_dir");
 	
-	protected PythonPlatform() {
-		super("PYTHON");
+	protected PythonPlatform(Collection<File> myFile) {
+		
+		
+		
+		super("PYTHON", myFile);
+
 		
 		// create goolHelper.py by copying the resource
 		FileOutputStream goolHelperOut;
@@ -62,7 +66,7 @@ public class PythonPlatform extends Platform {
 
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		return new PythonCodePrinter(new File(outputDir));
+		return new PythonCodePrinter(new File(outputDir), myFileToCopy);
 	}
 
 	@Override
@@ -70,13 +74,14 @@ public class PythonPlatform extends Platform {
 		return new PythonCompiler(new File(outputDir), new ArrayList<File>());
 	}
 
-	private static PythonPlatform instance = new PythonPlatform();
+	private static PythonPlatform instance = new PythonPlatform(myFileToCopy);
 
-	public static PythonPlatform getInstance() {
+	public static PythonPlatform getInstance(Collection<File> myF) {
+		myFileToCopy = myF;
 		return instance;
 	}
 	public static void newInstance() {
-		instance = new PythonPlatform();
+		instance = new PythonPlatform(myFileToCopy);
 	}
 	
 }

@@ -4,6 +4,12 @@ import gool.ast.constructs.Dependency;
 import gool.ast.type.PrimitiveType;
 import gool.executor.common.SpecificCompiler;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,15 +37,23 @@ public abstract class Platform extends PrimitiveType {
 	 */
 	private SpecificCompiler compiler;
 	
+	
+	protected static Collection<File> myFileToCopy;
+	
+	public Collection<File> getFile(){
+		
+		return myFileToCopy;
+	}
 	/**
 	 * This creates a platform and puts it in the global platform register.
 	 * @param name
 	 */
-	protected Platform(String name) {
+	protected Platform(String name, Collection<File> myFile) {
 		if (name == null || name.trim().length() == 0) {
 			throw new IllegalArgumentException("The name parameter can not be null or empty.");
 		}
 		this.name = name.toUpperCase();
+		this.myFileToCopy = myFile;
 		registeredPlatforms.put(name, this);
 	}
 	
@@ -129,6 +143,7 @@ public abstract class Platform extends PrimitiveType {
 	public String callGetCode() {
 		return codePrinter.getCodeGenerator().getCode(this);
 	}
+
 
 
 }

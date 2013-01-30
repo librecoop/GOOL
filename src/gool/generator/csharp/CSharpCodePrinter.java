@@ -3,6 +3,7 @@ package gool.generator.csharp;
 import gool.generator.common.CodePrinter;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * Provides the basic functionality to generate C# code from a list of GOOL
@@ -11,8 +12,8 @@ import java.io.File;
 public class CSharpCodePrinter extends CodePrinter {
 	private static final String TEMPLATE_DIR = "gool/generator/csharp/templates/";
 
-	public CSharpCodePrinter(File outputDir) {
-		super(new CSharpGenerator(), outputDir);
+	public CSharpCodePrinter(File outputDir, Collection<File> myF) {
+		super(new CSharpGenerator(), outputDir, myF);
 	}
 	
 	@Override

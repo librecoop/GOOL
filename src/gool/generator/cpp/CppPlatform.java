@@ -13,24 +13,25 @@ import gool.generator.common.Platform;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class CppPlatform extends Platform {
 	private final String outputDir = Settings.get("cpp_out_dir");
 
-	public CppPlatform() {
-		super("CPP");
+	public CppPlatform(Collection<File> myFile) {
+		super("CPP", myFile);
 	}
 	
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		return new CppCodePrinter(new File(outputDir));
+		return new CppCodePrinter(new File(outputDir), myFileToCopy);
 	}
 	
 	@Override
 	protected SpecificCompiler initializeCompiler() {
 		return new CppCompiler(new File(outputDir), new ArrayList<File>());
 	}
-	private static CppPlatform instance = new CppPlatform();
+	private static CppPlatform instance = new CppPlatform(myFileToCopy);
 
 
 	public static Platform getInstance() {
@@ -38,7 +39,7 @@ public class CppPlatform extends Platform {
 	}
 
 	public static void newInstance() {
-		instance = new CppPlatform();
+		instance = new CppPlatform(myFileToCopy);
 	}
 
 }

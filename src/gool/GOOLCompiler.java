@@ -40,6 +40,8 @@ public class GOOLCompiler {
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = getFilesInFolder(folder, "java");
+			Collection<File> filesNonChange = getFilesInFolder(folder, "txt");
+			Collection<File> mF = null;
 			Log.i(files.toString());
 			GOOLCompiler gc = new GOOLCompiler();
 			
@@ -48,7 +50,7 @@ public class GOOLCompiler {
 //			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
 
-			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
 			//gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
 
 		} catch (Exception e) {
@@ -68,6 +70,7 @@ public class GOOLCompiler {
 		}
 		return files;
 	}
+
 
 	/**
 	 * Taking concrete Java into concrete Target is done in two steps:

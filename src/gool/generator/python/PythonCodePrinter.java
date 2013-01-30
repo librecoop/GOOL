@@ -7,14 +7,15 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import logger.Log;
 
 public class PythonCodePrinter extends CodePrinter {
 	
-	public PythonCodePrinter(File outputDir) {
-		super(new PythonGenerator(), outputDir);
+	public PythonCodePrinter(File outputDir, Collection<File> myF) {
+		super(new PythonGenerator(), outputDir, myF);
 	}
 	
 	@Override

@@ -9,7 +9,10 @@ import gool.generator.GoolGeneratorController;
 import gool.generator.common.exception.VelocityException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -60,6 +63,8 @@ public abstract class CodePrinter {
 	 * The selected code generator.
 	 */
 	private CodeGenerator generator;
+	
+	private Collection<File> myFileToCopy;
 
 	/**
 	 * Creates a new {@link CodePrinter} with a specific {@link CodeGenerator}.
@@ -71,10 +76,36 @@ public abstract class CodePrinter {
 	 * @throws Exception
 	 *             when the velocity engine can not be properly initialized.
 	 */
-	public CodePrinter(CodeGenerator generator, File outputDir) {
+	public CodePrinter(CodeGenerator generator, File outputDir, Collection<File> myFile) {
 		this.generator = generator;
 		this.engine = new VelocityEngine();
 		this.outputDir = outputDir;
+		this.myFileToCopy = myFile;
+		
+		for(File fi : myFileToCopy){
+			File fd;
+
+			String path="";
+			try {
+				int i = fi.getCanonicalPath().lastIndexOf("src")+4;
+				path = fi.getCanonicalPath().toString().substring(i);
+			}
+			catch (IOException e) {
+				Log.e(e.toString());
+			}
+			fd = new File(outputDir+"/"+path);
+			try{
+				CopierFichier(fi, fd);
+			}
+			catch (FileNotFoundException e){
+				new File(path).mkdirs();
+				try{
+				CopierFichier(fi, fd);}
+				catch(Exception e1){
+					Log.e(e1.toString());
+				}
+		}
+
 
 		GoolGeneratorController.setCodeGenerator(generator);
 
@@ -90,6 +121,7 @@ public abstract class CodePrinter {
 					"The velocity engine can not be properly initialized.", e);
 		}
 
+	}
 	}
 
 	/**
@@ -289,4 +321,37 @@ public abstract class CodePrinter {
 
 		return result;
 	}
+	
+	private boolean CopierFichier(File Source, File Destination) throws FileNotFoundException{
+        boolean resultat=false;
+        FileInputStream filesource=null;
+        FileOutputStream fileDestination=null;
+        try{
+            filesource=new FileInputStream(Source);
+            fileDestination=new FileOutputStream(Destination);
+            byte buffer[]=new byte[512*1024];
+            int nblecture;
+            while((nblecture=filesource.read(buffer))!=-1){
+                fileDestination.write(buffer,0,nblecture);
+            }
+            resultat=true;
+        }
+        catch(FileNotFoundException nf){
+            nf.printStackTrace();
+        }catch(IOException io){
+            io.printStackTrace();
+        }finally{
+            try{
+                filesource.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            try{
+                fileDestination.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        } 
+        return resultat;
+    }
 }

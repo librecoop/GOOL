@@ -55,9 +55,9 @@ public class XmlCodePrinter extends CodePrinter {
 	 */
 	private boolean classdefok = true;
 
-	public XmlCodePrinter(File outputDir) {
+	public XmlCodePrinter(File outputDir, Collection<File> myF) {
 		//Chose you're favorite Generator for recognized.
-		super(new JavaGenerator(), outputDir);
+		super(new JavaGenerator(), outputDir, myF);
 	}
 
 	private Set<ClassDef> printedClasses = new HashSet<ClassDef>();
