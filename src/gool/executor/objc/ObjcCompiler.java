@@ -56,7 +56,6 @@ public class ObjcCompiler extends SpecificCompiler{
 		}
 		
 		params.addAll(Arrays.asList(Settings.get("objc_compiler_lib"), "-o", execFileName));
-		System.out.println("*********");
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
 	}

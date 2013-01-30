@@ -275,7 +275,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String p;
 		boolean b = false;
 		
-		if(methodCall.getGeneralName() != null){
+		if(methodCall.getGeneralName() != null&& methodCall.getGeneralName()!=""){
 			specificName = MethodManager.getSpecificName(methodCall.getGeneralName(),methodCall.getLibrary(),Language.OBJC);
 			if(MethodManager.isAbsent(specificName)){
 				return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", methodCall.getGeneralName().replaceAll("\\s", ""), methodCall.getLibrary());
