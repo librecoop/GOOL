@@ -81,11 +81,15 @@ public class MethodManager {
 		}		
 	}
 	
-	public static HashMap<String, HashSet<MethDef>> methPerso = new HashMap<String, HashSet<MethDef>>();
-	public static HashSet<String> dependencies = new HashSet<String>();
+	private static HashMap<String, HashSet<MethDef>> methPerso = new HashMap<String, HashSet<MethDef>>();
+	private static HashSet<String> dependencies = new HashSet<String>();
 	
 	public static HashSet<MethDef> getMethInLib(String libName){
 		return methPerso.get(libName);
+	}
+	
+	public static HashMap<String, HashSet<MethDef>> getMethPerso(){
+		return methPerso;
 	}
 	
 	public static HashSet<String> getDependencies(){
@@ -135,7 +139,7 @@ public class MethodManager {
 
 	public static String getGeneralName(String formatedName, String methodLibrary, Language l){
 		String fileName = getFileName(l.name(), methodLibrary);
-		String res = "";
+		String res = null;
 		try{
 			InputStream ips= new FileInputStream(fileName); 
 			InputStreamReader ipsr=new InputStreamReader(ips);
@@ -203,5 +207,10 @@ public class MethodManager {
 	
 	public static String getCommentFileName(String methodLibrary){
 		return "src/gool/methods/comment."+methodLibrary.toLowerCase()+".method";
+	}
+
+	public static void reset() {
+		methPerso.clear();
+		dependencies.clear();		
 	}	
 }
