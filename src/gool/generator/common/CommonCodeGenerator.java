@@ -533,7 +533,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 private String tab(){
 	String result="";
 	for(int i=0;i<this.indentation-1;i++)
-		result+="    ";
+		result+=("    ");
 	return result;
 }
 			
