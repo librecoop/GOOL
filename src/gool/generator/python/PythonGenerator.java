@@ -993,7 +993,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 						first = false;
 					}
 					if (! method.getModifiers().contains(Modifier.PRIVATE) && ! method.isConstructor()) {
-						block += formatIndented("else:\n%-1super(%s, self).%s(args*)",
+						block += formatIndented("else:\n%-1super(%s, self).%s(*args)",
 								classDef.getName(), method.isConstructor()?"__init__":method.getName());
 					}
 					// If all methods under the wrapper are statics of dynamics,
