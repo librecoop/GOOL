@@ -270,6 +270,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	public static void addForbiddenKeyword(File keywordsFile)
 			throws IOException {
+		@SuppressWarnings("resource")
 		BufferedReader reader = new BufferedReader(new FileReader(keywordsFile));
 
 		String keyword;
@@ -1485,22 +1486,29 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			target = (Expression) n.getMethodSelect().accept(this, context);
 		}
 		
-		if(method.owner.toString().equals("java.lang.String")){
+		if(method.owner.toString().matches("^[java.].*") && !(target instanceof Parameterizable)){
+		//if(method.owner.toString().contains("java.lang.String")){
 			ArrayList<String> type = new ArrayList<String>();
-			int index;
+			String ret;
+			String lib = method.owner.toString().substring(method.owner.toString().lastIndexOf(".")+1);
+			
+			int index = method.type.getReturnType().toString().lastIndexOf(".");
+			if(index == -1) ret = method.type.getReturnType().toString();
+			else ret = method.type.getReturnType().toString().substring(index+1);
+			
+			
+			
 			for (Type t : method.type.getParameterTypes()) {
 				index = t.toString().lastIndexOf(".");
-				if(index == -1) 
-					type.add(t.toString());
-				else
-					type.add(t.toString().substring(index+1));
+				if(index == -1) type.add(t.toString());
+				else type.add(t.toString().substring(index+1));
 			}
-			String general = MethodManager.getGeneralName(method.type.getReturnType().toString(), method.name.toString(), type, "String", Language.JAVA);
+			String general = MethodManager.getGeneralName(ret, method.name.toString(), type, lib, Language.JAVA);
 			target = new MethCall(goolType(((MethodSymbol) method).getReturnType(), context)
-					, target, general, "String");
+					, target, general, lib);
 		}
 
-		if (!(target instanceof Parameterizable)) {
+		if (!(target instanceof Parameterizable) || target instanceof InitCall) {
 			target = new MethCall(goolType(
 					((MethodSymbol) method).getReturnType(), context), target);
 		}

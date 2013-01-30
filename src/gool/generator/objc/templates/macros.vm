@@ -26,9 +26,9 @@
 #end
 
 #macro ( includesPerso $dep )
-#foreach( $d in $dep )#import "${d}.h"
+#foreach( $d in $dep )#import "${d}OBJC.h"
 #end
 #end
 
-#macro ( type $type )
-$Helper.removePointer($type)#end
+#macro ( type $t )
+$Helper.removePointer($t)#end
