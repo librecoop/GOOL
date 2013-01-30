@@ -16,6 +16,7 @@ import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Block;
 import gool.ast.constructs.BufferedWriterMethCall;
 import gool.ast.constructs.CastExpression;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -75,6 +76,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
@@ -99,7 +101,8 @@ import org.apache.commons.lang.StringUtils;
 public class CppGenerator extends CommonCodeGenerator {
 
 	@SuppressWarnings("unused")
-	private static Map<IType, String> tempStore=new HashMap<IType, String>();
+	private static Map<IType, String> tempTypeStore=new HashMap<IType, String>();
+	private static Map<String, String> tempVariableStore=new HashMap<String, String>();
 	private TypeFile typeFile=new TypeFile();
 	private TypeFileReader typeFileReader=new TypeFileReader();
 	private TypeFileWriter typeFileWriter=new TypeFileWriter();
@@ -274,9 +277,11 @@ public class CppGenerator extends CommonCodeGenerator {
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
 			return String.format("std::cout << (%s)->data() << std::endl;", GeneratorHelper
 				.joinParams(systemOutPrintCall.getParameters()));
+//			return String.format("std::cout << (%s) << std::endl;", GeneratorHelper
+//					.joinParams(systemOutPrintCall.getParameters()));
 		}
 		else {
-			return String.format("std::cout << (%s) << std::endl;", GeneratorHelper
+			return String.format("std::cout << (%s) << std::endl", GeneratorHelper
 					.joinParams(systemOutPrintCall.getParameters()));
 		}
 	}
@@ -331,6 +336,12 @@ public class CppGenerator extends CommonCodeGenerator {
 		}
 		if (typeDependency.getType() instanceof TypeFileWriter) {
 			return "fstream";
+		}
+		if (typeDependency.getType() instanceof TypeException) {
+			return "exception";
+		}
+		if (typeDependency.getType() instanceof TypeIOException) {
+			return "exception";
 		}
 //		if (typeDependency.getType().toString().equalsIgnoreCase("")){
 //			return "";
@@ -605,16 +616,16 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeBufferedWriter typeBufferedWriter) {
 		//TODO Auto-generated method stub
-		return String.format("std::fstream");
+		return String.format("std::ofstream");
 		//return String.format("fstream");
 	}
 
 	@Override
 	public String getCode(BufferedReaderReadLineCall bufferedReaderReadLineCall) {
 		// TODO Auto-generated method stub
-		if (!(tempStore.containsValue("getline()")))
+		if (!(tempTypeStore.containsValue("getline()")))
 		{
-			tempStore.put(bufferedReaderReadLineCall.getType(), "true");
+			tempTypeStore.put(bufferedReaderReadLineCall.getType(), "true");
 			return String.format("getline( %s , line )", bufferedReaderReadLineCall.getExpression());
 		}
 		else
@@ -625,9 +636,9 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(BufferedReaderReadCall bufferedReaderReadCall) {
 		// TODO Auto-generated method stub
-		if (!(tempStore.containsValue("get()")))
+		if (!(tempTypeStore.containsValue("get()")))
 		{
-			tempStore.put(bufferedReaderReadCall.getType(), "true");
+			tempTypeStore.put(bufferedReaderReadCall.getType(), "true");
 			return String.format("%s.good()||-1", bufferedReaderReadCall.getExpression());
 		}
 		else
@@ -638,7 +649,7 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s.close()", bufferedReaderCloseCall.getExpression());
+		return String.format("%s.close();", bufferedReaderCloseCall.getExpression());
 	}
 	
 	@Override
@@ -646,7 +657,13 @@ public class CppGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		String initialValue=bufferedWriterWriteCall.getParameters().get(0).toString();
 		if (initialValue.contains("\""))
-		return String.format("%s<<%s;", bufferedWriterWriteCall.getExpression(),initialValue.substring(initialValue.indexOf("\""),initialValue.lastIndexOf("\"")+1));
+		{
+			return String.format("%s<<%s;", bufferedWriterWriteCall.getExpression(),initialValue.substring(initialValue.indexOf("\""),initialValue.lastIndexOf("\"")+1));
+		}
+		if(tempVariableStore.get(initialValue)!=null)
+		{
+			return String.format("%s<<%s;", bufferedWriterWriteCall.getExpression(),tempVariableStore.get(initialValue));
+		}
 		return String.format("%s<<%s;", bufferedWriterWriteCall.getExpression(),initialValue);
 	}
 	
@@ -679,35 +696,35 @@ public class CppGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(VarDeclaration varDec) {
- 		String initialValue = "";
- 		
- 		if(varDec.getInitialValue().toString().contains("getline()"))
+// 		String initialValue = "";
+ 		String initialValue=varDec.getInitialValue().toString();
+ 		if(varDec.getInitialValue().toString().contains("getline"))
  		{
- 			initialValue=varDec.getInitialValue().toString();
- 			tempStore.put(varDec.getType(), "getline()");
+// 			initialValue=varDec.getInitialValue().toString();
+ 			tempTypeStore.put(varDec.getType(), "getline()");
  			initialValue=initialValue.substring(initialValue.lastIndexOf("(")+1, initialValue.lastIndexOf(","));
- 			return String.format("getline(%s,line);\n std::string %s=line;\n", initialValue, varDec.getName());
+ 			return String.format("getline(%s,line);\n std::string* %s=(new std::string(line));\n", initialValue, varDec.getName());
  		}
  		if(varDec.getInitialValue().toString().contains("good()"))
  		{
- 			initialValue=varDec.getInitialValue().toString();
- 			tempStore.put(varDec.getType(), "get()");
+ //			initialValue=varDec.getInitialValue().toString();
+ 			tempTypeStore.put(varDec.getType(), "get()");
  			initialValue=initialValue.substring(0, initialValue.indexOf("."));
  			return String.format("%s %s= %s.get()));\n", varDec.getType(), varDec.getName(),initialValue);
  		}
 		if(varDec.getType()instanceof TypeFile)
 		{
-			initialValue="" + varDec.getInitialValue();
+//			initialValue="" + varDec.getInitialValue();
 			int a= initialValue.indexOf("\"");
 			int b= initialValue.lastIndexOf("\"");
 			initialValue=initialValue.substring(a, b)+"\"";
-			tempStore.put(typeFile, initialValue);
+			tempTypeStore.put(typeFile, initialValue);
 			//f.open((new fstream(( new std::string ( "//home//mavefreak//git//GOOLOUTPUTJAVA//src//a.txt" ) ))));
 			return String.format("%s %s;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
 		}
 		if(varDec.getType()instanceof TypeBufferedReader)
 		{
-			initialValue="" + varDec.getInitialValue();
+//			initialValue="" + varDec.getInitialValue();
 			if (initialValue.contains("\""))
 			{
 				int a= initialValue.indexOf("\"");
@@ -715,51 +732,73 @@ public class CppGenerator extends CommonCodeGenerator {
 				initialValue=initialValue.substring(a, b)+"\"";
 				return String.format("%s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
 			}
-			initialValue=tempStore.get(typeFileReader);
+			if(tempTypeStore.get(typeFileReader)!=null)
+			{
+				initialValue=tempTypeStore.get(typeFileReader);
+			}
+			if(tempTypeStore.get(typeFile)!=null)
+			{
+				initialValue=tempTypeStore.get(typeFile);
+			}
 			return String.format("%s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
 		}
 		if(varDec.getType()instanceof TypeBufferedWriter)
 		{
-			initialValue="" + varDec.getInitialValue();
+//			initialValue="" + varDec.getInitialValue();
 			if (initialValue.contains("\""))
 			{
 				int a= initialValue.indexOf("\"");
 				int b= initialValue.lastIndexOf("\"");
 				initialValue=initialValue.substring(a, b)+"\"";
-				return String.format("%s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
+				return String.format("%s %s;\n %s.open(%s);\n","std::ofstream", varDec.getName(), varDec.getName(),initialValue);
 			}
-			initialValue=tempStore.get(typeFileWriter);
-			return String.format("%s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
+			if(tempTypeStore.get(typeFileWriter)!=null)
+			{
+				initialValue=tempTypeStore.get(typeFileWriter);
+			}
+			if(tempTypeStore.get(typeFile)!=null)
+			{
+				initialValue=tempTypeStore.get(typeFile);
+			}
+			return String.format("%s %s;\n %s.open(%s);\n","std::ofstream", varDec.getName(), varDec.getName(),initialValue);
 		}
 		if(varDec.getType()instanceof TypeFileReader)
 		{
-			initialValue="" + varDec.getInitialValue();
+//			initialValue="" + varDec.getInitialValue();
 			
 			if (initialValue.contains("\""))
 			{
 				int a= initialValue.indexOf("\"");
 				int b= initialValue.lastIndexOf("\"");
 				initialValue=initialValue.substring(a, b)+"\"";
-				tempStore.put(typeFileReader, initialValue);
+				tempTypeStore.put(typeFileReader, initialValue);
 			}
 			else
-				tempStore.put(typeFileReader, tempStore.get(typeFile));
+				tempTypeStore.put(typeFileReader, tempTypeStore.get(typeFile));
 			return String.format("");
 		}
 		if(varDec.getType()instanceof TypeFileWriter)
 		{
-			initialValue="" + varDec.getInitialValue();
-		
+//			initialValue="" + varDec.getInitialValue();
+			
 			if (initialValue.contains("\""))
 			{
 				int a= initialValue.indexOf("\"");
 				int b= initialValue.lastIndexOf("\"");
 				initialValue=initialValue.substring(a, b)+"\"";
-				tempStore.put(typeFileWriter, initialValue);
+				tempTypeStore.put(typeFileWriter, initialValue);
 			}
 			else
-				tempStore.put(typeFileWriter, tempStore.get(typeFile));
+				tempTypeStore.put(typeFileWriter, tempTypeStore.get(typeFile));
 			return String.format("");
+		}
+		if(varDec.getType()instanceof TypeInt)
+		{
+			tempVariableStore.put(varDec.getName().toString(), "\""+initialValue.substring(initialValue.lastIndexOf("(")+1,initialValue.indexOf(")"))+"\"");
+		}
+		if(varDec.getType()instanceof TypeString)
+		{
+			tempVariableStore.put(varDec.getName().toString(), initialValue.substring(initialValue.indexOf("\""),initialValue.lastIndexOf("\"")+1));
 		}
 		if (varDec.getInitialValue() != null) {
 			initialValue = " = " + varDec.getInitialValue();
@@ -813,7 +852,7 @@ public class CppGenerator extends CommonCodeGenerator {
 //		int a= parameterValue.indexOf("\"");
 //		int b= parameterValue.lastIndexOf("\"");
 //		parameterValue=parameterValue.substring(a, b)+"\"";
-		return String.format("std::remove(%s)", tempStore.get(typeFile));
+		return String.format("std::remove(%s)", tempTypeStore.get(typeFile));
 	}
 
 	@Override
@@ -837,6 +876,22 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(TypeIOException typeIOException) {
 		// TODO Auto-generated method stub
-		return null;
+		return "exception& e";
+	}
+	@Override
+	public String getCode(Catch c ) {
+		StringBuilder result = new StringBuilder();
+		result.append("\n catch(");
+		result.append(c.getSingleParameter());
+		result.append(") {\n");
+		for (Statement statement : c.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("\n}");
+		return result.toString();
 	}
 }
