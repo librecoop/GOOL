@@ -57,7 +57,7 @@ public class GoolTest {
 	private List<Platform> platforms = Arrays.asList(
 			JavaPlatform.getInstance(), //CppPlatform.getInstance(),
 			CSharpPlatform.getInstance()
-			, AndroidPlatform.getInstance()
+			//, AndroidPlatform.getInstance()
 			);
 
 	// private List<Platform> platforms =
@@ -361,20 +361,21 @@ public class GoolTest {
 				+ "import gool.imports.java.io.FileWriter;\n"
 				+ "import gool.imports.java.io.BufferedWriter;\n"
 				+ "import gool.imports.java.io.File;\n"
+				+ "import gool.imports.java.io.FileNotFoundException;\n"
+				+ "import gool.imports.java.io.EOFException;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
-										+"BufferedWriter bw = new BufferedWriter(new FileWriter(\""+writeFile+"\")); \n"
-										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
 										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
 										+" String testString = br.readLine();char c = (char)br.read(); \n"
 										+"br.close();\n"
 										+"  \n System.out.println(testString+c);\n "
 								
-								
-								+"} catch(Exception ex) \n {ex.toString();}",
+								+"} catch(EOFException eof) \n { System.out.println(\"eof\");} "
+								+" catch(FileNotFoundException fnf) \n { System.out.println(\"notfound\");} "
+								+" catch(Exception ex) \n {ex.toString();}",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "line1A");
+		compareResultsDifferentPlatforms(input, "notfound");
 	}
 
 	@Test

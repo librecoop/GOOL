@@ -67,9 +67,11 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
+import gool.ast.type.TypeEOFException;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileNotFoundException;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeIOException;
@@ -81,6 +83,7 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
+import gool.imports.java.io.FileNotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +91,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.sun.tools.javac.code.Type;
 
 /**
  * It generates specific C# code for certain GOOL nodes.
@@ -273,6 +278,13 @@ public class CSharpGenerator extends CommonCodeGenerator {
 			return "System.IO";
 		}
 		if (typeDependency.getType() instanceof TypeIOException) {
+			return "System.IO";
+		}
+		if (typeDependency.getType() instanceof TypeFileNotFoundException) {
+			return "System.IO";
+		}
+	
+		if (typeDependency.getType() instanceof TypeEOFException) {
 			return "System.IO";
 		}
 
@@ -695,6 +707,15 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		return "IOException";
 	}
 
+	@Override
+	public String getCode(TypeFileNotFoundException typeFileNotFoundException) {
+		return "FileNotFoundException";
+	}
+
+	@Override
+	public String getCode(TypeEOFException typeEOFException) {
+		return "EndOfStreamException";
+	}
 	@Override
 	public String getCode(Finally f) {
 		StringBuilder result = new StringBuilder();

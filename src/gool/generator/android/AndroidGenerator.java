@@ -69,8 +69,10 @@ import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeBufferedWriter;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
+import gool.ast.type.TypeEOFException;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileNotFoundException;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeIOException;
@@ -323,6 +325,13 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeIOException) {
 			return "java.io.IOException";
 		}
+		if (typeDependency.getType() instanceof TypeFileNotFoundException) {
+			return "java.io.FileNotFoundException";
+		}
+	
+		if (typeDependency.getType() instanceof TypeEOFException) {
+			return "java.io.EOFException";
+		}
 		return super.getCode(typeDependency);
 	}
 
@@ -540,7 +549,18 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(TypeIOException typeIOException) {
 		return "IOException";
 	}
+	@Override
+	public String getCode(TypeFileNotFoundException typeFileNotFoundException) {
+		
+		return "FileNotFoundException";
+	}
 
+
+	@Override
+	public String getCode(TypeEOFException typeEOFException) {
+		
+		return "EOFException";
+	}
 	@Override
 	public String getCode(Finally f) {
 		StringBuilder result = new StringBuilder();

@@ -76,9 +76,11 @@ import gool.ast.type.TypeBufferedWriter;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
+import gool.ast.type.TypeEOFException;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileNotFoundException;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeIOException;
@@ -878,6 +880,18 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(TypeIOException typeIOException) {
 		// TODO Auto-generated method stub
 		return "exception& e";
+	}
+	
+	@Override
+	public String getCode(TypeFileNotFoundException typeFileNotFoundException) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public String getCode(TypeEOFException typeEndOfStreamException) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	@Override
 	public String getCode(Catch c ) {
