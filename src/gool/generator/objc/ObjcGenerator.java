@@ -105,7 +105,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 //List Methods
-	
 	@Override
 	public String getCode(ListAddCall lac) {
 		String nsObject = GeneratorHelperObjc.staticString(lac.getParameters().get(0));
@@ -182,7 +181,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		/*return String.format("[[%s objectForKey:@%s]isEqualToString:@" + "("
 				+ "null" + ")" + "]", mapContainsKeyCall.getExpression(),
 				mapContainsKeyCall.getParameters());*/ // TODO
-		return " /* MapContainsKeyCall non impl��ment�� */ ";
+		return " /* MapContainsKeyCall non implemente */ ";
 	}
 
 	@Override

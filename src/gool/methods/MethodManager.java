@@ -139,7 +139,7 @@ public class MethodManager {
 
 	public static String getGeneralName(String formatedName, String methodLibrary, Language l){
 		String fileName = getFileName(l.name(), methodLibrary);
-		String res = null;
+		String res = "";
 		try{
 			InputStream ips= new FileInputStream(fileName); 
 			InputStreamReader ipsr=new InputStreamReader(ips);
@@ -157,7 +157,8 @@ public class MethodManager {
 			br.close(); 
 		}		
 		catch (Exception e){
-			System.out.println(e.toString());
+			System.err.println(e.toString());
+			res = null;
 		}
 		
 		return res;
