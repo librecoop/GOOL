@@ -86,6 +86,9 @@ public class GoolTests {
 	
 	@Before
 	public void before() {
+		for(Platform platform : platforms) {
+			deleteDirContent(platform.getCodePrinter().getOutputDir(), false);
+		}
 		platform.reInitializeCodePrinter();
 	}
 	
@@ -98,13 +101,6 @@ public class GoolTests {
 
 		String result = ExecutorHelper.compileAndRun(platform, files);
 		Assert.assertEquals(name, asserts.getOutput(), result);
-	}
-	
-	@After
-	public void tearDown() {
-		for(Platform platform : platforms) {
-			deleteDirContent(platform.getCodePrinter().getOutputDir(), false);
-		}
 	}
 	
 	//Clean up output directories
