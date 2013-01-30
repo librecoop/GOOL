@@ -32,6 +32,7 @@ import gool.ast.constructs.BufferedWriterMethCall;
 import gool.ast.constructs.Catch;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.FileMethCall;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.Identifier;
@@ -486,4 +487,6 @@ public interface CodeGenerator {
 	String getCode(FileDeleteCall fileDeleteCall);
 	String getCode(FileExistsCall fileExistsCall);
 	String getCode(TypeIOException typeIOException);
+
+	String getCode(Finally f);
 }

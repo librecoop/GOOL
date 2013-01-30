@@ -17,6 +17,7 @@ public class Try extends Block {
 	private List<Statement> statements = new ArrayList<Statement>();
 	private List<Catch> catches = new ArrayList<Catch>();
 	private Block b;
+	private Finally finallyBlock;
 	
 	/**
 	 * Creates a new block with the specified expression.
@@ -31,9 +32,16 @@ public class Try extends Block {
 	public Try() {
 	}
 	
+	public Try(Block block, List<Catch> catches, Finally finallyBlock) {
+		this.b=block;
+		this.catches = catches;
+		this.finallyBlock = finallyBlock;
+	}
+	
 	public Try(Block block, List<Catch> catches) {
 		this.b=block;
 		this.catches = catches;
+		
 	}
 
 	/**
@@ -85,6 +93,12 @@ public class Try extends Block {
 	public List<Catch> getCatches() {
 		return catches;
 	}
+
+	public Finally getFinallyBlock() {
+		return finallyBlock;
+	}
+	
+	
 
 	
 	

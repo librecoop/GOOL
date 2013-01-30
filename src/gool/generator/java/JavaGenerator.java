@@ -21,6 +21,7 @@ import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.FileMethCall;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.Try;
 
@@ -475,6 +476,10 @@ public class JavaGenerator extends CommonCodeGenerator {
 			result.append(getCode(c));		
 			
 		}
+		/* If a finally block exists add the code for it as well */
+		if(t.getFinallyBlock() != null) {
+		result.append(t.getFinallyBlock());
+		}
 		return result.toString();
 	}
 	
@@ -496,8 +501,23 @@ public class JavaGenerator extends CommonCodeGenerator {
 	}
 	
 	@Override
+	public String getCode(Finally f ) {
+		StringBuilder result = new StringBuilder();
+		result.append("\n finally {\n");
+		for (Statement statement : f.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("\n}");
+		return result.toString();
+	}
+	
+	@Override
 	public String getCode(TypeIOException typeIOException) {
-		// TODO Auto-generated method stub
+		
 		return "IOException";
 	}
 	

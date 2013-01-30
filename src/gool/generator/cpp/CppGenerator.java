@@ -28,6 +28,7 @@ import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FileMethCall;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
@@ -893,5 +894,11 @@ public class CppGenerator extends CommonCodeGenerator {
 		}
 		result.append("\n}");
 		return result.toString();
+	}
+
+	@Override
+	public String getCode(Finally f) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

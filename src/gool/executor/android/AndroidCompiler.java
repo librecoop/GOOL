@@ -68,12 +68,12 @@ public class AndroidCompiler extends SpecificCompiler {
 			 * as it may take some time, limited to a maximum of 10 seconds
 			 */			
 			do {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 				// Reads the logCat file and returns the SysOut equivalent
 			returnString = execLogCatCommand("adb logcat -d raw JUnitSysOut:I *:S"); 
 			waitTime++;
 			}
-			while(returnString.equals("")||waitTime>20);
+			while(returnString.equals("")||waitTime>10);
 			logger.info("Waited "+waitTime/2+" seconds for logcat output:" + returnString);
 			return returnString;
 		} catch (IOException e) {
@@ -121,8 +121,11 @@ public class AndroidCompiler extends SpecificCompiler {
 			e.printStackTrace();
 
 		}
-
-		return returnString.substring(returnString.indexOf(":") + 1);
+		//Some formating is used to remove the signature
+		String pattern = "\n?I/JUnitSysOut\\(\\s*\\d*\\): ";
+		//String formattedString = returnString.replaceAll("I/JUnitSysOut(*): ", "");
+		
+		return returnString.replaceAll(pattern,"");
 
 	}
 
