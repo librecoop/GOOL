@@ -1509,7 +1509,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		Meth method = createMethod(n, context, customCode, true);
 		method.setInherited(isInherited);
-
+		
 		return method;
 	}
 
@@ -1565,6 +1565,24 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 						context)));
 			}
 		}
+		
+		/** go through each throwStatement and adds it to the method.
+		 * I do not believe this way is ideal, there should be a more 
+		 * adequate way
+		 */		
+				if (n.getThrows() != null) {
+					for (ExpressionTree p : n.getThrows()) {
+						if(p.toString().equals("Exception")) {
+							method.addThrowStatement(TypeException.INSTANCE);
+						}
+						else if (p.toString().equals("IOException")){
+							method.addThrowStatement(TypeIOException.INSTANCE);
+						}						
+						
+					}
+				}
+				
+		
 
 		// Can we safely move it to L1298?
 		method.setModifiers(modifiers);
