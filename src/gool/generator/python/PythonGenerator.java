@@ -499,12 +499,17 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		// allow inheritance when multiple methods have the same name
 		if (methodsNames.get(meth).equals(meth.getName())) {
 			prefix = formatIndented (
-					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
+					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n%-1return\n",
 					printMethParamsTypes(meth, ", "),
 					currentClass.getName(),
 					meth.isConstructor()?"__init__":meth.getName());
-			if (! meth.getParams().isEmpty())
-				prefix += printMethParamsNames(meth).substring(2) + " = args\n";
+			if (! meth.getParams().isEmpty()) {
+				prefix += printMethParamsNames(meth).substring(2);
+				if (meth.getParams().size() == 1)
+					prefix += ", = args\n";
+				else
+					prefix += " = args\n";
+			}
 			prefix += "# end of GOOL header\n";
 		}
 		if (meth.isConstructor()) {
