@@ -68,9 +68,7 @@ import org.apache.commons.lang.StringUtils;
  * languages.
  */
 public abstract class CommonCodeGenerator implements CodeGenerator {
-
-	
-	
+	protected int indentation = 2;
 	@Override
 	public String getCode(Identifier identifier) {
 		return identifier.getName();
@@ -121,6 +119,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
+			for (int i=0;i<this.indentation;i++){
+				result.append("    ");
+			}
 			result.append(statement);
 			
 			if (!(statement instanceof Block)) {
@@ -220,9 +221,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 
 	@Override
-	public String getCode(For forInstruction) {
-		return String.format("for(%s;%s;%s){ %s }", forInstruction.getInitializer(), forInstruction
-				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement());
+	    public String getCode(For forInstruction) {
+		this.indentation++;
+		String result = String.format("for(%s;%s;%s){\n%s%s}", forInstruction.getInitializer(), forInstruction
+				.getCondition(), forInstruction.getUpdater(), forInstruction.getWhileStatement(),tab());
+		this.indentation--;
+		return result;
 	}
 
 	@Override
@@ -249,6 +253,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		}
 		return out;
 	}
+
 
 	@Override
 	public String getCode(Collection<Modifier> modifiers) {
@@ -433,8 +438,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(While whilee) {
-		return String.format("while(%s){ %s }", whilee.getCondition(), whilee
-				.getWhileStatement());
+		this.indentation++;
+		String result = String.format("while(%s){\n%s%s}", whilee.getCondition(), whilee
+				.getWhileStatement(),tab());
+		this.indentation--;
+		return result;
 	}
 	
 	@Override
@@ -521,4 +529,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(Catch catchExpression ) {
 		return "Handled in subclass";
 	}
+
+private String tab(){
+	String result="";
+	for(int i=0;i<this.indentation-1;i++)
+		result+="    ";
+	return result;
+}
+			
 }
