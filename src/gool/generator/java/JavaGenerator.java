@@ -22,6 +22,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.ExceptionMethCall;
 import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.Finally;
+import gool.ast.constructs.Meth;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.Try;
 
@@ -542,6 +543,19 @@ public class JavaGenerator extends CommonCodeGenerator {
 	public String getCode(TypeEOFException typeEOFException) {
 		
 		return "EOFException";
+	}
+	
+	@Override
+	public String getCode(Meth meth) {
+		if(meth.getThrowStatement().size()== 0) {
+			return super.getCode(meth);
+		}
+		else {
+			return String.format("%s %s %s(%s) throws %s", getCode(meth.getModifiers()), meth
+					.getType(), meth.getName(), StringUtils.join(meth.getParams(),
+					", "), StringUtils.join(meth.getThrowStatement(),", "));			
+		}
+		
 	}
 	
 }

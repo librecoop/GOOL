@@ -29,6 +29,7 @@ import gool.ast.constructs.Expression;
 import gool.ast.constructs.FileMethCall;
 import gool.ast.constructs.Finally;
 import gool.ast.constructs.MainMeth;
+import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
@@ -573,5 +574,18 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		}
 		result.append("\n}");
 		return result.toString();
+	}
+	
+	@Override
+	public String getCode(Meth meth) {
+		if(meth.getThrowStatement().size()== 0) {
+			return super.getCode(meth);
+		}
+		else {
+			return String.format("%s %s %s(%s) throws %s", getCode(meth.getModifiers()), meth
+					.getType(), meth.getName(), StringUtils.join(meth.getParams(),
+					", "), StringUtils.join(meth.getThrowStatement(),", "));			
+		}
+		
 	}
 }

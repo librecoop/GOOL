@@ -26,6 +26,12 @@ public class Meth extends Dec {
 	 * The list of generic types (specific to the method).
 	 */
 	private List<IType> genericTypes = new ArrayList<IType>();
+	/**
+	 * The list of Exceptions the method throws
+	 */
+	private List<IType> throwStatement = new ArrayList<IType>();
+	
+	
 
 	/**
 	 * Indicates if this method is inherited.
@@ -111,4 +117,14 @@ public class Meth extends Dec {
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
+
+	public List<IType> getThrowStatement() {
+		return throwStatement;
+	}
+	
+	public final void addThrowStatement(IType type) {
+		throwStatement.add(type);
+	}
+	
+	
 }

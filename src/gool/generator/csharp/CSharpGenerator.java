@@ -347,10 +347,19 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		String name = replaceMethodName(meth, meth.getName());
 
 		customizeModifiers(meth);
-
+		//Below test if the method has a throws clause in which case a comment is generated
+		if(meth.getThrowStatement().size()==0) {
 		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()),
 				meth.getType(), name,
 				GeneratorHelper.joinParams(meth.getParams()));
+		}
+		else {
+			return String.format("%s %s %s(%s)", getCode(meth.getModifiers()),
+					meth.getType(), name,
+					GeneratorHelper.joinParams(meth.getParams())) 
+					+ "\n// This method throws the following exceptions in JAVA:" + meth.getThrowStatement().toString()+"\n";
+			
+		}
 	}
 
 	private void customizeModifiers(Meth meth) {
@@ -721,5 +730,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		result.append("\n}");
 		return result.toString();
 	}
+	
+	
 
 }
