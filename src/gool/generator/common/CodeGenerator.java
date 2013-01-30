@@ -91,8 +91,10 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
+import gool.ast.type.TypeEOFException;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
+import gool.ast.type.TypeFileNotFoundException;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeIOException;
@@ -486,7 +488,13 @@ public interface CodeGenerator {
 	String getCode(FileIsFileCall fileIsFileCall);
 	String getCode(FileDeleteCall fileDeleteCall);
 	String getCode(FileExistsCall fileExistsCall);
+	
+	
 	String getCode(TypeIOException typeIOException);
 
+	String getCode(TypeFileNotFoundException typeFileNotFoundException);
+	
+	String getCode(TypeEOFException typeEndOfStreamException);
+	
 	String getCode(Finally f);
 }

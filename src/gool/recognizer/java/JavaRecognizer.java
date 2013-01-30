@@ -89,9 +89,11 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
+import gool.ast.type.TypeEOFException;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
+import gool.ast.type.TypeFileNotFoundException;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeIOException;
@@ -640,6 +642,19 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("IOException", tmpOtd);
 		string2otdMap.put("java.io.IOException", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.IOException", tmpOtd);
+		
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeFileNotFoundException();
+			}
+		};
+		string2otdMap.put("FileNotFoundException", tmpOtd);
+		string2otdMap.put("java.io.FileNotFoundException", tmpOtd);
+		string2otdMap.put("gool.imports.java.io.FileNotFoundException", tmpOtd);
+	
+		string2otdMap.put("EOFException", tmpOtd);
+		string2otdMap.put("java.io.EOFException", tmpOtd);
+		string2otdMap.put("gool.imports.java.io.EOFException", tmpOtd);
 	}
 
 	private IType string2IType(String typeName, Context context) {
