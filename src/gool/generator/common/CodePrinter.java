@@ -93,18 +93,19 @@ public abstract class CodePrinter {
 			catch (IOException e) {
 				Log.e(e.toString());
 			}
-			fd = new File(outputDir+"/"+path);
-			try{
-				CopierFichier(fi, fd);
+			if(path.length() != fi.getName().length()){
+				int nbF = (path.length()-fi.getName().length()-1);
+				String a = path.substring(0, nbF);
+				new File(outputDir+File.separator+a).mkdirs();
+				
 			}
-			catch (FileNotFoundException e){
-				new File(path).mkdirs();
-				try{
-				CopierFichier(fi, fd);}
-				catch(Exception e1){
-					Log.e(e1.toString());
+			fd = new File(outputDir+File.separator+path);
+				try {
+					CopierFichier(fi, fd);
+				} catch (FileNotFoundException e1) {
+					System.out.println(e1.toString());
 				}
-		}
+
 
 
 		GoolGeneratorController.setCodeGenerator(generator);
