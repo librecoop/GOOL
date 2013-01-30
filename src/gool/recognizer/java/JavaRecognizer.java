@@ -652,6 +652,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("java.io.FileNotFoundException", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.FileNotFoundException", tmpOtd);
 	
+		tmpOtd = new Otd() {
+			public IType getType() {
+				return new TypeEOFException();
+			}
+		};
 		string2otdMap.put("EOFException", tmpOtd);
 		string2otdMap.put("java.io.EOFException", tmpOtd);
 		string2otdMap.put("gool.imports.java.io.EOFException", tmpOtd);
@@ -1592,7 +1597,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 						}
 						else if (p.toString().equals("IOException")){
 							method.addThrowStatement(TypeIOException.INSTANCE);
-						}						
+						}				
+						else if (p.toString().equals("EOFException")){
+							method.addThrowStatement(TypeEOFException.INSTANCE);
+						}				
+						else if (p.toString().equals("FileNotFoundException")){
+							method.addThrowStatement(TypeFileNotFoundException.INSTANCE);
+						}				
 						
 					}
 				}

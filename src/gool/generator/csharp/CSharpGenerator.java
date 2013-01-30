@@ -714,7 +714,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeEOFException typeEOFException) {
-		return "EOFException";
+		return "EndOfStreamException";
 	}
 	@Override
 	public String getCode(Finally f) {

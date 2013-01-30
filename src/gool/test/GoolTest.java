@@ -372,8 +372,8 @@ public class GoolTest {
 										+"  \n System.out.println(testString+c);\n "
 								
 								+"} catch(EOFException eof) \n { System.out.println(\"eof\");} "
-								+"} catch(FileNotFoundException fnf) \n { System.out.println(\"notfound\");} "
-								+"} catch(Exception ex) \n {ex.toString();}",
+								+" catch(FileNotFoundException fnf) \n { System.out.println(\"notfound\");} "
+								+" catch(Exception ex) \n {ex.toString();}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "notfound");
 	}
