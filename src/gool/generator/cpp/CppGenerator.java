@@ -548,7 +548,8 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		if (classDef.getPpackage() != null)
 			sb = sb.append(String.format("namespace %s {", classDef.getPackageName()));
 		sb = sb.append("#include <boost/any.hpp>\n");
-		sb = sb.append("#include <boost/lexical_cast.hpp>\n\n");
+		sb = sb.append("#include <boost/lexical_cast.hpp>\n");
+		sb = sb.append("#include \"finally.h\"\n\n");
 		sb = sb.append(String.format("#include \"%s.h\"\n\n", classDef.getName()));
 		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
 		if (! dependencies.isEmpty()) {
@@ -597,13 +598,17 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(Try tryStatement) {
-		String ret = formatIndented("try\n{%1}", tryStatement.getBlock() +
-				(tryStatement.getFinilyBlock().getStatements().isEmpty()?"":"throw (void*)NULL; // if no exceptions, activate the 'finaly' block\n"));
+		String ret = "";
+		if (tryStatement.getFinilyBlock().getStatements().isEmpty()) {
+			ret = formatIndented("try\n{%1}", tryStatement.getBlock());		
+		} else {
+			ret = formatIndented("try\n{\nfinally(%1) // finally%1}",
+					tryStatement.getFinilyBlock(),
+					tryStatement.getBlock());
+		}
 		for (Catch c: tryStatement.getCatches()) {
 			ret += "\n" + c;
 		}
-		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
-			ret += formatIndented("catch(void *) // finaly\n{%1}\n", tryStatement.getFinilyBlock());
 		return ret;
 	}
 

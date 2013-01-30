@@ -36,7 +36,11 @@ import org.junit.runners.Parameterized.Parameters;
 public class GoolTests {
 	
 	//Platforms to be tested
-	private static List<Platform> platforms = Arrays.asList((Platform)JavaPlatform.getInstance(),/*CSharpPlatform.getInstance(),  CppPlatform.getInstance(),*/ PythonPlatform.getInstance());
+	private static List<Platform> platforms = Arrays.asList(
+			JavaPlatform.getInstance(),
+//			CSharpPlatform.getInstance(),
+//			CppPlatform.getInstance(),
+			PythonPlatform.getInstance());
 
 	private String name;	//Name of the test
 	private Platform platform;	//Platform for the test
