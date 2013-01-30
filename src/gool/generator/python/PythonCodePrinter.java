@@ -6,16 +6,58 @@ import gool.generator.common.CodePrinter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import logger.Log;
 
 public class PythonCodePrinter extends CodePrinter {
 	
+
+	private void createGoolHelperModule(File outputDir) {
+		FileOutputStream goolHelperOut;
+		byte[] buffer = new byte[1024];
+		int noOfBytes;
+
+		// Helpers to create by copying the resource
+		List<String> goolHelperIn = new ArrayList<String>();
+		goolHelperIn.add("goolHelper/__init__.py");
+		goolHelperIn.add("goolHelper/IO.py");
+		goolHelperIn.add("goolHelper/Util.py");
+		
+		// create the directory
+		File dir = new File(outputDir+"/goolHelper");
+		if (! dir.isDirectory() && ! dir.mkdirs()) {
+			Log.e(String.format("Impossible to create the module '%s/goolHelper'", outputDir));
+		} else {
+			// Print helpers
+			for(String in : goolHelperIn) {
+				InputStream helper;
+				try {
+					helper = PythonPlatform.class.getResource(in).openStream();
+	
+					goolHelperOut = new FileOutputStream (outputDir+"/"+in);
+					while ((noOfBytes = helper.read(buffer)) != -1) {
+						goolHelperOut.write(buffer, 0, noOfBytes);
+					}
+					goolHelperOut.close();
+					helper.close();
+				} catch (IOException e){
+					Log.e(String.format("Impossible to create the file '%s'", in));
+				}
+			}
+		}
+		
+	}
+
+
 	public PythonCodePrinter(File outputDir, Collection<File> myF) {
 		super(new PythonGenerator(), outputDir, myF);
+		createGoolHelperModule(outputDir);
 	}
 	
 	@Override

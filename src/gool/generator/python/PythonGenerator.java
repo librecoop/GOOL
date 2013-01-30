@@ -71,12 +71,11 @@ import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInputStream;
-import gool.ast.type.TypeException;
-import gool.ast.type.TypeException.Kind;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -116,6 +115,12 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * Updated every time we start to print a new class.
 	 */
 	private ClassDef currentClass;
+	
+	/**
+	 * The class currently printed.
+	 * Updated every time we start to print a new method.
+	 */
+	private Meth currentMeth;
 	
 	/**
 	 * Used to store comments.
@@ -190,7 +195,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	public String getCode(Block block) {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
-			if(statement.toString().contains("goolHelperUtil.Scanner(System.in"))
+			if(statement.toString().contains("goolHelper.Util.Scanner(System.in"))
 			Log.e("mon stat :"+statement.toString());
 			result.append(printWithComment(statement));
 		}
@@ -276,7 +281,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(ClassNew classNew) {
 
-		if(classNew.getName().equals("goolHelperUtil.Scanner"))
+		if(classNew.getName().equals("goolHelper.Util.Scanner"))
 			return String.format("%s()", classNew.getName());
 		return String.format("%s(%s)", classNew.getType(), StringUtils
 				.join(classNew.getParameters(), ", "));
@@ -483,6 +488,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * @return the Python code of the method
 	 */
 	private String printMeth(Meth meth, String prefix) {
+		currentMeth = meth;
 		// register parameters as local identifiers
 		localIndentifiers.clear();
 		for (VarDeclaration p : meth.getParams()) {
@@ -569,24 +575,35 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (name.equals("this"))
 			return "self";
 
-		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)
-				&& ! name.startsWith("__")) {
-			name = "__" + name;
+		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)) {
+			name = name.replaceFirst("^__", "");
+			// we are cheating Python to access private members out of their parent class
+			if (currentMeth.isMainMethod())
+				name = String.format("_%s__%s", currentClass.getName(), name);
+			else
+				name = "__" + name;
 		}
-		if (localIndentifiers.contains(name))
+		if (localIndentifiers.contains(name)) {
 			return name;
-		else
-			return "self." + name;
-			
+		} else {
+			if (currentMeth!=null && currentMeth.isMainMethod())
+				return currentClass.getName() + "." + name;
+			else
+				return "self." + name;
+		}			
 	}
 	
 	@Override
 	public String getCode(MemberSelect memberSelect) {
 		String name = memberSelect.getIdentifier();
-		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)
-				&& ! name.startsWith("__")) {
-			name = "__" + name;
-		}		
+		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)) {
+			name = name.replaceFirst("^__", "");
+			// we are cheating Python to access private members out of their parent class
+			if (currentMeth != null && currentMeth.isMainMethod())
+				name = String.format("_%s__%s", currentClass.getName(), name);
+			else
+				name = "__" + name;
+		}
 		return String.format("%s.%s", memberSelect.getTarget(), name);
 	}
 
@@ -694,28 +711,28 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(TypeFile typeFile){
-		return "goolHelperIO.File";
+		return "goolHelper.IO.File";
 	}
 	
 	@Override
 	public String getCode(TypeFileReader typeFileReader){
-		return "goolHelperIO.FileReader";
+		return "goolHelper.IO.FileReader";
 	}
 	
 	@Override
 	public String getCode(TypeFileWriter typeFileWriter){
-		return "goolHelperIO.FileWriter";
+		return "goolHelper.IO.FileWriter";
 	}
 
 	@Override
 	public String getCode(TypeBufferedReader tbr) {
-		return "goolHelperIO.BufferedReader";
+		return "goolHelper.IO.BufferedReader";
 	}
 	
 
 	@Override
 	public String getCode(TypeScanner typeScanner) {
-		return "goolHelperUtil.Scanner";
+		return "goolHelper.Util.Scanner";
 	}
 	
 	@Override
@@ -828,7 +845,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	public String getCode(CustomDependency customDependency) {		
 		if (customDependency.getName().startsWith("java.io")) {
-			return "goolHelperIO";
+			return "goolHelper.IO";
 		}
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
@@ -882,7 +899,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder ("#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelperIO\nimport goolHelperUtil\n\n");
+		StringBuilder code = new StringBuilder (
+				"#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelper.IO\nimport goolHelper.Util\n\n");
 		
 		// Printing the imports.
 		// This is not the best way to write it in Python, but doing it right
@@ -1032,10 +1050,9 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			 * TODO: deal with command line arguments
 			 */
 			localIndentifiers.clear();
+			currentMeth = mainMeth;
 			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
-					mainMeth.getBlock().toString()
-					.replaceAll("([^\\w])self([^\\w])", "$1"+classDef.getName()+"$2")
-					.replaceAll("(\\w)\\.__", "$1._"+classDef.getName()+"__")));
+					mainMeth.getBlock()));
 		}
 
 		return code.toString();
@@ -1077,38 +1094,27 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(TypeException typeException) {
-		String retour = "";
 		switch (typeException.getKind()) {
 		case GLOBAL:
-			retour = "BaseException";
-			break;
+			return "BaseException";
 		case ARITHMETIC:
-			retour = "ArithmeticError";
-			break;
+			return "ArithmeticError";
 		case COLLECTION:
-			retour = "LookupError";
-			break;
+			return "LookupError";
 		case CAST:
-			retour = "ValueError";
-			break;
+			return "ValueError";
 		case ARGUMENT:
-			retour = "AttributeError";
-			break;
+			return "AttributeError";
 		case ARRAY:
-			retour = "IndexError";
-			break;
+			return "IndexError";
 		case TYPE:
-			retour = "TypeError";
-			break;
+			return "TypeError";
 		// in Python, 'None' is an object but it does'nt have many methods
 		case NULLREFERENCE:
-			retour = "AttributeError";
-			break;
+			return "AttributeError";
 		default:
-			retour = typeException.getName();
-			break;
+			return typeException.getName();
 		}
-		return retour;
 	}
 
 }
