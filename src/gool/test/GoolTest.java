@@ -163,7 +163,7 @@ public class GoolTest {
 				"Printer p = new Printer(); p.print();", MAIN_CLASS_NAME);
 		input += "\n"
 				+ TestHelper.surroundWithClass(
-						"public void print(){System.out.println(2 + 2);}",
+						"public void print()  {System.out.println(2 + 2);}",
 						"Printer", "");
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -404,6 +404,19 @@ public class GoolTest {
 								+"} catch(Exception ex) \n {ex.toString();}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1Awrite2");
+	}
+	
+	@Test
+	public void exceptionThrowTest() throws Exception {
+		String input = "import gool.imports.java.io.IOException;\n" +TestHelper.surroundWithClassMain(
+				"try {\n print();\n}\n" +
+				"catch(IOException ioe) {\n System.out.println(ioe);\n}\n" +
+				"catch(Exception e) {\n System.out.println(e);\n}\n}"		
+				+"\n public static void print() throws IOException, Exception {System.out.println(2 + 2);"		
+				, MAIN_CLASS_NAME);
+		
+		String expected = "4";
+		compareResultsDifferentPlatforms(input, expected);
 	}
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {

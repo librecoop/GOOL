@@ -345,7 +345,7 @@ public class CSharpGenerator extends CommonCodeGenerator {
 			return String.format("%s %s %s(%s)", getCode(meth.getModifiers()),
 					meth.getType(), name,
 					GeneratorHelper.joinParams(meth.getParams())) 
-					+ "\n//// This method throws the following exceptions in JAVA:" + meth.getThrowStatement().toString()+"\n";
+					+ "\n// This method throws the following exceptions in JAVA:" + meth.getThrowStatement().toString()+"\n";
 			
 		}
 	}
