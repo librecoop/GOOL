@@ -691,7 +691,8 @@ public class CppGenerator extends CommonCodeGenerator {
 		}
 		if(tempVariableStore.get(initialValue)!=null)
 		{
-			return String.format("%s<<%s", bufferedWriterWriteCall.getExpression(),tempVariableStore.get(initialValue));
+			//return String.format("%s<<%s", bufferedWriterWriteCall.getExpression(),tempVariableStore.get(initialValue));
+			return String.format("%s.put(%s)", bufferedWriterWriteCall.getExpression(),tempVariableStore.get(initialValue));
 		}
 		return String.format("%s<<%s", bufferedWriterWriteCall.getExpression(),"\""+tempChar+"\"");
 	}
@@ -954,7 +955,7 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(Finally f ) {
 		StringBuilder result = new StringBuilder();
-		result.append("\n finally {\n");
+		//result.append("\n finally {\n");
 		for (Statement statement : f.getBlock().getStatements()) {
 			result.append(statement);
 			if (!(statement instanceof Block)) {
@@ -962,7 +963,8 @@ public class CppGenerator extends CommonCodeGenerator {
 			}
 			
 		}
-		result.append("\n}");
+		Object o=f.getClass();
+		//result.append("\n}");
 		return result.toString();
 	}
 	@Override
