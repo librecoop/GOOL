@@ -376,6 +376,7 @@ public class GoolTest {
 
 	@Test
 	public void fileTestAppend() throws Exception {
+		try {
 		//String readFile = Settings.get("read_file_path");
 		//String readFile = Settings.get("read_file_path");
 		String writeFile = Settings.get("write_file_path");
@@ -401,7 +402,13 @@ public class GoolTest {
 								+"} catch(Exception ex) \n {System.out.println(\"ex\");}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1Awrite2");
-		Assert.fail("Append is not supported by bufferedreader at the moment");
+		}
+		catch(Exception e) {
+			logger.error(e);
+			Assert.fail("Append is not supported by bufferedreader at the moment in C++");
+			return;
+		}
+		
 	}
 	
 	@Test
