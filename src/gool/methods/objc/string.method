@@ -1,44 +1,44 @@
 charAtIndex			=	characterAtIndex(int) : char
 unicodeAtIndex		=	
-compareWithCase		=	compare(String) : int
-compareWithoutCase	=	caseInsensitiveCompare(String) : int
-concatenation		=	appendString(String) : NSString*
-contains			=	{return$s[$arg$srangeOfString:$arg].location == NSNotFound;} #: boolean
-copy				=	copy(String) : NSString*
-endSuffixe			=	hasSuffix(String) : boolean
-equalWithCase		=	isEqual(Object) : boolean
+compareWithCase		=	compare(NSMutableString *) : int
+compareWithoutCase	=	caseInsensitiveCompare(NSMutableString *) : int
+concatenation		=	appendString(NSMutableString *) : NSMutableString*
+contains			=	{return$s[$arg$srangeOfString:$arg].location == NSNotFound;}#()#: BOOL
+copy				=	copy(NSMutableString *) : NSMutableString *
+endSuffixe			=	hasSuffix(NSMutableString *) : BOOL
+equalWithCase		=	isEqual(id) : BOOL
 equalWithoutCase	=	
-withFormat			=	stringWithFormat/format(String, Object...) : NSString*
+withFormat			=	stringWithFormat/format(NSMutableString *, id...) : NSMutableString *
 toByte				=	dataUsingEncoding("NSUTF8StringEncoding") : byte[]
 toByteWithCharSet	=	
-firstIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(0,[p1$slength])];return$srange.location;}#(String,int)#: int 
-firstIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(String,int,int)#: int
-firstIndexStr		=	{NSRange$srange$s=[p1$srangeOfString:p2];return$srange.location;}(String,String) : int
-firstIndexStrFrom	=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(String,String,int)#: int
-empty				=	{return$s[$arg$slength] == 0} (String): boolean
-lastIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:NSBackwardsSearch$srange:NSMakeRange(0,p1$slength])];return$srange.location;}#(String,int)#: int 
-lastIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:NSBackwardsSearch$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(String,int,int)#: int
-lastIndexStr		=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:NSBackwardsSearch];return$srange.location;}(String,String) : int
-lastIndexStrFrom	=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:NSBackwardsSearch$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(String,String,int)#: int
+firstIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(0,[p1$slength])];return$srange.location;}#(NSMutableString*,int)#: int 
+firstIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(NSMutableString*,int,int)#: int
+firstIndexStr		=	{NSRange$srange$s=[p1$srangeOfString:p2];return$srange.location;}#(NSMutableString*,NSMutableString*)#: int
+firstIndexStrFrom	=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(NSMutableString*,NSMutableString*,int)#: int
+empty				=	{return$s[$arg$slength] == 0} (NSMutableString*): BOOL
+lastIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:NSBackwardsSearch$srange:NSMakeRange(0,p1$slength])];return$srange.location;}#(NSMutableString*,int)#: int 
+lastIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:NSBackwardsSearch$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(NSMutableString*,int,int)#: int
+lastIndexStr		=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:NSBackwardsSearch];return$srange.location;}(NSMutableString*,NSMutableString*) : int
+lastIndexStrFrom	=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:NSBackwardsSearch$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(NSMutableString*,NSMutableString*,int)#: int
 lenght				=	length() : int
 matchesWithRegex	=	
 matchesRegionCase	=	
 matchesRegion		=	
-replaceChar			=	{return$s[p1$sstringByReplacingOccurrencesOfString:[NSString$sstringWithFormat:@"%c",p2]$swithString:[NSString$sstringWithFormat:@"%c",p3]];}#(String,char, char)#:NSString*
-replaceString		=	stringByReplacingOccurrencesOfString/withString(String, String) : NSString*
+replaceChar			=	{return$s[p1$sstringByReplacingOccurrencesOfString:[NSString$sstringWithFormat:@"%c",p2]$swithString:[NSString$sstringWithFormat:@"%c",p3]];}#(NSMutableString*,char, char)#:NSMutableString*
+replaceString		=	stringByReplacingOccurrencesOfString/withString(NSMutableString *, NSMutableString *) : NSMutableString*
 replaceregex		=
-startPrefixe		=	hasPrefix(String):boolean
-subStr				=	substringFromIndex(int):NSString*
+startPrefixe		=	hasPrefix(String):BOOL
+subStr				=	substringFromIndex(int):NSMutableString*
 subStrWithEnd		=	
 toChars				=	UTF8String():char *
-lowerCase			=	lowercaseString() : NSString*
-upperCase			=	uppercaseString() : NSString*
-valueOfBool			=	{return$s(p2 == true ?@"true":@"false");}#(boolean)#: NSString*
-valueOfChar			=	{return$s[NSString$sstringWithFormat:@"%c" ,p2];}#(char)#: NSString*
-valueOfCharArray	=	{return$s[NSString$sstringWithCString:p1$sencoding:NSASCIIStringEncoding];}#(char[])#: NSString*
-valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",p2];}#(double)#:NSString*
+lowerCase			=	lowercaseString() : NSMutableString*
+upperCase			=	uppercaseString() : NSMutableString*
+valueOfBool			=	{return$s(p2 == true ?@"true":@"false");}#(BOOL)#: NSMutableString*
+valueOfChar			=	{return$s[NSMutableString$sstringWithFormat:@"%c" ,p2];}#(char)#: NSMutableString*
+valueOfCharArray	=	{return$s[NSString$sstringWithCString:p1$sencoding:NSASCIIStringEncoding];}#(char[])#: NSMutableString*
+valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",p2];}#(double)#:NSMutableString*
 valueOfFloat		=	
-valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",p2];}#(int)#:NSString*
+valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",p2];}#(int)#:NSMutableString*
 valueOfLong			=	
-valueOfObject		=	{return$s(id)(p2 == nil ?nil:[p2.description]);}#(Object)#:Object
+valueOfObject		=	{return$s(id)(p2 == nil ?nil:[p2.description]);}#(id)#:id
 
