@@ -498,12 +498,17 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		// allow inheritance when multiple methods have the same name
 		if (methodsNames.get(meth).equals(meth.getName())) {
 			prefix = formatIndented (
-					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n",
+					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n%-1return\n",
 					printMethParamsTypes(meth, ", "),
 					currentClass.getName(),
 					meth.isConstructor()?"__init__":meth.getName());
-			if (! meth.getParams().isEmpty())
-				prefix += printMethParamsNames(meth).substring(2) + " = args\n";
+			if (! meth.getParams().isEmpty()) {
+				prefix += printMethParamsNames(meth).substring(2);
+				if (meth.getParams().size() == 1)
+					prefix += ", = args\n";
+				else
+					prefix += " = args\n";
+			}
 			prefix += "# end of GOOL header\n";
 		}
 		if (meth.isConstructor()) {
@@ -919,6 +924,22 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			}
 		}
 		
+		/* As it is not a method, we have do do everything manually.
+		 * The condition makes sure we do not execute the main when
+		 * importing the file
+		 * TODO: deal with command line arguments
+		 */
+		for (Meth meth : classDef.getMethods()) {
+			if (meth.isMainMethod()) {
+				localIndentifiers.clear();
+				currentMeth = meth;
+				code = code.append(formatIndented(
+						"\nif __name__ == '__main__':\n%-1from %s import *\n# main program%1# end of main\n%-1exit()\n",
+						classDef.getName(), meth.getBlock()));
+			}
+
+		}
+		
 		// We only produce new-style classes. Theses have to explicitly
 		// inherit from the 'object' class.
 		// Not needed in Python 3, but kept for compatibility.
@@ -947,12 +968,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		// dealing with multiple methods having the same name,
 		// which is forbidden in Python
 		List<Meth> meths = new ArrayList<Meth>();
-		Meth mainMeth = null;
 		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
 			// the main method will be printed outside of the class later
-			if (method.isMainMethod()) {
-				mainMeth = method;
-			}
 			if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
 				meths.clear();
 				
@@ -988,7 +1005,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 						first = false;
 					}
 					if (! method.getModifiers().contains(Modifier.PRIVATE) && ! method.isConstructor()) {
-						block += formatIndented("else:\n%-1super(%s, self).%s(args*)",
+						block += formatIndented("else:\n%-1super(%s, self).%s(*args)",
 								classDef.getName(), method.isConstructor()?"__init__":method.getName());
 					}
 					// If all methods under the wrapper are statics of dynamics,
@@ -1043,25 +1060,12 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			}
 		}
 		
-		if (mainMeth != null) {
-			/* As it is not a method, we have do do everything manually.
-			 * The condition is not needed, but is customary.
-			 * TODO: find a way to avoid regex (for now, it is matched in strings for example
-			 * TODO: deal with command line arguments
-			 */
-			localIndentifiers.clear();
-			currentMeth = mainMeth;
-			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
-					mainMeth.getBlock()));
-		}
-
 		return code.toString();
 	}
 
 
 	@Override
 	public String getCode(TypeChar typeChar) {
-		// does not support unicode is Python 2.x
 		return "str";
 	}
 
@@ -1094,6 +1098,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(TypeException typeException) {
+		// TODO: add more exceptions
 		switch (typeException.getKind()) {
 		case GLOBAL:
 			return "BaseException";
@@ -1109,8 +1114,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			return "IndexError";
 		case TYPE:
 			return "TypeError";
-		// in Python, 'None' is an object but it does'nt have many methods
 		case NULLREFERENCE:
+			// in Python, 'None' is an object but it does'nt have many methods
 			return "AttributeError";
 		default:
 			return typeException.getName();

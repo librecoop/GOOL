@@ -54,15 +54,12 @@ public class GOOLCompiler {
 			}
 			
 			Collection<File> filesNonChange = getFilesInFolderNonExe(folder, extToNCopy);
-			Log.i(files.toString());	
-
 			concreteJavaToConcretePlatform(  JavaPlatform.getInstance(filesNonChange), files);
 //			concreteJavaToConcretePlatform(CSharpPlatform.getInstance(filesNonChange), files);
 //			concreteJavaToConcretePlatform(   CppPlatform.getInstance(filesNonChange), files);
 
 			concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
 			//concreteJavaToConcretePlatform(   XmlPlatform.getInstance(filesNonChange), files);
-
 
 		} catch (Exception e) {
 			Log.e(e);
