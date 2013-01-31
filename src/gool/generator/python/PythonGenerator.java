@@ -924,6 +924,22 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			}
 		}
 		
+		/* As it is not a method, we have do do everything manually.
+		 * The condition makes sure we do not execute the main when
+		 * importing the file
+		 * TODO: deal with command line arguments
+		 */
+		for (Meth meth : classDef.getMethods()) {
+			if (meth.isMainMethod()) {
+				localIndentifiers.clear();
+				currentMeth = meth;
+				code = code.append(formatIndented(
+						"\nif __name__ == '__main__':\n%-1from %s import *\n# main program%1# end of main\n%-1exit()\n",
+						classDef.getName(), meth.getBlock()));
+			}
+
+		}
+		
 		// We only produce new-style classes. Theses have to explicitly
 		// inherit from the 'object' class.
 		// Not needed in Python 3, but kept for compatibility.
@@ -952,12 +968,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		// dealing with multiple methods having the same name,
 		// which is forbidden in Python
 		List<Meth> meths = new ArrayList<Meth>();
-		Meth mainMeth = null;
 		for(Meth method : classDef.getMethods()) { //On parcourt les méthodes
 			// the main method will be printed outside of the class later
-			if (method.isMainMethod()) {
-				mainMeth = method;
-			}
 			if(getName(method) == null) {	//Si la méthode n'a pas encore été renommée
 				meths.clear();
 				
@@ -1048,18 +1060,6 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			}
 		}
 		
-		if (mainMeth != null) {
-			/* As it is not a method, we have do do everything manually.
-			 * The condition makes sure we do not execute the main when
-			 * importing the file
-			 * TODO: deal with command line arguments
-			 */
-			localIndentifiers.clear();
-			currentMeth = mainMeth;
-			code = code.append(formatIndented("\n# main program\nif __name__ == '__main__':%1",
-					mainMeth.getBlock()));
-		}
-
 		return code.toString();
 	}
 
