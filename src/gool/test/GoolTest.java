@@ -54,14 +54,6 @@ public class GoolTest {
 	}
 
 	private static final String MAIN_CLASS_NAME = "Test";
-	private List<Platform> platforms = Arrays.asList(
-			JavaPlatform.getInstance(), //CppPlatform.getInstance(),
-			CSharpPlatform.getInstance()
-			//, AndroidPlatform.getInstance()
-			);
-
-	// private List<Platform> platforms =
-	// Arrays.asList(CppPlatform.getInstance());
 
 	@BeforeClass
 	public static void init() {
@@ -71,13 +63,11 @@ public class GoolTest {
 	public void helloWorld() throws Exception {
 		String input = TestHelper.surroundWithClassMain(
 				"try {\n " +
-				"String myString = new String(\"ja\"); \n" +
 				"System.out.println(\"Hello World\");" 
 				//+"throw new Exception(\"throwing...\");\n"
-						+"\n }  catch(Exception testExcep) {\n System.out.println(testExcep.toString());\n }"
-				+" finally {\n System.out.println(\"Finally1\");\n System.out.println(\"Finally2\");\n}"
+						+"\n }  catch(Exception testExcep) {\n System.out.println(\"notfound\");\n }"
 				, MAIN_CLASS_NAME);
-		String expected = "Hello WorldFinally1Finally2";
+		String expected = "Hello World";
 		logger.info("START: HELLO WORLD test, expected value: "+expected);
 		compareResultsDifferentPlatforms(input, expected);
 	}
@@ -341,7 +331,7 @@ public class GoolTest {
 										+"  \n System.out.println(testString+c);\n "
 								
 								
-								+"} catch(IOException iox) \n { iox.toString();} \n catch(Exception ex) \n {ex.toString();}\n",
+								+"} catch(IOException iox) \n { System.out.println(\"iox\");} \n catch(Exception e) \n {System.out.println(\"ex\");}\n",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1A");
 	}
@@ -373,9 +363,9 @@ public class GoolTest {
 								
 								+"} catch(EOFException eof) \n { System.out.println(\"eof\");} "
 								+" catch(FileNotFoundException fnf) \n { System.out.println(\"notfound\");} "
-								+" catch(Exception ex) \n {ex.toString();}",
+								+" catch(Exception ex) \n {System.out.println(\"ex\");}",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "notfound");
+		compareResultsDifferentPlatforms(input, "eof");
 	}
 
 	@Test
@@ -402,18 +392,19 @@ public class GoolTest {
 										+"  \n System.out.println(testString);\n "
 								
 								
-								+"} catch(Exception ex) \n {ex.toString();}",
+								+"} catch(Exception ex) \n {System.out.println(\"ex\");}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1Awrite2");
+		Assert.fail("Append is not supported by bufferedreader at the moment");
 	}
 	
 	@Test
 	public void exceptionThrowTest() throws Exception {
 		String input = "import gool.imports.java.io.IOException;\n" +TestHelper.surroundWithClassMain(
-				"try {\n print();\n}\n" +
-				"catch(IOException ioe) {\n System.out.println(ioe);\n}\n" +
-				"catch(Exception e) {\n System.out.println(e);\n}\n}"		
-				+"\n public static void print() throws IOException, Exception {System.out.println(2 + 2);"		
+				"try {\n Test t=new Test(); t.print();\n}\n" +
+				"catch(IOException ioe) {\n System.out.println(\"ioe\");\n}\n" +
+				"catch(Exception e) {\n System.out.println(\"e\");\n}\n}"		
+				+"\n public void print() throws IOException, Exception {System.out.println(2 + 2);"		
 				, MAIN_CLASS_NAME);
 		
 		String expected = "4";
@@ -426,10 +417,9 @@ public class GoolTest {
 
 	private void compareResultsDifferentPlatforms(GoolTestExecutor executor)
 			throws Exception {
-		for (Platform platform : platforms) {
+			Platform platform =CppPlatform.getInstance();
 			logger.info("START: platform: " +platform.getName());
 			executor.compare(platform);
 			logger.info("FINISH platform: " +platform.getName());
-		}
 	}
 }

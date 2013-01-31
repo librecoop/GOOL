@@ -44,6 +44,7 @@ import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarDeclaration;
+import gool.ast.exception.ExceptionPrintStackTraceCall;
 import gool.ast.file.FileDeleteCall;
 import gool.ast.file.FileExistsCall;
 import gool.ast.file.FileIsDirectoryCall;
@@ -100,6 +101,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.sun.xml.internal.rngom.parse.compact.EOFException;
 
 public class CppGenerator extends CommonCodeGenerator {
 
@@ -278,7 +281,7 @@ public class CppGenerator extends CommonCodeGenerator {
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
-			return String.format("std::cout << (%s)->data() << std::endl;", GeneratorHelper
+			return String.format("std::cout << (%s)->data() << std::endl", GeneratorHelper
 				.joinParams(systemOutPrintCall.getParameters()));
 //			return String.format("std::cout << (%s) << std::endl;", GeneratorHelper
 //					.joinParams(systemOutPrintCall.getParameters()));
@@ -344,6 +347,12 @@ public class CppGenerator extends CommonCodeGenerator {
 			return "exception";
 		}
 		if (typeDependency.getType() instanceof TypeIOException) {
+			return "exception";
+		}
+		if (typeDependency.getType() instanceof TypeFileNotFoundException) {
+			return "exception";
+		}
+		if (typeDependency.getType() instanceof TypeEOFException) {
 			return "exception";
 		}
 //		if (typeDependency.getType().toString().equalsIgnoreCase("")){
@@ -576,9 +585,19 @@ public class CppGenerator extends CommonCodeGenerator {
 		modifiers.remove(meth.getAccessModifier());
 		modifiers.remove(Modifier.FINAL);
 		
-		return String.format("%s %s %s::%s(%s)", getCode(modifiers), meth.getType(), meth
-				.getClassDef().getName(), meth.getName(), StringUtils.join(meth
-				.getParams(), ", "));
+		if(meth.getThrowStatement().size()==0)
+		{
+					return String.format("%s %s %s::%s(%s)", getCode(modifiers), meth.getType(), meth
+					.getClassDef().getName(), meth.getName(), StringUtils.join(meth
+					.getParams(), ", "));
+		}
+		
+		else
+		{
+					return String.format("%s %s %s::%s(%s)", getCode(modifiers), meth.getType(), meth
+					.getClassDef().getName(), meth.getName(), StringUtils.join(meth
+					.getParams(), ", "))+ "\n//// This method throws the following exceptions in JAVA:" + meth.getThrowStatement().toString()+"\n";
+		}
 	}
 
 	@Override
@@ -652,29 +671,36 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(BufferedReaderCloseCall bufferedReaderCloseCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s.close();", bufferedReaderCloseCall.getExpression());
+		return String.format("%s.close()", bufferedReaderCloseCall.getExpression());
 	}
 	
 	@Override
 	public String getCode(BufferedWriterWriteCall bufferedWriterWriteCall) {
 		// TODO Auto-generated method stub
+		char tempChar = 0;
+		for (Expression expression : bufferedWriterWriteCall.getParameters()) {
+			if (expression instanceof Constant
+					&& expression.getType() instanceof TypeInt) {
+				tempChar = (char) Integer.parseInt(expression.toString());
+			}
+		}
 		String initialValue=bufferedWriterWriteCall.getParameters().get(0).toString();
 		if (initialValue.contains("\""))
 		{
-			return String.format("%s<<%s;", bufferedWriterWriteCall.getExpression(),initialValue.substring(initialValue.indexOf("\""),initialValue.lastIndexOf("\"")+1));
+			return String.format("%s<<%s", bufferedWriterWriteCall.getExpression(),initialValue.substring(initialValue.indexOf("\""),initialValue.lastIndexOf("\"")+1));
 		}
 		if(tempVariableStore.get(initialValue)!=null)
 		{
-			return String.format("%s<<%s;", bufferedWriterWriteCall.getExpression(),tempVariableStore.get(initialValue));
+			return String.format("%s<<%s", bufferedWriterWriteCall.getExpression(),tempVariableStore.get(initialValue));
 		}
-		return String.format("%s<<%s;", bufferedWriterWriteCall.getExpression(),initialValue);
+		return String.format("%s<<%s", bufferedWriterWriteCall.getExpression(),"\""+tempChar+"\"");
 	}
 	
 
 	@Override
 	public String getCode(BufferedWriterCloseCall bufferedWriCloseCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s.close();", bufferedWriCloseCall.getExpression());
+		return String.format("%s.close()", bufferedWriCloseCall.getExpression());
 	}
 	
 	@Override
@@ -690,7 +716,7 @@ public class CppGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		return String.format("std::fstream");
+		return String.format("std::ofstream");
 	}
 	@Override
 	public String getCode(NewInstance newInstance) {
@@ -699,135 +725,126 @@ public class CppGenerator extends CommonCodeGenerator {
 	}
 	@Override
 	public String getCode(VarDeclaration varDec) {
-// 		String initialValue = "";
- 		String initialValue=varDec.getInitialValue().toString();
- 		if(varDec.getInitialValue().toString().contains("getline"))
- 		{
-// 			initialValue=varDec.getInitialValue().toString();
- 			tempTypeStore.put(varDec.getType(), "getline()");
- 			initialValue=initialValue.substring(initialValue.lastIndexOf("(")+1, initialValue.lastIndexOf(","));
- 			return String.format("getline(%s,line);\n std::string* %s=(new std::string(line));\n", initialValue, varDec.getName());
- 		}
- 		if(varDec.getInitialValue().toString().contains("good()"))
- 		{
- //			initialValue=varDec.getInitialValue().toString();
- 			tempTypeStore.put(varDec.getType(), "get()");
- 			initialValue=initialValue.substring(0, initialValue.indexOf("."));
- 			return String.format("%s %s= %s.get()));\n", varDec.getType(), varDec.getName(),initialValue);
- 		}
-		if(varDec.getType()instanceof TypeFile)
+ 		String initialValue = "";
+		if(varDec.getInitialValue()!=null)
 		{
-//			initialValue="" + varDec.getInitialValue();
-			int a= initialValue.indexOf("\"");
-			int b= initialValue.lastIndexOf("\"");
-			initialValue=initialValue.substring(a, b)+"\"";
-			tempTypeStore.put(typeFile, initialValue);
-			//f.open((new fstream(( new std::string ( "//home//mavefreak//git//GOOLOUTPUTJAVA//src//a.txt" ) ))));
-			return String.format("%s %s;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
-		}
-		if(varDec.getType()instanceof TypeBufferedReader)
-		{
-//			initialValue="" + varDec.getInitialValue();
-			if (initialValue.contains("\""))
+			initialValue=varDec.getInitialValue().toString();
+	 		if(varDec.getInitialValue().toString().contains("getline"))
+	 		{
+//	 			initialValue=varDec.getInitialValue().toString();
+	 			tempTypeStore.put(varDec.getType(), "getline()");
+	 			initialValue=initialValue.substring(initialValue.lastIndexOf("(")+1, initialValue.lastIndexOf(","));
+	 			return String.format("getline(%s,line);\n std::string* %s=(new std::string(line));\n", initialValue, varDec.getName());
+	 		}
+	 		if(varDec.getInitialValue().toString().contains("good()"))
+	 		{
+	 //			initialValue=varDec.getInitialValue().toString();
+	 			tempTypeStore.put(varDec.getType(), "get()");
+	 			initialValue=initialValue.substring(0, initialValue.indexOf("."));
+	 			return String.format("%s %s= %s.get()));\n", varDec.getType(), varDec.getName(),initialValue);
+	 		}
+			if(varDec.getType()instanceof TypeFile)
 			{
+//				initialValue="" + varDec.getInitialValue();
 				int a= initialValue.indexOf("\"");
 				int b= initialValue.lastIndexOf("\"");
 				initialValue=initialValue.substring(a, b)+"\"";
-				return String.format("%s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
-			}
-			if(tempTypeStore.get(typeFileReader)!=null)
-			{
-				initialValue=tempTypeStore.get(typeFileReader);
-			}
-			if(tempTypeStore.get(typeFile)!=null)
-			{
-				initialValue=tempTypeStore.get(typeFile);
-			}
-			return String.format("%s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
-		}
-		if(varDec.getType()instanceof TypeBufferedWriter)
-		{
-//			initialValue="" + varDec.getInitialValue();
-			if (initialValue.contains("\""))
-			{
-				int a= initialValue.indexOf("\"");
-				int b= initialValue.lastIndexOf("\"");
-				initialValue=initialValue.substring(a, b)+"\"";
+				tempTypeStore.put(typeFile, initialValue);
+				//f.open((new fstream(( new std::string ( "//home//mavefreak//git//GOOLOUTPUTJAVA//src//a.txt" ) ))));
 				return String.format("%s %s;\n %s.open(%s);\n","std::ofstream", varDec.getName(), varDec.getName(),initialValue);
 			}
-			if(tempTypeStore.get(typeFileWriter)!=null)
+			if(varDec.getType()instanceof TypeBufferedReader)
 			{
-				initialValue=tempTypeStore.get(typeFileWriter);
+//				initialValue="" + varDec.getInitialValue();
+				if (initialValue.contains("\""))
+				{
+					int a= initialValue.indexOf("\"");
+					int b= initialValue.lastIndexOf("\"");
+					initialValue=initialValue.substring(a, b)+"\"";
+					return String.format("%s %s;\n %s.exceptions(std::ifstream::failbit|std::ifstream::badbit|std::ifstream::eofbit);" +
+							" std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::ifstream", varDec.getName(),varDec.getName(),
+							varDec.getName(),initialValue);
+//					return String.format("std::ofstream tempBufferedReader\n;tempBufferedReader.open(%s)\n;tempBufferedReader.close();\n" +
+//							" \n %s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n",initialValue,"std::fstream", 
+//							varDec.getName(), varDec.getName(),initialValue);
+				}
+				if(tempTypeStore.get(typeFileReader)!=null)
+				{
+					initialValue=tempTypeStore.get(typeFileReader);
+				}
+				if(tempTypeStore.get(typeFile)!=null)
+				{
+					initialValue=tempTypeStore.get(typeFile);
+				}
+				return String.format("%s %s;\n std::string line=\" \" ;\n unsigned char output;\n %s.open(%s);\n","std::fstream", varDec.getName(), varDec.getName(),initialValue);
 			}
-			if(tempTypeStore.get(typeFile)!=null)
+			if(varDec.getType()instanceof TypeBufferedWriter)
 			{
-				initialValue=tempTypeStore.get(typeFile);
+//				initialValue="" + varDec.getInitialValue();
+				if (initialValue.contains("\""))
+				{
+					int a= initialValue.indexOf("\"");
+					int b= initialValue.lastIndexOf("\"");
+					initialValue=initialValue.substring(a, b)+"\"";
+					return String.format("%s %s;\n %s.open(%s);\n","std::ofstream", varDec.getName(), varDec.getName(),initialValue);
+				}
+				if(tempTypeStore.get(typeFileWriter)!=null)
+				{
+					initialValue=tempTypeStore.get(typeFileWriter);
+				}
+				if(tempTypeStore.get(typeFile)!=null)
+				{
+					initialValue=tempTypeStore.get(typeFile);
+				}
+				return String.format("%s %s;\n %s.open(%s);\n","std::ofstream", varDec.getName(), varDec.getName(),initialValue);
 			}
-			return String.format("%s %s;\n %s.open(%s);\n","std::ofstream", varDec.getName(), varDec.getName(),initialValue);
-		}
-		if(varDec.getType()instanceof TypeFileReader)
-		{
-//			initialValue="" + varDec.getInitialValue();
+			if(varDec.getType()instanceof TypeFileReader)
+			{
+//				initialValue="" + varDec.getInitialValue();
+				
+				if (initialValue.contains("\""))
+				{
+					int a= initialValue.indexOf("\"");
+					int b= initialValue.lastIndexOf("\"");
+					initialValue=initialValue.substring(a, b)+"\"";
+					tempTypeStore.put(typeFileReader, initialValue);
+				}
+				else
+					tempTypeStore.put(typeFileReader, tempTypeStore.get(typeFile));
+				return String.format("");
+			}
+			if(varDec.getType()instanceof TypeFileWriter)
+			{
+//				initialValue="" + varDec.getInitialValue();
+				
+				if (initialValue.contains("\""))
+				{
+					int a= initialValue.indexOf("\"");
+					int b= initialValue.lastIndexOf("\"");
+					initialValue=initialValue.substring(a, b)+"\"";
+					tempTypeStore.put(typeFileWriter, initialValue);
+				}
+				else
+					tempTypeStore.put(typeFileWriter, tempTypeStore.get(typeFile));
+				return String.format("");
+			}
+			if((varDec.getType()instanceof TypeInt)&&(initialValue.contains("\"")))
+			{
+				tempVariableStore.put(varDec.getName().toString(), "\""+initialValue.substring(initialValue.lastIndexOf("(")+1,initialValue.indexOf(")"))+"\"");
+			}
+			if(varDec.getType()instanceof TypeString&&(initialValue.contains("\"")))
+			{
+				tempVariableStore.put(varDec.getName().toString(), initialValue.substring(initialValue.indexOf("\""),initialValue.lastIndexOf("\"")+1));
+			}
 			
-			if (initialValue.contains("\""))
-			{
-				int a= initialValue.indexOf("\"");
-				int b= initialValue.lastIndexOf("\"");
-				initialValue=initialValue.substring(a, b)+"\"";
-				tempTypeStore.put(typeFileReader, initialValue);
-			}
-			else
-				tempTypeStore.put(typeFileReader, tempTypeStore.get(typeFile));
-			return String.format("");
-		}
-		if(varDec.getType()instanceof TypeFileWriter)
-		{
-//			initialValue="" + varDec.getInitialValue();
-			
-			if (initialValue.contains("\""))
-			{
-				int a= initialValue.indexOf("\"");
-				int b= initialValue.lastIndexOf("\"");
-				initialValue=initialValue.substring(a, b)+"\"";
-				tempTypeStore.put(typeFileWriter, initialValue);
-			}
-			else
-				tempTypeStore.put(typeFileWriter, tempTypeStore.get(typeFile));
-			return String.format("");
-		}
-		if(varDec.getType()instanceof TypeInt)
-		{
-			tempVariableStore.put(varDec.getName().toString(), "\""+initialValue.substring(initialValue.lastIndexOf("(")+1,initialValue.indexOf(")"))+"\"");
-		}
-		if(varDec.getType()instanceof TypeString)
-		{
-			tempVariableStore.put(varDec.getName().toString(), initialValue.substring(initialValue.indexOf("\""),initialValue.lastIndexOf("\"")+1));
-		}
-		if (varDec.getInitialValue() != null) {
+			//If it does not seem to be included into the previous clauses, it will come into the common clause
 			initialValue = " = " + varDec.getInitialValue();
 		}
-		
+ 		
 		return String.format("%s %s%s", varDec.getType(), varDec.getName(),
 				initialValue);
 	}
-	@Override
-	public String getCode(Try t ) {
-		StringBuilder result = new StringBuilder();
-		result.append("try{\n");
-		for (Statement statement : t.getBlock().getStatements()) {
-			result.append(statement);
-			if (!(statement instanceof Block)) {
-				result.append("\n");
-			}
-			
-		}
-		result.append("}\n");
-		result.append("catch(int e)\n");
-		result.append("{\n");
-		result.append("std::cout<<e;");
-		result.append("} \n");
-		return result.toString();
-	}
+	
 
 	@Override
 	public String getCode(FileMethCall fileMethCall) {
@@ -851,10 +868,6 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(FileDeleteCall fileDeleteCall) {
 		// TODO Auto-generated method stub
-//		String parameterValue=fileDeleteCall.getExpression().toString();
-//		int a= parameterValue.indexOf("\"");
-//		int b= parameterValue.lastIndexOf("\"");
-//		parameterValue=parameterValue.substring(a, b)+"\"";
 		return String.format("std::remove(%s)", tempTypeStore.get(typeFile));
 	}
 
@@ -867,31 +880,59 @@ public class CppGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(BufferedWriterFlushCall bufferedWriterFlushCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s.flush();", bufferedWriterFlushCall.getExpression());
+		return String.format("%s.flush()", bufferedWriterFlushCall.getExpression());
 	}
 
 	@Override
 	public String getCode(BufferedWriterNewLineCall bufferedWriterNewLineCall) {
 		// TODO Auto-generated method stub
-		return String.format("%s<<std::endl;",bufferedWriterNewLineCall.getExpression());
+		return String.format("%s<<std::endl",bufferedWriterNewLineCall.getExpression());
 	}
 
 	@Override
-	public String getCode(TypeIOException typeIOException) {
-		// TODO Auto-generated method stub
-		return "exception& e";
+	public String getCode(Try t ) {
+		StringBuilder result = new StringBuilder();
+		result.append("try{\n");
+		for (Statement statement : t.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		int counter=0;
+		result.append("\n}"); //closing bracket
+		ArrayList<IType> tempCatchList=new ArrayList<IType>();
+		tempCatchList.add(TypeEOFException.INSTANCE);
+		tempCatchList.add(TypeFileNotFoundException.INSTANCE);
+		tempCatchList.add(TypeEOFException.INSTANCE);
+		for (Catch c : t.getCatches()) {
+			if ((tempCatchList.get(0).toString()==(c.getSingleParameter().getType().toString())))
+			{
+				counter++;
+				if(counter>1)
+					continue;
+			}
+			result.append(getCode(c));		
+			
+		}
+		/* If a finally block exists add the code for it as well */
+		if(t.getFinallyBlock() != null) {
+		result.append(t.getFinallyBlock());
+		}
+		return result.toString();
 	}
 	
 	@Override
 	public String getCode(TypeFileNotFoundException typeFileNotFoundException) {
 		// TODO Auto-generated method stub
-		return null;
+		return "std::ios_base::failure&";
 	}
 	
 	@Override
 	public String getCode(TypeEOFException typeEndOfStreamException) {
 		// TODO Auto-generated method stub
-		return null;
+		return "std::ios_base::failure&";
 	}
 	@Override
 	public String getCode(Catch c ) {
@@ -911,8 +952,33 @@ public class CppGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(Finally f) {
+	public String getCode(Finally f ) {
+		StringBuilder result = new StringBuilder();
+		result.append("\n finally {\n");
+		for (Statement statement : f.getBlock().getStatements()) {
+			result.append(statement);
+			if (!(statement instanceof Block)) {
+				result.append(";").append("\n");
+			}
+			
+		}
+		result.append("\n}");
+		return result.toString();
+	}
+	@Override
+	public String getCode(TypeException typeException) {
 		// TODO Auto-generated method stub
-		return null;
+		return "std::exception&";
+	}
+	@Override
+	public String getCode(TypeIOException typeIOException) {
+		// TODO Auto-generated method stub
+		return "std::ios_base::failure&";
+	}
+	
+	@Override
+	public String getCode(
+			ExceptionPrintStackTraceCall exceptionPrintStackTraceCall) {
+		return String.format("std::cout<<%s.what()",exceptionPrintStackTraceCall.getExpression());
 	}
 }
