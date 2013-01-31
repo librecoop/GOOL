@@ -2,13 +2,13 @@ charAtIndex			=	characterAtIndex(int) : char
 unicodeAtIndex		=	
 compareWithCase		=	compare(String) : int
 compareWithoutCase	=	caseInsensitiveCompare(String) : int
-concatenation		=	appendString(String) : string
+concatenation		=	appendString(String) : NSString*
 contains			=	{return$s[$arg$srangeOfString:$arg].location == NSNotFound;} #: boolean
-copy				=	copy(String) : String
+copy				=	copy(String) : NSString*
 endSuffixe			=	hasSuffix(String) : boolean
 equalWithCase		=	isEqual(Object) : boolean
 equalWithoutCase	=	
-withFormat			=	stringWithFormat/format(String, Object...) : String
+withFormat			=	stringWithFormat/format(String, Object...) : NSString*
 toByte				=	dataUsingEncoding("NSUTF8StringEncoding") : byte[]
 toByteWithCharSet	=	
 firstIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(0,[p1$slength])];return$srange.location;}#(String,int)#: int 
@@ -24,21 +24,21 @@ lenght				=	length() : int
 matchesWithRegex	=	
 matchesRegionCase	=	
 matchesRegion		=	
-replaceChar			=	{return$s[p1$sstringByReplacingOccurrencesOfString:[NSString$sstringWithFormat:@"%c",p2]$swithString:[NSString$sstringWithFormat:@"%c",p3]];}#(String,char, char)#:String
-replaceString		=	stringByReplacingOccurrencesOfString/withString(String, String) : String
+replaceChar			=	{return$s[p1$sstringByReplacingOccurrencesOfString:[NSString$sstringWithFormat:@"%c",p2]$swithString:[NSString$sstringWithFormat:@"%c",p3]];}#(String,char, char)#:NSString*
+replaceString		=	stringByReplacingOccurrencesOfString/withString(String, String) : NSString*
 replaceregex		=
 startPrefixe		=	hasPrefix(String):boolean
-subStr				=	substringFromIndex(int):String
+subStr				=	substringFromIndex(int):NSString*
 subStrWithEnd		=	
 toChars				=	UTF8String():char *
-lowerCase			=	lowercaseString() : String
-upperCase			=	uppercaseString() : String
-valueOfBool			=	{return$s(p2 == true ?@"true":@"false");}#(boolean)#: String
-valueOfChar			=	{return$s[NSString$sstringWithFormat:@"%c" ,p2];}#(char)#: String
-valueOfCharArray	=	{return$s[NSString$sstringWithCString:p1$sencoding:NSASCIIStringEncoding];}#(char[])#: String
-valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",p2];}#(double)#:String
+lowerCase			=	lowercaseString() : NSString*
+upperCase			=	uppercaseString() : NSString*
+valueOfBool			=	{return$s(p2 == true ?@"true":@"false");}#(boolean)#: NSString*
+valueOfChar			=	{return$s[NSString$sstringWithFormat:@"%c" ,p2];}#(char)#: NSString*
+valueOfCharArray	=	{return$s[NSString$sstringWithCString:p1$sencoding:NSASCIIStringEncoding];}#(char[])#: NSString*
+valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",p2];}#(double)#:NSString*
 valueOfFloat		=	
-valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",p2];}#(int)#:String
+valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",p2];}#(int)#:NSString*
 valueOfLong			=	
 valueOfObject		=	{return$s(id)(p2 == nil ?nil:[p2.description]);}#(Object)#:Object
 
