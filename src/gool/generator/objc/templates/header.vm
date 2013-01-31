@@ -13,7 +13,7 @@ enum $class.Name {
 	#end
 };
 #elseif(!$class.isInterface())
-@interface $class.Name :#if($class.ParentClass) #type($class.ParentClass) #set($dp = 1)#else NSObject #end#if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
+@interface $class.Name :#if($class.ParentClass) #type($class.ParentClass) #set($dp = 1)#else NSObject #end #if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
 	@private
 	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "private")
 	$field;

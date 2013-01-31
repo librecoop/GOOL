@@ -1512,10 +1512,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//Normalement pas de "|| target instanceof InitCall" ni de 
 		//addParameters(n.getArguments(), (Parameterizable)((MethCall)target).getTarget(), context);
 		//Cette ligne permet d'ajouter les arguements passer a super() ou a this()
-		if (!(target instanceof Parameterizable) || target instanceof InitCall) {
+		if( target instanceof InitCall){
 			target = new MethCall(goolType(
 					((MethodSymbol) method).getReturnType(), context), target);
 			addParameters(n.getArguments(), (Parameterizable)((MethCall)target).getTarget(), context);
+		}
+		
+		if (!(target instanceof Parameterizable)) {
+			target = new MethCall(goolType(
+					((MethodSymbol) method).getReturnType(), context), target);
 		}
 
 		addParameters(n.getArguments(), (Parameterizable) target, context);

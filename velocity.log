@@ -1,35 +1,8 @@
-2013-01-31 11:30:57,312 - Loaded System Directive: org.apache.velocity.runtime.directive.Define
-2013-01-31 11:30:57,314 - Loaded System Directive: org.apache.velocity.runtime.directive.Break
-2013-01-31 11:30:57,315 - Loaded System Directive: org.apache.velocity.runtime.directive.Evaluate
-2013-01-31 11:30:57,315 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2013-01-31 11:30:57,317 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2013-01-31 11:30:57,318 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2013-01-31 11:30:57,321 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2013-01-31 11:30:57,322 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2013-01-31 11:30:57,326 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,352 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,352 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,352 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,352 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,352 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,352 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,353 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,353 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,353 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,353 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,353 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,353 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,353 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,354 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,354 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,354 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,354 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,354 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,354 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,355 - Created '20' parsers.
-2013-01-31 11:30:57,365 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
-2013-01-31 11:30:57,365 - Velocity was not initialized! Calling init()...
-2013-01-31 11:30:57,366 - Could not load resource 'VM_global_library.vm' from ResourceLoader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader: 
+2013-01-31 12:37:44,187 - Velocity was not initialized! Calling init()...
+2013-01-31 12:37:44,188 - Created '20' parsers.
+2013-01-31 12:37:44,194 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2013-01-31 12:37:44,194 - Velocity was not initialized! Calling init()...
+2013-01-31 12:37:44,196 - Could not load resource 'VM_global_library.vm' from ResourceLoader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader: 
 org.apache.velocity.exception.ResourceNotFoundException: ClasspathResourceLoader Error: cannot find resource VM_global_library.vm
 	at org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader.getResourceStream(ClasspathResourceLoader.java:131)
 	at org.apache.velocity.runtime.resource.loader.ResourceLoader.resourceExists(ResourceLoader.java:224)
@@ -49,63 +22,189 @@ org.apache.velocity.exception.ResourceNotFoundException: ClasspathResourceLoader
 	at gool.GOOLCompiler.concreteJavaToAbstractGool(GOOLCompiler.java:102)
 	at gool.GOOLCompiler.concreteJavaToConcretePlatform(GOOLCompiler.java:81)
 	at gool.GOOLCompiler.main(GOOLCompiler.java:46)
-2013-01-31 11:30:57,372 - Velocimacro : Default library not found.
-2013-01-31 11:30:57,372 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2013-01-31 11:30:57,372 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2013-01-31 11:30:57,372 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
-2013-01-31 11:30:57,372 - Velocimacro : autoload off : VM system will not automatically reload global library macros
-2013-01-31 11:30:57,798 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:30:57,829 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:30:57,894 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:30:57,903 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:30:57,905 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:30:57,908 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:30:57,911 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:30:57,915 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:30:57,918 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:30:57,923 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:30:57,924 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,058 - Log4JLogChute initialized using file 'velocity.log'
-2013-01-31 11:32:58,059 - Starting Apache Velocity v1.6.4 (compiled: 2010-04-27 15:31:23)
-2013-01-31 11:32:58,059 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2013-01-31 11:32:58,059 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
-2013-01-31 11:32:58,059 - Target log system for org.apache.velocity.runtime.log.AvalonLogChute is not available (java.lang.NoClassDefFoundError: org/apache/log/format/Formatter).  Falling back to next log system...
-2013-01-31 11:32:58,059 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
-2013-01-31 11:32:58,059 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
-2013-01-31 11:32:58,063 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,070 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl) with class java.util.Collections$SynchronizedMap cache map.
-2013-01-31 11:32:58,072 - Loaded System Directive: org.apache.velocity.runtime.directive.Define
-2013-01-31 11:32:58,073 - Loaded System Directive: org.apache.velocity.runtime.directive.Break
-2013-01-31 11:32:58,073 - Loaded System Directive: org.apache.velocity.runtime.directive.Evaluate
-2013-01-31 11:32:58,074 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2013-01-31 11:32:58,075 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2013-01-31 11:32:58,076 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2013-01-31 11:32:58,077 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2013-01-31 11:32:58,078 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2013-01-31 11:32:58,080 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,105 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,105 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,105 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,105 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,105 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,105 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,105 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,106 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,107 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,107 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,107 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,107 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,107 - Created '20' parsers.
-2013-01-31 11:32:58,114 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
-2013-01-31 11:32:58,114 - Velocity was not initialized! Calling init()...
-2013-01-31 11:32:58,115 - Could not load resource 'VM_global_library.vm' from ResourceLoader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader: 
+2013-01-31 12:37:44,198 - Velocimacro : Default library not found.
+2013-01-31 12:37:44,199 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2013-01-31 12:37:44,199 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2013-01-31 12:37:44,199 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2013-01-31 12:37:44,199 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2013-01-31 12:37:44,860 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:44,876 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:44,918 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:44,923 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:44,923 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:44,924 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:44,925 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:44,926 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:44,926 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:44,927 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:44,928 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:44,991 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,002 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,003 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,004 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,005 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,006 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,006 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,007 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,008 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,032 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,037 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,037 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,038 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,039 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,040 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,041 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,041 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,042 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,068 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,071 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,072 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,073 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,073 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,074 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,075 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,075 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,076 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,085 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,088 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,089 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,089 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,090 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,091 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,091 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,092 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,092 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,111 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,115 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,115 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,116 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,121 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,121 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,122 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,122 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,123 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,135 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,139 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,139 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,140 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,141 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,142 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,142 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,143 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,143 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,162 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,164 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,165 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,166 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,167 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,167 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,168 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,168 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,168 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,183 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,202 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,203 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,204 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,204 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,208 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,208 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,209 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,209 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,239 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,244 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,245 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,246 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,247 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,247 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,248 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,248 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,249 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,271 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,280 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,281 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,287 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,288 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,288 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,289 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,297 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,298 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,335 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,342 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,342 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,343 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,344 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,344 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,345 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,345 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,346 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,369 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,373 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,373 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,374 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,381 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,382 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,383 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,383 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,384 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,419 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,430 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,431 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,432 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,432 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,433 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,434 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,434 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,435 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,469 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:37:45,473 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:37:45,473 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:37:45,474 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:37:45,475 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:37:45,475 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:37:45,475 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:37:45,476 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:37:45,477 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:06,103 - Log4JLogChute initialized using file 'velocity.log'
+2013-01-31 12:38:06,103 - Starting Apache Velocity v1.6.4 (compiled: 2010-04-27 15:31:23)
+2013-01-31 12:38:06,103 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2013-01-31 12:38:06,103 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2013-01-31 12:38:06,103 - Target log system for org.apache.velocity.runtime.log.AvalonLogChute is not available (java.lang.NoClassDefFoundError: org/apache/log/format/Formatter).  Falling back to next log system...
+2013-01-31 12:38:06,103 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-31 12:38:06,104 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-31 12:38:06,108 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:06,116 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl) with class java.util.Collections$SynchronizedMap cache map.
+2013-01-31 12:38:06,118 - Loaded System Directive: org.apache.velocity.runtime.directive.Define
+2013-01-31 12:38:06,118 - Loaded System Directive: org.apache.velocity.runtime.directive.Break
+2013-01-31 12:38:06,119 - Loaded System Directive: org.apache.velocity.runtime.directive.Evaluate
+2013-01-31 12:38:06,120 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2013-01-31 12:38:06,121 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2013-01-31 12:38:06,122 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2013-01-31 12:38:06,124 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2013-01-31 12:38:06,125 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2013-01-31 12:38:06,127 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,151 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,151 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,152 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,153 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,153 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,153 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,153 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,153 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,153 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,153 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,154 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,154 - Created '20' parsers.
+2013-01-31 12:38:06,161 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2013-01-31 12:38:06,161 - Velocity was not initialized! Calling init()...
+2013-01-31 12:38:06,162 - Could not load resource 'VM_global_library.vm' from ResourceLoader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader: 
 org.apache.velocity.exception.ResourceNotFoundException: ClasspathResourceLoader Error: cannot find resource VM_global_library.vm
 	at org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader.getResourceStream(ClasspathResourceLoader.java:131)
 	at org.apache.velocity.runtime.resource.loader.ResourceLoader.resourceExists(ResourceLoader.java:224)
@@ -125,121 +224,189 @@ org.apache.velocity.exception.ResourceNotFoundException: ClasspathResourceLoader
 	at gool.GOOLCompiler.concreteJavaToAbstractGool(GOOLCompiler.java:102)
 	at gool.GOOLCompiler.concreteJavaToConcretePlatform(GOOLCompiler.java:81)
 	at gool.GOOLCompiler.main(GOOLCompiler.java:46)
-2013-01-31 11:32:58,118 - Velocimacro : Default library not found.
-2013-01-31 11:32:58,118 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2013-01-31 11:32:58,118 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2013-01-31 11:32:58,118 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
-2013-01-31 11:32:58,118 - Velocimacro : autoload off : VM system will not automatically reload global library macros
-2013-01-31 11:32:58,313 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,328 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,373 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,376 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:32:58,376 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:32:58,377 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:32:58,378 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:32:58,379 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:32:58,379 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:32:58,380 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:32:58,380 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,409 - ResourceManager : found gool/generator/objc/templates/headerPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,414 - ResourceManager : found gool/generator/objc/templates/classPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,435 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,438 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:32:58,439 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:32:58,440 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:32:58,440 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:32:58,442 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:32:58,443 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:32:58,443 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:32:58,445 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,455 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,458 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:32:58,458 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:32:58,459 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:32:58,460 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:32:58,461 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:32:58,461 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:32:58,461 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:32:58,462 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,492 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,494 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:32:58,495 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:32:58,496 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:32:58,497 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:32:58,497 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:32:58,498 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:32:58,498 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:32:58,499 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,509 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,511 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:32:58,512 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:32:58,513 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:32:58,514 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:32:58,514 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:32:58,515 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:32:58,515 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:32:58,516 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,522 - ResourceManager : found gool/generator/objc/templates/headerPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,529 - ResourceManager : found gool/generator/objc/templates/classPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,556 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,559 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:32:58,560 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:32:58,560 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:32:58,561 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:32:58,562 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:32:58,562 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:32:58,563 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:32:58,563 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,572 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:32:58,574 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:32:58,575 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:32:58,576 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:32:58,576 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:32:58,577 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:32:58,577 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:32:58,578 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:32:58,578 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,532 - Log4JLogChute initialized using file 'velocity.log'
-2013-01-31 11:33:41,533 - Starting Apache Velocity v1.6.4 (compiled: 2010-04-27 15:31:23)
-2013-01-31 11:33:41,533 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-2013-01-31 11:33:41,533 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
-2013-01-31 11:33:41,533 - Target log system for org.apache.velocity.runtime.log.AvalonLogChute is not available (java.lang.NoClassDefFoundError: org/apache/log/format/Formatter).  Falling back to next log system...
-2013-01-31 11:33:41,533 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
-2013-01-31 11:33:41,533 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
-2013-01-31 11:33:41,537 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,546 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl) with class java.util.Collections$SynchronizedMap cache map.
-2013-01-31 11:33:41,547 - Loaded System Directive: org.apache.velocity.runtime.directive.Define
-2013-01-31 11:33:41,548 - Loaded System Directive: org.apache.velocity.runtime.directive.Break
-2013-01-31 11:33:41,549 - Loaded System Directive: org.apache.velocity.runtime.directive.Evaluate
-2013-01-31 11:33:41,549 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-2013-01-31 11:33:41,550 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-2013-01-31 11:33:41,551 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-2013-01-31 11:33:41,553 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
-2013-01-31 11:33:41,553 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-2013-01-31 11:33:41,556 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,580 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,580 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,580 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,580 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,580 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,580 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,580 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,581 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,582 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,582 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,582 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,582 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,582 - Created '20' parsers.
-2013-01-31 11:33:41,588 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
-2013-01-31 11:33:41,589 - Velocity was not initialized! Calling init()...
-2013-01-31 11:33:41,590 - Could not load resource 'VM_global_library.vm' from ResourceLoader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader: 
+2013-01-31 12:38:06,165 - Velocimacro : Default library not found.
+2013-01-31 12:38:06,165 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2013-01-31 12:38:06,165 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2013-01-31 12:38:06,165 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2013-01-31 12:38:06,165 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2013-01-31 12:38:07,015 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,029 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,070 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,072 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,073 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,074 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,075 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,076 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,077 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,077 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,078 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,112 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,115 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,115 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,117 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,117 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,118 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,119 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,119 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,121 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,137 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,141 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,142 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,143 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,144 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,144 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,145 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,145 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,146 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,175 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,178 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,179 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,179 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,180 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,181 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,181 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,182 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,183 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,192 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,194 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,195 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,196 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,197 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,197 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,198 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,198 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,199 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,221 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,225 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,226 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,227 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,230 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,231 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,231 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,231 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,232 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,241 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,243 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,244 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,245 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,245 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,246 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,246 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,247 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,247 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,267 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,270 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,270 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,271 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,272 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,272 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,273 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,273 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,274 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,308 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,319 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,320 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,321 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,322 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,322 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,323 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,323 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,324 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,351 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,358 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,359 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,360 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,360 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,361 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,362 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,362 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,369 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,390 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,399 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,399 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,400 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,401 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,402 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,402 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,403 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,403 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,447 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,454 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,454 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,455 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,456 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,457 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,457 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,457 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,458 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,477 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,481 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,482 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,482 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,483 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,484 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,484 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,484 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,490 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,531 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,538 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,539 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,540 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,541 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,541 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,542 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,542 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,547 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,586 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:38:07,590 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:38:07,591 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:38:07,591 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:38:07,592 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:38:07,592 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:38:07,593 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:38:07,594 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:38:07,595 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:54,679 - Log4JLogChute initialized using file 'velocity.log'
+2013-01-31 12:39:54,679 - Starting Apache Velocity v1.6.4 (compiled: 2010-04-27 15:31:23)
+2013-01-31 12:39:54,679 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2013-01-31 12:39:54,679 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2013-01-31 12:39:54,679 - Target log system for org.apache.velocity.runtime.log.AvalonLogChute is not available (java.lang.NoClassDefFoundError: org/apache/log/format/Formatter).  Falling back to next log system...
+2013-01-31 12:39:54,680 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-31 12:39:54,680 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-31 12:39:54,683 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:54,691 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl) with class java.util.Collections$SynchronizedMap cache map.
+2013-01-31 12:39:54,693 - Loaded System Directive: org.apache.velocity.runtime.directive.Define
+2013-01-31 12:39:54,694 - Loaded System Directive: org.apache.velocity.runtime.directive.Break
+2013-01-31 12:39:54,695 - Loaded System Directive: org.apache.velocity.runtime.directive.Evaluate
+2013-01-31 12:39:54,695 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2013-01-31 12:39:54,696 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2013-01-31 12:39:54,697 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2013-01-31 12:39:54,699 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2013-01-31 12:39:54,699 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2013-01-31 12:39:54,702 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,726 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,726 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,726 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,726 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,726 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,726 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,727 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,728 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,728 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,728 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,728 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,728 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,728 - Created '20' parsers.
+2013-01-31 12:39:54,735 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2013-01-31 12:39:54,735 - Velocity was not initialized! Calling init()...
+2013-01-31 12:39:54,736 - Could not load resource 'VM_global_library.vm' from ResourceLoader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader: 
 org.apache.velocity.exception.ResourceNotFoundException: ClasspathResourceLoader Error: cannot find resource VM_global_library.vm
 	at org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader.getResourceStream(ClasspathResourceLoader.java:131)
 	at org.apache.velocity.runtime.resource.loader.ResourceLoader.resourceExists(ResourceLoader.java:224)
@@ -259,77 +426,145 @@ org.apache.velocity.exception.ResourceNotFoundException: ClasspathResourceLoader
 	at gool.GOOLCompiler.concreteJavaToAbstractGool(GOOLCompiler.java:102)
 	at gool.GOOLCompiler.concreteJavaToConcretePlatform(GOOLCompiler.java:81)
 	at gool.GOOLCompiler.main(GOOLCompiler.java:46)
-2013-01-31 11:33:41,593 - Velocimacro : Default library not found.
-2013-01-31 11:33:41,593 - Velocimacro : allowInline = true : VMs can be defined inline in templates
-2013-01-31 11:33:41,593 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-2013-01-31 11:33:41,593 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
-2013-01-31 11:33:41,593 - Velocimacro : autoload off : VM system will not automatically reload global library macros
-2013-01-31 11:33:41,798 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,812 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,853 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,856 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:33:41,857 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:33:41,858 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:33:41,859 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:33:41,859 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:33:41,860 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:33:41,860 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:33:41,861 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,885 - ResourceManager : found gool/generator/objc/templates/headerPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,890 - ResourceManager : found gool/generator/objc/templates/classPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,911 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,914 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:33:41,915 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:33:41,916 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:33:41,916 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:33:41,918 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:33:41,918 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:33:41,919 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:33:41,920 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,932 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,940 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:33:41,940 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:33:41,941 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:33:41,942 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:33:41,943 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:33:41,943 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:33:41,943 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:33:41,944 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,973 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,976 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:33:41,976 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:33:41,978 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:33:41,979 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:33:41,980 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:33:41,980 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:33:41,981 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:33:41,982 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:41,997 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:42,001 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:33:42,002 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:33:42,008 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:33:42,010 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:33:42,011 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:33:42,012 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:33:42,013 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:33:42,014 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:42,020 - ResourceManager : found gool/generator/objc/templates/headerPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:42,025 - ResourceManager : found gool/generator/objc/templates/classPerso.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:42,046 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:42,050 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:33:42,050 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:33:42,051 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:33:42,052 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:33:42,053 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:33:42,053 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:33:42,053 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:33:42,054 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:42,062 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-2013-01-31 11:33:42,067 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
-2013-01-31 11:33:42,067 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
-2013-01-31 11:33:42,069 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
-2013-01-31 11:33:42,070 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
-2013-01-31 11:33:42,071 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
-2013-01-31 11:33:42,072 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
-2013-01-31 11:33:42,073 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
-2013-01-31 11:33:42,073 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:54,739 - Velocimacro : Default library not found.
+2013-01-31 12:39:54,739 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2013-01-31 12:39:54,739 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2013-01-31 12:39:54,739 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2013-01-31 12:39:54,740 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2013-01-31 12:39:55,536 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,553 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,598 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,602 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,603 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,605 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,607 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,608 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,609 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,609 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,610 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,651 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,654 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,655 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,656 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,657 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,658 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,658 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,659 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,660 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,680 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,683 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,683 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,684 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,685 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,686 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,687 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,687 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,688 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,720 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,724 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,725 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,726 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,727 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,727 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,728 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,728 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,730 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,741 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,744 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,744 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,745 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,746 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,747 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,747 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,748 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,748 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,768 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,771 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,772 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,772 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,777 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,778 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,778 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,779 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,779 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,787 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,790 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,790 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,791 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,792 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,793 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,793 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,793 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,794 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,822 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,824 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,825 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,825 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,826 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,827 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,827 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,827 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,828 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,843 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,847 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,848 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,850 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,850 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,851 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,852 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,852 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,853 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,883 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,891 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,891 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,892 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,893 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,894 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,894 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,905 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,906 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,927 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,936 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,937 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,938 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,939 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,939 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,940 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:55,940 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:55,941 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,975 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:55,989 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:55,990 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:55,991 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:55,992 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:55,992 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:55,993 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:56,001 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:56,002 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:56,012 - ResourceManager : found gool/generator/objc/templates/class.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:56,020 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:56,020 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:56,021 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:56,022 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:56,023 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:56,023 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:56,023 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:56,024 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:56,074 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:56,078 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:56,078 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:56,079 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:56,080 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:56,081 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:56,081 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:56,082 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:56,083 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:56,116 - ResourceManager : found gool/generator/objc/templates/header.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-31 12:39:56,126 - Velocimacro : VM addition rejected : params : inline not allowed to replace existing VM
+2013-01-31 12:39:56,127 - Velocimacro : VM addition rejected : block : inline not allowed to replace existing VM
+2013-01-31 12:39:56,127 - Velocimacro : VM addition rejected : interfaces : inline not allowed to replace existing VM
+2013-01-31 12:39:56,128 - Velocimacro : VM addition rejected : join : inline not allowed to replace existing VM
+2013-01-31 12:39:56,128 - Velocimacro : VM addition rejected : includes : inline not allowed to replace existing VM
+2013-01-31 12:39:56,129 - Velocimacro : VM addition rejected : includesPerso : inline not allowed to replace existing VM
+2013-01-31 12:39:56,129 - Velocimacro : VM addition rejected : type : inline not allowed to replace existing VM
+2013-01-31 12:39:56,130 - ResourceManager : found gool/generator/objc/templates/macros.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader

@@ -11,7 +11,7 @@
 
 #macro (interfaces $interfaces)
 #set( $size = $interfaces.size() )
-#if ($size > 0)#foreach( $interface in $interfaces )$interface#if($velocityCount != $size), #end#end#end
+#if ($size > 0)#foreach( $interface in $interfaces )#type($interface)#if($velocityCount != $size), #end#end#end
 #end
 
 #macro (join $collection $separator)

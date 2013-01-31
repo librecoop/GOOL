@@ -23,6 +23,7 @@ import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.Throw;
@@ -447,7 +448,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall){
-		String nsString = GeneratorHelperObjc.staticStringMini(systemOutPrintCall.getParameters().get(0));
+		String nsString = GeneratorHelperObjc.staticString(systemOutPrintCall.getParameters().get(0));
 		String out = null;
 		String format = null;
 		
@@ -469,8 +470,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),
-				StringUtils.join(equalsCall.getParameters(), ", "));
+		String arg = getMethCallName(equalsCall.getParameters(), false);
+		return String.format("[%s isEqual: %s]", equalsCall.getTarget(),arg);
 	}
 	
 	@Override
@@ -486,6 +487,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ThisCall thisCall) {
 		return "self()";
+	}
+	
+	@Override
+	public String getCode(Return returnExpr) {
+		String nsString = GeneratorHelperObjc.staticString(returnExpr.getExpression());
+		return String.format("return (%s%s)", nsString, returnExpr.getExpression());
 	}
 	
 ///////////////
@@ -654,8 +661,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
 			
-			String nsStringLeft =  GeneratorHelperObjc.staticStringMini(binaryOp.getLeft());
-			String nsStringRight =  GeneratorHelperObjc.staticStringMini(binaryOp.getRight());
+			String nsStringLeft =  GeneratorHelperObjc.staticString(binaryOp.getLeft());
+			String nsStringRight =  GeneratorHelperObjc.staticString(binaryOp.getRight());
 			
 			if(binaryOp.getLeft().getType() instanceof TypeClass)
 				left = "["+ left + " toString]";
