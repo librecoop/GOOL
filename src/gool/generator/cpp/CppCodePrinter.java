@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import logger.Log;
@@ -61,8 +62,8 @@ public class CppCodePrinter extends CodePrinter {
 	}
 		
 
-	public CppCodePrinter(File outputDir) {
-		super(new CppGenerator(), outputDir);
+	public CppCodePrinter(File outputDir, Collection<File> myF) {
+		super(new CppGenerator(), outputDir, myF);
 		createFinallyInclude(outputDir);
 	}
 

@@ -18,8 +18,10 @@ import gool.generator.python.PythonPlatform;
 import gool.generator.xml.XmlPlatform;
 import gool.parser.java.JavaParser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,15 +42,37 @@ public class GOOLCompiler {
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = getFilesInFolder(folder, "java");
+			//String extToNCopy = ".java"+".class"+".java~";
+			ArrayList<String> extToNCopy = new ArrayList<String>();
+			//extToNCopy.add("java");
+			//extToNCopy.add("class");
+			//extToNCopy.add("java~");
+			
+			
+			try{
+				File t = new File(Settings.get("java_in_dir")+File.separator+".goolIgnore");
+				FileReader f = new FileReader(t);
+				BufferedReader g = new BufferedReader(f);
+				String ligne;
+				while((ligne = g.readLine()) !=null)
+					extToNCopy.add(ligne);
+			}
+			catch (Exception e){
+				Log.e(e.toString());
+			}
+			
+			
+			
+			Collection<File> filesNonChange = getFilesInFolderNonExe(folder, extToNCopy);
+			//Collection<File> filesImag = getFilesInFolder(folder, "java")
 			Log.i(files.toString());
 			GOOLCompiler gc = new GOOLCompiler();
-			
 
-			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);
+//			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
 //			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
-			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(), files);
-			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
+			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
+//			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
 
 		} catch (Exception e) {
 			Log.e(e);
@@ -67,6 +91,32 @@ public class GOOLCompiler {
 		}
 		return files;
 	}
+	
+	private static Collection<File> getFilesInFolderNonExe(File folder, ArrayList<String> ext) {
+		
+		Collection<File> files = new ArrayList<File>();
+
+			
+			
+			for(File f : folder.listFiles()) {
+				if(f.isDirectory()) {
+					files.addAll(getFilesInFolderNonExe(f, ext));
+				}
+				else{
+					boolean trouve = false;
+					for(String s : ext){
+						if(f.getName().endsWith(s))
+							trouve = true;
+					}
+					if(!trouve)
+						files.add(f);
+					trouve = false;
+					
+				}
+			}
+		return files;
+	}
+
 
 	/**
 	 * Taking concrete Java into concrete Target is done in two steps:

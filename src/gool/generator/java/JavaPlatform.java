@@ -8,6 +8,7 @@ import gool.generator.common.Platform;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is the default Java Platform.
@@ -22,13 +23,13 @@ public final class JavaPlatform extends Platform {
 
 	private final String outputDir = Settings.get("java_out_dir");
 
-	private JavaPlatform() {
-		super("JAVA");
+	private JavaPlatform(Collection<File> myFile) {
+		super("JAVA", myFile);
 	}
 	
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		return new JavaCodePrinter(new File(outputDir));
+		return new JavaCodePrinter(new File(outputDir), myFileToCopy);
 	}
 	
 	@Override
@@ -40,12 +41,12 @@ public final class JavaPlatform extends Platform {
 	 * What follows is to make sure that we always use the same instance of this object.
 	 */
 	
-	private static JavaPlatform instance = new JavaPlatform();
+	private static JavaPlatform instance = new JavaPlatform(myFileToCopy);
 
 	public static JavaPlatform getInstance() {
 		return instance;
 	}
 	public static void newInstance() {
-		instance = new JavaPlatform();
+		instance = new JavaPlatform(myFileToCopy);
 	}
 }

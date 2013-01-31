@@ -8,13 +8,19 @@ import gool.generator.common.Platform;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+
 
 public class PythonPlatform extends Platform {
 
 	private final String outputDir = Settings.get("python_out_dir");
 	
-	protected PythonPlatform() {
-		super("PYTHON");
+	protected PythonPlatform(Collection<File> myFile) {
+		
+		
+		
+		super("PYTHON", myFile);
+
 		
 		//Test output folder exists
 		File folder = new File(outputDir);
@@ -25,7 +31,7 @@ public class PythonPlatform extends Platform {
 
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		return new PythonCodePrinter(new File(outputDir));
+		return new PythonCodePrinter(new File(outputDir), myFileToCopy);
 	}
 
 	@Override
@@ -33,12 +39,13 @@ public class PythonPlatform extends Platform {
 		return new PythonCompiler(new File(outputDir), new ArrayList<File>());
 	}
 
-	private static PythonPlatform instance = new PythonPlatform();
+	private static PythonPlatform instance = new PythonPlatform(myFileToCopy);
 
-	public static PythonPlatform getInstance() {
+	public static PythonPlatform getInstance(Collection<File> myF) {
+		myFileToCopy = myF;
 		return instance;
 	}
 	public static void newInstance() {
-		instance = new PythonPlatform();
+		instance = new PythonPlatform(myFileToCopy);
 	}
 }

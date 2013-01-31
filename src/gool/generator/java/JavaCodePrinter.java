@@ -3,6 +3,7 @@ package gool.generator.java;
 import gool.generator.common.CodePrinter;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * Provides the basic functionality to generate Java code from a list of GOOL
@@ -11,8 +12,8 @@ import java.io.File;
 public class JavaCodePrinter extends CodePrinter {
 	private static final String TEMPLATE_DIR = "gool/generator/java/templates/";
 
-	public JavaCodePrinter(File outputDir) {
-		super(new JavaGenerator(), outputDir);
+	public JavaCodePrinter(File outputDir, Collection<File> myF) {
+		super(new JavaGenerator(), outputDir, myF);
 	}
 	
 	@Override

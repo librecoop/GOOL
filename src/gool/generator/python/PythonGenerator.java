@@ -1050,8 +1050,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 		
 		if (mainMeth != null) {
 			/* As it is not a method, we have do do everything manually.
-			 * The condition is not needed, but is customary.
-			 * TODO: find a way to avoid regex (for now, it is matched in strings for example
+			 * The condition makes sure we do not execute the main when
+			 * importing the file
 			 * TODO: deal with command line arguments
 			 */
 			localIndentifiers.clear();
@@ -1066,7 +1066,6 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(TypeChar typeChar) {
-		// does not support unicode is Python 2.x
 		return "str";
 	}
 
@@ -1099,6 +1098,7 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(TypeException typeException) {
+		// TODO: add more exceptions
 		switch (typeException.getKind()) {
 		case GLOBAL:
 			return "BaseException";
@@ -1114,8 +1114,8 @@ public class PythonGenerator extends CommonCodeGenerator implements CodeGenerato
 			return "IndexError";
 		case TYPE:
 			return "TypeError";
-		// in Python, 'None' is an object but it does'nt have many methods
 		case NULLREFERENCE:
+			// in Python, 'None' is an object but it does'nt have many methods
 			return "AttributeError";
 		default:
 			return typeException.getName();

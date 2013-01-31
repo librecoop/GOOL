@@ -40,7 +40,7 @@ public class GoolTests {
 			JavaPlatform.getInstance(),
 //			CSharpPlatform.getInstance(),
 //			CppPlatform.getInstance(),
-			PythonPlatform.getInstance());
+			PythonPlatform.getInstance(new ArrayList<File>()));
 
 	private String name;	//Name of the test
 	private Platform platform;	//Platform for the test
@@ -71,7 +71,8 @@ public class GoolTests {
 			for(File dir : dirs) {
 				File test = new File(dir, "test");
 				if(test.exists() && test.isDirectory()) {
-					File ini = new File(test_dir + dir.getName() + File.separator + dir.getName() + ".ini");
+					File ini = new File(dir.getAbsolutePath() + File.separator + dir.getName() + ".ini");
+					
 					if(ini.exists()) {
 						tests.put(dir, new Asserts(ini));
 					}

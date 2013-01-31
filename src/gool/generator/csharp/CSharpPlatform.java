@@ -8,16 +8,18 @@ import gool.generator.common.Platform;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public final class CSharpPlatform extends Platform {
 	private final String outputDir = Settings.get("csharp_out_dir");
-	private CSharpPlatform() {
-		super("CSHARP");
+	private CSharpPlatform(Collection<File> myFile) {
+		super("CSHARP", myFile);
 	}
 	
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		return new CSharpCodePrinter(new File(outputDir));
+		//TODO a voir pour passer la liste des fichiers
+		return new CSharpCodePrinter(new File(outputDir), null);
 	}
 	
 	@Override
@@ -25,7 +27,7 @@ public final class CSharpPlatform extends Platform {
 		return new CSharpCompiler(new File(outputDir), new ArrayList<File>());
 	}
 
-	private static CSharpPlatform instance = new CSharpPlatform();
+	private static CSharpPlatform instance = new CSharpPlatform(myFileToCopy);
 
 
 	public static CSharpPlatform getInstance() {
@@ -33,6 +35,6 @@ public final class CSharpPlatform extends Platform {
 	}
 
 	public static void newInstance() {
-		instance = new CSharpPlatform();
+		instance = new CSharpPlatform(myFileToCopy);
 	}
 }

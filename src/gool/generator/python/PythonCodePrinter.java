@@ -8,6 +8,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import logger.Log;
 
 public class PythonCodePrinter extends CodePrinter {
 	
+
 	private void createGoolHelperModule(File outputDir) {
 		FileOutputStream goolHelperOut;
 		byte[] buffer = new byte[1024];
@@ -51,9 +53,10 @@ public class PythonCodePrinter extends CodePrinter {
 		}
 		
 	}
-	
-	public PythonCodePrinter(File outputDir) {
-		super(new PythonGenerator(), outputDir);
+
+
+	public PythonCodePrinter(File outputDir, Collection<File> myF) {
+		super(new PythonGenerator(), outputDir, myF);
 		createGoolHelperModule(outputDir);
 	}
 	
