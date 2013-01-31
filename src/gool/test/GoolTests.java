@@ -32,22 +32,44 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GoolTests, for unit testing Gool.
+ * Tests are in the folder tests in the root folder of Gool.
+ * Each test must be in a folder named with the name of the test. In this folder a file .ini named with the
+ * name of the parent folder contains asserts for the test, and a folder "test" contain the program to test.
+ */
 @RunWith(value = Parameterized.class)
 public class GoolTests {
 	
-	//Platforms to be tested
+	/** The platforms to test. */
 	private static List<Platform> platforms = Arrays.asList(
 			JavaPlatform.getInstance(),
 //			CSharpPlatform.getInstance(),
 //			CppPlatform.getInstance(),
 			PythonPlatform.getInstance());
 	
-	private String name;	//Name of the test
-	private Platform platform;	//Platform for the test
+	/** The name of the test. */
+	private String name;
+	
+	/** The platform of the test. */
+	private Platform platform;
+	
+	/** The input files. */
 	private Collection<File> inputFiles;
-	private Asserts asserts;	//Asserts object containing information on the result expected
+	
+	/** The asserts. */
+	private Asserts asserts;
 
 
+	/**
+	 * Instantiates a new gool tests.
+	 *
+	 * @param name the name
+	 * @param p the platform
+	 * @param inputFiles the input files
+	 * @param a the aasserts
+	 */
 	public GoolTests(String name, Platform p, Collection<File> inputFiles, Asserts a) {
 		this.name = name;
 		this.inputFiles = inputFiles;
@@ -55,7 +77,11 @@ public class GoolTests {
 		platform = p;
 	}
 	
-	//Create the list of tests
+	/**
+	 * Create tests.
+	 *
+	 * @return the collection
+	 */
 	@Parameters(name="{0}") //Available to properly name tests in JUnit 4.11
 	public static Collection<Object[]> data() {
 		Map<File, Asserts> tests = new HashMap<File, Asserts>();
@@ -81,6 +107,7 @@ public class GoolTests {
 	
 			Object[][] data = new Object[tests.size()*platforms.size()][];
 				
+			//Init the object containing the tests
 			int i=0;
 			for(Map.Entry<File, Asserts> test : tests.entrySet()) {
 				Collection<File> inputFiles = GOOLCompiler.getFilesInFolder(test.getKey(), "java");
@@ -94,12 +121,20 @@ public class GoolTests {
 		return new ArrayList<Object[]>();
 	}
 	
+	/**
+	 * Before.
+	 */
 	@Before
 	public void before() {
-		deleteDirContent(platform.getCodePrinter().getOutputDir(), false);
+		deleteDirContent(platform.getCodePrinter().getOutputDir(), false);	//Clean up the output directory
 		platform.reInitializeCodePrinter();
 	}
 	
+	/**
+	 * Test.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void test() throws Exception {		
 		Map<Platform, List<File>> files = GOOLCompiler.concreteJavaToConcretePlatform(platform, inputFiles);
@@ -116,6 +151,9 @@ public class GoolTests {
 		checkFiles();
 	}
 	
+	/**
+	 * Check folders.
+	 */
 	private void checkFolders() {
 		List<String> dirs = asserts.getDirectories();
 		File folder;
@@ -126,10 +164,14 @@ public class GoolTests {
 		}
 	}
 	
+	/**
+	 * Check files.
+	 */
 	private void checkFiles() {
 		Map<String, String> fs = asserts.getFiles();
 		File file;
 		
+		//For each file that must be checked we look if they exist and have the content expected
 		for(Map.Entry<String, String> f : fs.entrySet()) {
 			file = new File(platform.getCodePrinter().getOutputDir(), f.getKey());
 			Assert.assertEquals(name + ": file " + f.getKey(), true, file.exists() && file.isFile());
@@ -155,7 +197,12 @@ public class GoolTests {
 		}
 	}
 	
-	//Clean up output directories
+	/**
+	 * Clean up the output directory.
+	 *
+	 * @param dir the directory to clean
+	 * @param delete the delete
+	 */
 	private void deleteDirContent(File dir, boolean delete) {
 		if (dir.isDirectory()) {
 			String[] children = dir.list();
@@ -171,10 +218,10 @@ public class GoolTests {
 
 class Asserts {
 	
-	private String output = "";
-	private Map<String, String> files = new HashMap<String, String>();
-	private List<String> directories = new ArrayList<String>();
-	
+	private String output = ""; //output expected
+	private Map<String, String> files = new HashMap<String, String>();	//files to be ckecked
+	private List<String> directories = new ArrayList<String>(); //directories to be checked
+		
 	public Asserts (File fIni) {
 		Ini ini = new Ini();
 		Config cfg = new Config();
