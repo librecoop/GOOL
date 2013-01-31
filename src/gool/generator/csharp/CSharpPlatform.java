@@ -30,7 +30,15 @@ public final class CSharpPlatform extends Platform {
 	private static CSharpPlatform instance = new CSharpPlatform(myFileToCopy);
 
 
+	public static CSharpPlatform getInstance(Collection<File> myF) {
+		myFileToCopy = myF;
+		return instance;
+	}
+	
 	public static CSharpPlatform getInstance() {
+		if(myFileToCopy == null) {
+			myFileToCopy = new ArrayList<File>();
+		}
 		return instance;
 	}
 

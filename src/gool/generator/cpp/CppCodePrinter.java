@@ -8,7 +8,6 @@ package gool.generator.cpp;
 
 import gool.ast.constructs.ClassDef;
 import gool.generator.common.CodePrinter;
-import gool.generator.python.PythonPlatform;
 
 import java.io.File;
 import java.io.FileNotFoundException;

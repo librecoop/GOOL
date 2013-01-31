@@ -11,11 +11,8 @@ import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.Platform;
-import gool.generator.cpp.CppPlatform;
-import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
-import gool.generator.xml.XmlPlatform;
 import gool.parser.java.JavaParser;
 
 import java.io.BufferedReader;
@@ -42,12 +39,7 @@ public class GOOLCompiler {
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = getFilesInFolder(folder, "java");
-			//String extToNCopy = ".java"+".class"+".java~";
 			ArrayList<String> extToNCopy = new ArrayList<String>();
-			//extToNCopy.add("java");
-			//extToNCopy.add("class");
-			//extToNCopy.add("java~");
-			
 			
 			try{
 				File t = new File(Settings.get("java_in_dir")+File.separator+".goolIgnore");
@@ -58,28 +50,23 @@ public class GOOLCompiler {
 					extToNCopy.add(ligne);
 			}
 			catch (Exception e){
-				Log.e(e.toString());
+				Log.e(e);
 			}
 			
-			
-			
 			Collection<File> filesNonChange = getFilesInFolderNonExe(folder, extToNCopy);
-			//Collection<File> filesImag = getFilesInFolder(folder, "java")
-			Log.i(files.toString());
-			GOOLCompiler gc = new GOOLCompiler();
+			concreteJavaToConcretePlatform(  JavaPlatform.getInstance(filesNonChange), files);
+//			concreteJavaToConcretePlatform(CSharpPlatform.getInstance(filesNonChange), files);
+//			concreteJavaToConcretePlatform(   CppPlatform.getInstance(filesNonChange), files);
 
-//			gc.concreteJavaToConcretePlatform(  JavaPlatform.getInstance(), files);
-//			gc.concreteJavaToConcretePlatform(CSharpPlatform.getInstance(), files);
-//			gc.concreteJavaToConcretePlatform(   CppPlatform.getInstance(), files);
-			gc.concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
-//			gc.concreteJavaToConcretePlatform(   XmlPlatform.getInstance(), files);
+			concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
+			//concreteJavaToConcretePlatform(   XmlPlatform.getInstance(filesNonChange), files);
 
 		} catch (Exception e) {
 			Log.e(e);
 		}
 	}
 
-	private static Collection<File> getFilesInFolder(File folder, String ext) {
+	public static Collection<File> getFilesInFolder(File folder, String ext) {
 		Collection<File> files = new ArrayList<File>();
 		for(File f : folder.listFiles()) {
 			if(f.isDirectory()) {
@@ -130,14 +117,14 @@ public class GOOLCompiler {
 	 * @return a map of the compiled files for the different platforms
 	 * @throws Exception
 	 */
-	public Map<Platform, List<File>> concreteJavaToConcretePlatform(
+	public static Map<Platform, List<File>> concreteJavaToConcretePlatform(
 			Platform destPlatform, String input) throws Exception {
 		Collection<ClassDef> classDefs = concreteJavaToAbstractGool(
 				destPlatform, input);
 		return abstractGool2Target(classDefs);
 	}
 
-	public Map<Platform, List<File>> concreteJavaToConcretePlatform(
+	public static Map<Platform, List<File>> concreteJavaToConcretePlatform(
 			Platform destPlatform, Collection<? extends File> inputFiles)
 			throws Exception {
 		Collection<ClassDef> classDefs = concreteJavaToAbstractGool(
@@ -153,12 +140,12 @@ public class GOOLCompiler {
 	 * @return abstract GOOL classes
 	 * @throws Exception
 	 */
-	private Collection<ClassDef> concreteJavaToAbstractGool(
+	private static Collection<ClassDef> concreteJavaToAbstractGool(
 			Platform destPlatform, String input) throws Exception {
 		return JavaParser.parseGool(destPlatform, input);
 	}
 
-	private Collection<ClassDef> concreteJavaToAbstractGool(
+	private static Collection<ClassDef> concreteJavaToAbstractGool(
 			Platform destPlatform, Collection<? extends File> inputFiles)
 			throws Exception {
 		return JavaParser.parseGool(destPlatform,
@@ -172,7 +159,7 @@ public class GOOLCompiler {
 	 * @return a map of the compiled files for the different platforms
 	 * @throws FileNotFoundException
 	 */
-	private Map<Platform, List<File>> abstractGool2Target(
+	private static Map<Platform, List<File>> abstractGool2Target(
 			Collection<ClassDef> classDefs) throws FileNotFoundException {
 		return GeneratorHelper.printClassDefs(classDefs);
 	}

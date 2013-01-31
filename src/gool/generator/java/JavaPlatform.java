@@ -43,9 +43,18 @@ public final class JavaPlatform extends Platform {
 	
 	private static JavaPlatform instance = new JavaPlatform(myFileToCopy);
 
-	public static JavaPlatform getInstance() {
+	public static JavaPlatform getInstance(Collection<File> myF) {
+		myFileToCopy = myF;
 		return instance;
 	}
+	
+	public static JavaPlatform getInstance() {
+		if(myFileToCopy == null) {
+			myFileToCopy = new ArrayList<File>();
+		}
+		return instance;
+	}
+	
 	public static void newInstance() {
 		instance = new JavaPlatform(myFileToCopy);
 	}
