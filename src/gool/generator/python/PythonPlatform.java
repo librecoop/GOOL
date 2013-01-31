@@ -45,6 +45,14 @@ public class PythonPlatform extends Platform {
 		myFileToCopy = myF;
 		return instance;
 	}
+	
+	public static PythonPlatform getInstance() {
+		if(myFileToCopy == null) {
+			myFileToCopy = new ArrayList<File>();
+		}
+		return instance;
+	}
+	
 	public static void newInstance() {
 		instance = new PythonPlatform(myFileToCopy);
 	}

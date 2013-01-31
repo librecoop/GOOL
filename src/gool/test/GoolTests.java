@@ -40,17 +40,17 @@ public class GoolTests {
 			JavaPlatform.getInstance(),
 //			CSharpPlatform.getInstance(),
 //			CppPlatform.getInstance(),
-			PythonPlatform.getInstance(new ArrayList<File>()));
-
+			PythonPlatform.getInstance());
+	
 	private String name;	//Name of the test
 	private Platform platform;	//Platform for the test
-	private File dir;	//Folder for the test
+	private Collection<File> inputFiles;
 	private Asserts asserts;	//Asserts object containing information on the result expected
 
 
-	public GoolTests(String name, Platform p, File dir, Asserts a) {
+	public GoolTests(String name, Platform p, Collection<File> inputFiles, Asserts a) {
 		this.name = name;
-		this.dir = dir;
+		this.inputFiles = inputFiles;
 		asserts = a;
 		platform = p;
 	}
@@ -83,8 +83,9 @@ public class GoolTests {
 				
 			int i=0;
 			for(Map.Entry<File, Asserts> test : tests.entrySet()) {
+				Collection<File> inputFiles = GOOLCompiler.getFilesInFolder(test.getKey(), "java");
 				for(Platform platform : platforms) {
-					data[i++] = new Object[] { test.getKey().getName() + " / " + platform.getName(), platform, test.getKey(), test.getValue() };
+					data[i++] = new Object[] { test.getKey().getName() + " / " + platform.getName(), platform, inputFiles, test.getValue() };
 				}
 			}
 			
@@ -100,11 +101,8 @@ public class GoolTests {
 	}
 	
 	@Test
-	public void test() throws Exception {
-		Collection<File> inputFiles = getFilesInFolder(dir, "java");
-		
-		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, inputFiles);
+	public void test() throws Exception {		
+		Map<Platform, List<File>> files = GOOLCompiler.concreteJavaToConcretePlatform(platform, inputFiles);
 
 		String result = ExecutorHelper.compileAndRun(platform, files);
 		
@@ -168,20 +166,6 @@ public class GoolTests {
 		if(delete) {
 			dir.delete();
 		}
-	} 
-
-	//Files in folder
-	private static Collection<File> getFilesInFolder(File folder, String ext) {
-		Collection<File> files = new ArrayList<File>();
-		for(File f : folder.listFiles()) {
-			if(f.isDirectory()) {
-				files.addAll(getFilesInFolder(f, ext));
-			}
-			else if ( f.getName().endsWith(ext)) {
-				files.add(f);
-			}
-		}
-		return files;
 	}
 }
 

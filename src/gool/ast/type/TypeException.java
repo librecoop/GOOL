@@ -1,11 +1,8 @@
 package gool.ast.type;
 
-import gool.ast.constructs.Node;
 import gool.generator.GoolGeneratorController;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class TypeException extends IType {
 

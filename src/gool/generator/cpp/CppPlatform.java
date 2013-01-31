@@ -34,7 +34,15 @@ public class CppPlatform extends Platform {
 	private static CppPlatform instance = new CppPlatform(myFileToCopy);
 
 
-	public static Platform getInstance() {
+	public static CppPlatform getInstance(Collection<File> myF) {
+		myFileToCopy = myF;
+		return instance;
+	}
+	
+	public static CppPlatform getInstance() {
+		if(myFileToCopy == null) {
+			myFileToCopy = new ArrayList<File>();
+		}
 		return instance;
 	}
 
