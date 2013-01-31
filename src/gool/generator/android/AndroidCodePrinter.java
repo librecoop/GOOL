@@ -67,7 +67,7 @@ public class AndroidCodePrinter extends CodePrinter {
 		dir.mkdirs();
 		// Create the file for the class, fill it in, close it
 		File classFile = new File(dir, getFileName(pclass.getName()));
-		logger.info(String.format("Writing to file %s", classFile));
+		logger.debug(String.format("Writing to file %s", classFile));
 		PrintWriter writer = new PrintWriter(classFile);
 		writer.println(code);
 		writer.close();
@@ -83,7 +83,7 @@ public class AndroidCodePrinter extends CodePrinter {
 			 */
 			File activityFile = new File(dir, getFileName(pclass.getName())
 					.replace(".java", "Activity.java"));
-			logger.info(String
+			logger.debug(String
 					.format("Writing to file %s", activityFile));
 			writer = new PrintWriter(activityFile);
 			String activityClassCode = processTemplate("activity.vm", pclass);
@@ -100,7 +100,7 @@ public class AndroidCodePrinter extends CodePrinter {
 			File printOutFile = new File(dir, "PrintOut.java");
 			if(!printOutFile.exists()) {
 					
-			logger.info(String
+			logger.debug(String
 					.format("Writing to file %s", printOutFile));
 			writer = new PrintWriter(printOutFile);
 			String printOutFileCode = processTemplate("printout.vm", pclass);
@@ -217,7 +217,7 @@ public class AndroidCodePrinter extends CodePrinter {
 									// directory
 			if (!destination.exists()) {
 				destination.mkdir();
-				logger.info("Copied directory: " + source + "  to "
+				logger.debug("Copied directory: " + source + "  to "
 						+ destination);
 			}
 
@@ -248,7 +248,7 @@ public class AndroidCodePrinter extends CodePrinter {
 
 				is.close();
 				os.close();
-				logger.info("Copied file from " + source + " to "
+				logger.debug("Copied file from " + source + " to "
 						+ destination);
 			} catch (FileNotFoundException e) {
 				logger.warn("Could not find file " + e);
