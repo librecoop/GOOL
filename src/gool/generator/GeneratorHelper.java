@@ -5,6 +5,7 @@ import gool.ast.constructs.Dependency;
 import gool.ast.type.IType;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
+import gool.methods.MethodManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,7 +63,9 @@ public class GeneratorHelper {
 			Collection<ClassDef> classDefs)
 			throws FileNotFoundException {
 		Map<Platform, List<File>> compilationUnits = new HashMap<Platform, List<File>>();
-
+		
+		MethodManager.reset();
+		
 		for (ClassDef classDef : classDefs) {
 			//The target platform is held by the GOOL class, retrieve it.
 			Platform platform = (Platform) classDef.getPlatform();
@@ -78,12 +81,17 @@ public class GeneratorHelper {
 						+ currentPrinter.getOutputDir());
 				currentPrinter.getOutputDir().mkdirs();
 			}
-
+			
 			//Just compile each abstract GOOL class and add it to the map.
 			compilationUnits.get(platform).addAll(
 					currentPrinter.print(classDef));
+			
 			compilationUnits.get(platform).addAll(
 					currentPrinter.printPersonalLib());
+			
+			compilationUnits.get(platform).addAll(
+					currentPrinter.print(classDef));
+			
 		}
 		return compilationUnits;
 	}

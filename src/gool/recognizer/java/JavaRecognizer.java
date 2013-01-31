@@ -270,6 +270,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	public static void addForbiddenKeyword(File keywordsFile)
 			throws IOException {
+		@SuppressWarnings("resource")
 		BufferedReader reader = new BufferedReader(new FileReader(keywordsFile));
 
 		String keyword;
@@ -1487,15 +1488,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		
 		if(method.owner.toString().equals("java.lang.String")){
 			ArrayList<String> type = new ArrayList<String>();
-			int index;
+			String ret;
+			int index = method.type.getReturnType().toString().lastIndexOf(".");
+			
+			if(index == -1) ret = method.type.getReturnType().toString();
+			else ret = method.type.getReturnType().toString().substring(index+1);
+			
 			for (Type t : method.type.getParameterTypes()) {
 				index = t.toString().lastIndexOf(".");
-				if(index == -1) 
-					type.add(t.toString());
-				else
-					type.add(t.toString().substring(index+1));
+				if(index == -1) type.add(t.toString());
+				else type.add(t.toString().substring(index+1));
 			}
-			String general = MethodManager.getGeneralName(method.type.getReturnType().toString(), method.name.toString(), type, "String", Language.JAVA);
+			String general = MethodManager.getGeneralName(ret, method.name.toString(), type, "String", Language.JAVA);
 			target = new MethCall(goolType(((MethodSymbol) method).getReturnType(), context)
 					, target, general, "String");
 		}

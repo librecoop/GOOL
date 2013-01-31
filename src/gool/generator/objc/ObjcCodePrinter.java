@@ -61,14 +61,16 @@ public class ObjcCodePrinter extends CodePrinter {
 
 	}
 	
-	
+	@Override
 	public List<File> printPersonalLib() throws FileNotFoundException{
 		List<File> r = new ArrayList<File>();
 		
-		for (String s : MethodManager.methPerso.keySet()) {
+		for (String s : MethodManager.getMethPerso().keySet()) {
 			String headerCode = processTemplate("headerPerso.vm", s);
 			String classCode = processTemplate("classPerso.vm", s);
 			PrintWriter writer;
+			
+			System.out.println(MethodManager.getDependencies());
 			
 			File dir = new File(getOutputDir().getAbsolutePath());
 			dir.mkdirs();

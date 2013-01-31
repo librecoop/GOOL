@@ -1,9 +1,10 @@
-package gool.generator.objc;
+package gool.generator.objc; 
 
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
@@ -13,6 +14,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.Language;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
@@ -23,7 +25,9 @@ import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
@@ -55,6 +59,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
@@ -70,6 +75,7 @@ import gool.methods.MethodManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -268,108 +274,51 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return String.format("[[%s alloc]%s]", removePointer(classNew.getType()), init);
 	}
 	
-	@Override
-	public String getCode(MethCall methodCall) {
-		String arg = new String();
-		String specificName;
-		String p;
-		boolean b = false;
-		
-		if(methodCall.getGeneralName() != null){
-			specificName = MethodManager.getSpecificName(methodCall.getGeneralName(),methodCall.getLibrary(),Language.OBJC);
-			if(MethodManager.isAbsent(specificName)){
-				return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", methodCall.getGeneralName().replaceAll("\\s", ""), methodCall.getLibrary());
-			}
-			else if(MethodManager.isMethPerso(specificName)){
-				ArrayList<String> typeParam = new ArrayList<String>();
-				typeParam.add(((MemberSelect)methodCall.getTarget()).getTarget().getType().toString());
-				for (Expression s : methodCall.getParameters()) {
-					typeParam.add(s.getType().toString());
-				}				
-				MethodManager.addMeth(methodCall.getGeneralName(), specificName, methodCall.getLibrary(), typeParam);
-				
-				Expression firstParam = ((MemberSelect)methodCall.getTarget()).getTarget();
-				String nsString = GeneratorHelperObjc.staticStringMini(firstParam);
-				arg = String.format("%s%s ", nsString, firstParam.toString());
-				
-				for(Expression e : methodCall.getParameters()) {
-					nsString = GeneratorHelperObjc.staticStringMini(e);
-					if(e.getType() == TypeChar.INSTANCE)
-						p = "'"+e.toString()+"'";
-					else
-						p = e.toString();
-					arg += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, p);
-				}
-				
-				
-				return String.format("[%sOBJC %s:%s]",
-						methodCall.getLibrary().toLowerCase(),
-						methodCall.getGeneralName(),
-						arg);
-			}
-			else {
-				specificName = specificName.substring(0,specificName.indexOf("("));
-				for(Expression e : methodCall.getParameters()) {
-					String nsString = GeneratorHelperObjc.staticStringMini(e);
-					String partName = "";
-					if(specificName.indexOf("/")==-1)
-						partName = specificName;
-					else {
-						partName = specificName.substring(0, specificName.indexOf("/")); 
-						specificName = specificName.substring(specificName.indexOf("/")+1);
-					}
-					if(e.getType() == TypeChar.INSTANCE)
-						p = "'"+e.toString()+"'";
-					else
-						p = e.toString();
-					arg += String.format("%s:%s%s ", partName, nsString, p);
-				}
-				
-				if(methodCall.getParameters().size() == 0)
-					arg = specificName;
-				
-				if(methodCall.getTarget() instanceof MemberSelect){
-					return String.format("[%s %s]", ((MemberSelect)methodCall.getTarget()).getTarget(), arg);
-				}else if(methodCall.getTarget() instanceof MethCall){
-					return String.format("[%s %s]", ((MethCall)methodCall.getTarget()).getTarget(), arg);
-				}else if(methodCall.getTarget() instanceof FieldAccess){
-					return String.format("[%s %s]", ((FieldAccess)methodCall.getTarget()).getTarget(), arg);
-				}else if(methodCall.getTarget() instanceof EqualsCall){
-					return String.format("[%s %s]", ((EqualsCall)methodCall.getTarget()).getTarget(), arg);
-				}
-			}
-		}
-		else {
-			for(Expression e : methodCall.getParameters()) {
-				String nsString = GeneratorHelperObjc.staticStringMini(e);
-				if(!b){
-					arg += String.format("%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
-					b = true;
-				}
-				else
-					arg += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
-			}
-		}
-		
-		if(methodCall.getTarget() instanceof VarAccess){
-			return String.format("[self %s%s]", methodCall.getTarget(), arg);
-		}
-		return String.format("[%s%s]", methodCall.getTarget(), arg);
+	//retourne l'expression appellant la méthode
+	private Expression getTarget(Object n){
+		if(n instanceof MemberSelect){
+			return ((MemberSelect)n).getTarget();
+		}else if(n instanceof MethCall){
+			return ((MethCall)n).getTarget();
+		}else if(n instanceof FieldAccess){
+			return ((FieldAccess)n).getTarget();
+		}else if(n instanceof EqualsCall){
+			return ((EqualsCall)n).getTarget();
+		}else 
+			return null;
 	}
 	
-	@Override
-	public String getCode(Meth meth) {
-		String ret = new String();
-		String arg = new String();
-		String mod = (meth.getModifiers().contains(Modifier.STATIC) ? "+" : "-");
+	//génère la liste des paramètres pour l'appel d'une méthode
+	private String getMethCallName(List<Expression> param, boolean typeFirstParam){
+		String arg = "";
+		String p;
+		String nsString;
 		boolean b = false;
-
-		if (!(meth.getType() instanceof TypeNone))
-			ret = String.format("(%s)", meth.getType().toString());
-		else
-			ret = "(void)";
-
-		for(VarDeclaration e : meth.getParams()) {
+		
+		for(Expression e : param) {
+			nsString = GeneratorHelperObjc.staticStringMini(e);
+			if(e.getType() == TypeChar.INSTANCE) p = "'"+e.toString()+"'";
+			else p = e.toString();
+			
+			if(!b){
+				if(typeFirstParam) arg += String.format("%s:%s%s ", removePointer(e.getType()), nsString, p);
+				else arg += String.format("%s%s ", nsString, p);
+					
+				b = true;
+			}
+			else
+				arg += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, p);
+		}
+		
+		return arg;
+	}
+	
+	//Génère la liste des paramètres pour la définition d'une méthode
+	private String getMethDefName(List<VarDeclaration> param){
+		String arg = "";
+		boolean b = false;
+		
+		for(VarDeclaration e : param) {
 			if(!b){
 				arg += String.format("%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
 				b = true;
@@ -378,22 +327,114 @@ public class ObjcGenerator extends CommonCodeGenerator {
 				arg += String.format("and%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
 		}
 		
+		return arg;
+	}
+	
+	private String methUnknow(String generalName, String library){
+		return String.format("/* La méthode %s de la bibliothèque %s n'est pas implémenté pour le langage */", generalName.replaceAll("\\s", ""), library);
+	}
+	
+	//Génère l'appel d'une méthode généré automatiquement
+	private String methPerso(MethCall methodCall, String specificName){
+		ArrayList<String> typeParam = new ArrayList<String>();
+		ArrayList<Expression> param = new ArrayList<Expression>();
+		String arg;
+		Expression firstParam = getTarget(methodCall.getTarget());
+		
+		param.add(firstParam);
+		typeParam.add(firstParam.getType().toString());
+		for (Expression s : methodCall.getParameters()) {
+			typeParam.add(s.getType().toString());
+			param.add(s);
+		}
+		
+		MethodManager.addMeth(methodCall.getGeneralName(), specificName, methodCall.getLibrary(), typeParam);
+		
+		arg = getMethCallName(param, false);		
+		
+		return String.format("[%sOBJC %s:%s]",
+				methodCall.getLibrary(),
+				methodCall.getGeneralName(),
+				arg);
+	}
+	
+	//Génère l'appel d'une méthode présente dans le langage
+	private String methKnow(MethCall methodCall, String specificName){
+		specificName = specificName.substring(0,specificName.indexOf("("));
+		String p;
+		String arg = "";
+		
+		for(Expression e : methodCall.getParameters()) {
+			String nsString = GeneratorHelperObjc.staticStringMini(e);
+			String partName = "";
+			if(specificName.indexOf("/")==-1)
+				partName = specificName;
+			else {
+				partName = specificName.substring(0, specificName.indexOf("/")); 
+				specificName = specificName.substring(specificName.indexOf("/")+1);
+			}
+			if(e.getType() == TypeChar.INSTANCE)
+				p = "'"+e.toString()+"'";
+			else
+				p = e.toString();
+			arg += String.format("%s:%s%s ", partName, nsString, p);
+		}
+		
+		if(methodCall.getParameters().size() == 0)
+			arg = specificName;
+		
+		return String.format("[%s %s]", getTarget(methodCall.getTarget()), arg);
+	}
+	
+	@Override
+	public String getCode(MethCall methodCall) {
+		String arg = new String();
+		String specificName;
+		
+		if(methodCall.getGeneralName() != null){ //La méthode n'est pas une méthode appartenant aux classes du projet
+			specificName = MethodManager.getSpecificName(methodCall.getGeneralName(),methodCall.getLibrary(),Language.OBJC);
+			if(MethodManager.isAbsent(specificName)){ //La méthode n'a pas de correspondance
+				return methUnknow(methodCall.getGeneralName(), methodCall.getLibrary());
+			}
+			else if(MethodManager.isMethPerso(specificName)){ 	//La méthode à une correspondance mais n'est pas une méthode standard du langage. 
+				return methPerso(methodCall, specificName);		//elle sera généré dans un fichier a part
+			}
+			else {
+				return methKnow(methodCall, specificName);	//La méthode à une correspondance direct dans le langage
+			}
+		}
+		else {	//La méthode appartient au méthode du projet
+			arg = getMethCallName(methodCall.getParameters(), true);
+			
+			if(methodCall.getTarget() instanceof VarAccess){
+				return String.format("[self %s%s]", methodCall.getTarget(), arg);
+			}
+			return String.format("[%s%s]", methodCall.getTarget(), arg);
+		}		
+		
+	}
+	
+	@Override
+	public String getCode(Meth meth) {
+		String ret = new String();
+		String arg = new String();
+		String mod = (meth.getModifiers().contains(Modifier.STATIC) ? "+" : "-");
+
+		if (!(meth.getType() instanceof TypeNone))
+			ret = String.format("(%s)", meth.getType().toString());
+		else
+			ret = "(void)";
+		
+		arg = getMethDefName(meth.getParams());
+		
 		return String.format("%s %s %s%s", mod, ret, meth.getName(),arg);
 	}
 
 	@Override
 	public String getCode(Constructor cons) {
 		String param = new String();
-		boolean b = false;
 		
-		for(VarDeclaration e : cons.getParams()) {
-			if(!b){
-				param += String.format("With%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
-				b = true;
-			}
-			else
-				param += String.format("and%s:(%s)%s ", removePointer(e.getType()), e.getType(), e.getName());
-		}
+		param = getMethDefName(cons.getParams());
 
 		return String.format("- (id)init%s", param);
 	}
@@ -428,18 +469,10 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	
 	@Override
 	public String getCode(ParentCall parentCall) {
-		boolean b = false;
 		String out = "self = [super init";
 		
-		for(Expression e : parentCall.getParameters()) {
-			String nsString = GeneratorHelperObjc.staticStringMini(e);
-			if(!b){
-				out += String.format("With%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
-				b = true;
-			}
-			else
-				out += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
-		}
+		out += getMethCallName(parentCall.getParameters(), true);
+		
 		out += "]";
 		return out;
 	}
@@ -548,6 +581,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeInt) {
 			return "noprint";
 		}
+		if (typeDependency.getType() instanceof TypeException) {
+			return "Foundation/Foundation.h";
+		}
 		return removePointer(super.getCode(typeDependency)).concat(".h");
 	}
 
@@ -590,9 +626,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		if (varDec.getInitialValue() != null) {
 			if (varDec.getInitialValue().getType() instanceof TypeNull)
 				initialValue = " = nil"; //TODO pas normal, nil est mit dans le type de la valeur initital et pas dans la valeur initiale
-			else if (varDec.getInitialValue().getType() instanceof TypeString)
+			else if (varDec.getInitialValue().getType() instanceof TypeString && !(varDec.getInitialValue() instanceof MethCall))
 				initialValue = " = @" + varDec.getInitialValue();
-			else if(varDec.getInitialValue().getType() instanceof TypeChar)
+			else if(varDec.getInitialValue().getType() instanceof TypeChar && !(varDec.getInitialValue() instanceof MethCall))
 				initialValue = " = '" + varDec.getInitialValue() + "'";
 			else
 				initialValue = " = " + varDec.getInitialValue();
@@ -674,4 +710,28 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return out;
 	}
 
+	@Override
+	public String getCode(TypeException typeException) {
+		return "NSException *";
+	}
+
+	@Override
+	public String getCode(Catch catchBlock) {
+		return "@catch";
+	}
+
+	@Override
+	public String getCode(Try tryBlock) {
+		return "@try ";
+	}
+
+	@Override
+	public String getCode(Throw throwexpression) {
+		return "@throw";
+	}
+
+	@Override
+	public String getCode(Finally finalyBlock) {
+		return "@finally";
+	}
 }

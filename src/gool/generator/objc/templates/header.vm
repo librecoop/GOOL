@@ -4,6 +4,7 @@
 #set($ts = 1)
 
 #includes ($Helper.printDependencies($class))
+#includesPerso ($MManager.getDependencies())
 
 #if ($class.isEnum())
 enum $class.Name {
@@ -13,7 +14,7 @@ enum $class.Name {
 };
 #elseif(!$class.isInterface())
 #set($dp = 0)
-@interface $class.Name #if($class.ParentClass) : $class.ParentClass#set($dp = 1)#end#if($dp != 1 && !$class.Interfaces.isEmpty()):#end#if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
+@interface $class.Name #if($class.ParentClass) : $type($class.ParentClass)#set($dp = 1)#end#if($dp != 1 && !$class.Interfaces.isEmpty()):#end#if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
 	@private
 	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "private")
 	$field;

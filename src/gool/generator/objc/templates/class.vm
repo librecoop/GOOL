@@ -27,7 +27,7 @@ $method.Block
 #end
 #if($ts == 1)
 -(NSString *)toString{
-	return @"$class.name";
+	return @"${class.Name}";
 }
 #end
 @end

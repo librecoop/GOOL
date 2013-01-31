@@ -81,15 +81,47 @@ public class MethodManager {
 		}		
 	}
 	
-	public static HashMap<String, HashSet<MethDef>> methPerso = new HashMap<String, HashSet<MethDef>>();
+	private static HashMap<String, HashSet<MethDef>> methPerso = new HashMap<String, HashSet<MethDef>>();
+	private static HashSet<String> dependencies = new HashSet<String>();
 	
 	public static HashSet<MethDef> getMethInLib(String libName){
 		return methPerso.get(libName);
 	}
 	
+	public static HashMap<String, HashSet<MethDef>> getMethPerso(){
+		return methPerso;
+	}
+	
+	public static HashSet<String> getDependencies(){
+		return dependencies;
+	}
+	
 	public static void addMeth(String name, String corps, String library, ArrayList<String> typeParam){
 		String retType = corps.substring(corps.indexOf("#:")+2);
+		String comment = "TODO";
 		ArrayList<Param> param = new ArrayList<Param>();
+		
+		dependencies.add(library);
+		
+		try{
+			InputStream ips= new FileInputStream(getCommentFileName(library.toLowerCase())); 
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String ligne;
+			while ((ligne=br.readLine())!=null){
+				if(ligne.contains(name)){
+					comment = ligne;
+					comment = comment.substring(comment.indexOf("=")+1);
+					break;
+				}
+			}
+			br.close(); 
+		}		
+		catch (Exception e){
+			System.out.println(e.toString());
+		}
+		
+		
 		for(int i=0;i<typeParam.size();i++){
 			param.add(new Param("p"+(i+1), typeParam.get(i)));
 		}
@@ -98,15 +130,16 @@ public class MethodManager {
 		corps = corps.replaceAll("[;]", ";\n\t\t");
 		corps = corps.substring(0,corps.indexOf("#"));
 		
+		
 		if(methPerso.get(library) == null)
 			methPerso.put(library, new HashSet<MethDef>());
-		MethDef m = new MethDef(name, param, corps, retType, "test comment");
+		MethDef m = new MethDef(name, param, corps, retType, comment);
 		methPerso.get(library).add(m);		
 	}
 
 	public static String getGeneralName(String formatedName, String methodLibrary, Language l){
 		String fileName = getFileName(l.name(), methodLibrary);
-		String res = "";
+		String res = null;
 		try{
 			InputStream ips= new FileInputStream(fileName); 
 			InputStreamReader ipsr=new InputStreamReader(ips);
@@ -174,5 +207,10 @@ public class MethodManager {
 	
 	public static String getCommentFileName(String methodLibrary){
 		return "src/gool/methods/comment."+methodLibrary.toLowerCase()+".method";
+	}
+
+	public static void reset() {
+		methPerso.clear();
+		dependencies.clear();		
 	}	
 }

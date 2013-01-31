@@ -11,6 +11,7 @@ import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
@@ -29,6 +30,9 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 		}
 		else if(type instanceof TypeBool){
 			return "Bool";
+		}
+		else if(type instanceof TypeException){
+			return "NSException *";
 		}
 		else{
 			return "/* Unrecognized by gool */";
