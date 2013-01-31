@@ -1,5 +1,6 @@
 package gool.methods;
 
+import gool.ast.constructs.Expression;
 import gool.ast.constructs.Language;
 
 import java.io.BufferedReader;
@@ -96,6 +97,21 @@ public class MethodManager {
 		return dependencies;
 	}
 	
+	public static boolean isParam(Expression s, String corps) {
+		String paramReq;
+		paramReq = corps.substring(corps.indexOf("#")+1);
+		paramReq = paramReq.substring(0,paramReq.indexOf("#"));
+		paramReq = paramReq.replaceAll("[()]", "");
+		String[] array = paramReq.split("[,]");
+		
+		for(int j=0;j<array.length;j++)
+			if(s.getType().toString().equalsIgnoreCase((array[j]))){
+				return true;
+			}
+		
+		return false;
+	}	
+	
 	public static void addMeth(String name, String corps, String library, ArrayList<String> typeParam){
 		String retType = corps.substring(corps.indexOf("#:")+2);
 		String comment = "TODO";
@@ -120,7 +136,6 @@ public class MethodManager {
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
-		
 		
 		for(int i=0;i<typeParam.size();i++){
 			param.add(new Param("p"+(i+1), typeParam.get(i)));
@@ -216,5 +231,5 @@ public class MethodManager {
 	public static void reset() {
 		methPerso.clear();
 		dependencies.clear();		
-	}	
+	}
 }

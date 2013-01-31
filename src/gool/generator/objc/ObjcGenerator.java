@@ -340,11 +340,16 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String arg;
 		Expression firstParam = getTarget(methodCall.getTarget());
 		
-		param.add(firstParam);
-		typeParam.add(firstParam.getType().toString());
+		if(MethodManager.isParam(firstParam,specificName)){
+			param.add(firstParam);
+			typeParam.add(firstParam.getType().toString());
+		}
+		
 		for (Expression s : methodCall.getParameters()) {
-			typeParam.add(s.getType().toString());
-			param.add(s);
+			if(MethodManager.isParam(s,specificName)){
+				typeParam.add(s.getType().toString());
+				param.add(s);
+			}
 		}
 		
 		MethodManager.addMeth(methodCall.getGeneralName(), specificName, methodCall.getLibrary(), typeParam);
@@ -403,12 +408,13 @@ public class ObjcGenerator extends CommonCodeGenerator {
 				return methKnow(methodCall, specificName);	//La méthode à une correspondance direct dans le langage
 			}
 		}
-		else {	//La méthode appartient au méthode du projet
+		else {	//La méthode appartient aux méthodes du projet
 			arg = getMethCallName(methodCall.getParameters(), true);
 			
-			if(methodCall.getTarget() instanceof VarAccess){
+			if(methodCall.getTarget() instanceof VarAccess)
 				return String.format("[self %s%s]", methodCall.getTarget(), arg);
-			}
+			if(methodCall.getTarget() instanceof ParentCall)
+				return getCode((ParentCall)methodCall.getTarget());
 			return String.format("[%s%s]", methodCall.getTarget(), arg);
 		}		
 		
@@ -675,8 +681,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String sep;
 		
 		if(memberSelect.getType() instanceof TypeMethod)  sep = " ";
-		else if(!(memberSelect.getType() instanceof PrimitiveType)) sep = "->"; //TODO normalement ReferenceType et pas negatif
-		else sep = ".";
+		else  sep = "->"; 
 		
 		return String.format("%s%s%s", target, sep, memberSelect.getIdentifier());
 	}

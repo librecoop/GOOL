@@ -3,6 +3,7 @@ package gool.generator.objc;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.BinaryOperation;
 import gool.ast.constructs.Expression;
+import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.VarAccess;
 import gool.ast.type.IType;
@@ -77,7 +78,8 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 	public static String staticStringMini(Expression e){
 		return ((e.getType() instanceof TypeString) 
 				&& !(e instanceof VarAccess)
-				&& !(e instanceof MethCall))
+				&& !(e instanceof MethCall)
+				&& !(e instanceof MemberSelect))
 				? "@" : "";
 	}
 	
@@ -86,6 +88,7 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 				&& !(e instanceof VarAccess) 
 				&& !(e instanceof MethCall)) 
 				&& !(e instanceof ArrayAccess) 
+				&& !(e instanceof MemberSelect)
 				&& !(e.toString().contains("[NSString stringWithFormat"))
 				? "@" : "";
 	}
