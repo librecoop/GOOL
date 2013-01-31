@@ -11,8 +11,8 @@ equalWithoutCase	=
 withFormat			=	stringWithFormat/format(NSMutableString *, id...) : NSMutableString *
 toByte				=	dataUsingEncoding("NSUTF8StringEncoding") : byte[]
 toByteWithCharSet	=	
-firstIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(0,[p1$slength])];return$srange.location;}#(NSMutableString*,int)#: int 
-firstIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(NSMutableString*,int,int)#: int
+firstIndexChar		=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(0,[p1$slength])];return$srange.location;}#(NSMutableString*,char)#: int 
+firstIndexCharFrom	=	{NSRange$srange$s=[p1$srangeOfString:[NSString$sstringWithFormat:@"%c",p2]$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(NSMutableString*,char,int)#: int
 firstIndexStr		=	{NSRange$srange$s=[p1$srangeOfString:p2];return$srange.location;}#(NSMutableString*,NSMutableString*)#: int
 firstIndexStrFrom	=	{NSRange$srange$s=[p1$srangeOfString:p2$soptions:0$srange:NSMakeRange(p3,p1$slength]-p3)];return$srange.location;}#(NSMutableString*,NSMutableString*,int)#: int
 empty				=	{return$s[$arg$slength] == 0} (NSMutableString*): BOOL
