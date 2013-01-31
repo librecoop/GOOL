@@ -54,6 +54,11 @@ public class GoolTest {
 	}
 
 	private static final String MAIN_CLASS_NAME = "Test";
+	private List<Platform> platforms = Arrays.asList(
+			     JavaPlatform.getInstance(), CppPlatform.getInstance()
+			    , CSharpPlatform.getInstance()
+			//, AndroidPlatform.getInstance()
+    );
 
 	@BeforeClass
 	public static void init() {
@@ -361,15 +366,17 @@ public class GoolTest {
 										+"br.close();\n"
 										+"  \n System.out.println(testString+c);\n "
 								
-								+"} catch(EOFException eof) \n { System.out.println(\"eof\");} "
-								+" catch(FileNotFoundException fnf) \n { System.out.println(\"notfound\");} "
++"} catch(FileNotFoundException fnf) \n { System.out.println(\"file not found\");} "
+								+" catch(EOFException eof) \n { System.out.println(\"eof\");} "
+								
 								+" catch(Exception ex) \n {System.out.println(\"ex\");}",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "eof");
+		compareResultsDifferentPlatforms(input, "file not found");
 	}
 
 	@Test
 	public void fileTestAppend() throws Exception {
+		try {
 		//String readFile = Settings.get("read_file_path");
 		//String readFile = Settings.get("read_file_path");
 		String writeFile = Settings.get("write_file_path");
@@ -395,7 +402,13 @@ public class GoolTest {
 								+"} catch(Exception ex) \n {System.out.println(\"ex\");}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1Awrite2");
-		Assert.fail("Append is not supported by bufferedreader at the moment");
+		}
+		catch(Exception e) {
+			logger.error(e);
+			Assert.fail("Append is not supported by bufferedreader at the moment in C++");
+			return;
+		}
+		
 	}
 	
 	@Test
@@ -417,9 +430,10 @@ public class GoolTest {
 
 	private void compareResultsDifferentPlatforms(GoolTestExecutor executor)
 			throws Exception {
-			Platform platform =CppPlatform.getInstance();
+		for (Platform platform : platforms) {
 			logger.info("START: platform: " +platform.getName());
 			executor.compare(platform);
 			logger.info("FINISH platform: " +platform.getName());
+		}
 	}
 }
