@@ -1,6 +1,7 @@
 package gool.generator.csharp;
 
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constant;
@@ -9,13 +10,16 @@ import gool.ast.constructs.CustomDependency;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.list.ListAddCall;
 import gool.ast.list.ListContainsCall;
@@ -43,6 +47,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
@@ -425,10 +430,39 @@ public class CSharpGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	@Override
 	public String getCode(TypeFile typeFile) {
 		return "filecsharp";
+	}
+
+	@Override
+	public String getCode(TypeException typeException) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Catch catchBlock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Try tryBlock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Throw throwexpression) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCode(Finally finalyBlock) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

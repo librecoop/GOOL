@@ -1,9 +1,10 @@
-package gool.generator.objc;
+package gool.generator.objc; 
 
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
 import gool.ast.constructs.Assign;
 import gool.ast.constructs.BinaryOperation;
+import gool.ast.constructs.Catch;
 import gool.ast.constructs.ClassNew;
 import gool.ast.constructs.Constructor;
 import gool.ast.constructs.CustomDependency;
@@ -13,6 +14,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.Language;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
@@ -23,7 +25,9 @@ import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
+import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
+import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
@@ -55,6 +59,7 @@ import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
+import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
@@ -335,11 +340,16 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String arg;
 		Expression firstParam = getTarget(methodCall.getTarget());
 		
-		param.add(firstParam);
-		typeParam.add(firstParam.getType().toString());
+		if(MethodManager.isParam(firstParam,specificName)){
+			param.add(firstParam);
+			typeParam.add(firstParam.getType().toString());
+		}
+		
 		for (Expression s : methodCall.getParameters()) {
-			typeParam.add(s.getType().toString());
-			param.add(s);
+			if(MethodManager.isParam(s,specificName)){
+				typeParam.add(s.getType().toString());
+				param.add(s);
+			}
 		}
 		
 		MethodManager.addMeth(methodCall.getGeneralName(), specificName, methodCall.getLibrary(), typeParam);
@@ -398,12 +408,13 @@ public class ObjcGenerator extends CommonCodeGenerator {
 				return methKnow(methodCall, specificName);	//La méthode à une correspondance direct dans le langage
 			}
 		}
-		else {	//La méthode appartient au méthode du projet
+		else {	//La méthode appartient aux méthodes du projet
 			arg = getMethCallName(methodCall.getParameters(), true);
 			
-			if(methodCall.getTarget() instanceof VarAccess){
+			if(methodCall.getTarget() instanceof VarAccess)
 				return String.format("[self %s%s]", methodCall.getTarget(), arg);
-			}
+			if(methodCall.getTarget() instanceof ParentCall)
+				return getCode((ParentCall)methodCall.getTarget());
 			return String.format("[%s%s]", methodCall.getTarget(), arg);
 		}		
 		
@@ -576,6 +587,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeInt) {
 			return "noprint";
 		}
+		if (typeDependency.getType() instanceof TypeException) {
+			return "Foundation/Foundation.h";
+		}
 		return removePointer(super.getCode(typeDependency)).concat(".h");
 	}
 
@@ -667,8 +681,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String sep;
 		
 		if(memberSelect.getType() instanceof TypeMethod)  sep = " ";
-		else if(!(memberSelect.getType() instanceof PrimitiveType)) sep = "->"; //TODO normalement ReferenceType et pas negatif
-		else sep = ".";
+		else  sep = "->"; 
 		
 		return String.format("%s%s%s", target, sep, memberSelect.getIdentifier());
 	}
@@ -702,4 +715,28 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return out;
 	}
 
+	@Override
+	public String getCode(TypeException typeException) {
+		return "NSException *";
+	}
+
+	@Override
+	public String getCode(Catch catchBlock) {
+		return "@catch";
+	}
+
+	@Override
+	public String getCode(Try tryBlock) {
+		return "@try ";
+	}
+
+	@Override
+	public String getCode(Throw throwexpression) {
+		return "@throw";
+	}
+
+	@Override
+	public String getCode(Finally finalyBlock) {
+		return "@finally";
+	}
 }
