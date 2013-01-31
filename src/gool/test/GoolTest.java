@@ -55,8 +55,8 @@ public class GoolTest {
 
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms = Arrays.asList(
-			     JavaPlatform.getInstance(), CppPlatform.getInstance(),
-			     CSharpPlatform.getInstance()
+			     JavaPlatform.getInstance(), CppPlatform.getInstance()
+			    , CSharpPlatform.getInstance()
 			//, AndroidPlatform.getInstance()
     );
 
@@ -366,11 +366,12 @@ public class GoolTest {
 										+"br.close();\n"
 										+"  \n System.out.println(testString+c);\n "
 								
-								+"} catch(EOFException eof) \n { System.out.println(\"eof\");} "
-								+" catch(FileNotFoundException fnf) \n { System.out.println(\"notfound\");} "
++"} catch(FileNotFoundException fnf) \n { System.out.println(\"file not found\");} "
+								+" catch(EOFException eof) \n { System.out.println(\"eof\");} "
+								
 								+" catch(Exception ex) \n {System.out.println(\"ex\");}",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "eof");
+		compareResultsDifferentPlatforms(input, "file not found");
 	}
 
 	@Test
