@@ -54,6 +54,11 @@ public class GoolTest {
 	}
 
 	private static final String MAIN_CLASS_NAME = "Test";
+	private List<Platform> platforms = Arrays.asList(
+			     JavaPlatform.getInstance(), CppPlatform.getInstance(),
+			     CSharpPlatform.getInstance()
+			//, AndroidPlatform.getInstance()
+    );
 
 	@BeforeClass
 	public static void init() {
@@ -417,9 +422,10 @@ public class GoolTest {
 
 	private void compareResultsDifferentPlatforms(GoolTestExecutor executor)
 			throws Exception {
-			Platform platform =CppPlatform.getInstance();
+		for (Platform platform : platforms) {
 			logger.info("START: platform: " +platform.getName());
 			executor.compare(platform);
 			logger.info("FINISH platform: " +platform.getName());
+		}
 	}
 }
