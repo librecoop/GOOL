@@ -139,7 +139,8 @@ public class MethodManager {
 
 	public static String getGeneralName(String formatedName, String methodLibrary, Language l){
 		String fileName = getFileName(l.name(), methodLibrary);
-		String res = null;
+		String res = "";
+	
 		try{
 			InputStream ips= new FileInputStream(fileName); 
 			InputStreamReader ipsr=new InputStreamReader(ips);
@@ -157,13 +158,16 @@ public class MethodManager {
 			br.close(); 
 		}		
 		catch (Exception e){
-			System.out.println(e.toString());
+			System.err.println(e.toString());
+			res = null;
 		}
 		
 		return res;
 	}
 	
 	public static String getGeneralName(String retType, String name, List<String> list, String methodLibrary, Language l){
+		/*String namestring[] = retType.split("\\."); 
+		retType=namestring[namestring.length-1];*/
 		String formatedName = String.format("%s(%s) : %s", name, StringUtils.join(list, ", "), retType);		
 		return MethodManager.getGeneralName(formatedName, methodLibrary, l);
 	}

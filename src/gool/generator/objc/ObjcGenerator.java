@@ -110,7 +110,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 //List Methods
-	
 	@Override
 	public String getCode(ListAddCall lac) {
 		String nsObject = GeneratorHelperObjc.staticString(lac.getParameters().get(0));
@@ -187,7 +186,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		/*return String.format("[[%s objectForKey:@%s]isEqualToString:@" + "("
 				+ "null" + ")" + "]", mapContainsKeyCall.getExpression(),
 				mapContainsKeyCall.getParameters());*/ // TODO
-		return " /* MapContainsKeyCall non impl��ment�� */ ";
+		return " /* MapContainsKeyCall non implemente */ ";
 	}
 
 	@Override
@@ -391,6 +390,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String arg = new String();
 		String specificName;
 		
+
 		if(methodCall.getGeneralName() != null){ //La méthode n'est pas une méthode appartenant aux classes du projet
 			specificName = MethodManager.getSpecificName(methodCall.getGeneralName(),methodCall.getLibrary(),Language.OBJC);
 			if(MethodManager.isAbsent(specificName)){ //La méthode n'a pas de correspondance

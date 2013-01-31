@@ -37,7 +37,6 @@ public class CppCompiler extends SpecificCompiler {
 		logger.info("--->" + mainFile);
 		String execFileName = mainFile.getName().replace(".cpp",".bin");
 		params.addAll(Arrays.asList(Settings.get("cpp_compiler_cmd"), "-I", Settings.get("boost_lib_dir"), "-o", execFileName) );
-
 		/*
 		 * Add the needed dependencies to be able to compile programs.
 		 */
@@ -84,6 +83,7 @@ public class CppCompiler extends SpecificCompiler {
 		Map<String, String> env = new HashMap<String, String>();
 
 		params.addAll(Arrays.asList("./"+file.getName()));
+		logger.info("pass here");
 		return Command.exec(getOutputDir(), params, env);
 	}
 

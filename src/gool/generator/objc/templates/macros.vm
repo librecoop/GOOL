@@ -30,5 +30,5 @@
 #end
 #end
 
-#macro ( type $type )
-$Helper.removePointer($type)#end
+#macro ( type $t )
+$Helper.removePointer($t)#end

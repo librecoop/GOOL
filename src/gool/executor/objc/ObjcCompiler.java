@@ -35,7 +35,7 @@ public class ObjcCompiler extends SpecificCompiler{
 		}
 		
 		logger.info("--->" + mainFile);
-		String execFileName = mainFile.getName().replace(".m","");
+		String execFileName = mainFile.getName();
 		params.addAll(Arrays.asList(Settings.get("objc_compiler_cmd")) );
 		
 		for (File file : files) {
@@ -56,7 +56,6 @@ public class ObjcCompiler extends SpecificCompiler{
 		}
 		
 		params.addAll(Arrays.asList(Settings.get("objc_compiler_lib"), "-o", execFileName));
-
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
 	}
@@ -82,7 +81,6 @@ public class ObjcCompiler extends SpecificCompiler{
 		}
 
 		Map<String, String> env = new HashMap<String, String>();
-
 		params.addAll(Arrays.asList("./"+file.getName()));
 		return Command.exec(getOutputDir(), params, env);
 	}
