@@ -99,15 +99,18 @@ public class MethodManager {
 	
 	public static boolean isParam(Expression s, String corps) {
 		String paramReq;
+		String type = s.getType().toString().replaceAll("\\s", "");
 		paramReq = corps.substring(corps.indexOf("#")+1);
 		paramReq = paramReq.substring(0,paramReq.indexOf("#"));
 		paramReq = paramReq.replaceAll("[()]", "");
 		String[] array = paramReq.split("[,]");
 		
-		for(int j=0;j<array.length;j++)
-			if(s.getType().toString().equalsIgnoreCase((array[j]))){
+		for(int j=0;j<array.length;j++){
+			array[j] = array[j].replaceAll("\\s", "");
+			if(type.equalsIgnoreCase((array[j]))){
 				return true;
 			}
+		}
 		
 		return false;
 	}	

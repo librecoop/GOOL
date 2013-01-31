@@ -33,12 +33,12 @@ subStrWithEnd		=
 toChars				=	UTF8String():char *
 lowerCase			=	lowercaseString() : NSMutableString*
 upperCase			=	uppercaseString() : NSMutableString*
-valueOfBool			=	{return$s(p2 == true ?@"true":@"false");}#(BOOL)#: NSMutableString*
-valueOfChar			=	{return$s[NSMutableString$sstringWithFormat:@"%c" ,p2];}#(char)#: NSMutableString*
+valueOfBool			=	{return$s(p1 == true ?@"true":@"false");}#(BOOL)#: NSMutableString*
+valueOfChar			=	{return$s[NSMutableString$sstringWithFormat:@"%c" ,p1];}#(char)#: NSMutableString*
 valueOfCharArray	=	{return$s[NSString$sstringWithCString:p1$sencoding:NSASCIIStringEncoding];}#(char[])#: NSMutableString*
-valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",p2];}#(double)#:NSMutableString*
+valueOfDouble		=	{return$s[NSString$sstringWithFormat:@"%f",p1];}#(double)#:NSMutableString*
 valueOfFloat		=	
-valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",p2];}#(int)#:NSMutableString*
+valueOfInt			=	{return$s[NSString$sstringWithFormat:@"%d",p1];}#(int)#:NSMutableString*
 valueOfLong			=	
-valueOfObject		=	{return$s(id)(p2 == nil ?nil:[p2.description]);}#(id)#:id
+valueOfObject		=	{return$s(id)(p1 == nil ?nil:[p1.description]);}#(id)#:id
 
