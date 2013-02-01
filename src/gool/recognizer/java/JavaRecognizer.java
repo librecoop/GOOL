@@ -1152,7 +1152,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
 		Log.d("XX Entering MemberSelect with target-identifier XX");
-		Log.d(target.toString());
 		Log.d(identifier.toString());
 		Log.d("XX");
 		/*

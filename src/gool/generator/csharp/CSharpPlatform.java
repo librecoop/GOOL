@@ -19,7 +19,7 @@ public final class CSharpPlatform extends Platform {
 	@Override
 	protected CodePrinter initializeCodeWriter() {
 		//TODO a voir pour passer la liste des fichiers
-		return new CSharpCodePrinter(new File(outputDir), null);
+		return new CSharpCodePrinter(new File(outputDir), myFileToCopy);
 	}
 	
 	@Override

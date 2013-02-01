@@ -11,8 +11,11 @@ import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.Platform;
+import gool.generator.cpp.CppPlatform;
+import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
+import gool.generator.xml.XmlPlatform;
 import gool.parser.java.JavaParser;
 
 import java.io.BufferedReader;
@@ -55,11 +58,10 @@ public class GOOLCompiler {
 			
 			Collection<File> filesNonChange = getFilesInFolderNonExe(folder, extToNCopy);
 			concreteJavaToConcretePlatform(  JavaPlatform.getInstance(filesNonChange), files);
-//			concreteJavaToConcretePlatform(CSharpPlatform.getInstance(filesNonChange), files);
-//			concreteJavaToConcretePlatform(   CppPlatform.getInstance(filesNonChange), files);
-
+			concreteJavaToConcretePlatform(CSharpPlatform.getInstance(filesNonChange), files);
+			concreteJavaToConcretePlatform(   CppPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
-			//concreteJavaToConcretePlatform(   XmlPlatform.getInstance(filesNonChange), files);
+			concreteJavaToConcretePlatform(   XmlPlatform.getInstance(filesNonChange), files);
 
 		} catch (Exception e) {
 			Log.e(e);
