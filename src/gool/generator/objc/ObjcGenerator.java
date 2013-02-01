@@ -264,7 +264,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		for(Expression e : classNew.getParameters()) {
 			String nsString = GeneratorHelperObjc.staticStringMini(e);
 			if(!b){
-				init += String.format("With%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
+				init += String.format("%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
 				b = true;
 			}
 			else
@@ -517,6 +517,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	public String getCode(TypeObject typeObject) {
 		// type java.object
+		// return NSObject
 		return "id";
 	}
 
@@ -602,7 +603,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 ///////////////
 	
-//Depedency methods
+//Dependency methods
 	
 	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {

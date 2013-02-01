@@ -89,7 +89,6 @@ public class ObjcCompiler extends SpecificCompiler{
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
 			throws FileNotFoundException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
