@@ -106,15 +106,13 @@ public abstract class CodePrinter {
 					System.out.println(e1.toString());
 				}
 
-
-
+		}
+		
 		GoolGeneratorController.setCodeGenerator(generator);
-
 		try {
 			Properties p = new Properties();
 			p.setProperty("resource.loader", "class");
-			p
-					.setProperty("class.resource.loader.class",
+			p.setProperty("class.resource.loader.class",
 							"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 			engine.init(p);
 		} catch (Exception e) {
@@ -122,7 +120,6 @@ public abstract class CodePrinter {
 					"The velocity engine can not be properly initialized.", e);
 		}
 
-	}
 	}
 
 	/**
