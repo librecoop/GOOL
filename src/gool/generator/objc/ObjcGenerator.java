@@ -257,7 +257,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ClassNew classNew) {
 		
-		String init = new String("init");
+		String init = new String("initWith");
 		
 		boolean b = false;
 		
@@ -443,7 +443,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		param = getMethDefName(cons.getParams());
 
-		return String.format("- (id)init%s", param);
+		return String.format("- (id)initWith%s", param);
 	}
 	
 	@Override

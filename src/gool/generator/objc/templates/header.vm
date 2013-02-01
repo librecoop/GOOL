@@ -37,7 +37,7 @@ enum $class.Name {
 		#set($p = 1)#foreach($mod in $method.getModifiers())#if($mod == "private")#set($p = 0)#end#end
 		#if($p != 0)
 		
-	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end#end#if($method.getName() == "toString")#set($ts=0)#end
+	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)With#elseif($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end#end#if($method.getName() == "toString")#set($ts=0)#end
 	#end
 	
 	#if($ts==1)-(NSString *)toString;#end
@@ -47,7 +47,7 @@ enum $class.Name {
 @protocol $class.Name
 	#foreach( $method in $class.Methods )
 		
-	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end
+	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)With#elseif($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end
 	#end
 	
 @end
