@@ -226,6 +226,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		FORBIDDEN_KEYWORDS.add("ref");
 		FORBIDDEN_KEYWORDS.add("object");
 		FORBIDDEN_KEYWORDS.add("string");
+		
+		// PYTHON
+		FORBIDDEN_KEYWORDS.add("print");
 	}
 	
 	/**
@@ -1241,12 +1244,17 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d("X Standard method call for X");
 		Log.d(n.toString());
 		Log.d("X");
-
+        System.out.println(context);
+        if(context!=null){
 		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier().toString(), getTypeMirror(n));
 		if (dec == null) {
 			Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
 			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
 		}
+        }
+        
+        Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
+		Dec dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
 		MemberSelect f = new MemberSelect(target, dec);
 		return f;
 	}

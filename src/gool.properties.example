@@ -9,4 +9,16 @@ cpp_out_dir=../GOOLOUTPUTCPP/
 java_in_dir=../GOOLINPUTJAVA/src/
 csharp_in_dir=../GOOLINPUTCS/
 cpp_in_dir=../GOOLINPUTCPP/
+<<<<<<< HEAD
 python_out_dir=../GOOLOUTPUTPYTHON/
+=======
+
+
+android_compiler_cmd= 
+android_out_dir=../GOOLOUTPUTANDROIDTEMP/
+android_out_dir_final=../GOOLOUTPUTANDROID/
+android_in_dir=../GOOLINPUTANDROID/src/
+android_sdk_path=
+read_file_path=/home/wherevever/a.txt
+write_file_path=/home/whereevever/b.txt
+>>>>>>> 1d0a4b9cb96b88d5c1b1a42ad6da5f18522293a0

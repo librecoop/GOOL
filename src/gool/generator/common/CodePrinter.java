@@ -52,7 +52,7 @@ public abstract class CodePrinter {
 	/**
 	 * This list is just to remember which abstract GOOL classes were printed already.
 	 */
-	private Set<ClassDef> printedClasses = new HashSet<ClassDef>();
+	protected Set<ClassDef> printedClasses = new HashSet<ClassDef>();
 
 	/**
 	 * the Velocity template engine.
@@ -121,6 +121,28 @@ public abstract class CodePrinter {
 		}
 
 	}
+	
+	
+	public CodePrinter(CodeGenerator generator, File outputDir) {
+		this.generator = generator;
+		this.engine = new VelocityEngine();
+		this.outputDir = outputDir;
+		
+		GoolGeneratorController.setCodeGenerator(generator);
+		try {
+			Properties p = new Properties();
+			p.setProperty("resource.loader", "class");
+			p.setProperty("class.resource.loader.class",
+							"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+			engine.init(p);
+		} catch (Exception e) {
+			throw new VelocityException(
+					"The velocity engine can not be properly initialized.", e);
+		}
+
+	}
+	
+	
 
 	/**
 	 * Cleans the output directory.

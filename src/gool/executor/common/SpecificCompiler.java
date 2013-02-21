@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public abstract class SpecificCompiler {
 
 
@@ -34,7 +35,6 @@ public abstract class SpecificCompiler {
 	}
 
 	public static void cleanOutDir(File outDir) {
-		System.out.println("Cleaning out directory " + outDir);
 		
 		File[] binFiles = outDir.listFiles();
 		if (binFiles != null) {

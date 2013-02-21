@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 public class JavaCompiler extends SpecificCompiler {
+	
 
 	public JavaCompiler(File javaOutputDir, List<File> deps) {
 		super(javaOutputDir, deps);

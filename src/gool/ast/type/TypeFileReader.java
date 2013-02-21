@@ -1,5 +1,6 @@
 package gool.ast.type;
 
+
 import gool.ast.constructs.ClassDef;
 import gool.generator.GoolGeneratorController;
 
@@ -51,5 +52,4 @@ public class TypeFileReader extends ReferenceType {
 	public String getName() {
 		return this.callGetCode();
 	}
-
 }

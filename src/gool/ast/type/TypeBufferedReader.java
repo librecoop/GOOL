@@ -1,5 +1,6 @@
 package gool.ast.type;
 
+
 import gool.ast.constructs.ClassDef;
 import gool.generator.GoolGeneratorController;
 
@@ -11,11 +12,12 @@ public class TypeBufferedReader extends ReferenceType {
 	private ClassDef classDef;
 	
 	public TypeBufferedReader(){}
-
+	
 	public TypeBufferedReader(IType elementType) {
 		this();
 		addArgument(elementType);
 	}
+	
 	
 	public IType getElementType() {
 		if (getTypeArguments().size() > 0) {

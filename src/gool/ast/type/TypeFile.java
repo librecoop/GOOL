@@ -1,3 +1,4 @@
+
 package gool.ast.type;
 
 import gool.ast.constructs.ClassDef;

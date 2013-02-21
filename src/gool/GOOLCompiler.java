@@ -10,6 +10,7 @@ package gool;
 import gool.ast.constructs.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
+import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
@@ -30,6 +31,7 @@ import java.util.Map;
 import logger.Log;
 
 public class GOOLCompiler {
+	
 
 	/**
 	 * The main
@@ -62,7 +64,8 @@ public class GOOLCompiler {
 			concreteJavaToConcretePlatform(   CppPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(   XmlPlatform.getInstance(filesNonChange), files);
-
+		    //TODO: same for android
+			concreteJavaToConcretePlatform(   AndroidPlatform.getInstance(), files);
 		} catch (Exception e) {
 			Log.e(e);
 		}
@@ -163,7 +166,7 @@ public class GOOLCompiler {
 	 */
 	private static Map<Platform, List<File>> abstractGool2Target(
 			Collection<ClassDef> classDefs) throws FileNotFoundException {
-		return GeneratorHelper.printClassDefs(classDefs);
+		return GeneratorHelper.printClassDefs(classDefs);		
 	}
 
 

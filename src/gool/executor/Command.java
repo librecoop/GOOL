@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -40,7 +41,6 @@ public final class Command {
 	 */
 	public static String exec(File workingDir, List<String> params, Map<String, String> env) {
 		try {
-			System.out.println(StringUtils.join(params.toArray(), " "));
 			StringBuffer buffer = new StringBuffer();
 
 			ProcessBuilder pb = new ProcessBuilder(params);

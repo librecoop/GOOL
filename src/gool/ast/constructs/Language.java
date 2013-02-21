@@ -1,5 +1,5 @@
 package gool.ast.constructs;
 
 public enum Language {
-	CSHARP, JAVA, CPP, PYTHON;
+	CSHARP, JAVA, CPP, PYTHON, ANDROID;
 }

@@ -32,6 +32,7 @@ public class ClassDef extends Dependency {
 	 * Class' name.
 	 */
 	private String name;
+		
 	/**
 	 * List of fields.
 	 */
@@ -178,7 +179,8 @@ public class ClassDef extends Dependency {
 	public final String getName() {
 		return name;
 	}
-
+	
+	
 	public final void setName(String name) {
 		this.name = name;
 	}

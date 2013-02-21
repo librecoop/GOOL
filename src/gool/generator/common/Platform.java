@@ -53,6 +53,15 @@ public abstract class Platform extends PrimitiveType {
 		registeredPlatforms.put(name, this);
 	}
 	
+	protected Platform(String name) {
+		if (name == null || name.trim().length() == 0) {
+			throw new IllegalArgumentException("The name parameter can not be null or empty.");
+		}
+		this.name = name.toUpperCase();
+		registeredPlatforms.put(name, this);
+	}
+	
+	
 	/**
 	 * Finds a platform in the global register
 	 * @param Name of a platform

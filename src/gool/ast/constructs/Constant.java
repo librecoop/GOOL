@@ -3,6 +3,8 @@ package gool.ast.constructs;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
+import gool.ast.type.TypeChar;
+import gool.ast.type.TypeString;
 import gool.generator.GoolGeneratorController;
 
 
@@ -45,6 +47,7 @@ public class Constant extends Expression {
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
-	}
+	}	
+	
 	
 }

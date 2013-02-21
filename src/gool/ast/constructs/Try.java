@@ -1,3 +1,4 @@
+
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
