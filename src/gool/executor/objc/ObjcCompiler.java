@@ -41,7 +41,8 @@ public class ObjcCompiler extends SpecificCompiler{
 			if(!params.contains(file.toString()))
 					params.add(file.toString());
 		}
-		params.addAll(Arrays.asList("-lgnustep-base", "-o", execFileName));
+		// the -std=gnu99 option is used to allow initial declarations in 'for' loop
+		params.addAll(Arrays.asList("-std=gnu99","-lgnustep-base", "-o", execFileName));
 		
 		/*
 		 * Add the needed dependencies to be able to compile programs.
