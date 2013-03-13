@@ -25,6 +25,11 @@ public class GoolTest {
 		public void compare(Platform platform) throws Exception {
 			String result = compileAndRun(platform);
 			System.out.println(platform + " Result: " + result);
+			
+			//The following instruction is used to remove some logging data
+			//at the beginning of the result string
+			result=result.substring(result.indexOf("] ")+2);
+			
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -40,10 +45,12 @@ public class GoolTest {
 	}
 	
 	private static final String MAIN_CLASS_NAME = "Test";
-	private List<Platform> platforms =
-//	 Arrays.asList(JavaPlatform.getInstance(), CSharpPlatform.getInstance(), CppPlatform.getInstance(), ObjcPlatform.getInstance());
-//	private List<Platform> platforms = Arrays.asList(CppPlatform.getInstance());
- Arrays.asList(ObjcPlatform.getInstance(),JavaPlatform.getInstance());
+	private List<Platform> platforms = Arrays.asList(
+    //JavaPlatform.getInstance(),
+    //CSharpPlatform.getInstance(),
+	//CppPlatform.getInstance(),
+    (Platform)ObjcPlatform.getInstance()
+    );
 
 	@BeforeClass
 	public static void init() {

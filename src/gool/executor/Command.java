@@ -43,7 +43,6 @@ public final class Command {
 	public static String exec(File workingDir, List<String> params, Map<String, String> env) {
 		try {
 			logger.info(StringUtils.join(params.toArray(), " "));
-			for(int i=0; i<params.size(); i++) System.out.println("param["+i+"] = "+params.get(i));
 
 			StringBuffer buffer = new StringBuffer();
 

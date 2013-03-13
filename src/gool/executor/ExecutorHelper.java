@@ -60,7 +60,6 @@ public final class ExecutorHelper {
 
 	public static List<File> compile(Map<Platform, List<File>> files) throws FileNotFoundException {
 		List<File> result = new ArrayList<File>();
-		System.out.println("Taille de files : "+files.size());
 		for (Entry<Platform, List<File>> item : files.entrySet()) {
 			SpecificCompiler compiler = item.getKey().getCompiler();
 			logger.info("---3-->" + compiler);
