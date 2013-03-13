@@ -449,6 +449,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall){
 		String nsString = GeneratorHelperObjc.staticString(systemOutPrintCall.getParameters().get(0));
+		
+		
 		String out = null;
 		String format = null;
 		
@@ -459,7 +461,12 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		format = (systemOutPrintCall.getParameters().get(0) instanceof ArrayAccess) && ((ArrayAccess)systemOutPrintCall.getParameters().get(0)).getExpression().getType() instanceof TypeArray ? 
 				GeneratorHelperObjc.format(((TypeArray)((ArrayAccess)systemOutPrintCall.getParameters().get(0)).getExpression().getType()).getElementType()) : 
 				GeneratorHelperObjc.format(systemOutPrintCall.getParameters().get(0));
-				
+		
+		//I added the two following lines to fix a bug dealing with
+		//non-string parameters in NSLog calls.
+		if(!format.equals("%@"))
+			nsString="";
+		
 		return String.format("NSLog(@\"%s\",%s%s)",format,nsString,out == null ? GeneratorHelper.joinParams(systemOutPrintCall.getParameters()) : out);
 	}
 	
