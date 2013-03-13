@@ -43,6 +43,8 @@ public final class Command {
 	public static String exec(File workingDir, List<String> params, Map<String, String> env) {
 		try {
 			logger.info(StringUtils.join(params.toArray(), " "));
+			for(int i=0; i<params.size(); i++) System.out.println("param["+i+"] = "+params.get(i));
+
 			StringBuffer buffer = new StringBuffer();
 
 			ProcessBuilder pb = new ProcessBuilder(params);
@@ -51,7 +53,6 @@ public final class Command {
 			for (Entry<String, String> e : env.entrySet()) {
 				pb.environment().put(e.getKey(), e.getValue());
 			}
-			
 			Process p = pb.redirectErrorStream(true).start();
 
 			p.getOutputStream().close();
