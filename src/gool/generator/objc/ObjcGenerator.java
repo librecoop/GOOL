@@ -443,7 +443,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		
 		param = getMethDefName(cons.getParams());
 
-		return String.format("- (id)initWith%s", param);
+		return String.format("- (%s *)initWith%s",cons.getClassDef().getName(), param);
 	}
 	
 	@Override

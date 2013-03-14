@@ -28,7 +28,8 @@ public class GoolTest {
 			
 			//The following instruction is used to remove some logging data
 			//at the beginning of the result string
-			result=result.substring(result.indexOf("] ")+2);
+			if(platform == ObjcPlatform.getInstance() && result.indexOf("] ")!=-1)
+				result=result.substring(result.indexOf("] ")+2);
 			
 			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
@@ -156,7 +157,7 @@ public class GoolTest {
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-
+	
 	@Test
 	public void mapForEach() throws Exception {
 		String input = 
