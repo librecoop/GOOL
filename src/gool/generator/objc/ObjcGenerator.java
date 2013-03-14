@@ -144,7 +144,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("[%s objectsAtIndex:%s]", lgc.getExpression(),
+		return String.format("[%s objectAtIndex:%s]", lgc.getExpression(),
 				lgc.getParameters().get(0));
 	}
 	
@@ -162,7 +162,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("[%s removeObjectsAtIndex:%s]",
+		return String.format("[%s removeObjectAtIndex:%s]",
 				lrc.getExpression(), lrc.getParameters().get(0));
 	}
 
@@ -240,7 +240,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(MapSizeCall mapSizeCall) {
 		return String.format(
-				"[(NSArray * )%s allKeys count]",
+				"[[(NSArray * )%s allKeys] count]",
 				mapSizeCall.getExpression());
 		//TODO
 	}
@@ -257,20 +257,22 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ClassNew classNew) {
 		
-		String init = new String("initWith");
+		String init = new String("init");
 		
 		boolean b = false;
 		
 		for(Expression e : classNew.getParameters()) {
 			String nsString = GeneratorHelperObjc.staticStringMini(e);
 			if(!b){
+				init +="With";
 				init += String.format("%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
 				b = true;
 			}
-			else
+			else{
+				init +="With";
 				init += String.format("and%s:%s%s ", removePointer(e.getType()), nsString, e.toString());
+			}
 		}
-		
 		return String.format("[[%s alloc]%s]", removePointer(classNew.getType()), init);
 	}
 	
