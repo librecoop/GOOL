@@ -61,7 +61,7 @@ public class GoolTest {
 		    , CSharpPlatform.getInstance()
 		    
 		    , PythonPlatform.getInstance()
-			/*, AndroidPlatform.getInstance()*/
+			, AndroidPlatform.getInstance()
 			
 			
     );
