@@ -55,13 +55,13 @@ public class GoolTest {
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms = Arrays.asList(
 			
-			     JavaPlatform.getInstance()
+	//		     (Platform)JavaPlatform.getInstance()
 
-			, CppPlatform.getInstance()
-		    , CSharpPlatform.getInstance()
+	//		, CppPlatform.getInstance()
+	//	    , CSharpPlatform.getInstance()
 		    
-		    , PythonPlatform.getInstance()
-			, AndroidPlatform.getInstance()
+	//	    , PythonPlatform.getInstance()
+			 (Platform)AndroidPlatform.getInstance()
 			
 			
     );
