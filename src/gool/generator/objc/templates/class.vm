@@ -1,0 +1,37 @@
+## Velocity template for writing out classes in Objective C
+#parse($macros)
+#set($ts = 1)
+
+#includes ($Helper.printDependencies($class))
+#import "${class.Name}.h"
+@implementation ${class.Name}
+
+#foreach( $method in $class.Methods )
+	#if(!${method.isMainMethod()} && !$method.isAbstract())
+${method.Header}#if($class.isInterface());#else
+{
+$method.Block
+#if(${method.isConstructor()})
+	return self;
+		#end
+}
+#if($method.getName() == "toString")#set($ts=0)#end
+	#end
+	#end
+
+#end
+#if($ts == 1)
+-(NSString *)toString{
+	return @"${class.Name}";
+}
+#end
+@end
+
+#foreach( $method in $class.Methods )
+	#if(${method.isMainMethod()})
+${method.Header}{
+${method.Block}
+return 0;
+}
+	#end
+#end

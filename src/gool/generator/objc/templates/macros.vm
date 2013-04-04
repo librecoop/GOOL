@@ -1,0 +1,34 @@
+#macro( params $params )
+#set( $paramsNb = $params.size() )
+#foreach( $p in $params )$p.Type $p.Name#if($velocityCount != $paramsNb), #end#end
+#end
+
+#macro ( block $block )
+#foreach( $stmt in $block.Statements )$stmt;
+#end
+ 
+#end
+
+#macro (interfaces $interfaces)
+#set( $size = $interfaces.size() )
+#if ($size > 0)#foreach( $interface in $interfaces )#type($interface)#if($velocityCount != $size), #end#end#end
+#end
+
+#macro (join $collection $separator)
+#set( $size = $collection.size() )
+#foreach( $item in $collection )$item#if($velocityCount != $size)$separator #end#end
+#end
+
+#macro ( includes $dependencies )
+#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))#import "${dep}"
+#end
+#end
+#end
+
+#macro ( includesPerso $dep )
+#foreach( $d in $dep )#import "${d}OBJC.h"
+#end
+#end
+
+#macro ( type $t )
+$Helper.removePointer($t)#end
