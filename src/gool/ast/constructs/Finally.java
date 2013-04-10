@@ -55,6 +55,7 @@ public class Finally extends Block {
 	 */
 	public void addStatement(Statement statement, int position) {
 		statements.add(position, statement);
+
 	}
 
 	@Override

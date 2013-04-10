@@ -18,9 +18,9 @@ import javax.tools.ToolProvider;
 import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public final class ExecutorHelper {
-	
 
 	public static Iterable<? extends JavaFileObject> getJavaFileObjects(
 			Collection<? extends File> inputFiles) {
@@ -50,6 +50,7 @@ public final class ExecutorHelper {
 		List<File> compiledFiles = ExecutorHelper.compile(files);
 
 		Log.i(compiledFiles.toString());
+
 		result.append(platform.getCompiler().run(compiledFiles.get(0)));
 		return result.toString();
 	}
@@ -62,7 +63,6 @@ public final class ExecutorHelper {
 
 	public static List<File> compile(Map<Platform, List<File>> files) throws FileNotFoundException {
 		List<File> result = new ArrayList<File>();
-	
 		for (Entry<Platform, List<File>> item : files.entrySet()) {
 			SpecificCompiler compiler = item.getKey().getCompiler();
 			File outputFile = compiler.compileToExecutable(item.getValue(), null, null, null);	

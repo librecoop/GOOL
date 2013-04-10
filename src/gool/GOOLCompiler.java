@@ -17,8 +17,8 @@ import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 import gool.generator.xml.XmlPlatform;
+import gool.generator.objc.ObjcPlatform;
 import gool.parser.java.JavaParser;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import logger.Log;
 
 public class GOOLCompiler {
@@ -41,6 +40,7 @@ public class GOOLCompiler {
 	 * - triggers it upon the files, with argument the target platform.
 	 */
 	public static void main(String[] args) {
+		
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = getFilesInFolder(folder, "java");
@@ -64,8 +64,10 @@ public class GOOLCompiler {
 			concreteJavaToConcretePlatform(   CppPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(   XmlPlatform.getInstance(filesNonChange), files);
-		    //TODO: same for android
+		    //TODO: same for android & Objc
 			concreteJavaToConcretePlatform(   AndroidPlatform.getInstance(), files);
+			concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);
+
 		} catch (Exception e) {
 			Log.e(e);
 		}

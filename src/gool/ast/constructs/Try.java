@@ -3,6 +3,7 @@ package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
 
+
 import java.util.List;
 
 public class Try extends Statement {
@@ -43,5 +44,4 @@ public class Try extends Statement {
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-
 }

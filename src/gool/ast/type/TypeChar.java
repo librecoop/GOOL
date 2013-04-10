@@ -2,6 +2,7 @@ package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
+
 public class TypeChar extends PrimitiveType{
 	
 	public static final TypeChar INSTANCE = new TypeChar();

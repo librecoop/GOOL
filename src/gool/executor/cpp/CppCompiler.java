@@ -11,11 +11,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import logger.Log;
 
 public class CppCompiler extends SpecificCompiler {
 
+	@SuppressWarnings("unused")
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
 
@@ -32,9 +32,9 @@ public class CppCompiler extends SpecificCompiler {
 			mainFile = files.get(0);
 		}
 		Log.i("--->" + mainFile);
+
 		String execFileName = mainFile.getName().replace(".cpp",".bin");
 		params.addAll(Arrays.asList(Settings.get("cpp_compiler_cmd"), "-I", Settings.get("boost_lib_dir"), "-o", execFileName) );
-
 		/*
 		 * Add the needed dependencies to be able to compile programs.
 		 */
@@ -86,6 +86,6 @@ public class CppCompiler extends SpecificCompiler {
 
 	@Override
 	public String getSourceCodeExtension() {
-		return "cs";
+		return "cpp";
 	}
 }

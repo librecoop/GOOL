@@ -20,6 +20,8 @@ public class MethCall extends Parameterizable {
 	 * The target object.
 	 */
 	private Expression target;
+	private String generalName;
+	private String library;
 
 	
 	public MethCall(IType type, Expression target) {
@@ -43,6 +45,12 @@ public class MethCall extends Parameterizable {
 	public MethCall(IType type, String name) {
 		this(type, new Identifier(type, name));
 	}
+	
+	public MethCall(IType type, Expression target, String generalName, String library){
+		this(type, target);
+		this.generalName = generalName;
+		this.library = library;
+	}
 
 	public static MethCall  create(IType type,
 			Expression target, Meth meth,
@@ -56,6 +64,14 @@ public class MethCall extends Parameterizable {
 
 	public Expression getTarget() {
 		return target;
+	}
+	
+	public String getGeneralName() {
+		return this.generalName;
+	}
+	
+	public String getLibrary(){
+		return this.library;
 	}
 
 	@Override

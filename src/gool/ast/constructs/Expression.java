@@ -32,6 +32,4 @@ public abstract class Expression extends Statement {
 		this.type = type;
 	}
 	
-
-
 }

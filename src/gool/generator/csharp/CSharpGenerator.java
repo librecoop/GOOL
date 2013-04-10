@@ -11,6 +11,7 @@ import gool.ast.constructs.Dependency;
 import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Field;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
@@ -97,7 +98,6 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 	
 	@Override
 	public String getCode(TypeChar typeChar) {
-		// TODO Auto-generated method stub
 		return "char";
 	}
 

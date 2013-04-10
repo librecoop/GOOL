@@ -3,16 +3,12 @@ package gool;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
 import logger.Log;
-
-
 public final class Settings {
 
 	private static Properties properties;
 	private static String androidPackage;
 	private static String androidMainActivity;
-
 	static {
 		load("gool.properties");
 	}
@@ -36,7 +32,7 @@ public final class Settings {
 			throw new IllegalStateException(
 					"The configuration settings are not properly initiliazed.");
 		}
-		@SuppressWarnings("unchecked")
+		//TODO @SuppressWarnings("unchecked")
 		String value = (String) properties.get(property);
 		if (value == null) {
 			throw new IllegalStateException(String.format(

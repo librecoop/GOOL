@@ -5,8 +5,10 @@ import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
 import gool.generator.android.AndroidCodePrinter;
 import gool.generator.android.AndroidPlatform;
+import gool.ast.type.IType;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
+import gool.methods.MethodManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +24,7 @@ import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.log4j.Logger;
 
 /**
  * This class helps generate the concrete target
@@ -29,9 +32,8 @@ import org.apache.velocity.exception.ResourceNotFoundException;
  * It has a method starting the entire process
  * As well as some ancillary methods
  */
-public final class GeneratorHelper {
+public class GeneratorHelper {
 	
-
 	public static String joinParams(List<?> parameters) {
 		if (parameters == null) {
 			return "";
@@ -68,7 +70,9 @@ public final class GeneratorHelper {
 			Collection<ClassDef> classDefs)
 			throws FileNotFoundException {
 		Map<Platform, List<File>> compilationUnits = new HashMap<Platform, List<File>>();
-
+		
+		MethodManager.reset();
+		
 		for (ClassDef classDef : classDefs) {
 			//The target platform is held by the GOOL class, retrieve it.
 			Platform platform = (Platform) classDef.getPlatform();
@@ -84,11 +88,12 @@ public final class GeneratorHelper {
 						+ currentPrinter.getOutputDir());
 				currentPrinter.getOutputDir().mkdirs();
 			}
-
+			
 			//Just compile each abstract GOOL class and add it to the map.
 
 //			try {
-				compilationUnits.get(platform).addAll(currentPrinter.print(classDef));
+				compilationUnits.get(platform).addAll(
+						currentPrinter.print(classDef));
 //			} catch (ResourceNotFoundException e) {
 //				Log.e(String.format(
 //						"Impossible to produce file '%s': platforms should" +
@@ -96,8 +101,19 @@ public final class GeneratorHelper {
 //						" or have a 'class.vm' template.",
 //						currentPrinter.getFileName(classDef.getName())));
 //			}
-			
+				compilationUnits.get(platform).addAll(
+						currentPrinter.printPersonalLib());
+				
+				compilationUnits.get(platform).addAll(
+						currentPrinter.print(classDef));
 		}
+		
+		
+		
+		
+		
+		
+		
 		//If the platform is android a project has to be created and the files created
 		// above copied into the project.
 		if(compilationUnits.containsKey(AndroidPlatform.getInstance())) {
@@ -107,6 +123,18 @@ public final class GeneratorHelper {
 			compilationUnits.put(platform, newFileList);
 		}
 		return compilationUnits;
+	}
+	
+	
+	//TODO =>  use in OBJC macro for delete pointer in param list for the name of a function. 
+	//Should be use in the OBJCGeneratorHelper
+	public static String removePointer(String s){
+		return s.replaceAll("[\\s*]+$", "");
+	}
+	
+	//idem
+	public static String removePointer(IType type) {
+		return removePointer(type.toString());
 	}
 
 

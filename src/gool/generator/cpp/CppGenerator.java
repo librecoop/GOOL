@@ -17,6 +17,7 @@ import gool.ast.constructs.EnhancedForLoop;
 import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
+import gool.ast.constructs.Finally;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
@@ -151,7 +152,7 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
-
+	
 	@Override
 	public String getCode(TypeString typeString) {
 		return "std::string*";

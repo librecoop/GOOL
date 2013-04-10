@@ -1,5 +1,6 @@
 package gool.ast.constructs;
 
+//TODO ajouter Objc
 public enum Language {
-	CSHARP, JAVA, CPP, PYTHON, ANDROID;
+	CSHARP, JAVA, CPP, PYTHON, ANDROID, OBJC;
 }

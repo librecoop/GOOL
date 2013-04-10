@@ -1,4 +1,3 @@
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
@@ -31,5 +30,4 @@ public class Catch extends Statement {
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-
 }

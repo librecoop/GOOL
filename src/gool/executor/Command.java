@@ -11,12 +11,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Operating System command execution helper.
  */
 public final class Command {
-	
+	private static Logger logger = Logger.getLogger(Command.class.getName());
 	private Command() {
 	}
 
@@ -49,7 +50,6 @@ public final class Command {
 			for (Entry<String, String> e : env.entrySet()) {
 				pb.environment().put(e.getKey(), e.getValue());
 			}
-			
 			Process p = pb.redirectErrorStream(true).start();
 
 			p.getOutputStream().close();

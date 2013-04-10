@@ -7,10 +7,10 @@ import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
+import gool.generator.objc.ObjcPlatform;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -37,8 +37,12 @@ public class GoolTest {
 				this.input = "package com.test; " + input;
 			}
 			String result = compileAndRun(platform);
-			Assert.assertEquals(String.format("The platform %s", platform),
-					expected, result);
+			//The following instruction is used to remove some logging data
+			//at the beginning of the result string
+			if(platform == ObjcPlatform.getInstance() && result.indexOf("] ")!=-1)
+				result=result.substring(result.indexOf("] ")+2);
+			
+			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -54,15 +58,16 @@ public class GoolTest {
 
 	private static final String MAIN_CLASS_NAME = "Test";
 	private List<Platform> platforms = Arrays.asList(
+
 			
-	//		     (Platform)JavaPlatform.getInstance()
+			     (Platform)JavaPlatform.getInstance()
 
 	//		, CppPlatform.getInstance()
 	//	    , CSharpPlatform.getInstance()
 		    
 	//	    , PythonPlatform.getInstance()
-			 (Platform)AndroidPlatform.getInstance()
-			
+	//		, (Platform) ObjcPlatform.getInstance()
+	//		 (Platform)AndroidPlatform.getInstance()
 			
     );
 
@@ -196,7 +201,7 @@ public class GoolTest {
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-
+	
 	@Test
 	public void mapForEach() throws Exception {
 		String input = "import gool.imports.java.util.HashMap;\n"
@@ -322,7 +327,7 @@ public class GoolTest {
 				"int total = 1 ^ 0; System.out.println(total);",
 				MAIN_CLASS_NAME);
 		String expected = "";
-		compareResultsDifferentPlatforms(input, "expected");
+		compareResultsDifferentPlatforms(input, expected);
 	}
 	
 	/**

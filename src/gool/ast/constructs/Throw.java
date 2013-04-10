@@ -21,6 +21,7 @@ public class Throw extends Statement {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+
 	public Expression getExpression() {
 		return expression;
 	}
