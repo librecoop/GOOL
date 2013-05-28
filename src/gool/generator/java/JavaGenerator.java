@@ -66,7 +66,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-public class JavaGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
+public class JavaGenerator extends CommonCodeGenerator /*implements CodeGeneratorNoVelocity*/ {
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 	private static Logger logger = Logger.getLogger(JavaGenerator.class
@@ -323,7 +323,7 @@ public class JavaGenerator extends CommonCodeGenerator implements CodeGeneratorN
 	}
 
 	
-	@Override
+	//@Override
 	public String printClass(ClassDef classDef) {
 		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
 		// print the package containing the class

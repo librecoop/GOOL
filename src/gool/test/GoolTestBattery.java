@@ -6,6 +6,7 @@ import gool.executor.ExecutorHelper;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
 import gool.generator.java.JavaPlatform;
+import gool.generator.objc.ObjcPlatform;
 import gool.generator.python.PythonPlatform;
 
 import java.io.BufferedReader;
@@ -49,7 +50,8 @@ public class GoolTestBattery {
 //			CSharpPlatform.getInstance(),
 //			CppPlatform.getInstance(),
 //			(Platform)PythonPlatform.getInstance(),
-//			(Platform)AndroidPlatform.getInstance()
+//			(Platform)AndroidPlatform.getInstance(),
+//			(Platform)ObjcPlatform.getInstance()
 			);
 	
 	/** The name of the test. */
@@ -143,6 +145,12 @@ public class GoolTestBattery {
 		Map<Platform, List<File>> files = GOOLCompiler.concreteJavaToConcretePlatform(platform, inputFiles);
 
 		String result = ExecutorHelper.compileAndRun(platform, files);
+		
+		
+		//The following instruction is used to remove some logging data
+		//at the beginning of the result string
+		if(platform == ObjcPlatform.getInstance() && result.indexOf("] ")!=-1)
+			result=result.substring(result.indexOf("] ")+2);
 		
 		//Check the output
 		Assert.assertEquals(name + ": output", asserts.getOutput(), result);

@@ -95,7 +95,6 @@ import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 
 import java.util.Collection;
-import gool.ast.constructs.Try;
 
 /**
  * Generates the concrete target from the abstract GOOL.
@@ -107,7 +106,7 @@ public interface CodeGenerator {
 	void addCustomDependency(String key, Dependency value);
 
 	String getCode(ArrayAccess arrayAccess);
-	
+
 	String getCode(ArrayNew arrayNew);
 
 	String getCode(Assign assign);
@@ -286,7 +285,6 @@ public interface CodeGenerator {
 	String getCode(ThisCall thisCall);
 
 	String getCode(ToStringCall tsc);
-	
 
 	/**
 	 * Produces code for a boolean type in the target language.

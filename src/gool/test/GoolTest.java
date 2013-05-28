@@ -17,7 +17,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GoolTest {
-
+	
+	private List<Platform> platforms = Arrays.asList(
+	(Platform)JavaPlatform.getInstance()
+	//		, CppPlatform.getInstance()
+	//	    , CSharpPlatform.getInstance()
+	//	    , PythonPlatform.getInstance()
+	// (Platform) ObjcPlatform.getInstance()
+	//		 (Platform)AndroidPlatform.getInstance()	
+    );
+	
 	private static class GoolTestExecutor {
 		private static final String CLEAN_UP_REGEX = "Note:.*?[\r\n]|(\\w+>\\s)|[\\r\\n]+";
 		private String input;
@@ -57,19 +66,7 @@ public class GoolTest {
 	}
 
 	private static final String MAIN_CLASS_NAME = "Test";
-	private List<Platform> platforms = Arrays.asList(
 
-			
-			     (Platform)JavaPlatform.getInstance()
-
-	//		, CppPlatform.getInstance()
-	//	    , CSharpPlatform.getInstance()
-		    
-	//	    , PythonPlatform.getInstance()
-	//		, (Platform) ObjcPlatform.getInstance()
-	//		 (Platform)AndroidPlatform.getInstance()
-			
-    );
 
 	@BeforeClass
 	public static void init() {

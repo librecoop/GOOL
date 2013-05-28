@@ -22,7 +22,6 @@ import javax.tools.ToolProvider;
 import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.util.JavacTask;
@@ -34,7 +33,6 @@ import com.sun.source.util.Trees;
  */
 public class JavaParser {
 
-	private static Logger logger = Logger.getLogger(JavaParser.class.getName());
 	/**
 	 * Parsing concrete Java into abstract GOOL is done in three steps.
 	 * - We call Sun's java parser to produce abstract Java;

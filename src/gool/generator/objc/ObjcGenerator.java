@@ -417,7 +417,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			arg = getMethCallName(methodCall.getParameters(), true);
 			
 			if(methodCall.getTarget() instanceof VarAccess)
-				return String.format("[self %s%s]", methodCall.getTarget(), arg);
+				return String.format("[%s%s]", methodCall.getTarget(), arg);
+			
 			if(methodCall.getTarget() instanceof ParentCall)
 				return getCode((ParentCall)methodCall.getTarget());
 			return String.format("[%s%s]", methodCall.getTarget(), arg);
@@ -654,7 +655,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			else if (varDec.getInitialValue().getType() instanceof TypeString && !(varDec.getInitialValue() instanceof MethCall))
 				initialValue = " = @" + varDec.getInitialValue();
 			else if(varDec.getInitialValue().getType() instanceof TypeChar && !(varDec.getInitialValue() instanceof MethCall))
-				initialValue = " = '" + varDec.getInitialValue() + "'";
+				initialValue = " = " + varDec.getInitialValue();
 			else
 				initialValue = " = " + varDec.getInitialValue();
 		}

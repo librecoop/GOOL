@@ -10,6 +10,9 @@
 	#if(!${method.isMainMethod()} && !$method.isAbstract())
 ${method.Header}#if($class.isInterface());#else
 {
+##if(${method.isConstructor()})
+##	self = [super init];
+##	#end
 $method.Block
 #if(${method.isConstructor()})
 	return self;
