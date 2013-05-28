@@ -1620,6 +1620,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		
+		//the following piece of code is used to fix a weird code generation bug that occurs only with ObjC.
 		if(context.getClassDef().getPlatform()==ObjcPlatform.getInstance() && (target instanceof InitCall) && (target instanceof Parameterizable)){
 			target = new MethCall(goolType(
 					((MethodSymbol) method).getReturnType(), context), target);

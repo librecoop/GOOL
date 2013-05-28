@@ -20,10 +20,10 @@ public class GoolTest {
 	
 	private List<Platform> platforms = Arrays.asList(
 	//(Platform)JavaPlatform.getInstance()
-	//		, CppPlatform.getInstance()
-	//	    , CSharpPlatform.getInstance()
-	//	    , PythonPlatform.getInstance()
-	 (Platform) ObjcPlatform.getInstance()
+	//		(Platform) CppPlatform.getInstance()
+	//	    (Platform) CSharpPlatform.getInstance()
+		    (Platform) PythonPlatform.getInstance()
+	// (Platform) ObjcPlatform.getInstance()
 	//		 (Platform)AndroidPlatform.getInstance()	
     );
 	
@@ -180,6 +180,7 @@ public class GoolTest {
 						"public void printr()  {System.out.println(2 + 2);}",
 						"Printer", "");
 		String expected = "4";
+		System.out.println(input);
 		compareResultsDifferentPlatforms(input, expected);
 	}
 

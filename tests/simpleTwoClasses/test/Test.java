@@ -5,6 +5,6 @@ public class Test {
 	}
 }
 
-class Printer {
+public class Printer {
 	public void printr(){System.out.println(2 + 2);}
 }

@@ -5,6 +5,8 @@ import gool.Settings;
 import gool.executor.ExecutorHelper;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
+import gool.generator.cpp.CppPlatform;
+import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.objc.ObjcPlatform;
 import gool.generator.python.PythonPlatform;
@@ -46,10 +48,10 @@ public class GoolTestBattery {
 	
 	/** The platforms to test. */
 	private static List<Platform> platforms = Arrays.asList(
-			(Platform)JavaPlatform.getInstance()
-//			CSharpPlatform.getInstance(),
-//			CppPlatform.getInstance(),
-//			(Platform)PythonPlatform.getInstance(),
+//			(Platform)JavaPlatform.getInstance()
+//			(Platform)CSharpPlatform.getInstance()
+//			(Platform)CppPlatform.getInstance()
+			(Platform)PythonPlatform.getInstance()
 //			(Platform)AndroidPlatform.getInstance(),
 //			(Platform)ObjcPlatform.getInstance()
 			);

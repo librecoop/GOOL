@@ -49,7 +49,8 @@ public class CppCompiler extends SpecificCompiler {
 		}
 
 		for (File file : files) {
-			params.add(file.toString());
+			if(!params.contains(file.toString()))
+				params.add(file.toString());
 		} 
 
 		Command.exec(getOutputDir(), params);
