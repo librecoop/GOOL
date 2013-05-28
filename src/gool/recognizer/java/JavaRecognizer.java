@@ -98,6 +98,7 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
+import gool.generator.objc.ObjcPlatform;
 import gool.methods.MethodManager;
 
 import java.io.BufferedReader;
@@ -1619,12 +1620,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		
-		if( (target instanceof InitCall) && (target instanceof Parameterizable)){
+		if(context.getClassDef().getPlatform()==ObjcPlatform.getInstance() && (target instanceof InitCall) && (target instanceof Parameterizable)){
 			target = new MethCall(goolType(
 					((MethodSymbol) method).getReturnType(), context), target);
 			addParameters(n.getArguments(), (Parameterizable)((MethCall)target).getTarget(), context);
 		}
-		
+		/*
 		if(method.owner.toString().matches("^[java.].*") && !(target instanceof Parameterizable)){
 			//if(method.owner.toString().contains("java.lang.String")){
 				ArrayList<String> type = new ArrayList<String>();
@@ -1646,7 +1647,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				target = new MethCall(goolType(((MethodSymbol) method).getReturnType(), context)
 						, target, general, lib);
 			}
-
+		*/
 		if (!(target instanceof Parameterizable)) {
 			target = new MethCall(goolType(((MethodSymbol) method)
 					.getReturnType(), context), target);
