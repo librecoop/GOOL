@@ -537,7 +537,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		return String.format("%s /* Unrecognized by GOOL, passed on */", typeUnknown.getTextualtype());
+		return String.format("%s", typeUnknown.getTextualtype()); //+" /* Unrecognized by GOOL, passed on */";
 	}
 	
 	@Override
