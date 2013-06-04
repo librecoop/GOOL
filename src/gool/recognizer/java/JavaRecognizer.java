@@ -121,6 +121,7 @@ import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
 import gool.generator.objc.ObjcPlatform;
 import gool.methods.MethodManager;
+import gool.recognizer.common.GoolMatcher;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -980,7 +981,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		ClassNew c = new ClassNew(type);
 
 		addParameters(n.getArguments(), c, context);
-
+		
+		System.out.println("CALL GoolMatcher.matchClassNew: "+c);
+		GoolMatcher.matchClassNew(c);
 		return c;
 	}
 	
@@ -1101,6 +1104,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return f;
 		}
 		context.addDeclaration(variable, variable.getName(), getTypeMirror(n));
+		System.out.println("CALL GoolMatcher.matchDec: "+variable);
+		GoolMatcher.matchDec(variable);
 		return variable;
 	}
 
@@ -1350,7 +1355,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		//Let us deal with modifiers
 		classDef.setModifiers(modifiers);
-
 		JCModifiers mtree = (JCModifiers) n.getModifiers();
 		classDef.setIsInterface((mtree.flags & Flags.INTERFACE) != 0);
 
@@ -1361,7 +1365,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		// Register the class as one of the outputs
 		goolClasses.put(classDef.getType(), classDef);
-
 		/*
 		 * If the class has the CustomCode annotation, we enerate a class 
 		 * without processing the code inside
@@ -1441,6 +1444,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitCompilationUnit(CompilationUnitTree n, Context context) {
+		
+
+		
+		
 		//The destination package is either null or that specified by the visited package
 		String ppackage = null;
 		if (n.getPackageName() != null) {
@@ -1450,6 +1457,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//Each class that is imported is registered as a dependency
 		//TODO: We don't automatically go and compile dependencies.
 		List<Dependency> dependencies = new ArrayList<Dependency>();
+		
+		//GoolMatcher init call
+		System.out.println("defaultplatform at entry point:"+defaultPlatform);
+		GoolMatcher.init(Language.JAVA, this.defaultPlatform, this.goolClasses);
+		
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
 			if (!dependencyString.contains("gool.imports.java")
@@ -1676,6 +1688,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
+		
+		if(target instanceof MethCall){
+			System.out.println("CALL GoolMatcher.matchMethCall: "+target+"   (type: "+target.getType()+")");
+			GoolMatcher.matchMethCall((MethCall)target);
+		}
 		return target;
 	}
 
@@ -1881,6 +1898,5 @@ class Context {
 			return types.isAssignable(declaration, instance);
 		}
 	}
-
 }
 

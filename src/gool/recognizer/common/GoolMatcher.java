@@ -27,37 +27,57 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.ClassNew;
+import gool.ast.constructs.Expression;
+import gool.ast.constructs.Field;
 import gool.ast.constructs.Language;
+import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
+import gool.ast.constructs.VarAccess;
+import gool.ast.constructs.VarDeclaration;
+import gool.ast.type.IType;
 import gool.ast.type.TypeUnknown;
+import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 import gool.generator.common.Platform;
+import gool.generator.java.JavaGenerator;
 import gool.imports.java.util.ArrayList;
+import gool.imports.java.util.HashMap;
+import gool.recognizer.common.MethodSignature;
 
 public class GoolMatcher{
 
 	private static Language InputLang;
 	private static Platform OutputLang;
 	private static ArrayList<String> EnabledGoolLibs;
-	private static ArrayList<String> BuiltGoolClasses;
+	private static ArrayList<String> BuiltGoolClassesNames;
+	private static HashMap<String, MethodSignature> RecognizedGoolMethods;
+	private static Map<IType, ClassDef> GoolClasses;
 
-	
-	
+
+
 	/*
 	 *  methods called by the input language recognizer to modify the nodes they constructs
 	 */
-	static public void init(Language inputLang, Platform outputLang){
-		
+	static public void init(Language inputLang, Platform outputLang, Map<IType, ClassDef> goolClasses){
+
 		InputLang = inputLang;
 		OutputLang = outputLang;
 		EnabledGoolLibs = new ArrayList<String>();
-		BuiltGoolClasses = new ArrayList<String>();
-		for(String lib: getDefaultGoolLibs())
-			EnabledGoolLibs.add(lib);
+		BuiltGoolClassesNames = new ArrayList<String>();
+		RecognizedGoolMethods = new HashMap<String, MethodSignature>();
+		GoolClasses = goolClasses;
+		ArrayList<String> defaultGoolLibs = getDefaultGoolLibs();
+		if(!(defaultGoolLibs.size()==0))
+			for(String lib: defaultGoolLibs)
+				EnabledGoolLibs.add(lib);
 	}
 
 	public static void matchImport(String InputLangImport){
@@ -65,21 +85,54 @@ public class GoolMatcher{
 		if(GoolLib!=null)
 			EnabledGoolLibs.add(GoolLib);
 	}
-	
-	public static ClassDef matchClassNew(ClassNew ClassNew){
-		String InputLangClass = ClassNew.getType().callGetCode();
+
+	public static void matchDec(VarDeclaration variable){
+		if(!(variable.getType() instanceof TypeUnknown))
+			return;
+		String InputLangClass = variable.getType().getName();
 		String GoolClass = getMatchedGoolClass(InputLangClass);
-		ClassNew.setType(new TypeUnknown(GoolClass));
-		if(!BuiltGoolClasses.contains(GoolClass)){
+		// if we don't find any GoolClass matched with the InputLangClass, we do nothing and pass on.
+			if(GoolClass==null)
+				return;
+		// else, we change the type of the variable node by the GoolClass type
+		// and we build a Gool library of this GoolClass if it hasn't been done yet
+		variable.setType(new TypeUnknown(GoolClass));
+		/*
+		if(!BuiltGoolClassesNames.contains(GoolClass)){
 			ClassDef GoolClassAST = buildGoolClass(GoolClass);
-			return GoolClassAST;
-		}
-		else
-			return null;
+			GoolClasses.put(GoolClassAST.getType(), GoolClassAST);
+			}
+		*/
 	}
-	
-	public static ClassDef matchMethCall(MethCall MethCall){
-		return null;
+
+	public static void matchClassNew(ClassNew ClassNew){
+		if(ClassNew.getType() instanceof TypeUnknown){
+			String InputLangClass = ClassNew.getType().getName();
+			String GoolClass = getMatchedGoolClass(InputLangClass);
+			ClassNew.setType(new TypeUnknown(GoolClass));
+		}
+	}
+
+	public static void matchMethCall(MethCall MethCall){
+		// substitution of MethCall type
+		if(MethCall.getType() instanceof TypeUnknown){
+			String InputLangClass = MethCall.getType().getName();
+			String GoolClass = getMatchedGoolClass(InputLangClass);
+			MethCall.setType(new TypeUnknown(GoolClass));
+		}
+		
+		// substitution of the method's name
+		if(MethCall.getTarget()!=null)
+		{
+			IType TargetClassType = ((VarAccess)((MemberSelect)MethCall.getTarget()).getTarget()).getDec().getType();
+			if(TargetClassType instanceof TypeUnknown){
+				String GoolClass = TargetClassType.getName();
+				MethodSignature MethSign = new MethodSignature(MethCall);
+				String GoolMethod = getMatchedGoolMethod(GoolClass, MethSign);
+				((MemberSelect)MethCall.getTarget()).getDec().setName(GoolMethod);
+				RecognizedGoolMethods.put(GoolClass+"."+GoolMethod, MethSign);
+			}
+		}
 	}
 
 
@@ -95,7 +148,7 @@ public class GoolMatcher{
 			String line;
 			while ((line=br.readLine())!=null){
 				line=removeSpaces(line);
-				if(!isInputMatchLine(line)){
+				if(isInputMatchLine(line)){
 					String GoolLib=getLeftPartOfInputMatchLine(line);
 					String Import=getRightPartOfInputMatchLine(line);
 					if(Import.equals("default"))
@@ -119,10 +172,11 @@ public class GoolMatcher{
 			String line;
 			while ((line=br.readLine())!=null){
 				line=removeSpaces(line);
-				if(!isInputMatchLine(line)){
+				if(isInputMatchLine(line)){
 					String GoolLib=getLeftPartOfInputMatchLine(line);
 					String Import=getRightPartOfInputMatchLine(line);
-					if(Import.equals(InputLangImport)){
+					//TODO: this has to be improved
+					if(Import.contains(InputLangImport)){
 						res = GoolLib;
 						break;
 					}
@@ -147,11 +201,12 @@ public class GoolMatcher{
 				String line;
 				while ((line=br.readLine())!=null){
 					line=removeSpaces(line);
-					if(!isInputMatchLine(line)){
+					if(isInputMatchLine(line)){
 						String GoolClass=getLeftPartOfInputMatchLine(line);
-						String Class=getRightPartOfInputMatchLine(line);
-						if(Class.equals(InputLangClass)){
-							res = GoolLib;
+						String Classes=getRightPartOfInputMatchLine(line);
+						//TODO: this has to be improved
+						if(Classes.contains(InputLangClass)){
+							res = GoolClass;
 							matchFound=true;
 							break;
 						}
@@ -167,14 +222,135 @@ public class GoolMatcher{
 		}
 		return res;
 	}
-	static private String getMatchedGoolMethod(String InputLangMethod){
-		return "";
+	static private String getMatchedGoolMethod(String GoolClass, MethodSignature InputLangMethSign){
+		String res = null;
+		boolean matchFound=false;
+		for(String GoolLib: EnabledGoolLibs){
+			try{
+				InputStream ips= new FileInputStream(getPathOfInputMethodMatchFile(GoolLib)); 
+				InputStreamReader ipsr=new InputStreamReader(ips);
+				BufferedReader br=new BufferedReader(ipsr);
+				String line;
+				while ((line=br.readLine())!=null){
+					line=removeSpaces(line);
+					if(isInputMatchLine(line)){
+						String GoolFullMethodName=getLeftPartOfInputMatchLine(line);
+						String GoolClassName=GoolFullMethodName.substring(0, GoolFullMethodName.lastIndexOf("."));
+						MethodSignature MethSign=new MethodSignature(getRightPartOfInputMatchLine(line));
+						if(GoolClassName.equals(GoolClass) && MethSign.isCompatibleWith(InputLangMethSign)){
+							res = GoolFullMethodName.substring(GoolClassName.length()+1);
+							matchFound=true;
+							break;
+						}
+					}	
+				}
+				br.close(); 
+				if(matchFound)
+					break;
+			}		
+			catch (Exception e){
+				System.out.println(e.toString());
+			}
+		}
+		return res;
+	}
+	static private String getMatchedOutputClass(String GoolClass){
+		String res = null;
+		boolean matchFound=false;
+		for(String GoolLib: EnabledGoolLibs){
+			try{
+				InputStream ips= new FileInputStream(getPathOfOutputClassMatchFile(GoolLib)); 
+				InputStreamReader ipsr=new InputStreamReader(ips);
+				BufferedReader br=new BufferedReader(ipsr);
+				String line;
+				while ((line=br.readLine())!=null){
+					line=removeSpaces(line);
+					if(isOutputMatchLine(line)){
+						String GoolClassName=getLeftPartOfOutputMatchLine(line);
+						String OutputClassName=getRightPartOfOutputMatchLine(line);
+						//TODO: this has to be improved
+						if(GoolClassName.equals(GoolClass)){
+							res = OutputClassName;
+							matchFound=true;
+							break;
+						}
+					}	
+				}
+				br.close(); 
+				if(matchFound)
+					break;
+			}		
+			catch (Exception e){
+				System.out.println(e.toString());
+			}
+		}
+		return res;
 	}
 
-	
-	
-	
-	
+	static private String getMatchedOutputMethodName(String GoolMethod){
+		String res = null;
+		boolean matchFound=false;
+		for(String GoolLib: EnabledGoolLibs){
+			try{
+				InputStream ips= new FileInputStream(getPathOfOutputMethodMatchFile(GoolLib)); 
+				InputStreamReader ipsr=new InputStreamReader(ips);
+				BufferedReader br=new BufferedReader(ipsr);
+				String line;
+				while ((line=br.readLine())!=null){
+					line=removeSpaces(line);
+					if(isOutputMatchLine(line)){
+						String GoolFullMethodName=getLeftPartOfOutputMatchLine(line);
+						String OutputMethodName=getRightPartOfOutputMatchLine(line);
+						if(GoolFullMethodName.equals(GoolMethod)){
+							res = OutputMethodName;
+							matchFound=true;
+							break;
+						}
+					}	
+				}
+				br.close(); 
+				if(matchFound)
+					break;
+			}		
+			catch (Exception e){
+				System.out.println(e.toString());
+			}
+		}
+		return res;
+	}
+	static private ArrayList<String> getAllGoolMethodNames(String GoolClass){
+		ArrayList<String> res = new ArrayList<String>();
+		boolean matchFound=false;
+		for(String GoolLib: EnabledGoolLibs){
+			try{
+				InputStream ips= new FileInputStream(getPathOfOutputMethodMatchFile(GoolLib)); 
+				InputStreamReader ipsr=new InputStreamReader(ips);
+				BufferedReader br=new BufferedReader(ipsr);
+				String line;
+				while ((line=br.readLine())!=null){
+					line=removeSpaces(line);
+					if(isOutputMatchLine(line)){
+						String GoolFullMethodName=getLeftPartOfOutputMatchLine(line);
+						String GoolClassName=GoolFullMethodName.substring(0, GoolFullMethodName.lastIndexOf("."));
+						if(GoolClassName.equals(GoolClass)){
+							res.add(GoolFullMethodName);
+							matchFound=true;
+						}
+					}	
+				}
+				br.close(); 
+				if(matchFound)
+					break;
+			}		
+			catch (Exception e){
+				System.out.println(e.toString());
+			}
+		}
+		return res;
+	}
+
+
+
 	/*
 	 *  methods used by the GoolMatcher to build a ClassDef from a GoolClass
 	 */
@@ -184,17 +360,38 @@ public class GoolMatcher{
 		GoolClassAST.setIsInterface(false);
 		GoolClassAST.setPlatform(OutputLang);
 		GoolClassAST.addModifier(Modifier.PUBLIC);
-		
-		
+
+		String OutputClassName = getMatchedOutputClass(GoolClass);
+		GoolClassAST.addField(new Field(Modifier.PRIVATE, GoolClass.toLowerCase()+OutputLang.getName().toLowerCase(), new TypeUnknown(OutputClassName)));
+		GoolClassAST.createDefaultConstructor();
+
+		//Set<String> RecognizedMethods = RecognizedGoolMethods.keySet();
+
+		for(String GoolMethodName : getAllGoolMethodNames(GoolClass)){
+			String OutputMethodName = getMatchedOutputMethodName(GoolMethodName);
+			if(!OutputMethodName.equals("CUSTOMIZEDMETHOD")){
+			MethodSignature MethSign = RecognizedGoolMethods.get(GoolMethodName);
+			Meth GoolMethod = new Meth(MethSign.getGoolreturntype(), Modifier.PUBLIC, OutputMethodName);
+			GoolMethod.setClassDef(GoolClassAST);
+			for(int i=0; i<MethSign.getGoolparamtypes().size(); i++){
+				GoolMethod.addParameter(new VarDeclaration(MethSign.getGoolparamtypes().get(i), "param"+i));
+			}
+			//construction du corps de la methode
+			//if(GoolMethod.getType() instanceof TypeVoid)
+				//GoolMethod.addStatement(new MethodCall());
+			
+			
+			GoolClassAST.addMethod(GoolMethod);
+			}
+		}
+
 		return GoolClassAST;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
 
 
 	/*
@@ -261,8 +458,8 @@ public class GoolMatcher{
 	static private String getPathOfOutputDependencyFile(String GoolLibName){
 		return getPathOfOutputMatchDir(GoolLibName) + "Dependencies.properties";
 	}
-	static private String getPathOfOutputCustomizedMethodFile(String GoolLibName, MethodSignature s){
-		return getPathOfOutputMatchDir(GoolLibName) + "CustomizedMethods/" + s;
+	static private String getPathOfOutputCustomizedMethodFile(String GoolLibName, String GoolMethodName){
+		return getPathOfOutputMatchDir(GoolLibName) + "CustomizedMethods/" + GoolMethodName;
 	}
 
 
@@ -290,79 +487,5 @@ public class GoolMatcher{
 			break;
 		}
 		return res;
-	}
-
-	// this class is used by the GoolMatcher to compare methods
-	class MethodSignature{
-		String classname;
-		String methodname;
-		ArrayList<String> paramtypes;
-		String returntype;
-		MethodSignature(String className, String methodName, ArrayList<String> paramtypes, String returntype){
-			this.classname=className;
-			this.methodname=methodName;
-			this.paramtypes=paramtypes;
-			this.returntype=returntype;
-		}
-		// a method signature can be created from a raw string such as: "methodName(int,char):int"
-		MethodSignature(String RawSignature){
-			String s=removeSpaces(RawSignature);
-			String sname=s.substring(0, s.indexOf("("));
-
-			System.out.println("Partie nom de classe et nom de méthode: "+sname);
-
-			this.classname=sname.substring(0, sname.lastIndexOf("."));
-			sname=sname.substring(sname.lastIndexOf("."));
-			this.methodname=sname.substring(1);
-			s=s.substring(s.indexOf("(")+1);
-			System.out.println("Nom de classe: "+classname);
-			System.out.println("Nom de methode: "+methodname);
-			System.out.println("Partie paramètres et valeur de retour après la première parenthèse: "+s);
-			paramtypes=new ArrayList<String>();
-			for(int i=0; s.charAt(0)!=':'; i++){
-				int ind1=s.indexOf(",");
-				int ind2=s.indexOf(")");
-				if(ind1!=-1){
-					this.paramtypes.add(s.substring(0, ind1));
-					s=s.substring(ind1+1);
-				}
-				else{
-					this.paramtypes.add(s.substring(0, ind2));
-					s=s.substring(ind2+1);
-				}
-			}
-			s=s.substring(1);
-			this.returntype=s;
-		}
-		// 2 signatures are compatible if they have exactly the same return type and the same parameter types
-		public boolean isCompatibleWith(MethodSignature s){
-			if(!this.returntype.equals(s.returntype))
-				return false;
-			if(this.paramtypes.size()!=s.paramtypes.size())
-				return false;
-			for(int i=0; i<this.paramtypes.size(); i++)
-				if(!this.paramtypes.get(i).equals(s.paramtypes.get(i)))
-					return false;
-			return true;
-		}
-		// 2 signatures are equal if they have exactly the same class name, method name, parameter types and return type
-		public boolean equals(MethodSignature s){
-			if(!this.classname.equals(s.classname))
-				return false;
-			if(!this.methodname.equals(s.classname))
-				return false;
-			if(!this.isCompatibleWith(s))
-				return false;
-			return true;
-		}
-		public String toString(){
-			String res = this.classname + "." + this.methodname + "(";
-			for(String paramtype: this.paramtypes)
-				res += paramtype + ",";
-			if(!this.paramtypes.isEmpty())
-				res = res.substring(0,res.length()-1);
-			res += "):" + this.returntype;
-			return res;
-		}
 	}
 }
