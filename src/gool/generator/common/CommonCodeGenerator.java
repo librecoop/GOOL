@@ -67,6 +67,8 @@ import gool.ast.type.TypeClass;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeGoolClassToMatch;
+import gool.ast.type.TypeMatchedGoolClass;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -76,6 +78,7 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
+import gool.recognizer.common.GoolMatcher;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -93,6 +96,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 * String used to produce one level of indentation.
 	 * Can be overwritten in the constructor of the concrete generator.
 	 */
+	
 	protected String indentation = "\t";
 	
 	/**<pre>
@@ -537,7 +541,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		return String.format("%s", typeUnknown.getTextualtype()); //+" /* Unrecognized by GOOL, passed on */";
+		return String.format("%s", typeUnknown.getTextualtype())+" /* Unrecognized by GOOL, passed on */";
 	}
 	
 	@Override
@@ -595,8 +599,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		//For now if one wants to print the type of a TypeVar, this returns just the name of the TypeVar.
 		return typeVar.getTextualtype();
 	}
-
-
 	
 	@Override
 	public String getCode(TypeMethod typeMethod){
@@ -604,5 +606,15 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return typeMethod.getTextualtype();
 	}
 
+	@Override
+	public String getCode(TypeMatchedGoolClass typeMatchedGoolClass){
+		return typeMatchedGoolClass.getGoolclassname();
+	}
 	
+	@Override
+	public String getCode(TypeGoolClassToMatch typeGoolClassToMatch){
+		String res = GoolMatcher.matchGoolType(typeGoolClassToMatch.getGoolclassname());
+		if(res==null) return typeGoolClassToMatch.getGoolclassname()+" /* there is no corresponding class for this GoolClass in this output language, passing on */";
+		else return res;
+	}
 }

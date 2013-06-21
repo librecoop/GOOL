@@ -108,6 +108,7 @@ import gool.ast.type.TypeFileWriter;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeMatchedGoolClass;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -214,29 +215,29 @@ import com.sun.tools.javac.tree.TreeInfo;
  * The class Context is necessary for that and is declared at the bottom of this file.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
-	
+
 	/**
 	 * The Sun's abstract Java AST that we will now convert to abstract GOOL.
 	 */
 	private CompilationUnitTree ast;
-	
+
 	/**
 	 * The type information that was obtained from Sun's java parser analysis of the AST.
 	 */
 	private Trees typetrees;
-	
+
 	/**
 	 * The default platform used to specify the Target Language,
 	 * which will be annotated in the newly created classes.
 	 */
 	private Platform defaultPlatform;
-	
+
 	/**
 	 * The list of abstract GOOL classes and packages that will be generated.
 	 */
 	private Map<IType, ClassDef> goolClasses = new HashMap<IType, ClassDef>();
 	private Map<String, Package> packagesCache = new HashMap<String, Package>();
-	
+
 	/**
 	 * The list of keywords that may cause problems when generating target code
 	 * from concrete or abstract GOOL.
@@ -251,11 +252,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		FORBIDDEN_KEYWORDS.add("ref");
 		FORBIDDEN_KEYWORDS.add("object");
 		FORBIDDEN_KEYWORDS.add("string");
-		
+
 		// PYTHON
 		FORBIDDEN_KEYWORDS.add("print");
 	}
-	
+
 	/**
 	 * The map between Java operators and GOOL operators.
 	 * Left are the Java abstract operators.
@@ -288,7 +289,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		operatorMap.put(Kind.OR_ASSIGNMENT, Operator.OR);
 		operatorMap.put(Kind.PLUS_ASSIGNMENT, Operator.PLUS);
 	}
-	
+
 	static {
 		// register standard exceptions
 		// TODO: only exception from java.lang are registered for now
@@ -319,7 +320,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				new TypeException("InterruptedException", "java.lang", TypeException.Kind.INTERUPT),
 				new TypeException("NoSuchFieldException", "java.lang", TypeException.Kind.NOSUCHFIELD),
 				new TypeException("NoSuchMethodException", "java.lang", TypeException.Kind.NOSUCHMETH)
-		);
+				);
 
 	}
 
@@ -332,7 +333,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public void scan() {
 		super.scan(ast,null);
 	}
-	
+
 	/**
 	 * Setters and getters
 	 */
@@ -350,7 +351,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		reader.close();
 	}
-	
+
 	public final void setCurrentCompilationUnit(
 			CompilationUnitTree currentCompilationUnit) {
 		this.ast = currentCompilationUnit;
@@ -367,18 +368,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public final Collection<ClassDef> getGoolClasses() {
 		return goolClasses.values();
 	}
-	
+
 	private void addDependencyToContext(Context context, Dependency newDep) {
 		if (newDep != null && context != null && context.getClassDef() != null) {
 			context.getClassDef().addDependency(newDep);
 		}
 	}
-	
+
 
 	/**
 	 * THIS PART IS ABOUT TYPE CONVERSION
 	 */
-	
+
 	/**
 	 * Converts Java abstract operator kinds to GOOL abstract operators.
 	 */
@@ -454,8 +455,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			//The overloaded goolType method will map Java abstract "kinds" to GOOL primitive types
 			//The textualtype is for passing on unrecognized primitive types
 			return goolType(typeMirror.getKind(), typeMirror.toString());
+			
 		}
-
+		//GoolMatcher.printlibs();
+		System.out.println("TYPEMIRROR CALL : "+typeMirror.toString());
+		String GoolClass = GoolMatcher.matchType(typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1));
+		if (GoolClass!=null){ System.out.println("TYPE MATCH: The type "+typeMirror.toString()+" has been matched with the GoolClass type "+GoolClass);
+			return new TypeMatchedGoolClass(GoolClass);
+		}
 		//Dealing with non-primitive types.
 		//First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
@@ -468,6 +475,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d("XXX");
 		String typeName;
 		IType goolType;
+		
 		switch (typeMirror.getKind()) {
 		case PACKAGE: // -- Dealing with Packages
 			//Create a GOOL type of a type that matches the full name of the Java type.
@@ -485,7 +493,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			//However some classes receive a particular treatment like Lists, Maps etc.
 			typeName = classSymbol.getSimpleName().toString();
 			goolType = string2IType(typeName, context);
-			
+
 			//Whether in abstract Java or in GOOL, enums are codes as classes with some flag.
 			//We deal with this case.
 			boolean isEnum = ((classSymbol.flags() & Flags.ENUM) != 0);
@@ -542,12 +550,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		case NULL:
 			return TypeNull.INSTANCE;
 		default:
-			//We met a type that we do not know how to handle.
-			//Instead of throwing an error, we will just pass it on as such.
-			return new TypeUnknown(typeMirror.toString());
+				//We met a type that we do not know how to handle.
+				//Instead of throwing an error, we will just pass it on as such.
+				return new TypeUnknown(typeMirror.toString());
 		}
 	}
-	
+
 	//These Otd are classes that return classes like TypeList, TypeMap,... 
 	//why go through this intermediate step, and not replace the instantiations new Otd() by new TypeList(), new TypeMap... 
 	//This is because these instances of Otd get placed in a map, 
@@ -559,7 +567,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	private static final Map<String, Otd> string2otdMap = new HashMap<String, Otd>();
 	static {
-		
+
 		Otd tmpOtd = new Otd() {
 			public IType getType() {
 				return TypeString.INSTANCE;
@@ -567,7 +575,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("String", tmpOtd);
 		string2otdMap.put("java.lang.String", tmpOtd);
-		
+
 		//We found a Java boxed Double.
 		//As far as type goes, we unbox it and just say it is a GOOL Decimal.
 		tmpOtd = new Otd() {
@@ -576,7 +584,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		};
 		string2otdMap.put("java.lang.Double", tmpOtd);
-		
+
 		//We found a Java boxed Integer.
 		//As far as type goes, we unbox it and just say it is a GOOL Int.
 		tmpOtd = new Otd() {
@@ -586,11 +594,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("Integer", tmpOtd);
 		string2otdMap.put("java.lang.Integer", tmpOtd);
-		
+
 		//NEXT We recognize that the abstact Java was using some well-known class
 		//Which we want to treat in a particular manner
 		//I.e. for which we have a specific representation in the abstract GOOL.
-		
+
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeList();
@@ -600,7 +608,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("ArrayList", tmpOtd);
 		string2otdMap.put("java.util.ArrayList", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.ArrayList", tmpOtd);
-		
+
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeMap();
@@ -610,7 +618,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("HashMap", tmpOtd);
 		string2otdMap.put("java.util.HashMap", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.HashMap", tmpOtd);
-		
+
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeEntry();
@@ -618,7 +626,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("Entry", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.Map.Entry", tmpOtd);
-		
+
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeFile();
@@ -626,7 +634,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("File", tmpOtd);
 		string2otdMap.put("java.io.File", tmpOtd);
-		
+
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeFileReader();
@@ -636,9 +644,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("java.io.FileReader", tmpOtd);
 
 		string2otdMap.put("gool.imports.java.io.FileReader", tmpOtd);
-		
+
 		tmpOtd = new Otd() {
-			
+
 			@Override
 			public IType getType() {
 				return new TypeScanner();
@@ -648,7 +656,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("java.util.Scanner", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.Scanner", tmpOtd);
 
-		
+
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeFileWriter();
@@ -656,7 +664,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("FileWriter", tmpOtd);
 		string2otdMap.put("java.io.FileWriter", tmpOtd);
-		
+
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeBufferedReader();
@@ -668,9 +676,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	private IType string2IType(String typeName, Context context) {
 
-		
+
 		if (string2otdMap.containsKey(typeName)) {
-			
+
 			IType type = string2otdMap.get(typeName).getType();
 			addDependencyToContext(context, new TypeDependency(type));
 			return type;
@@ -687,11 +695,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 	}
 
-	
+
 	/**
 	 * THIS PART IS ABOUT ANCILLARY METHODS THAT HELP VISITING
 	 */
-	
+
 	/**
 	 * When visiting a method or a constructor, one needs to go through the list of its arguments, 
 	 * Visiting each of them recursively in turn, thereby generation an expression that gets added to the method or constructor.
@@ -711,7 +719,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 	}
 
-	
+
 	/**
 	 * A subroutine to generate error messages, with the name of the file that caused the error.
 	 * Notice that String.format(...) has the same sort of syntax to the old C printf.
@@ -724,7 +732,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				ast.getSourceFile().getName());
 	}
 
-	
+
 	/**
 	 * Lets you check for a certain annotation; e.g.
 	 * - "Override": used to set a inherited flag and that way be able to generate annotation.
@@ -742,9 +750,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		return false;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * THIS PART IS ABOUT VISITING UNRECOGNIZED STUFF
 	 *
@@ -755,13 +763,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 * - the type of the unrecognized expression;
 	 * - the concrete Java string of characters that represents it.
 	 */
-	
+
 	@Override
 	public Object visitAssert(AssertTree n, Context context) {
 		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
-	
-	
+
+
 	@Override
 	public Object visitBreak(BreakTree n, Context context) {
 		return new ExpressionUnknown(goolType(n,context),n.toString());
@@ -778,7 +786,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Block block = (Block) n.getBlock().accept(this, context);
 		return new Catch(parameter, block);
 	}
-	
+
 	@Override
 	public Object visitCompoundAssignment(CompoundAssignmentTree n,
 			Context context) {
@@ -811,7 +819,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitEmptyStatement(EmptyStatementTree n, Context context) {
 		return new ExpressionUnknown(goolType(n,context),n.toString());
 	}
-	
+
 	@Override
 	public Object visitInstanceOf(InstanceOfTree node, Context p) {
 		return new ExpressionUnknown(goolType(node,p),node.toString());
@@ -827,7 +835,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return new ExpressionUnknown(goolType(node,p),node.toString());
 
 	}
-	
+
 	@Override
 	public Object visitSwitch(SwitchTree node, Context p) {
 		return new ExpressionUnknown(goolType(node,p),node.toString());
@@ -863,13 +871,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitTypeParameter(TypeParameterTree node, Context p) {
 		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
-	
+
 	@Override
 	public Object visitWildcard(WildcardTree node, Context p) {
 		return new ExpressionUnknown(goolType(node,p),node.toString());
 	}
-	
-	
+
+
 	/**
 	 * THIS PART IS ABOUT VISITING RECOGNIZED STUFF : TYPES
 	 * 
@@ -879,7 +887,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitArrayType(ArrayTypeTree n, Context context) {
 		return goolType(n, context);
 	}
-	
+
 	@Override
 	public Object visitParameterizedType(ParameterizedTypeTree node,
 			Context context) {
@@ -890,7 +898,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitPrimitiveType(PrimitiveTypeTree n, Context context) {
 		return goolType(n.getPrimitiveTypeKind(), n.toString());
 	}
-	
+
 	/**
 	 * THIS PART IS ABOUT VISITING EASY RECURSIVE CASES
 	 * 
@@ -906,7 +914,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitArrayAccess(ArrayAccessTree n, Context context) {
 		return new ArrayAccess((Expression) n.getExpression().accept(this, context), (Expression) n.getIndex().accept(this, context));
 	}
-	
+
 	@Override
 	public Object visitAssignment(AssignmentTree n, Context context) {
 		Node variable = (Node) n.getVariable().accept(this, context);
@@ -932,7 +940,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return new While((Expression) n.getCondition().accept(this, context),
 				(Statement) n.getStatement().accept(this, context));
 	}
-	
+
 	@Override
 	public Object visitForLoop(ForLoopTree node, Context p) {
 		List<? extends StatementTree> initializers = node.getInitializer();
@@ -949,7 +957,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return new For(initializer, condition, updater, (Statement) node
 				.getStatement().accept(this, p));
 	}
-	
+
 	@Override
 	public Object visitEnhancedForLoop(EnhancedForLoopTree n, Context context) {
 		VarDeclaration varDec = (VarDeclaration) n.getVariable().accept(this,
@@ -981,12 +989,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		ClassNew c = new ClassNew(type);
 
 		addParameters(n.getArguments(), c, context);
-		
-		System.out.println("CALL GoolMatcher.matchClassNew: "+c);
-		GoolMatcher.matchClassNew(c);
+
 		return c;
 	}
-	
+
 	@Override
 	public Object visitParenthesized(ParenthesizedTree n, Context context) {
 		return n.getExpression().accept(this, context);
@@ -1019,11 +1025,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		String textualoperator=  n.toString().replace(n.getExpression().toString(), "").trim();
 		return new UnaryOperation(operator, expression, type, textualoperator);
 	}
-	
+
 
 	@Override
 	public Object visitBinary(BinaryTree n, Context context) {
-		
+
 		Expression leftExp = (Expression) n.getLeftOperand().accept(this,
 				context);
 		Expression rightExp = (Expression) n.getRightOperand().accept(this,
@@ -1056,11 +1062,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	/**
 	 * THIS PART IS ABOUT VISITING THE DELICATE CASES
 	 */ 
-	
+
 	/**
 	 * Literals, Variables, Declarations
 	 */
-	
+
 	/**
 	 * Literals are simple values such as "3".
 	 * Abstract GOOL represents them pretty much the same as abstract java.
@@ -1079,7 +1085,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
 			throw new IllegalArgumentException(error(
 					"The variable named '%s' uses reserved keyword.", n
-							.getName()));
+					.getName()));
 		}
 		//work out the GOOL type of the variable
 		IType type = goolType(n.getType(), context);
@@ -1092,7 +1098,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					this, context);
 			variable.setInitialValue(initializer);
 		}
-		
+
 		//a variable declaration may be an attribute declaration (a field), in which case it carries modifiers 
 		//and gets represented differently in GOOL, i.e. wrapped up with a Field().
 		// TODO: actually, any variable declaration could have modifiers.
@@ -1104,8 +1110,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			return f;
 		}
 		context.addDeclaration(variable, variable.getName(), getTypeMirror(n));
-		System.out.println("CALL GoolMatcher.matchDec: "+variable);
-		GoolMatcher.matchDec(variable);
 		return variable;
 	}
 
@@ -1114,7 +1118,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
 			throw new IllegalArgumentException(error(
 					"The variable named '%s' uses reserved keyword.", n
-							.getName()));
+					.getName()));
 		}
 
 		IType type = goolType(n, context);
@@ -1125,7 +1129,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (type.getName().equals(n.getName().toString())) {
 			return new Constant(type, n.getName().toString());
 		}
-		
+
 		//This method returns a VarAccess, accessing a previously declared variable, i.e. a VarDeclaration.
 		Dec dec;
 		if(context!=null) {
@@ -1138,12 +1142,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		else {
 			dec = new VarDeclaration(goolType(n, context), n.getName().toString());
 		}
-		
+
 		return new VarAccess(dec);
 	}
-	
 
-	
+
+
 	/**
 	 * Lists, maps
 	 */
@@ -1173,7 +1177,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		return new ArrayNew(goolType(node.getType(), p), dimesExpressions,
 				initialiList);
 	}
-	
+
 	/**
 	 * Deals with expressions like "target.identifier()".
 	 * It gets called by visitMethodInvokation().
@@ -1273,16 +1277,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d("X Standard method call for X");
 		Log.d(n.toString());
 		Log.d("X");
-        System.out.println(context);
-        if(context!=null){
-		Dec dec = context.getClassContext().getDeclaration(n.getIdentifier().toString(), getTypeMirror(n));
-		if (dec == null) {
-			Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
-			dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
+		if(context!=null){
+			Dec dec = context.getClassContext().getDeclaration(n.getIdentifier().toString(), getTypeMirror(n));
+			if (dec == null) {
+				Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
+				dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
+			}
 		}
-        }
-        
-        Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
+
+		Log.w(String.format("No declaration found for '%s' of type '%s' in curent context", n.getIdentifier(),  getTypeMirror(n)));
 		Dec dec = new VarDeclaration(goolType(n, context), n.getIdentifier().toString());
 		MemberSelect f = new MemberSelect(target, dec);
 		return f;
@@ -1291,21 +1294,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	/**
 	 * Classes, packages, imports...
 	 */
-	
+
 	@Override
 	public Object visitClass(ClassTree n, Context context) {
-		
+
 		//Get the name of the class
 		JCClassDecl c = (JCClassDecl) n;
 		ClassDef classDef = new ClassDef(n.getSimpleName().toString());
 		Log.i(String.format("Parsing class %s", n.getSimpleName()));
-		
+
 		//The new class will provide the context for the things parsed inside of it.
 		context = new Context(classDef, context);
 		//Create a variable called 'this' of type 'Classtree' to prevent errors
 		context.addDeclaration(new VarDeclaration(TypeObject.INSTANCE, "this"), "this", getTypeMirror(n));
 		context.addDeclaration(new VarDeclaration(TypeObject.INSTANCE, "super"), "super", null);
-		
+
 		//Enums are just classes with a particular flag, which we set up if necessary
 		//We said that before, with DECLARED types
 		//Here this is for the class itself
@@ -1413,12 +1416,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				context.addDeclaration(dec, dec.getName(), getTypeMirror(tree));
 			}
 		}
-		
+
 		//Recursively go through each member and add it to the abstract GOOL class
 		for (Tree tree : n.getMembers()) {
 			Node member = (Node) tree.accept(this, context);
-//			if (member instanceof Dec)
-//				context.addDeclaration((Dec)member);
+			//			if (member instanceof Dec)
+			//				context.addDeclaration((Dec)member);
 			if (member instanceof Meth) {
 				classDef.addMethod((Meth) member);
 			} else if (member instanceof Field) {
@@ -1429,7 +1432,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			} else if (member != null) {
 				Log.e(String.format(
 						"Unrecognized member for class %s: %s ", classDef
-								.getName(), member));
+						.getName(), member));
 			}
 		}
 
@@ -1444,10 +1447,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitCompilationUnit(CompilationUnitTree n, Context context) {
-		
 
-		
-		
+
+
+
 		//The destination package is either null or that specified by the visited package
 		String ppackage = null;
 		if (n.getPackageName() != null) {
@@ -1457,11 +1460,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		//Each class that is imported is registered as a dependency
 		//TODO: We don't automatically go and compile dependencies.
 		List<Dependency> dependencies = new ArrayList<Dependency>();
-		
+
 		//GoolMatcher init call
-		System.out.println("defaultplatform at entry point:"+defaultPlatform);
 		GoolMatcher.init(Language.JAVA, this.defaultPlatform, this.goolClasses);
-		
+
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
 			if (!dependencyString.contains("gool.imports.java")
@@ -1501,7 +1503,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	/**
 	 * Methods
 	 */
-	
+
 	@Override
 	public Object visitMethod(MethodTree n, Context context) {
 		boolean customCode = findAnnotation(n.getModifiers().getAnnotations(),
@@ -1608,7 +1610,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					if (statement instanceof InitCall
 							&& method instanceof Constructor) {
 						((Constructor) method)
-								.addInitCall((InitCall) statement);
+						.addInitCall((InitCall) statement);
 					} else if (statement != null) {
 						method.addStatement(statement);
 					}
@@ -1625,9 +1627,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 * MethodInvocation(<Target:MemberSelect<Target:MemberSelect<Target:"System", Identifier:"out">,<Identifier:"println">>>)
 	 * So it is easier to identify at this stage
 	 */
-	
+
 	@Override
-	
+
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
 		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());	
 		Expression target;
@@ -1652,47 +1654,24 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			target = (Expression) n.getMethodSelect().accept(this, context);
 
 		}
-		
+
 		//the following piece of code is used to fix a weird code generation bug that occurs only with ObjC.
 		if(context.getClassDef().getPlatform()==ObjcPlatform.getInstance() && (target instanceof InitCall) && (target instanceof Parameterizable)){
 			target = new MethCall(goolType(
 					((MethodSymbol) method).getReturnType(), context), target);
 			addParameters(n.getArguments(), (Parameterizable)((MethCall)target).getTarget(), context);
 		}
-		/*
-		if(method.owner.toString().matches("^[java.].*") && !(target instanceof Parameterizable)){
-			//if(method.owner.toString().contains("java.lang.String")){
-				ArrayList<String> type = new ArrayList<String>();
-				String ret;
-				String lib = method.owner.toString().substring(method.owner.toString().lastIndexOf(".")+1);
-				
-				int index = method.type.getReturnType().toString().lastIndexOf(".");
-				if(index == -1) ret = method.type.getReturnType().toString();
-				else ret = method.type.getReturnType().toString().substring(index+1);
-				
-				
-				
-				for (Type t : method.type.getParameterTypes()) {
-					index = t.toString().lastIndexOf(".");
-					if(index == -1) type.add(t.toString());
-					else type.add(t.toString().substring(index+1));
-				}
-				String general = MethodManager.getGeneralName(ret, method.name.toString(), type, lib, Language.JAVA);
-				target = new MethCall(goolType(((MethodSymbol) method).getReturnType(), context)
-						, target, general, lib);
-			}
-		*/
+		
 		if (!(target instanceof Parameterizable)) {
 			target = new MethCall(goolType(((MethodSymbol) method)
 					.getReturnType(), context), target);
 		}
-		
 		addParameters(n.getArguments(), (Parameterizable) target, context);
-		
+		/*
 		if(target instanceof MethCall){
 			System.out.println("CALL GoolMatcher.matchMethCall: "+target+"   (type: "+target.getType()+")");
 			GoolMatcher.matchMethCall((MethCall)target);
-		}
+		}*/
 		return target;
 	}
 
@@ -1740,15 +1719,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			case SYNCHRONIZED:
 				result.add(Modifier.SYNCHRONIZED);
 				break;
-		}}
+			}}
 
 		return result;
 	}
-	
+
 	public void setTypes(javax.lang.model.util.Types types) {
 		Context.setTypes(types);
 	}
-	
+
 }
 
 /**
@@ -1766,22 +1745,22 @@ class Context {
 	 * from something of the same name without this context. 
 	 * For instance mycustom.List will be passed on, whereas List might have been translated.
 	 */
-	
+
 	/**
 	 * The link to the parent context (who's declarations are still in scope).
 	 */
 	private Context parent;
-	
+
 	/**
 	 * If this context was created at a class level, contains that class, null otherwise.
 	 */
 	private ClassDef classDef;
-	
+
 	/**
 	 * Information on types, necessary for comparing them
 	 */
 	static private javax.lang.model.util.Types types;
-	
+
 	/**
 	 * Provides the class with a way to compare types
 	 * @param types The 'javax.lang.model.util.Type' given by the parser
@@ -1794,17 +1773,17 @@ class Context {
 	 * All the declaration defined at the current level sorted by identifier and type 
 	 */
 	private HashMap<String,HashMap<TypeMirror,Dec>> map;
-	
+
 	public Context(Context parent) {
 		this(null, parent);
 	}
-	
+
 	public Context(ClassDef classDef, Context parent) {
 		map = new HashMap<String,HashMap<TypeMirror,Dec>>();
 		this.parent = parent;
 		this.classDef = classDef;
 	}
-	
+
 	/**
 	 * Register a declaration in the context
 	 * @param dec The GOOL declaration to register
@@ -1820,7 +1799,7 @@ class Context {
 		identifier.put(type, dec);
 
 	}
-	
+
 	/**
 	 * Get a declaration from the current context or a parent.
 	 * @param name The identifier we are looking for
@@ -1837,7 +1816,7 @@ class Context {
 		else
 			return null;
 	}
-	
+
 	/**
 	 * Get a declaration from the current context but not a parent.
 	 * @param name The identifier we are looking for
@@ -1850,12 +1829,12 @@ class Context {
 		if (identifier != null) {
 			for (Entry<TypeMirror,Dec> e : identifier.entrySet()) {
 				if (isTypeMirrorCompatible(type, e.getKey()))
-						return e.getValue();
+					return e.getValue();
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get the context associated with the class we are visiting
 	 * @return The top-level(?) context
@@ -1879,7 +1858,7 @@ class Context {
 		else
 			return classDef;
 	}
-	
+
 	/**
 	 * Test if a instance and a declaration have compatible types.<br>
 	 * For fields-like types, the instance must be assignable to the declaration.

@@ -452,9 +452,8 @@ public class GoolTest {
 	
 	@Test
 	public void exceptionThrowTest() throws Exception {
-		String input = "import gool.imports.java.io.IOException;\n" +TestHelper.surroundWithClassMain(
+		String input = TestHelper.surroundWithClassMain(
 				"try {\n Test t=new Test(); t.print();\n}\n" +
-				"catch(IOException ioe) {\n System.out.println(\"ioe\");\n}\n" +
 				"catch(Exception e) {\n System.out.println(\"e\");\n}\n}"		
 				+"\n public void print() throws IOException, Exception {System.out.println(2 + 2);"		
 				, MAIN_CLASS_NAME);

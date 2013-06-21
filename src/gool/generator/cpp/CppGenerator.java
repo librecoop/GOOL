@@ -475,8 +475,8 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return String.format("/* ListContainsCall not implemented in C++ at the moment */");
 	}
 
 	@Override

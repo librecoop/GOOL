@@ -48,8 +48,8 @@ import gool.generator.GoolGeneratorController;
 import gool.generator.common.CodeGenerator;
 import gool.generator.common.Platform;
 import gool.generator.java.JavaGenerator;
-import gool.imports.java.util.ArrayList;
-import gool.imports.java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
 import gool.recognizer.common.MethodSignature;
 
 public class GoolMatcher{
@@ -61,13 +61,14 @@ public class GoolMatcher{
 	private static HashMap<String, MethodSignature> RecognizedGoolMethods;
 	private static Map<IType, ClassDef> GoolClasses;
 
-
+	static public void printlibs(){
+		System.out.println("PRINT LIBS. size: "+EnabledGoolLibs.size());
+	}
 
 	/*
 	 *  methods called by the input language recognizer to modify the nodes they constructs
 	 */
 	static public void init(Language inputLang, Platform outputLang, Map<IType, ClassDef> goolClasses){
-
 		InputLang = inputLang;
 		OutputLang = outputLang;
 		EnabledGoolLibs = new ArrayList<String>();
@@ -86,6 +87,12 @@ public class GoolMatcher{
 			EnabledGoolLibs.add(GoolLib);
 	}
 
+	public static String matchType(String InputLangClassName){
+		return getMatchedGoolClass(InputLangClassName);
+	}
+	public static String matchGoolType(String GoolClass){
+		return getMatchedOutputClass(GoolClass);
+	}
 	public static void matchDec(VarDeclaration variable){
 		if(!(variable.getType() instanceof TypeUnknown))
 			return;
@@ -149,9 +156,11 @@ public class GoolMatcher{
 			while ((line=br.readLine())!=null){
 				line=removeSpaces(line);
 				if(isInputMatchLine(line)){
+					System.out.println("line:"+line);
 					String GoolLib=getLeftPartOfInputMatchLine(line);
 					String Import=getRightPartOfInputMatchLine(line);
-					if(Import.equals("default"))
+					System.out.println(Import);
+					if(Import.equals("DEFAULT"))
 						res.add(GoolLib);
 				}	
 			}
@@ -160,6 +169,7 @@ public class GoolMatcher{
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
+		System.out.println("res="+res.size());
 		return res;
 	}
 

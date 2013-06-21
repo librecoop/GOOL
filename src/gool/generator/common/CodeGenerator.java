@@ -100,10 +100,12 @@ import gool.ast.type.TypeException;
 import gool.ast.type.TypeFile;
 import gool.ast.type.TypeFileReader;
 import gool.ast.type.TypeFileWriter;
+import gool.ast.type.TypeGoolClassToMatch;
 import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeMatchedGoolClass;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -454,5 +456,9 @@ public interface CodeGenerator {
 	String getCode(Try tryStatement);
 
 	String getCode(TypeException typeException);
+
+	String getCode(TypeMatchedGoolClass typeMatchedGoolClass);
+
+	String getCode(TypeGoolClassToMatch typeGoolClassToMatch);
 	
 }
