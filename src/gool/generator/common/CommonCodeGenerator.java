@@ -38,6 +38,7 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
+import gool.ast.constructs.GoolLibDependency;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.ListMethCall;
@@ -56,6 +57,7 @@ import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
+import gool.ast.constructs.UnrecognizedDependency;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
@@ -78,7 +80,7 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
-import gool.recognizer.common.GoolMatcher;
+import gool.recognizer.common.RecognizerMatcher;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -613,8 +615,16 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	
 	@Override
 	public String getCode(TypeGoolClassToMatch typeGoolClassToMatch){
-		String res = GoolMatcher.matchGoolType(typeGoolClassToMatch.getGoolclassname());
+		String res = GeneratorMatcher.matchGoolType(typeGoolClassToMatch.getGoolclassname());
 		if(res==null) return typeGoolClassToMatch.getGoolclassname()+" /* there is no corresponding class for this GoolClass in this output language, passing on */";
 		else return res;
+	}
+	
+	public String getCode(GoolLibDependency goolLibDependency){
+		return goolLibDependency.getName();
+	}
+	
+	public String getCode(UnrecognizedDependency unrecognizedDependency){
+		return unrecognizedDependency.getName()+" /* This user/system import is not recognized by GOOL. */ ";
 	}
 }

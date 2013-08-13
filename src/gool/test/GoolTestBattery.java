@@ -69,12 +69,12 @@ public class GoolTestBattery {
 	
 	/** The platforms to test. */
 	private static List<Platform> platforms = Arrays.asList(
-			(Platform)JavaPlatform.getInstance()
-//			(Platform)CSharpPlatform.getInstance(),
-//			(Platform)CppPlatform.getInstance(),
+			(Platform)JavaPlatform.getInstance(),
+			(Platform)CSharpPlatform.getInstance(),
+			(Platform)CppPlatform.getInstance(),
 //			(Platform)PythonPlatform.getInstance()
 //			(Platform)AndroidPlatform.getInstance()
-//			(Platform)ObjcPlatform.getInstance()
+			(Platform)ObjcPlatform.getInstance()
 			);
 	
 	/** The name of the test. */

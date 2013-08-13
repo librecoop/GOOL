@@ -44,6 +44,7 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
+import gool.ast.constructs.GoolLibDependency;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.ListMethCall;
@@ -65,6 +66,7 @@ import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
+import gool.ast.constructs.UnrecognizedDependency;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
@@ -460,5 +462,9 @@ public interface CodeGenerator {
 	String getCode(TypeMatchedGoolClass typeMatchedGoolClass);
 
 	String getCode(TypeGoolClassToMatch typeGoolClassToMatch);
+
+	String getCode(GoolLibDependency goolLibDependency);
+
+	String getCode(UnrecognizedDependency unrecognizedDependency);
 	
 }

@@ -40,11 +40,11 @@ import org.junit.Test;
 public class GoolTest {
 	
 	private List<Platform> platforms = Arrays.asList(
-	(Platform)JavaPlatform.getInstance()
-	//		(Platform) CppPlatform.getInstance()
-	//	    (Platform) CSharpPlatform.getInstance()
+	(Platform)JavaPlatform.getInstance(),
+			(Platform) CppPlatform.getInstance(),
+		    (Platform) CSharpPlatform.getInstance(),
 	//	    (Platform) PythonPlatform.getInstance()
-	// (Platform) ObjcPlatform.getInstance()
+	 (Platform) ObjcPlatform.getInstance()
 	//		 (Platform)AndroidPlatform.getInstance()	
     );
 	

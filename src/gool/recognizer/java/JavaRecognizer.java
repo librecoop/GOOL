@@ -27,6 +27,7 @@
 
 package gool.recognizer.java;
 
+import gool.ast.constructs.GoolLibDependency;
 import gool.ast.constructs.Language;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
@@ -70,6 +71,7 @@ import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.Try;
 import gool.ast.constructs.TypeDependency;
 import gool.ast.constructs.UnaryOperation;
+import gool.ast.constructs.UnrecognizedDependency;
 import gool.ast.constructs.VarAccess;
 import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.While;
@@ -122,7 +124,7 @@ import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
 import gool.generator.objc.ObjcPlatform;
 import gool.methods.MethodManager;
-import gool.recognizer.common.GoolMatcher;
+import gool.recognizer.common.RecognizerMatcher;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -371,6 +373,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	private void addDependencyToContext(Context context, Dependency newDep) {
 		if (newDep != null && context != null && context.getClassDef() != null) {
+			
+			//if the new dependency has already been added to the context, there is nothing to do
+			for(Dependency d : context.getClassDef().getDependencies())
+				if(d.toString().equals(newDep.toString()))
+					return;
+			
+			//else, if it is indeed a new dependency, we add it to the context
+			System.out.println("JavaRecognizer: addDependencyToContext "+newDep);
 			context.getClassDef().addDependency(newDep);
 		}
 	}
@@ -445,7 +455,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 * and a context.
 	 */
 	private IType goolType(TypeMirror typeMirror, Context context) {
-		
+
 		if (typeMirror == null) {
 			//A null abstract Java type usually means that we are dealing with a constructor.
 			return TypeNone.INSTANCE;
@@ -455,13 +465,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			//The overloaded goolType method will map Java abstract "kinds" to GOOL primitive types
 			//The textualtype is for passing on unrecognized primitive types
 			return goolType(typeMirror.getKind(), typeMirror.toString());
-			
+
 		}
-		//GoolMatcher.printlibs();
-		System.out.println("TYPEMIRROR CALL : "+typeMirror.toString());
-		String GoolClass = GoolMatcher.matchType(typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1));
+		//System.out.println("TYPEMIRROR CALL : "+typeMirror.toString());
+		//System.out.println("Appel à matchType("+typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1)+")");
+		String GoolClass = RecognizerMatcher.matchType(typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1));
+		System.out.println("GoolClass = "+GoolClass);
 		if (GoolClass!=null){ System.out.println("TYPE MATCH: The type "+typeMirror.toString()+" has been matched with the GoolClass type "+GoolClass);
-			return new TypeMatchedGoolClass(GoolClass);
+		return new TypeMatchedGoolClass(GoolClass);
 		}
 		//Dealing with non-primitive types.
 		//First, retrieve the full name of the Java type.
@@ -475,7 +486,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d("XXX");
 		String typeName;
 		IType goolType;
-		
+
 		switch (typeMirror.getKind()) {
 		case PACKAGE: // -- Dealing with Packages
 			//Create a GOOL type of a type that matches the full name of the Java type.
@@ -509,13 +520,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 			//TODO: sort out imports
 			//Add the encountered type as a dependency of the current class, which is context.getClassDef().
-			if (!type.toString().startsWith("java.lang") && !type.toString().startsWith("java.lang")) {
+			/*if (!type.toString().startsWith("java.lang") && !type.toString().startsWith("java.lang")) {
 				if (!goolType.toString().equalsIgnoreCase("gool")
 						&& !context.getClassDef().getType().equals(goolType)) {
 					context.getClassDef().addDependency(
 							new TypeDependency(goolType));
 				}
-			}
+			}*/
 			return goolType;
 		case EXECUTABLE: // -- Dealing with methods
 			//Create a GOOL type of a type that matches the Java type.
@@ -550,9 +561,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		case NULL:
 			return TypeNull.INSTANCE;
 		default:
-				//We met a type that we do not know how to handle.
-				//Instead of throwing an error, we will just pass it on as such.
-				return new TypeUnknown(typeMirror.toString());
+			//We met a type that we do not know how to handle.
+			//Instead of throwing an error, we will just pass it on as such.
+			return new TypeUnknown(typeMirror.toString());
 		}
 	}
 
@@ -627,6 +638,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		string2otdMap.put("Entry", tmpOtd);
 		string2otdMap.put("gool.imports.java.util.Map.Entry", tmpOtd);
 
+		/*
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeFile();
@@ -634,7 +646,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		};
 		string2otdMap.put("File", tmpOtd);
 		string2otdMap.put("java.io.File", tmpOtd);
-
+		*/
+		
 		tmpOtd = new Otd() {
 			public IType getType() {
 				return new TypeFileReader();
@@ -1462,14 +1475,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 
 		//GoolMatcher init call
-		GoolMatcher.init(Language.JAVA, this.defaultPlatform, this.goolClasses);
+		RecognizerMatcher.init(Language.JAVA, this.defaultPlatform, this.goolClasses);
 
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
-			if (!dependencyString.contains("gool.imports.java")
-					&& !dependencyString.contains("gool.imports.java.annotations")) {
-				dependencies.add(new CustomDependency(dependencyString));
-			}
+			//if (!dependencyString.contains("gool.imports.java")
+			//		&& !dependencyString.contains("gool.imports.java.annotations")) {
+				String goolClass = RecognizerMatcher.matchImport(dependencyString);
+				System.out.println("reconnaissance de la dépendance: "+dependencyString);
+				if(goolClass!=null){
+					dependencies.add(new GoolLibDependency(goolClass+".*"));
+				}else{
+					dependencies.add(new UnrecognizedDependency(dependencyString));
+					//dependencies.add(new CustomDependency(dependencyString));
+				}
+			//}
 		}
 		//Visit each member class in turn
 		//And add it to the Dependencies too
@@ -1490,6 +1510,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			classDef.addDependencies(dependencies);
 		}
+		System.out.println("[END OF visitCompilationUnit]");
 		return null;
 	}
 
@@ -1661,7 +1682,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					((MethodSymbol) method).getReturnType(), context), target);
 			addParameters(n.getArguments(), (Parameterizable)((MethCall)target).getTarget(), context);
 		}
-		
+
 		if (!(target instanceof Parameterizable)) {
 			target = new MethCall(goolType(((MethodSymbol) method)
 					.getReturnType(), context), target);

@@ -1,0 +1,27 @@
+# Part 1/3 :
+# Declaration of fields that will be added to the GoolClass.
+# Syntax: field <name> : <GoolType>
+#
+# A GoolType is either the name of a GoolClass (from any GOOL library),
+# or a type implemented in the "gool.ast.type" package.
+
+	field outputlangobject : GoolFile
+	field filename : TypeString
+
+
+# Part 2/3 :
+# Declaration of constructors of the GoolClass
+# Syntax: constructor ( <list of comma-separated GoolTypes> )
+
+	constructor ()
+	constructor (TypeString)
+
+
+# Part 3/3 :
+# Methods of the GoolClass.
+# Syntax: method <methodname> ( <list of comma-separated GoolTypes> ) : <return GoolType>
+
+	method createNewFile () : TypeBool
+	method exists () : TypeBool
+	method delete () : TypeBool
+

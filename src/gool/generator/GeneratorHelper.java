@@ -93,8 +93,17 @@ public class GeneratorHelper {
 		Map<Platform, List<File>> compilationUnits = new HashMap<Platform, List<File>>();
 		
 		MethodManager.reset();
-		
 		for (ClassDef classDef : classDefs) {
+			
+			
+			int x=0;
+			for(Dependency d : classDef.getDependencies()){
+				x++;
+				System.out.println("Dep"+x+":"+d);
+			}
+			
+			
+			
 			//The target platform is held by the GOOL class, retrieve it.
 			Platform platform = (Platform) classDef.getPlatform();
 			//Get a codePrinter corresponding to that platform.
@@ -122,15 +131,13 @@ public class GeneratorHelper {
 //						" or have a 'class.vm' template.",
 //						currentPrinter.getFileName(classDef.getName())));
 //			}
-				compilationUnits.get(platform).addAll(
-						currentPrinter.printPersonalLib());
+				//compilationUnits.get(platform).addAll(
+						//currentPrinter.printPersonalLib());
 				
-				compilationUnits.get(platform).addAll(
-						currentPrinter.print(classDef));
+				//compilationUnits.get(platform).addAll(
+						//currentPrinter.print(classDef));
+				
 		}
-		
-		
-		
 		
 		
 		
