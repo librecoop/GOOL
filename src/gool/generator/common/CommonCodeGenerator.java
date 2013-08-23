@@ -38,7 +38,7 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
-import gool.ast.constructs.GoolLibDependency;
+import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.ListMethCall;
@@ -620,11 +620,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		else return res;
 	}
 	
-	public String getCode(GoolLibDependency goolLibDependency){
-		return goolLibDependency.getName();
+	public String getCode(RecognizedDependency recognizedDependency){
+		return recognizedDependency.getName();
 	}
 	
 	public String getCode(UnrecognizedDependency unrecognizedDependency){
-		return unrecognizedDependency.getName()+" /* This user/system import is not recognized by GOOL. */ ";
+		return unrecognizedDependency.getName()+" /* The import "+unrecognizedDependency.getName()+" is unknown to the GOOL library system. */";
 	}
 }

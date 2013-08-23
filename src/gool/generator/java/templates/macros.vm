@@ -41,7 +41,8 @@
 #end
 ##-----
 #macro ( includes $dependencies )
-#foreach( $dep in $dependencies )#if(!$dep.equals("noprint")&&$dep.contains("."))import ${dep};#end
+#foreach( $dep in $dependencies )#if(!$dep.equals("noprint")&&$dep.contains("."))import ${dep};
+#end
 #end
 #end
 ##-----

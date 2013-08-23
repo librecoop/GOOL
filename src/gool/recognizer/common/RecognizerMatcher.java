@@ -30,121 +30,116 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.ClassNew;
-import gool.ast.constructs.Expression;
-import gool.ast.constructs.Field;
-import gool.ast.constructs.Language;
-import gool.ast.constructs.MemberSelect;
-import gool.ast.constructs.Meth;
-import gool.ast.constructs.MethCall;
-import gool.ast.constructs.Modifier;
-import gool.ast.constructs.VarAccess;
-import gool.ast.constructs.VarDeclaration;
-import gool.ast.type.IType;
-import gool.ast.type.TypeUnknown;
-import gool.ast.type.TypeVoid;
-import gool.generator.GoolGeneratorController;
-import gool.generator.common.CodeGenerator;
+import gool.ast.constructs.*;
+import gool.ast.type.*;
 import gool.generator.common.Platform;
-import gool.generator.java.JavaGenerator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+
+
 import gool.recognizer.common.MethodSignature;
 
 public class RecognizerMatcher{
 
-	private static Language InputLang;
+	private static Platform InputLang;
+	private static HashMap<String, ArrayList<String>> ClassMatchTable;
+	private static HashMap<String, ArrayList<String>> MethodMatchTable;
 	
-	private static ArrayList<String> EnabledGoolLibs;
-	private static ArrayList<String> BuiltGoolClassesNames;
-	private static HashMap<String, MethodSignature> RecognizedGoolMethods;
-	private static Map<IType, ClassDef> GoolClasses;
-
-
-	/*
-	 *  methods called by the input language recognizer to modify the nodes they constructs
-	 */
-	static public void init(Language inputLang, Platform outputLang, Map<IType, ClassDef> goolClasses){
+	
+	static public void init(Platform inputLang){
+		// Initialization of data structures
 		InputLang = inputLang;
-		EnabledGoolLibs = new ArrayList<String>();
-		BuiltGoolClassesNames = new ArrayList<String>();
-		RecognizedGoolMethods = new HashMap<String, MethodSignature>();
-		GoolClasses = goolClasses;
-		ArrayList<String> defaultGoolLibs = getDefaultGoolLibs();
-		if(!(defaultGoolLibs.size()==0))
-			for(String lib: defaultGoolLibs)
-				EnabledGoolLibs.add(lib);
+		ClassMatchTable = new HashMap<String, ArrayList<String>>();
+		MethodMatchTable = new HashMap<String, ArrayList<String>>();
+		
+		// Enabling the recognition of default libraries of the input language
+		ArrayList<String> defaultGoolClasses = getGoolClassesFromImport("default");
+		for(String defaultGoolClass : defaultGoolClasses)
+			enableRecognition(defaultGoolClass);
+	}
+
+	public static boolean matchImport(String inputLangImport){
+		ArrayList<String> goolClasses = getGoolClassesFromImport(inputLangImport);
+		for(String goolClass : goolClasses)
+			enableRecognition(goolClass);
+		return !goolClasses.isEmpty();
+	}
+
+	public static String matchClass(String inputLangClass){
+		for(String goolClass: ClassMatchTable.keySet())
+			if(ClassMatchTable.get(goolClass).contains(inputLangClass))
+				return goolClass;
+		return null;
 	}
 	
-	public static String matchImport(String InputLangImport){
-		String GoolLib = getMatchedGoolLib(InputLangImport);
-		if(GoolLib!=null && !EnabledGoolLibs.contains(GoolLib))
-			EnabledGoolLibs.add(GoolLib);
-		//String GoolLib = getMatchedGoolLib(InputLangImport);
-		return GoolLib;
+	public static String matchMethod(String inputLangMethodSignature){
+		for(String goolMethod: MethodMatchTable.keySet())
+			if(MethodMatchTable.get(goolMethod).contains(inputLangMethodSignature))
+				return goolMethod;
+		return null;
 	}
-
-	public static String matchType(String InputLangClassName){
-		return getMatchedGoolClass(InputLangClassName);
-	}
-
-	public static void matchDec(VarDeclaration variable){
-		if(!(variable.getType() instanceof TypeUnknown))
-			return;
-		String InputLangClass = variable.getType().getName();
-		String GoolClass = getMatchedGoolClass(InputLangClass);
-		// if we don't find any GoolClass matched with the InputLangClass, we do nothing and pass on.
-			if(GoolClass==null)
-				return;
-		// else, we change the type of the variable node by the GoolClass type
-		// and we build a Gool library of this GoolClass if it hasn't been done yet
-		variable.setType(new TypeUnknown(GoolClass));
-		/*
-		if(!BuiltGoolClassesNames.contains(GoolClass)){
-			ClassDef GoolClassAST = buildGoolClass(GoolClass);
-			GoolClasses.put(GoolClassAST.getType(), GoolClassAST);
-			}
-		*/
-	}
-
-
+	/*
 	public static void matchClassNew(ClassNew ClassNew){
 		if(ClassNew.getType() instanceof TypeUnknown){
 			String InputLangClass = ClassNew.getType().getName();
-			String GoolClass = getMatchedGoolClass(InputLangClass);
+			String GoolClass = matchClass(InputLangClass);
 			ClassNew.setType(new TypeUnknown(GoolClass));
 		}
-	}
-
-	public static void matchMethCall(MethCall MethCall){
-		// substitution of MethCall type
-		if(MethCall.getType() instanceof TypeUnknown){
-			String InputLangClass = MethCall.getType().getName();
-			String GoolClass = getMatchedGoolClass(InputLangClass);
-			MethCall.setType(new TypeUnknown(GoolClass));
-		}
-		
-		// substitution of the method's name
-		if(MethCall.getTarget()!=null)
-		{
-			IType TargetClassType = ((VarAccess)((MemberSelect)MethCall.getTarget()).getTarget()).getDec().getType();
-			if(TargetClassType instanceof TypeUnknown){
-				String GoolClass = TargetClassType.getName();
-				MethodSignature MethSign = new MethodSignature(MethCall);
-				String GoolMethod = getMatchedGoolMethod(GoolClass, MethSign);
-				((MemberSelect)MethCall.getTarget()).getDec().setName(GoolMethod);
-				RecognizedGoolMethods.put(GoolClass+"."+GoolMethod, MethSign);
+	}*/
+	private static void enableRecognition(String goolClass){
+		System.out.println("[RecognizerMatcher] Enabling the recognition of the GOOL class: "+goolClass+".");
+		try{
+			//matching the GOOL class with the input language classes
+			ArrayList<String> inputClasses = new ArrayList<String>();
+			InputStream ips= new FileInputStream(getPathOfInputClassMatchFile(goolClass)); 
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String line;
+			while ((line=br.readLine())!=null){
+				line=removeSpaces(line);
+				if(isInputMatchLine(line)){
+					String currentGoolClass = getLeftPartOfInputMatchLine(line);
+					ArrayList<String> currentInputClasses = parseCommaSeparatedValues(getRightPartOfInputMatchLine(line));
+					if(currentGoolClass.equals(goolClass))
+						inputClasses.addAll(currentInputClasses);
+				}	
 			}
+			br.close(); 
+			ClassMatchTable.put(goolClass,inputClasses);
+			
+			//matching the GOOL methods of the GOOL class with the input language methods
+			ArrayList<String> goolMethods = getGoolMethodsFromGoolClass(goolClass);
+			for(String goolMethod : goolMethods){
+				ArrayList<String> inputMethodSignatures = new ArrayList<String>();
+				ips= new FileInputStream(getPathOfInputMethodMatchFile(goolMethod)); 
+				ipsr=new InputStreamReader(ips);
+				br=new BufferedReader(ipsr);
+				while ((line=br.readLine())!=null){
+					line=removeSpaces(line);
+					if(isInputMatchLine(line)){
+						String currentGoolMethod = getLeftPartOfInputMatchLine(line);
+						String currentInputMethodSignature = getRightPartOfInputMatchLine(line);
+						if(currentGoolMethod.equals(goolMethod))
+							inputMethodSignatures.add(currentInputMethodSignature);
+					}	
+				}
+				br.close(); 
+				MethodMatchTable.put(goolMethod,inputMethodSignatures);
+			}	
+		}		
+		catch (Exception e){
+			System.out.println(e.toString());
 		}
+		printMatchTables();
 	}
+	
+	
 
-
-	/*
-	 *  methods used by the GoolMatcher to parse files and get the matching informations
-	 */
-	static private ArrayList<String> getDefaultGoolLibs(){
-		ArrayList<String> res = new ArrayList<String>();
+	
+	
+	static private ArrayList<String> getGoolClassesFromImport(String inputLangImport){
+		ArrayList<String> defaultGoolClasses = new ArrayList<String>();
 		try{
 			InputStream ips= new FileInputStream(getPathOfInputImportMatchFile()); 
 			InputStreamReader ipsr=new InputStreamReader(ips);
@@ -153,10 +148,10 @@ public class RecognizerMatcher{
 			while ((line=br.readLine())!=null){
 				line=removeSpaces(line);
 				if(isInputMatchLine(line)){
-					String GoolLib=getLeftPartOfInputMatchLine(line);
-					String Import=getRightPartOfInputMatchLine(line);
-					if(Import.equals("DEFAULT"))
-						res.add(GoolLib);
+					String currentGoolClass = getLeftPartOfInputMatchLine(line);
+					ArrayList<String> currentInputImports = parseCommaSeparatedValues(getRightPartOfInputMatchLine(line));
+					if(currentInputImports.contains(inputLangImport))
+						defaultGoolClasses.add(currentGoolClass);
 				}	
 			}
 			br.close(); 
@@ -164,26 +159,22 @@ public class RecognizerMatcher{
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
-		System.out.println("res="+res.size());
-		return res;
+		return defaultGoolClasses;
 	}
-
-	static private String getMatchedGoolLib(String InputLangImport){
-		String res = null;
+	
+	static private ArrayList<String> getGoolMethodsFromGoolClass(String goolClass){
+		ArrayList<String> goolMethods = new ArrayList<String>();
 		try{
-			InputStream ips= new FileInputStream(getPathOfInputImportMatchFile()); 
+			InputStream ips= new FileInputStream(getPathOfInputMethodMatchFile(goolClass+".")); 
 			InputStreamReader ipsr=new InputStreamReader(ips);
 			BufferedReader br=new BufferedReader(ipsr);
 			String line;
 			while ((line=br.readLine())!=null){
 				line=removeSpaces(line);
 				if(isInputMatchLine(line)){
-					String GoolLib=getLeftPartOfInputMatchLine(line);
-					String Import=getRightPartOfInputMatchLine(line);
-					//TODO: this has to be improved
-					if(Import.contains(InputLangImport)){
-						res = GoolLib;
-						break;
+					String currentGoolMethod = getLeftPartOfInputMatchLine(line);
+					if(currentGoolMethod.contains(goolClass)){
+						goolMethods.add(currentGoolMethod);
 					}
 				}	
 			}
@@ -192,81 +183,8 @@ public class RecognizerMatcher{
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
-		return res;
+		return goolMethods;
 	}
-
-	static private String getMatchedGoolClass(String InputLangClass){
-		String res = null;
-		boolean matchFound=false;
-		for(String GoolLib: EnabledGoolLibs){
-			try{
-				InputStream ips= new FileInputStream(getPathOfInputClassMatchFile(GoolLib)); 
-				InputStreamReader ipsr=new InputStreamReader(ips);
-				BufferedReader br=new BufferedReader(ipsr);
-				String line;
-				while ((line=br.readLine())!=null){
-					line=removeSpaces(line);
-					if(isInputMatchLine(line)){
-						String GoolClass=getLeftPartOfInputMatchLine(line);
-						String Classes=getRightPartOfInputMatchLine(line);
-						//TODO: this has to be improved
-						if(Classes.contains(InputLangClass)){
-							res = GoolClass;
-							matchFound=true;
-							break;
-						}
-					}	
-				}
-				br.close(); 
-				if(matchFound)
-					break;
-			}		
-			catch (Exception e){
-				System.out.println(e.toString());
-			}
-		}
-		return res;
-	}
-	static private String getMatchedGoolMethod(String GoolClass, MethodSignature InputLangMethSign){
-		String res = null;
-		boolean matchFound=false;
-		for(String GoolLib: EnabledGoolLibs){
-			try{
-				InputStream ips= new FileInputStream(getPathOfInputMethodMatchFile(GoolLib)); 
-				InputStreamReader ipsr=new InputStreamReader(ips);
-				BufferedReader br=new BufferedReader(ipsr);
-				String line;
-				while ((line=br.readLine())!=null){
-					line=removeSpaces(line);
-					if(isInputMatchLine(line)){
-						String GoolFullMethodName=getLeftPartOfInputMatchLine(line);
-						String GoolClassName=GoolFullMethodName.substring(0, GoolFullMethodName.lastIndexOf("."));
-						MethodSignature MethSign=new MethodSignature(getRightPartOfInputMatchLine(line));
-						if(GoolClassName.equals(GoolClass) && MethSign.isCompatibleWith(InputLangMethSign)){
-							res = GoolFullMethodName.substring(GoolClassName.length()+1);
-							matchFound=true;
-							break;
-						}
-					}	
-				}
-				br.close(); 
-				if(matchFound)
-					break;
-			}		
-			catch (Exception e){
-				System.out.println(e.toString());
-			}
-		}
-		return res;
-	}
-
-
-
-
-
-
-
-
 
 	/*
 	 *  methods used by the GoolMatcher to parse each line of a match file
@@ -286,66 +204,66 @@ public class RecognizerMatcher{
 	static private boolean isInputMatchLine(String line){
 		return !isCommentLine(line) && line.contains("<-");
 	}
-	static private boolean isOutputMatchLine(String line){
-		return !isCommentLine(line) && line.contains("->");
-	}
 	static private String getLeftPartOfInputMatchLine(String InputMatchLine){
 		return InputMatchLine.substring(0, InputMatchLine.indexOf("<-"));
 	}
 	static private String getRightPartOfInputMatchLine(String InputMatchLine){
 		return InputMatchLine.substring(InputMatchLine.indexOf("<-")+2);
 	}
-	static private String getLeftPartOfOutputMatchLine(String OutputMatchLine){
-		return OutputMatchLine.substring(0, OutputMatchLine.indexOf("->"));
+	static private ArrayList<String> parseCommaSeparatedValues(String csv){
+		ArrayList<String> parsedValues = new ArrayList<String>();
+		while(!csv.isEmpty()){
+			int ind1=csv.indexOf(",");
+			int ind2=csv.indexOf(";");
+			if(ind1!=-1){
+				parsedValues.add(csv.substring(0, ind1));
+				csv=csv.substring(ind1+1);
+			}
+			else{
+				parsedValues.add(csv.substring(0, ind2));
+				csv=csv.substring(ind2+1);
+			}
+		}
+		return parsedValues;
 	}
-	static private String getRightPartOfOutputMatchLine(String OutputMatchLine){
-		return OutputMatchLine.substring(OutputMatchLine.indexOf("->")+2);
-	}
-
 
 
 
 	/*
 	 *  methods used by the GoolMatcher to compute the path to match files
 	 */
-	static private String getPathOfInputMatchDir(String GoolLibName){
-		return "src/gool/recognizer/" + langToString(InputLang).toLowerCase() + "/matching/" + GoolLibName + "/";
+	static private String getPathOfInputMatchDir(String goolClass){
+		String goolPackageName = goolClass.substring(0, goolClass.lastIndexOf("."));
+		goolPackageName = goolPackageName.replace('.', '/');
+		return "src/gool/recognizer/" + InputLang.toString().toLowerCase() + "/matching/" + goolPackageName + "/";
 	}
 	static private String getPathOfInputImportMatchFile(){
-		return "src/gool/recognizer/" + langToString(InputLang).toLowerCase() + "/matching/ImportMatching.properties";
+		return "src/gool/recognizer/" + InputLang.toString().toLowerCase() + "/matching/ImportMatching.properties";
 	}
-	static private String getPathOfInputClassMatchFile(String GoolLibName){
-		return getPathOfInputMatchDir(GoolLibName) + "ClassMatching.properties";
+	static private String getPathOfInputClassMatchFile(String goolClass){
+		return getPathOfInputMatchDir(goolClass) + "ClassMatching.properties";
 	}
-	static private String getPathOfInputMethodMatchFile(String GoolLibName){
-		return getPathOfInputMatchDir(GoolLibName) + "MethodMatching.properties";
+	static private String getPathOfInputMethodMatchFile(String goolMethod){
+		String goolClassName = goolMethod.substring(0, goolMethod.lastIndexOf("."));
+		return getPathOfInputMatchDir(goolClassName) + "MethodMatching.properties";
 	}
 
 
-
-	// translation of a Language to a String
-	static private String langToString(Language lang){
-		String res = "";
-		switch(lang){
-		case JAVA:
-			res = "Java";
-			break;
-		case CPP:
-			res = "Cpp";
-			break;
-		case CSHARP:
-			res = "CSharp";
-			break;
-		case OBJC:
-			res = "Objc";
-			break;
-		case PYTHON:
-			res = "Python";
-			break;
-		case ANDROID:
-			res = "Android";
-			break;
+	//The following method may be used for debugging issues: it prints the content of the match tables.
+	public static void printMatchTables(){
+		System.out.println("[RecognizerMatcher] Printing ClassMatchTable...");
+		for(String goolClass : ClassMatchTable.keySet()){
+			System.out.print("[RecognizerMatcher] -- "+goolClass+" <- ");
+			for(String inputLangClass : ClassMatchTable.get(goolClass))
+				System.out.print(inputLangClass+" ");
+			System.out.println();
 		}
-		return res;
+		System.out.println("[RecognizerMatcher] Printing MethodMatchTable...");
+		for(String goolMethod : MethodMatchTable.keySet()){
+			System.out.print("[RecognizerMatcher] -- "+goolMethod+" <- ");
+			for(String inputLangMethodSignature : MethodMatchTable.get(goolMethod))
+				System.out.print(inputLangMethodSignature+" ");
+			System.out.println();
+		}
 	}
 }

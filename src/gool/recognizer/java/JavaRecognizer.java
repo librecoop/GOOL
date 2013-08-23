@@ -27,7 +27,7 @@
 
 package gool.recognizer.java;
 
-import gool.ast.constructs.GoolLibDependency;
+import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Language;
 import gool.ast.constructs.ArrayAccess;
 import gool.ast.constructs.ArrayNew;
@@ -122,6 +122,7 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.common.Platform;
+import gool.generator.java.JavaPlatform;
 import gool.generator.objc.ObjcPlatform;
 import gool.methods.MethodManager;
 import gool.recognizer.common.RecognizerMatcher;
@@ -380,8 +381,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					return;
 			
 			//else, if it is indeed a new dependency, we add it to the context
-			System.out.println("JavaRecognizer: addDependencyToContext "+newDep);
+			//System.out.println("default lib: Ajout de la dépendance "+newDep+" au contexte de la classe courante.");
 			context.getClassDef().addDependency(newDep);
+			System.out.println("Ajout d'une dépendance <"+newDep+"> à la classe courante.");
 		}
 	}
 
@@ -468,12 +470,28 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		}
 		//System.out.println("TYPEMIRROR CALL : "+typeMirror.toString());
-		//System.out.println("Appel à matchType("+typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1)+")");
+		
+		//String shortTypeName=typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1);
+		
+		System.out.println("Occurence du type <"+typeMirror+"> trouvée.");
+		String goolClass=RecognizerMatcher.matchClass(typeMirror.toString());
+		if(goolClass!=null){
+			addDependencyToContext(context, new RecognizedDependency(goolClass));
+			return new TypeMatchedGoolClass(goolClass);
+		}else{
+			//addDependencyToContext(context, new UnrecognizedDependency(typeMirror.toString()));
+		}
+		
+		
+		
+		/*
+		System.out.println("Appel à matchType("+typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1)+")");
 		String GoolClass = RecognizerMatcher.matchType(typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1));
-		System.out.println("GoolClass = "+GoolClass);
-		if (GoolClass!=null){ System.out.println("TYPE MATCH: The type "+typeMirror.toString()+" has been matched with the GoolClass type "+GoolClass);
+		//System.out.println("GoolClass = "+GoolClass);
+		if (GoolClass!=null){ System.out.println("Type recognized: The type "+typeMirror.toString()+" has been matched with the GoolClass type "+GoolClass);
 		return new TypeMatchedGoolClass(GoolClass);
 		}
+		*/
 		//Dealing with non-primitive types.
 		//First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
@@ -689,11 +707,19 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	private IType string2IType(String typeName, Context context) {
 
-
+		//if we recognized a type of a default lib, we add a dependency
+		/*
+		String goolClass=RecognizerMatcher.matchType(typeName);
+		System.out.println("Ajout d'une dépendance <"+goolClass+"> à la classe courante après occurence du type "+typeName);
+		if(goolClass!=null){
+			addDependencyToContext(context, new RecognizedDependency(goolClass));
+		}else{
+			addDependencyToContext(context, new UnrecognizedDependency(typeName));
+		}*/
+		
 		if (string2otdMap.containsKey(typeName)) {
-
 			IType type = string2otdMap.get(typeName).getType();
-			addDependencyToContext(context, new TypeDependency(type));
+			//addDependencyToContext(context, new TypeDependency(type));
 			return type;
 		} else if (typeName.equalsIgnoreCase("Object")) {
 			return TypeObject.INSTANCE;
@@ -1475,22 +1501,32 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		List<Dependency> dependencies = new ArrayList<Dependency>();
 
 		//GoolMatcher init call
-		RecognizerMatcher.init(Language.JAVA, this.defaultPlatform, this.goolClasses);
+		RecognizerMatcher.init(JavaPlatform.getInstance());
 
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
 			//if (!dependencyString.contains("gool.imports.java")
 			//		&& !dependencyString.contains("gool.imports.java.annotations")) {
-				String goolClass = RecognizerMatcher.matchImport(dependencyString);
-				System.out.println("reconnaissance de la dépendance: "+dependencyString);
+			
+			if(!RecognizerMatcher.matchImport(dependencyString)){
+				dependencies.add(new UnrecognizedDependency(dependencyString));
+			}
+				/*String goolClass = RecognizerMatcher.matchImport(dependencyString);
+				System.out.println("Evaluation de la dépendance: "+dependencyString+" ...");
 				if(goolClass!=null){
-					dependencies.add(new GoolLibDependency(goolClass+".*"));
+					System.out.println("... reconnue comme une dépendance de la classe "+goolClass+" .");
+					dependencies.add(new RecognizedDependency(goolClass));
 				}else{
+					System.out.println("... non reconnue, sera transcrite de manière générique.");
 					dependencies.add(new UnrecognizedDependency(dependencyString));
-					//dependencies.add(new CustomDependency(dependencyString));
-				}
+				}*/
+				
+				
+				
 			//}
 		}
+		
+		
 		//Visit each member class in turn
 		//And add it to the Dependencies too
 		//Each class may have a package.
@@ -1653,6 +1689,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
 		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());	
+		
+		String signature = (method.owner+"."+method.name+method.type).replace(")","):");
+		System.out.println("visitMethodInvocation: "+signature);
+		
 		Expression target;
 		if (n.getMethodSelect().toString().equals("System.out.println")) {
 			context.getClassDef().addDependency(new SystemOutDependency());
@@ -1673,7 +1713,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().
 			target = (Expression) n.getMethodSelect().accept(this, context);
-
+			System.out.println("target: "+target);
+			String goolMethod = RecognizerMatcher.matchMethod(signature);
+			
+			if(goolMethod != null && target instanceof MemberSelect){
+				((MemberSelect)target).setIdentifier(goolMethod.substring(goolMethod.lastIndexOf(".")+1));
+			}
+			
+			
+			
 		}
 
 		//the following piece of code is used to fix a weird code generation bug that occurs only with ObjC.

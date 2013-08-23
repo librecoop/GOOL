@@ -22,11 +22,11 @@ import gool.generator.GoolGeneratorController;
 /**
  * See Dependency for comments.
  */
-public class GoolLibDependency extends Dependency {
+public class RecognizedDependency extends Dependency {
 
 	private String goolLibName;
 
-	public GoolLibDependency(String goolLibName) {
+	public RecognizedDependency(String goolLibName) {
 		this.goolLibName = goolLibName;
 	}
 

@@ -95,11 +95,11 @@ public class GeneratorHelper {
 		MethodManager.reset();
 		for (ClassDef classDef : classDefs) {
 			
-			
+			System.out.println("Dépendances de la classe "+classDef.getName()+" :");
 			int x=0;
 			for(Dependency d : classDef.getDependencies()){
 				x++;
-				System.out.println("Dep"+x+":"+d);
+				System.out.println("\tDep"+x+":"+d);
 			}
 			
 			

@@ -39,6 +39,10 @@ public class MemberSelect extends VarAccess{
 		return var.getName();
 	}
 	
+	public void setIdentifier(String newName) {
+		var.setName(newName);
+	}
+	
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);		

@@ -44,7 +44,7 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
-import gool.ast.constructs.GoolLibDependency;
+import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
 import gool.ast.constructs.ListMethCall;
@@ -463,7 +463,7 @@ public interface CodeGenerator {
 
 	String getCode(TypeGoolClassToMatch typeGoolClassToMatch);
 
-	String getCode(GoolLibDependency goolLibDependency);
+	String getCode(RecognizedDependency recognizedDependency);
 
 	String getCode(UnrecognizedDependency unrecognizedDependency);
 	
