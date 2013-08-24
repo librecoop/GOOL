@@ -15,14 +15,9 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 /**
  * Visits the abstract GOOL tree to generate concrete C++
  */
-
 
 package gool.generator.cpp;
 
@@ -99,7 +94,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
+public class CppGenerator extends CommonCodeGenerator implements
+		CodeGeneratorNoVelocity {
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
@@ -122,8 +118,8 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		Modifier m = field.getAccessModifier();
 		List<Modifier> modifiers = new ArrayList<Modifier>(field.getModifiers());
 		modifiers.remove(m);
-		String out = String.format("%s: %s %s %s", m, getCode(modifiers), field
-				.getType(), field.getName());
+		String out = String.format("%s: %s %s %s", m, getCode(modifiers),
+				field.getType(), field.getName());
 		if (field.getDefaultValue() != null) {
 			// out = String.format("%s = %s", out, field.getDefaultValue());
 
@@ -131,10 +127,9 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 			if (!field.getModifiers().contains(Modifier.FINAL)
 					&& !field.getModifiers().contains(Modifier.STATIC)) {
 				throw new IllegalArgumentException(
-						String
-								.format(
-										"The field '%s' should be initialized within one of the class constructors.",
-										field.getName()));
+						String.format(
+								"The field '%s' should be initialized within one of the class constructors.",
+								field.getName()));
 			}
 		}
 
@@ -173,7 +168,7 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 	public String getCode(TypeInt typeInt) {
 		return "int";
 	}
-	
+
 	@Override
 	public String getCode(TypeString typeString) {
 		return "std::string*";
@@ -189,23 +184,24 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		if (cast.getType().equals(cast.getExpression().getType())) {
 			return String.format("%s", cast.getExpression());
 		} else if (cast.getExpression().getType() == TypeObject.INSTANCE) {
-			return String.format("any_cast< %s >( %s )", cast.getType(), cast
-					.getExpression());
+			return String.format("any_cast< %s >( %s )", cast.getType(),
+					cast.getExpression());
 		} else {
-			return String.format("( ( %s )( %s ) )", cast.getType(), cast
-					.getExpression());
+			return String.format("( ( %s )( %s ) )", cast.getType(),
+					cast.getExpression());
 		}
 	}
 
 	@Override
 	public String getCode(Constant constant) {
 		if (constant.getType().equals(TypeString.INSTANCE)) {
-			return String.format("( new std::string ( %s ) )", super
-					.getCode(constant));
+			return String.format("( new std::string ( %s ) )",
+					super.getCode(constant));
 		} else if (constant.getType().equals(TypeNull.INSTANCE)) {
 			return "NULL";
 		} else if (constant.getType().equals(TypeBool.INSTANCE)) {
-			return String.valueOf(constant.getValue().toString().equalsIgnoreCase("true") ? 1 : 0);
+			return String.valueOf(constant.getValue().toString()
+					.equalsIgnoreCase("true") ? 1 : 0);
 		} else {
 			return super.getCode(constant);
 		}
@@ -250,14 +246,15 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 			memberAccess += " -> ";
 		}
 
-		return String.format("%s%s", memberAccess, memberSelect.getIdentifier());
+		return String
+				.format("%s%s", memberAccess, memberSelect.getIdentifier());
 	}
 
 	@Override
 	public String getCode(TypeDecimal typeReal) {
 		return "double";
 	}
-	
+
 	@Override
 	public String getCode(TypeChar typeChar) {
 		// TODO Auto-generated method stub
@@ -268,12 +265,13 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
-			return String.format("std::cout << (%s)->data() << std::endl", GeneratorHelper
-				.joinParams(systemOutPrintCall.getParameters()));
-		}
-		else {
-			return String.format("std::cout << (%s) << std::endl", GeneratorHelper
-					.joinParams(systemOutPrintCall.getParameters()));
+			return String.format("std::cout << (%s)->data() << std::endl",
+					GeneratorHelper.joinParams(systemOutPrintCall
+							.getParameters()));
+		} else {
+			return String.format("std::cout << (%s) << std::endl",
+					GeneratorHelper.joinParams(systemOutPrintCall
+							.getParameters()));
 		}
 	}
 
@@ -336,27 +334,34 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		return String.format("%s -> size() == 0", mapIsEmptyCall.getExpression());
+		return String.format("%s -> size() == 0",
+				mapIsEmptyCall.getExpression());
 	}
-	
+
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
 		String left = binaryOp.getLeft().toString();
 		String right = binaryOp.getRight().toString();
-		
-		if (binaryOp.getOperator() == Operator.PLUS && binaryOp.getType().equals(TypeString.INSTANCE)) {
+
+		if (binaryOp.getOperator() == Operator.PLUS
+				&& binaryOp.getType().equals(TypeString.INSTANCE)) {
 			if (!binaryOp.getLeft().getType().equals(TypeString.INSTANCE)) {
-				left = String.format("new std::string(boost::lexical_cast<std::string>(%s))", left);
+				left = String
+						.format("new std::string(boost::lexical_cast<std::string>(%s))",
+								left);
 			}
 			if (!binaryOp.getRight().getType().equals(TypeString.INSTANCE)) {
-				right = String.format("new std::string(boost::lexical_cast<std::string>(%s))", right);
+				right = String
+						.format("new std::string(boost::lexical_cast<std::string>(%s))",
+								right);
 			}
 			left = String.format("(%s)", left);
 			right = String.format("(%s)", right);
 
-			return String.format("new std::string(%s -> append(* (%s)))", left, right);
+			return String.format("new std::string(%s -> append(* (%s)))", left,
+					right);
 		}
-		
+
 		return super.getCode(binaryOp);
 	}
 
@@ -368,17 +373,17 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String
-				.format("%s -> find( %s ) -> second", mapGetCall
-						.getExpression(), GeneratorHelper.joinParams(mapGetCall
-						.getParameters()));
+		return String.format("%s -> find( %s ) -> second",
+				mapGetCall.getExpression(),
+				GeneratorHelper.joinParams(mapGetCall.getParameters()));
 	}
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
 		String expr = mapContainsKeyCall.getExpression().toString();
-		return String.format("(%s) -> find(%s) != (%s) -> end()", expr, GeneratorHelper.joinParams(mapContainsKeyCall
-				.getParameters()), expr);
+		return String.format("(%s) -> find(%s) != (%s) -> end()", expr,
+				GeneratorHelper.joinParams(mapContainsKeyCall.getParameters()),
+				expr);
 	}
 
 	@Override
@@ -407,16 +412,19 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		Expression expression = enhancedForLoop.getExpression();
 		String expressionToString = enhancedForLoop.getExpression().toString();
 		return String
-				.format(
-						"for(%s::iterator %sIterator = %s->begin(); %sIterator != %s->end(); ++%sIterator){\n"
-								+ "%s %s *%sIterator;" + "%s" + "\n}",
-						removePointer(expression.getType()), varName,
-						expressionToString, varName, expressionToString,
-						varName, varDec.getType(),
+				.format("for(%s::iterator %sIterator = %s->begin(); %sIterator != %s->end(); ++%sIterator){\n"
+						+ "%s %s *%sIterator;" + "%s" + "\n}",
+						removePointer(expression.getType()),
+						varName,
+						expressionToString,
+						varName,
+						expressionToString,
+						varName,
+						varDec.getType(),
 						(expression.getType() instanceof TypeMap) ? (String
-								.format("* %s = (%s*)&", varName, varDec
-										.getType())) : (String.format("%s = ",
-								varName)), varName, enhancedForLoop
+								.format("* %s = (%s*)&", varName,
+										varDec.getType())) : (String.format(
+								"%s = ", varName)), varName, enhancedForLoop
 								.getStatements());
 
 	}
@@ -426,10 +434,9 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 	public String getCode(CustomDependency customDependency) {
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			throw new IllegalArgumentException(
-					String
-							.format(
-									"There is no equivalent type in C++ for the GOOL type '%s'.",
-									customDependency.getName()));
+					String.format(
+							"There is no equivalent type in C++ for the GOOL type '%s'.",
+							customDependency.getName()));
 		}
 		return customDependencies.get(customDependency.getName()).toString();
 	}
@@ -463,7 +470,7 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		
+
 		return String.format("%s -> equals(%s)", equalsCall.getTarget(),
 				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
@@ -475,14 +482,15 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		
-		return String.format("/* ListContainsCall not implemented in C++ at the moment */");
+
+		return String
+				.format("/* ListContainsCall not implemented in C++ at the moment */");
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s->%s(%s)", lgc.getExpression(), "at", GeneratorHelper
-				.joinParams(lgc.getParameters()));
+		return String.format("%s->%s(%s)", lgc.getExpression(), "at",
+				GeneratorHelper.joinParams(lgc.getParameters()));
 	}
 
 	@Override
@@ -498,9 +506,9 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("%s -> erase(%s -> begin()+%s)", lrc
-				.getExpression(), lrc.getExpression(), GeneratorHelper.joinParams(lrc
-				.getParameters()));
+		return String.format("%s -> erase(%s -> begin()+%s)",
+				lrc.getExpression(), lrc.getExpression(),
+				GeneratorHelper.joinParams(lrc.getParameters()));
 	}
 
 	@Override
@@ -511,9 +519,8 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		 */
 		String expr = lrc.getExpression().toString();
 		return String
-				.format(
-						"for(std::vector<int>::size_type i = 0; i != %s->size(); i++) {"
-								+ "if ( boost::any_cast<%s>(%s->at(i)) == %s ) {%s->erase(%s->begin()+i);break;}}",
+				.format("for(std::vector<int>::size_type i = 0; i != %s->size(); i++) {"
+						+ "if ( boost::any_cast<%s>(%s->at(i)) == %s ) {%s->erase(%s->begin()+i);break;}}",
 						expr, lrc.getParameters().get(0).getType(), expr, lrc
 								.getParameters().get(0), expr, expr);
 	}
@@ -539,10 +546,10 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		// Remove (public, private, protected, final) invalid modifiers.
 		modifiers.remove(meth.getAccessModifier());
 		modifiers.remove(Modifier.FINAL);
-		
-		return String.format("%s %s %s::%s(%s)", getCode(modifiers), meth.getType(), meth
-				.getClassDef().getName(), meth.getName(), StringUtils.join(meth
-				.getParams(), ", "));
+
+		return String.format("%s %s %s::%s(%s)", getCode(modifiers),
+				meth.getType(), meth.getClassDef().getName(), meth.getName(),
+				StringUtils.join(meth.getParams(), ", "));
 	}
 
 	@Override
@@ -556,37 +563,41 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 		return "int main()";
 	}
 
-
 	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public String printClass(ClassDef classDef) {
-		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
+		StringBuilder sb = new StringBuilder(String.format(
+				"// Platform: %s\n\n", classDef.getPlatform()));
 		// print the package containing the class
 		if (classDef.getPpackage() != null)
-			sb = sb.append(String.format("namespace %s {", classDef.getPackageName()));
+			sb = sb.append(String.format("namespace %s {",
+					classDef.getPackageName()));
 		sb = sb.append("#include <boost/any.hpp>\n");
 		sb = sb.append("#include <boost/lexical_cast.hpp>\n");
 		sb = sb.append("#include \"finally.h\"\n\n");
-		sb = sb.append(String.format("#include \"%s.h\"\n\n", classDef.getName()));
-		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
-		if (! dependencies.isEmpty()) {
+		sb = sb.append(String.format("#include \"%s.h\"\n\n",
+				classDef.getName()));
+		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
+		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies) {
-				if (! dependency.equals("noprint"))
-					sb = sb.append(String.format("#include \"%s\"\n", dependency));
+				if (!dependency.equals("noprint"))
+					sb = sb.append(String.format("#include \"%s\"\n",
+							dependency));
 			}
 			sb = sb.append("\n");
 		}
-		for (Meth meth : classDef.getMethods()){
+		for (Meth meth : classDef.getMethods()) {
 			// TODO: deal with constructors ?
 			if (classDef.isInterface())
 				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
 			else
-				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));
+				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n",
+						meth.getHeader(), meth.getBlock()));
 		}
 		if (classDef.getPpackage() != null)
 			sb = sb.append("}");
@@ -612,23 +623,21 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 
 	@Override
 	public String getCode(Catch catchStatement) {
-		return formatIndented("catch (%s * %s)\n{%1}\n",
-				catchStatement.getParameter().getType(),
-				catchStatement.getParameter().getName(),
-				catchStatement.getBlock());
+		return formatIndented("catch (%s * %s)\n{%1}\n", catchStatement
+				.getParameter().getType(), catchStatement.getParameter()
+				.getName(), catchStatement.getBlock());
 	}
 
 	@Override
 	public String getCode(Try tryStatement) {
 		String ret = "";
 		if (tryStatement.getFinilyBlock().getStatements().isEmpty()) {
-			ret = formatIndented("try\n{%1}", tryStatement.getBlock());		
+			ret = formatIndented("try\n{%1}", tryStatement.getBlock());
 		} else {
 			ret = formatIndented("try\n{\nfinally(%1) // finally%1}",
-					tryStatement.getFinilyBlock(),
-					tryStatement.getBlock());
+					tryStatement.getFinilyBlock(), tryStatement.getBlock());
 		}
-		for (Catch c: tryStatement.getCatches()) {
+		for (Catch c : tryStatement.getCatches()) {
 			ret += "\n" + c;
 		}
 		return ret;
@@ -645,4 +654,3 @@ public class CppGenerator extends CommonCodeGenerator implements CodeGeneratorNo
 	}
 
 }
-

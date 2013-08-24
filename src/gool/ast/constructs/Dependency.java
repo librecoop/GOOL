@@ -15,21 +15,14 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
-
 /**
- * A dependency is the abstract GOOL representation 
- * of the existence of an external class
- * which is used in the code of some abstract GOOL class
- * Gets implemented by CustomDependency
- * TODO: Maybe the two could be merged
+ * A dependency is the abstract GOOL representation of the existence of an
+ * external class which is used in the code of some abstract GOOL class Gets
+ * implemented by CustomDependency TODO: Maybe the two could be merged
  */
-public abstract class Dependency extends Node{
+public abstract class Dependency extends Node {
 
 	@Override
 	public boolean equals(Object obj) {

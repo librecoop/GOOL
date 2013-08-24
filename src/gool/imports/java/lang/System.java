@@ -15,15 +15,12 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.lang;
 
 public final class System {
-	private System(){}
+	private System() {
+	}
+
 	public static void println(Object input) {
 	}
 }
- 

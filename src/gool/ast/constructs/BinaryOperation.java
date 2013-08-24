@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
@@ -26,7 +22,8 @@ import gool.ast.type.TypeString;
 import gool.generator.GoolGeneratorController;
 
 /**
- * Allows to compute the value of a boolean or integer operation with two operands.
+ * Allows to compute the value of a boolean or integer operation with two
+ * operands.
  */
 public class BinaryOperation extends Operation {
 
@@ -49,8 +46,9 @@ public class BinaryOperation extends Operation {
 	 * @param right
 	 *            the right operand.
 	 */
-	public BinaryOperation(Operator operator, Expression left, Expression right, IType type, String symbol) {
-		super(operator,type,symbol);
+	public BinaryOperation(Operator operator, Expression left,
+			Expression right, IType type, String symbol) {
+		super(operator, type, symbol);
 		/*
 		 * If both expressions have different types and the '+' operator is
 		 * used, we assume that it is a string concatenation. Thus, we force the

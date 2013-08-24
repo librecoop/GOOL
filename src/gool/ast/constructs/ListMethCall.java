@@ -15,23 +15,17 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
-
 public class ListMethCall extends Parameterizable {
 	private Expression expression;
 
-	public ListMethCall( IType type) {
+	public ListMethCall(IType type) {
 		super(type);
 	}
-
 
 	public ListMethCall(IType type, Expression expression) {
 		super(type);
@@ -40,9 +34,9 @@ public class ListMethCall extends Parameterizable {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 	public Expression getExpression() {
 		return expression;
 	}

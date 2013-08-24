@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor.cpp;
 
 import gool.Settings;
@@ -54,8 +50,9 @@ public class CppCompiler extends SpecificCompiler {
 		}
 		Log.i("--->" + mainFile);
 
-		String execFileName = mainFile.getName().replace(".cpp",".bin");
-		params.addAll(Arrays.asList(Settings.get("cpp_compiler_cmd"), "-I", Settings.get("boost_lib_dir"), "-o", execFileName) );
+		String execFileName = mainFile.getName().replace(".cpp", ".bin");
+		params.addAll(Arrays.asList(Settings.get("cpp_compiler_cmd"), "-I",
+				Settings.get("boost_lib_dir"), "-o", execFileName));
 		/*
 		 * Add the needed dependencies to be able to compile programs.
 		 */
@@ -70,14 +67,14 @@ public class CppCompiler extends SpecificCompiler {
 		}
 
 		for (File file : files) {
-			if(!params.contains(file.toString()))
+			if (!params.contains(file.toString()))
 				params.add(file.toString());
-		} 
+		}
 
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
 	}
-	
+
 	@Override
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args) {
@@ -102,7 +99,7 @@ public class CppCompiler extends SpecificCompiler {
 
 		Map<String, String> env = new HashMap<String, String>();
 
-		params.addAll(Arrays.asList("./"+file.getName()));
+		params.addAll(Arrays.asList("./" + file.getName()));
 		return Command.exec(getOutputDir(), params, env);
 	}
 

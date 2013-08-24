@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
@@ -29,7 +25,7 @@ public class TypeArray extends ReferenceType {
 	 * The type of the elements.
 	 */
 	private IType elementType;
-	
+
 	public TypeArray(IType elementType) {
 		setElementType(elementType);
 	}
@@ -46,7 +42,7 @@ public class TypeArray extends ReferenceType {
 	public final IType getElementType() {
 		return elementType;
 	}
-	
+
 	@Override
 	public String callGetCode() {
 		return getName();

@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.map;
 
 import gool.ast.constructs.Expression;
@@ -31,10 +27,10 @@ public class MapRemoveCall extends MapMethCall {
 	public MapRemoveCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}
-	
+
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

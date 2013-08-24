@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
@@ -32,14 +28,15 @@ public final class TypeObject extends ReferenceType {
 	 * A static instance to avoid the creation of new objects.
 	 */
 	public static final TypeObject INSTANCE = new TypeObject();
-	
-	private TypeObject(){}
+
+	private TypeObject() {
+	}
 
 	@Override
 	public String callGetCode() {
 		return getName();
 	}
-	
+
 	@Override
 	public String getName() {
 		return GoolGeneratorController.generator().getCode(this);

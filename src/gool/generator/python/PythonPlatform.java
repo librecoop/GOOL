@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.python;
 
 import gool.Settings;
@@ -31,23 +27,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 public class PythonPlatform extends Platform {
 
 	private final String outputDir = Settings.get("python_out_dir");
-	
+
 	protected PythonPlatform(Collection<File> myFile) {
-		
-		
-		
+
 		super("PYTHON", myFile);
 
-		
-		//Test output folder exists
+		// Test output folder exists
 		File folder = new File(outputDir);
-		if(!folder.exists()) {
+		if (!folder.exists()) {
 			folder.mkdir();
-		}		
+		}
 	}
 
 	@Override
@@ -66,14 +58,14 @@ public class PythonPlatform extends Platform {
 		myFileToCopy = myF;
 		return instance;
 	}
-	
+
 	public static PythonPlatform getInstance() {
-		if(myFileToCopy == null) {
+		if (myFileToCopy == null) {
 			myFileToCopy = new ArrayList<File>();
 		}
 		return instance;
 	}
-	
+
 	public static void newInstance() {
 		instance = new PythonPlatform(myFileToCopy);
 	}

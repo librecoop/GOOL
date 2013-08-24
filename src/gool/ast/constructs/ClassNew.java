@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
@@ -43,7 +39,7 @@ import java.util.List;
  */
 
 public class ClassNew extends Parameterizable {
-	
+
 	/**
 	 * 
 	 * Creates an instance with a class name and a type.
@@ -81,8 +77,7 @@ public class ClassNew extends Parameterizable {
 	}
 
 	@SuppressWarnings("unused")
-	public ClassNew(IType type,
-			List<Expression> params) {
+	public ClassNew(IType type, List<Expression> params) {
 		this(type);
 		addParameters(params);
 	}
@@ -92,19 +87,17 @@ public class ClassNew extends Parameterizable {
 		addParameter(expression);
 	}
 
-	public ClassNew(IType type,
-			Expression... paramArray) {
+	public ClassNew(IType type, Expression... paramArray) {
 		this(type);
 		if (paramArray != null) {
 			addParameters(Arrays.asList(paramArray));
 		}
 	}
 
-
 	public String getName() {
 		return getType().getName();
 	}
-	
+
 	public List<IType> getTypeArguments() {
 		return getType().getTypeArguments();
 	}

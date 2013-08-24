@@ -15,19 +15,13 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
 
-
 /**
- * This captures the if statements of the intermediate language.
- * Hence it is an OOTStatement.
- * Notice the type checking achieved through generics.
+ * This captures the if statements of the intermediate language. Hence it is an
+ * OOTStatement. Notice the type checking achieved through generics.
  */
 public class If extends Statement {
 
@@ -43,25 +37,26 @@ public class If extends Statement {
 	 * The statement that is evaluated when the condition is false.
 	 */
 	private Statement elseStatement;
-	
+
 	/**
-	 * @param condition 
+	 * @param condition
 	 * @param statements
 	 */
-	public If(Expression condition, Statement thenStatement, Statement elseStatement){
-		this.condition=condition;
+	public If(Expression condition, Statement thenStatement,
+			Statement elseStatement) {
+		this.condition = condition;
 		this.thenStatement = thenStatement;
 		this.elseStatement = elseStatement;
 	}
-	
+
 	public Expression getCondition() {
 		return condition;
 	}
-	
+
 	public Statement getThenStatement() {
 		return thenStatement;
 	}
-	
+
 	public Statement getElseStatement() {
 		return elseStatement;
 	}
@@ -70,5 +65,5 @@ public class If extends Statement {
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 }

@@ -15,30 +15,26 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.io;
 
-public class File{
+public class File {
 	public File(String arg) {
 		// TODO Auto-generated method stub
 	}
-	public Boolean delete()
-	{
+
+	public Boolean delete() {
 		return null;
 	}
-	public Boolean isFile()
-	{
+
+	public Boolean isFile() {
 		return null;
 	}
-	public Boolean isDirectory()
-	{
+
+	public Boolean isDirectory() {
 		return null;
 	}
-	public Boolean exists()
-	{
+
+	public Boolean exists() {
 		return null;
 	}
 }

@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor.csharp;
 
 import gool.Settings;
@@ -39,7 +35,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class CSharpCompiler extends SpecificCompiler {
-	private static Logger logger = Logger.getLogger(CSharpCompiler.class.getName());
+	private static Logger logger = Logger.getLogger(CSharpCompiler.class
+			.getName());
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
 
@@ -58,10 +55,10 @@ public class CSharpCompiler extends SpecificCompiler {
 			mainFile = files.get(0);
 		}
 
-			String execFileName = mainFile.getName().replace(".cs", ".exe");
-			params.addAll(Arrays.asList(Settings.get("csharp_compiler_cmd"), "-debug+", "/t:exe",
-					"/out:" + execFileName));
-		
+		String execFileName = mainFile.getName().replace(".cs", ".exe");
+		params.addAll(Arrays.asList(Settings.get("csharp_compiler_cmd"),
+				"-debug+", "/t:exe", "/out:" + execFileName));
+
 		/*
 		 * Add the needed dependencies to be able to compile programs.
 		 */
@@ -81,24 +78,23 @@ public class CSharpCompiler extends SpecificCompiler {
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
 	}
-	
-	
+
 	@Override
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
 			throws FileNotFoundException {
 		// TODO Duplicate code in compile and compileAll
-		
+
 		if (mainFile == null) {
 			Log.i(files.toString());
 			mainFile = files.get(0);
 		}
-		
+
 		String execFileName = mainFile.getName().replace(".cs", ".dll");
 
 		List<String> params = new ArrayList<String>();
-		params.addAll(Arrays.asList(Settings.get("csharp_compiler_cmd"), "-debug+", "/t:library"));
-		
+		params.addAll(Arrays.asList(Settings.get("csharp_compiler_cmd"),
+				"-debug+", "/t:library"));
 
 		/*
 		 * Add the needed dependencies to be able to compile programs.
@@ -123,8 +119,9 @@ public class CSharpCompiler extends SpecificCompiler {
 	@Override
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
-		String[] runTest = IS_WINDOWS ? new String[] { new File(getOutputDir(),	file.getName()).getAbsolutePath() }
-				: new String[] { "mono", file.getName() };
+		String[] runTest = IS_WINDOWS ? new String[] { new File(getOutputDir(),
+				file.getName()).getAbsolutePath() } : new String[] { "mono",
+				file.getName() };
 		List<String> params = new ArrayList<String>();
 
 		List<String> deps = new ArrayList<String>();
@@ -148,6 +145,5 @@ public class CSharpCompiler extends SpecificCompiler {
 	public String getSourceCodeExtension() {
 		return "cs";
 	}
-
 
 }

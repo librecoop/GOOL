@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.xml;
 
 import java.io.File;
@@ -32,9 +28,9 @@ import gool.generator.common.Platform;
 import gool.generator.python.PythonPlatform;
 
 public class XmlPlatform extends Platform {
-	
+
 	private final String outputDir = Settings.get("xml_out_dir");
-	
+
 	protected XmlPlatform(Collection<File> myFile) {
 		super("XML", myFile);
 	}
@@ -48,22 +44,21 @@ public class XmlPlatform extends Platform {
 	protected SpecificCompiler initializeCompiler() {
 		return null;
 	}
-	
+
 	private static XmlPlatform instance = new XmlPlatform(myFileToCopy);
 
-
-	
 	public static XmlPlatform getInstance(Collection<File> myF) {
 		myFileToCopy = myF;
 		return instance;
 	}
-	
+
 	public static XmlPlatform getInstance() {
-		if(myFileToCopy == null) {
+		if (myFileToCopy == null) {
 			myFileToCopy = new ArrayList<File>();
 		}
 		return instance;
 	}
+
 	public static void newInstance() {
 		instance = new XmlPlatform(myFileToCopy);
 	}

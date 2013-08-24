@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.android;
 
 import java.util.ArrayList;
@@ -93,15 +89,16 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 
-	public void addCustomDependency(String key, Dependency value){
+	public void addCustomDependency(String key, Dependency value) {
 		customDependencies.put(key, value);
 	}
-	
+
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		if (!(binaryOp.getLeft() instanceof Constant) && binaryOp.getOperator() == Operator.EQUAL) {
-			return String.format("%s==(%s)", binaryOp.getLeft(), binaryOp
-					.getRight());
+		if (!(binaryOp.getLeft() instanceof Constant)
+				&& binaryOp.getOperator() == Operator.EQUAL) {
+			return String.format("%s==(%s)", binaryOp.getLeft(),
+					binaryOp.getRight());
 		} else {
 			return super.getCode(binaryOp);
 		}
@@ -109,62 +106,77 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	public String getCode(ClassNew classNew) {
 		if (classNew.getType().toString().equals("File"))
-			return String.format("new %s (Environment.getExternalStorageDirectory(),%s)",classNew.getType(), StringUtils.join(classNew.getParameters(), ", "));
-		if (classNew.getType().toString().equals ("FileReader"))
-		{
+			return String.format(
+					"new %s (Environment.getExternalStorageDirectory(),%s)",
+					classNew.getType(),
+					StringUtils.join(classNew.getParameters(), ", "));
+		if (classNew.getType().toString().equals("FileReader")) {
 			List<String> tempList = new ArrayList<String>();
 			for (Expression expression : classNew.getParameters()) {
 				if (expression.getType() instanceof TypeString) {
-					String tempString = "new File (Environment.getExternalStorageDirectory(),"+  expression.toString()+ ")";
+					String tempString = "new File (Environment.getExternalStorageDirectory(),"
+							+ expression.toString() + ")";
 					tempList.add(String.valueOf(tempString));
 				} else {
 					tempList.add(expression.toString());
 				}
 			}
-			return String.format( "new %s (%s)", classNew.getType(),StringUtils.join(tempList, ","));
+			return String.format("new %s (%s)", classNew.getType(),
+					StringUtils.join(tempList, ","));
 		}
-			if (classNew.getType().toString().equals ("FileWriter"))
-			{
-				List<String> tempList2 = new ArrayList<String>();
-				for (Expression expression : classNew.getParameters()) {
-					if (expression.getType() instanceof TypeString) {
-						String tempString = "new File (Environment.getExternalStorageDirectory(),"+  expression.toString()+ ")";
-						tempList2.add(String.valueOf(tempString));
-					} else {
-						tempList2.add(expression.toString());
-					}
+		if (classNew.getType().toString().equals("FileWriter")) {
+			List<String> tempList2 = new ArrayList<String>();
+			for (Expression expression : classNew.getParameters()) {
+				if (expression.getType() instanceof TypeString) {
+					String tempString = "new File (Environment.getExternalStorageDirectory(),"
+							+ expression.toString() + ")";
+					tempList2.add(String.valueOf(tempString));
+				} else {
+					tempList2.add(expression.toString());
 				}
-			return String.format( "new %s (%s)", classNew.getType(),StringUtils.join(tempList2, ","));
 			}
-		
-		return String.format("new %s(%s)", classNew.getType(), StringUtils
-				.join(classNew.getParameters(), ", "));
+			return String.format("new %s (%s)", classNew.getType(),
+					StringUtils.join(tempList2, ","));
+		}
+
+		return String.format("new %s(%s)", classNew.getType(),
+				StringUtils.join(classNew.getParameters(), ", "));
 	}
 
 	public String getCode(CustomDependency customDependency) {
 		if (!customDependencies.containsKey(customDependency.getName())) {
-			System.out.println(String.format("Custom dependencies: %s, Desired: %s", customDependencies, customDependency.getName()));
-			throw new IllegalArgumentException(String.format("There is no equivalent type in Java for the GOOL type '%s'.", customDependency.getName()));
+			System.out.println(String.format(
+					"Custom dependencies: %s, Desired: %s", customDependencies,
+					customDependency.getName()));
+			throw new IllegalArgumentException(
+					String.format(
+							"There is no equivalent type in Java for the GOOL type '%s'.",
+							customDependency.getName()));
 		}
 		return customDependencies.get(customDependency.getName()).toString();
 	}
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return String.format("for(%s : %s){%s}",
-				enhancedForLoop.getVarDec(), 
-				(enhancedForLoop.getExpression().getType() instanceof TypeMap)?String.format("%s.entrySet()",enhancedForLoop.getExpression()):enhancedForLoop.getExpression(), 
-				enhancedForLoop.getStatements());
+		return String
+				.format("for(%s : %s){%s}",
+						enhancedForLoop.getVarDec(),
+						(enhancedForLoop.getExpression().getType() instanceof TypeMap) ? String
+								.format("%s.entrySet()",
+										enhancedForLoop.getExpression())
+								: enhancedForLoop.getExpression(),
+						enhancedForLoop.getStatements());
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		return String.format("%s.equals(%s)", equalsCall.getTarget(), StringUtils.join(equalsCall.getParameters(), ", "));
+		return String.format("%s.equals(%s)", equalsCall.getTarget(),
+				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
 
 	public String getCode(ListAddCall lac) {
-		return String.format("%s.add(%s)", lac.getExpression(), StringUtils
-				.join(lac.getParameters(), ", "));
+		return String.format("%s.add(%s)", lac.getExpression(),
+				StringUtils.join(lac.getParameters(), ", "));
 	}
 
 	public String getCode(ListContainsCall lcc) {
@@ -173,8 +185,8 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	}
 
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s.get(%s)", lgc.getExpression(), StringUtils
-				.join(lgc.getParameters(), ", "));
+		return String.format("%s.get(%s)", lgc.getExpression(),
+				StringUtils.join(lgc.getParameters(), ", "));
 	}
 
 	public String getCode(ListGetIteratorCall lgic) {
@@ -184,14 +196,15 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(ListIsEmptyCall liec) {
 		return String.format("%s.isEmpty()", liec.getExpression());
 	}
-	
+
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("%s.remove(%s)", lrc.getExpression(), StringUtils
-				.join(lrc.getParameters(), ", "));
+		return String.format("%s.remove(%s)", lrc.getExpression(),
+				StringUtils.join(lrc.getParameters(), ", "));
 	}
+
 	public String getCode(ListRemoveCall lrc) {
-		return String.format("%s.remove(%s)", lrc.getExpression(), StringUtils
-				.join(lrc.getParameters(), ", "));
+		return String.format("%s.remove(%s)", lrc.getExpression(),
+				StringUtils.join(lrc.getParameters(), ", "));
 	}
 
 	public String getCode(ListSizeCall lsc) {
@@ -199,9 +212,9 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	}
 
 	/**
-	 * Changed from java, might cause problems if input java has more than one main method
-	 * or if Android uses public static void main. Currently sufficient for preliminary
-	 * tests on HelloWorld.
+	 * Changed from java, might cause problems if input java has more than one
+	 * main method or if Android uses public static void main. Currently
+	 * sufficient for preliminary tests on HelloWorld.
 	 */
 	public String getCode(MainMeth mainMeth) {
 		return "public static void EntryMethod(String[] args)";
@@ -209,21 +222,20 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
-		return String.format("%s.containsKey(%s)", mapContainsKeyCall
-				.getExpression(), StringUtils.join(mapContainsKeyCall
-				.getParameters(), ", "));
+		return String.format("%s.containsKey(%s)",
+				mapContainsKeyCall.getExpression(),
+				StringUtils.join(mapContainsKeyCall.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
-		return String.format("%s.getKey()", mapEntryGetKeyCall
-				.getExpression());
+		return String.format("%s.getKey()", mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapEntryGetValueCall mapEntryGetKeyCall) {
-		return String.format("%s.getValue()", mapEntryGetKeyCall
-				.getExpression());
+		return String.format("%s.getValue()",
+				mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
@@ -234,8 +246,8 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		return String.format("%s.getIterator()", mapGetIteratorCall
-				.getExpression());
+		return String.format("%s.getIterator()",
+				mapGetIteratorCall.getExpression());
 	}
 
 	@Override
@@ -269,24 +281,24 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		out += ")";
 		return out;
 	}
-	
+
 	public String getCode(SystemOutDependency systemOutDependency) {
 		return "noprint";
 	}
 
-	
-	 // TODO Currently an android.widget.TextView called systemOutTextBox is used
-	 // as a System.out equivalent, this can probably be optimized with a Singleton
+	// TODO Currently an android.widget.TextView called systemOutTextBox is used
+	// as a System.out equivalent, this can probably be optimized with a
+	// Singleton
 	// type instance
-	 
+
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("PrintOut.getSystemOutTextBox().append(%s+\"\\n\"); ",
-		 StringUtils.join(
-				systemOutPrintCall.getParameters(), ",")) + 
-				String.format(" Log.i(\"JUnitSysOut\",String.valueOf(%s)) ",
-		 StringUtils.join(
-				systemOutPrintCall.getParameters(), ","));
+		return String.format(
+				"PrintOut.getSystemOutTextBox().append(%s+\"\\n\"); ",
+				StringUtils.join(systemOutPrintCall.getParameters(), ","))
+				+ String.format(" Log.i(\"JUnitSysOut\",String.valueOf(%s)) ",
+						StringUtils.join(systemOutPrintCall.getParameters(),
+								","));
 	}
 
 	public String getCode(ToStringCall tsc) {
@@ -314,10 +326,10 @@ public class AndroidGenerator extends CommonCodeGenerator {
 			return "java.util.Map";
 		}
 		if (typeDependency.getType() instanceof TypeFile) {
-			return "java.io.File;" +"\n import android.os.Environment\n";
+			return "java.io.File;" + "\n import android.os.Environment\n";
 		}
 		if (typeDependency.getType() instanceof TypeFileReader) {
-				return "java.io.FileReader";
+			return "java.io.FileReader";
 		}
 		if (typeDependency.getType() instanceof TypeBufferedReader) {
 			return "java.io.BufferedReader";
@@ -330,17 +342,18 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		return String.format("Map.Entry<%s, %s>",typeEntry.getKeyType(), typeEntry.getElementType());
+		return String.format("Map.Entry<%s, %s>", typeEntry.getKeyType(),
+				typeEntry.getElementType());
 	}
 
 	@Override
 	public String getCode(TypeInt typeInt) {
 		return "Integer";
 	}
-	
+
 	@Override
 	public String getCode(TypeList typeList) {
-		
+
 		IType elementType = typeList.getElementType();
 		if (elementType == null) {
 			elementType = TypeObject.INSTANCE;
@@ -350,8 +363,8 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeMap typeMap) {
-		return String.format("HashMap<%s, %s>", typeMap.getKeyType(), typeMap
-				.getElementType());
+		return String.format("HashMap<%s, %s>", typeMap.getKeyType(),
+				typeMap.getElementType());
 	}
 
 	@Override
@@ -363,12 +376,12 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(TypeString typeString) {
 		return "String";
 	}
-	
+
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "char";
 	}
-	
+
 	@Override
 	public String getCode(Modifier modifier) {
 		if (modifier == Modifier.OVERRIDE) {
@@ -390,29 +403,31 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(TypeFile typeFile) {
-		
+
 		return "File";
-		
+
 	}
+
 	@Override
 	public String getCode(TypeFileReader typeFileReader) {
-		
+
 		return "FileReader";
 	}
+
 	@Override
 	public String getCode(TypeBufferedReader typeBufferedReader) {
-	
+
 		return "BufferedReader";
 	}
-	
+
 	@Override
 	public String getCode(TypeFileWriter typeFileWriter) {
-		
+
 		return "FileWriter";
 	}
 
 	@Override
-	public String getCode(Try t ) {
+	public String getCode(Try t) {
 		StringBuilder result = new StringBuilder();
 		result.append("try{\n");
 		for (Statement statement : t.getBlock().getStatements()) {
@@ -420,18 +435,18 @@ public class AndroidGenerator extends CommonCodeGenerator {
 			if (!(statement instanceof Block)) {
 				result.append(";").append("\n");
 			}
-			
+
 		}
-		result.append("\n}"); //closing bracket
+		result.append("\n}"); // closing bracket
 		for (Catch c : t.getCatches()) {
-			result.append(getCode(c));		
-			
+			result.append(getCode(c));
+
 		}
 		return result.toString();
 	}
-	
+
 	@Override
-	public String getCode(Catch c ) {
+	public String getCode(Catch c) {
 		StringBuilder result = new StringBuilder();
 		result.append("\n catch(");
 		result.append(") {\n");
@@ -440,25 +455,24 @@ public class AndroidGenerator extends CommonCodeGenerator {
 			if (!(statement instanceof Block)) {
 				result.append(";").append("\n");
 			}
-			
+
 		}
-		
+
 		result.append("\n}");
 		return result.toString();
 	}
-	
-	
+
 	@Override
 	public String getCode(Meth meth) {
-		if(meth.getThrowStatement().size()== 0) {
+		if (meth.getThrowStatement().size() == 0) {
 			return super.getCode(meth);
+		} else {
+			return String.format("%s %s %s(%s) throws %s",
+					getCode(meth.getModifiers()), meth.getType(),
+					meth.getName(), StringUtils.join(meth.getParams(), ", "),
+					StringUtils.join(meth.getThrowStatement(), ", "));
 		}
-		else {
-			return String.format("%s %s %s(%s) throws %s", getCode(meth.getModifiers()), meth
-					.getType(), meth.getName(), StringUtils.join(meth.getParams(),
-					", "), StringUtils.join(meth.getThrowStatement(),", "));			
-		}
-		
+
 	}
 
 	@Override

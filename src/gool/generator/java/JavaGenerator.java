@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.java;
 
 import gool.ast.constructs.BinaryOperation;
@@ -87,7 +83,10 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-public class JavaGenerator extends CommonCodeGenerator /*implements CodeGeneratorNoVelocity*/ {
+public class JavaGenerator extends CommonCodeGenerator /*
+														 * implements
+														 * CodeGeneratorNoVelocity
+														 */{
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 	private static Logger logger = Logger.getLogger(JavaGenerator.class
@@ -127,9 +126,13 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return formatIndented("for (%s : %s){%1}",
-				enhancedForLoop.getVarDec(), 
-				(enhancedForLoop.getExpression().getType() instanceof TypeMap)?String.format("%s.entrySet()",enhancedForLoop.getExpression()):enhancedForLoop.getExpression(), 
+		return formatIndented(
+				"for (%s : %s){%1}",
+				enhancedForLoop.getVarDec(),
+				(enhancedForLoop.getExpression().getType() instanceof TypeMap) ? String
+						.format("%s.entrySet()",
+								enhancedForLoop.getExpression())
+						: enhancedForLoop.getExpression(),
 				enhancedForLoop.getStatements());
 	}
 
@@ -153,7 +156,7 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 		return String.format("%s.get(%s)", lgc.getExpression(),
 				StringUtils.join(lgc.getParameters(), ", "));
 	}
-	
+
 	public String getCode(ListGetIteratorCall lgic) {
 		return String.format("%s.getIterator()", lgic.getExpression());
 	}
@@ -254,7 +257,7 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 
 	public String getCode(ToStringCall tsc) {
 		return String.format("%s.toString()", tsc.getTarget());
-		
+
 	}
 
 	@Override
@@ -266,7 +269,7 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 	public String getCode(TypeDecimal typeReal) {
 		return "Double";
 	}
-	
+
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "char";
@@ -287,7 +290,7 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 		}
 		return super.getCode(typeDependency);
 	}
-	
+
 	@Override
 	public String getCode(TypeEntry typeEntry) {
 		return String.format("Map.Entry<%s, %s>", typeEntry.getKeyType(),
@@ -343,48 +346,51 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 		return null;
 	}
 
-	
-	//@Override
+	// @Override
 	public String printClass(ClassDef classDef) {
-		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
+		StringBuilder sb = new StringBuilder(String.format(
+				"// Platform: %s\n\n", classDef.getPlatform()));
 		// print the package containing the class
 		if (classDef.getPpackage() != null)
-			sb = sb.append(String.format("package %s;\n\n", classDef.getPackageName()));
+			sb = sb.append(String.format("package %s;\n\n",
+					classDef.getPackageName()));
 		// print the includes
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
-		if (! dependencies.isEmpty()) {
-			for (String dependency : dependencies){
-				if(dependency != "noprint" && dependency.contains("."))
+		if (!dependencies.isEmpty()) {
+			for (String dependency : dependencies) {
+				if (dependency != "noprint" && dependency.contains("."))
 					sb = sb.append(String.format("import %s;\n", dependency));
 			}
-				
+
 			sb = sb.append("\n");
 		}
 		// print the class prototype
 		sb = sb.append(String.format("%s %s %s",
 				StringUtils.join(classDef.getModifiers(), ' '),
-				classDef.isInterface()?"interface":"class",
+				classDef.isInterface() ? "interface" : "class",
 				classDef.getName()));
 		if (classDef.getParentClass() != null)
-			sb = sb.append(String.format(" extends %s",classDef.getParentClass()));
-		if (! classDef.getInterfaces().isEmpty())
-			sb = sb.append(String.format(" interfaces %s",StringUtils.join(classDef.getInterfaces(),", ")));
+			sb = sb.append(String.format(" extends %s",
+					classDef.getParentClass()));
+		if (!classDef.getInterfaces().isEmpty())
+			sb = sb.append(String.format(" interfaces %s",
+					StringUtils.join(classDef.getInterfaces(), ", ")));
 		sb = sb.append(" {\n\n");
 		// print the fields
 		for (Field field : classDef.getFields())
 			sb = sb.append(formatIndented("%-1%s;\n\n", field));
 		// print the methods
-		for (Meth meth : classDef.getMethods()){
+		for (Meth meth : classDef.getMethods()) {
 			if (classDef.isInterface()) {
 				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
 			} else {
 				if (meth.isConstructor()) {
 					sb = sb.append(formatIndented("%-1%s {\n%-2%s;%2%-1}\n\n",
-							meth.getHeader(),
-							((Constructor)meth).getInitCalls().get(0),
-							meth.getBlock()));
+							meth.getHeader(), ((Constructor) meth)
+									.getInitCalls().get(0), meth.getBlock()));
 				} else {
-					sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));					
+					sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n",
+							meth.getHeader(), meth.getBlock()));
 				}
 			}
 		}
@@ -410,20 +416,20 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 
 	@Override
 	public String getCode(Catch catchStatement) {
-		return formatIndented("catch (%s %s) {%1}",
-				catchStatement.getParameter().getType(),
-				catchStatement.getParameter().getName(),
-				catchStatement.getBlock());
+		return formatIndented("catch (%s %s) {%1}", catchStatement
+				.getParameter().getType(), catchStatement.getParameter()
+				.getName(), catchStatement.getBlock());
 	}
 
 	@Override
 	public String getCode(Try tryStatement) {
 		String ret = formatIndented("try {%1}", tryStatement.getBlock());
-		for (Catch c: tryStatement.getCatches()) {
+		for (Catch c : tryStatement.getCatches()) {
 			ret += " " + c;
 		}
 		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
-			ret += formatIndented(" finally {%1}", tryStatement.getFinilyBlock());
+			ret += formatIndented(" finally {%1}",
+					tryStatement.getFinilyBlock());
 		return ret;
 	}
 
@@ -476,5 +482,5 @@ public class JavaGenerator extends CommonCodeGenerator /*implements CodeGenerato
 			return typeException.getName();
 		}
 	}
-	
+
 }

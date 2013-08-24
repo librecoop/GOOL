@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.TypeBool;
@@ -36,7 +32,7 @@ public class EqualsCall extends Parameterizable {
 	public Expression getTarget() {
 		return target;
 	}
-	
+
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);

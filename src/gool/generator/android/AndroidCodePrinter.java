@@ -15,12 +15,7 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.android;
-
 
 import gool.Settings;
 import gool.ast.constructs.ClassDef;
@@ -90,8 +85,8 @@ public class AndroidCodePrinter extends CodePrinter {
 		writer.println(code);
 		writer.close();
 		/*
-		 *  This part checks whether the class contains a main method/entry point
-		 *  as well as creating the class that will be equivalent to sysOut.
+		 * This part checks whether the class contains a main method/entry point
+		 * as well as creating the class that will be equivalent to sysOut.
 		 */
 		if (pclass.isMainClass()) { // Check if class contains main method and
 									// if yes create activity class as well
@@ -108,21 +103,20 @@ public class AndroidCodePrinter extends CodePrinter {
 			// Put the generated class into the result list
 			result.add(activityFile);
 			/*
-			 * After this it checks whether a PrintOut class has been made yet and
-			 * if not creates it. The reason why it is done here is because most of the
-			 * time there will only be one main class and this step won't be repeated
-			 * Unnecessarily 
+			 * After this it checks whether a PrintOut class has been made yet
+			 * and if not creates it. The reason why it is done here is because
+			 * most of the time there will only be one main class and this step
+			 * won't be repeated Unnecessarily
 			 */
 			File printOutFile = new File(dir, "PrintOut.java");
-			if(!printOutFile.exists()) {
-			writer = new PrintWriter(printOutFile);
-			String printOutFileCode = processTemplate("printout.vm", pclass);
-			writer.println(printOutFileCode);
-			writer.close();
-			// Put the generated class into the result list
-			result.add(printOutFile);
+			if (!printOutFile.exists()) {
+				writer = new PrintWriter(printOutFile);
+				String printOutFileCode = processTemplate("printout.vm", pclass);
+				writer.println(printOutFileCode);
+				writer.close();
+				// Put the generated class into the result list
+				result.add(printOutFile);
 			}
-			
 
 		}
 
@@ -149,7 +143,8 @@ public class AndroidCodePrinter extends CodePrinter {
 		File newAndroidFolder = new File(Settings.get("android_out_dir_final"));
 		if (newAndroidFolder.exists()) {
 			deleteFolder(newAndroidFolder); // Removes all files and the
-											// directory as this causes problems for android project creation
+											// directory as this causes problems
+											// for android project creation
 		}
 		File newAndroidFolderSource = new File(
 				Settings.get("android_out_dir_final") + "//src");
@@ -160,14 +155,23 @@ public class AndroidCodePrinter extends CodePrinter {
 		// file to create a Android project
 		String mainMethodFolderString = mainClassFiles.get(0).getParentFile()
 				.getAbsolutePath(); // Get the first main method class
-		Settings.setAndroidMainActivity(mainClassFiles.get(0).getName()); //Sets this for later use by the Compiler class
+		Settings.setAndroidMainActivity(mainClassFiles.get(0).getName()); // Sets
+																			// this
+																			// for
+																			// later
+																			// use
+																			// by
+																			// the
+																			// Compiler
+																			// class
 		String folderString = oldAndroidFolder.getAbsolutePath();
 		String packageDirectory = mainMethodFolderString
 				.replace(folderString, "").replace("/", ".")
 				.replaceFirst(".", "");
-		//Below ensures that the code is within a package as required by android, if not creates one and
-		//updates folders accordingly
-		if(packageDirectory.equals("")) {
+		// Below ensures that the code is within a package as required by
+		// android, if not creates one and
+		// updates folders accordingly
+		if (packageDirectory.equals("")) {
 			packageDirectory = "com.test";
 			newAndroidFolderSource = new File(
 					Settings.get("android_out_dir_final") + "//src//com//test");
@@ -207,21 +211,20 @@ public class AndroidCodePrinter extends CodePrinter {
 	}
 
 	private void deleteFolder(File deleteFolder) {
-	
-		 String[] content;      
-	      if(deleteFolder.isDirectory()){  
-	          content = deleteFolder.list();  
-	          for (int i=0; i<content.length; i++) { 
-	         	       	 
-	              File myFile = new File(deleteFolder, content[i]);   
-	              if (myFile.isDirectory())
-	              {
-	            	  deleteFolder(myFile);
-	              }
-	              myFile.delete();  
-	          }  
-	       }  
-	      deleteFolder.delete();
+
+		String[] content;
+		if (deleteFolder.isDirectory()) {
+			content = deleteFolder.list();
+			for (int i = 0; i < content.length; i++) {
+
+				File myFile = new File(deleteFolder, content[i]);
+				if (myFile.isDirectory()) {
+					deleteFolder(myFile);
+				}
+				myFile.delete();
+			}
+		}
+		deleteFolder.delete();
 	}
 
 	private void copyFolder(File source, File destination) {
@@ -262,7 +265,7 @@ public class AndroidCodePrinter extends CodePrinter {
 			} catch (FileNotFoundException e) {
 
 			} catch (IOException ioe) {
-				
+
 			}
 		}
 
@@ -275,7 +278,8 @@ public class AndroidCodePrinter extends CodePrinter {
 	 * @param mainClassFiles
 	 * @return
 	 */
-	private void populateMainMethodClasses(File mainFolder, List<File> mainClassFiles) {
+	private void populateMainMethodClasses(File mainFolder,
+			List<File> mainClassFiles) {
 		File[] tempFileList = mainFolder.listFiles();
 		for (File tempFile : tempFileList) {
 			if (tempFile.isDirectory()) {

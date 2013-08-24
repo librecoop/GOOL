@@ -15,14 +15,9 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
-
 
 public abstract class InitCall extends MethCall {
 	protected InitCall(IType type, Expression target) {

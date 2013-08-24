@@ -15,12 +15,7 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.util;
-
 
 import java.util.Iterator;
 
@@ -39,7 +34,7 @@ public class ArrayList<T> implements Iterable<T> {
 	public boolean isEmpty() {
 		return false;
 	}
- 
+
 	public int size() {
 		return 0;
 	}

@@ -15,26 +15,23 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.io;
+
 import gool.imports.java.io.FileReader;
+
 public class BufferedReader {
-	public BufferedReader (FileReader arg) {
+	public BufferedReader(FileReader arg) {
 		// TODO Auto-generated method stub
 	}
-	public String readLine()
-	{
+
+	public String readLine() {
 		return null;
 	}
-	public int read()
-	{
+
+	public int read() {
 		return 0;
 	}
-	
-	public void close()
-	{
+
+	public void close() {
 	}
 }

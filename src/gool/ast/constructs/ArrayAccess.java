@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.TypeNone;
@@ -27,7 +23,7 @@ import gool.generator.GoolGeneratorController;
 /**
  * 
  */
-public class ArrayAccess extends Expression{
+public class ArrayAccess extends Expression {
 	private Expression expression;
 	private Expression index;
 
@@ -41,11 +37,11 @@ public class ArrayAccess extends Expression{
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 	public Expression getExpression() {
 		return expression;
 	}
-	
+
 	public Expression getIndex() {
 		return index;
 	}

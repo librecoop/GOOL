@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
@@ -28,7 +24,7 @@ public class Throw extends Statement {
 	 * Throw expression.
 	 */
 	private Expression expression;
-	
+
 	/**
 	 * 
 	 * @param expression
@@ -41,7 +37,6 @@ public class Throw extends Statement {
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-
 
 	public Expression getExpression() {
 		return expression;

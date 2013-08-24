@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
@@ -53,7 +49,7 @@ public class ClassDef extends Dependency {
 	 * Class' name.
 	 */
 	private String name;
-		
+
 	/**
 	 * List of fields.
 	 */
@@ -81,7 +77,7 @@ public class ClassDef extends Dependency {
 	private boolean isInterface;
 
 	private boolean isMainClass;
-	
+
 	private Package ppackage;
 
 	public ClassDef(Modifier modifier, String name, Platform platform) {
@@ -170,7 +166,7 @@ public class ClassDef extends Dependency {
 					freeVar.getType()));
 		}
 	}
-	
+
 	public void setPpackage(Package ppackage) {
 		this.ppackage = ppackage;
 	}
@@ -200,8 +196,7 @@ public class ClassDef extends Dependency {
 	public final String getName() {
 		return name;
 	}
-	
-	
+
 	public final void setName(String name) {
 		this.name = name;
 	}
@@ -308,8 +303,8 @@ public class ClassDef extends Dependency {
 	}
 
 	/**
-	 * Generates the target code using the specific CodePrinter 
-	 * related to the class' platform.
+	 * Generates the target code using the specific CodePrinter related to the
+	 * class' platform.
 	 * 
 	 * Instead of concatenating strings, the code generation is implemented
 	 * using velocity templates, unless the generator implements the interface
@@ -321,8 +316,9 @@ public class ClassDef extends Dependency {
 	 */
 	public String getCode() {
 		CodePrinter printer = getPlatform().getCodePrinter();
-		if(printer.getCodeGenerator() instanceof CodeGeneratorNoVelocity)
-			return ((CodeGeneratorNoVelocity)printer.getCodeGenerator()).printClass(this);
+		if (printer.getCodeGenerator() instanceof CodeGeneratorNoVelocity)
+			return ((CodeGeneratorNoVelocity) printer.getCodeGenerator())
+					.printClass(this);
 		else
 			return printer.processTemplate("class.vm", this);
 	}
@@ -336,18 +332,16 @@ public class ClassDef extends Dependency {
 	}
 
 	public final void addDependency(Dependency dependency) {
-		if (
-				(dependency instanceof TypeDependency)
-				&& 
-				(((TypeDependency)dependency).getType() instanceof TypeClass)
-				&& 
-				((TypeClass)((TypeDependency)dependency).getType()).getClassDef() != null
-				&&
-				((TypeClass)((TypeDependency)dependency).getType()).getClassDef().getPlatform() != null 
-				&&
-				(!((TypeClass)((TypeDependency)dependency).getType()).getClassDef().getPlatform().equals(getPlatform()))  
-				){
-			throw new IllegalArgumentException("There should not be dependencies between classes of different platforms.");
+		if ((dependency instanceof TypeDependency)
+				&& (((TypeDependency) dependency).getType() instanceof TypeClass)
+				&& ((TypeClass) ((TypeDependency) dependency).getType())
+						.getClassDef() != null
+				&& ((TypeClass) ((TypeDependency) dependency).getType())
+						.getClassDef().getPlatform() != null
+				&& (!((TypeClass) ((TypeDependency) dependency).getType())
+						.getClassDef().getPlatform().equals(getPlatform()))) {
+			throw new IllegalArgumentException(
+					"There should not be dependencies between classes of different platforms.");
 		}
 
 		if (dependency != null && !dependencies.contains(dependency)) {
@@ -391,7 +385,7 @@ public class ClassDef extends Dependency {
 		}
 		return ((ClassDef) obj).getType().equals(getType());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getType().getName().hashCode();
@@ -406,11 +400,12 @@ public class ClassDef extends Dependency {
 
 	public void setIsEnum(boolean isEnum) {
 		if (classType instanceof TypeClass) {
-			((TypeClass)classType).setIsEnum(isEnum);
+			((TypeClass) classType).setIsEnum(isEnum);
 		}
 	}
-	
+
 	public boolean isEnum() {
-		return (classType instanceof TypeClass) && ((TypeClass)classType).isEnum();
+		return (classType instanceof TypeClass)
+				&& ((TypeClass) classType).isEnum();
 	}
 }

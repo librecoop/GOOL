@@ -15,17 +15,13 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
 
-public class MemberSelect extends VarAccess{
+public class MemberSelect extends VarAccess {
 	private Expression target;
-	
+
 	public MemberSelect(Expression target, Dec var) {
 		super(var);
 		this.target = target;
@@ -34,18 +30,18 @@ public class MemberSelect extends VarAccess{
 	public Expression getTarget() {
 		return target;
 	}
-	
+
 	public String getIdentifier() {
 		return var.getName();
 	}
-	
+
 	public void setIdentifier(String newName) {
 		var.setName(newName);
 	}
-	
+
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

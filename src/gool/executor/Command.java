@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor;
 
 import java.io.BufferedReader;
@@ -39,13 +35,17 @@ import org.apache.log4j.Logger;
  */
 public final class Command {
 	private static Logger logger = Logger.getLogger(Command.class.getName());
+
 	private Command() {
 	}
 
 	/**
 	 * Executes a command in the specified working directory.
-	 * @param workingDir the working directory.
-	 * @param params the command to execute and its parameters.
+	 * 
+	 * @param workingDir
+	 *            the working directory.
+	 * @param params
+	 *            the command to execute and its parameters.
 	 * @return the console output.
 	 */
 	public static String exec(File workingDir, String... params) {
@@ -55,13 +55,18 @@ public final class Command {
 	public static String exec(File workingDir, List<String> params) {
 		return exec(workingDir, params, new HashMap<String, String>());
 	}
+
 	/**
 	 * Executes a command in the specified working directory.
-	 * @param workingDir the working directory.
-	 * @param params the command to execute and its parameters.
+	 * 
+	 * @param workingDir
+	 *            the working directory.
+	 * @param params
+	 *            the command to execute and its parameters.
 	 * @return the console output.
 	 */
-	public static String exec(File workingDir, List<String> params, Map<String, String> env) {
+	public static String exec(File workingDir, List<String> params,
+			Map<String, String> env) {
 		try {
 			StringBuffer buffer = new StringBuffer();
 
@@ -74,8 +79,8 @@ public final class Command {
 			Process p = pb.redirectErrorStream(true).start();
 
 			p.getOutputStream().close();
-			BufferedReader in = new BufferedReader(new InputStreamReader(p
-					.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					p.getInputStream()));
 
 			String line;
 			while ((line = in.readLine()) != null) {

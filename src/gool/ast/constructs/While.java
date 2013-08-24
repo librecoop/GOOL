@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
@@ -26,7 +22,7 @@ import gool.generator.GoolGeneratorController;
 /**
  * A while statement.
  */
-public class While extends Statement{
+public class While extends Statement {
 
 	/**
 	 * The condition expression.
@@ -36,20 +32,20 @@ public class While extends Statement{
 	 * The statement that is evaluated when the condition is true.
 	 */
 	private Statement whileStatement;
-	
+
 	/**
-	 * @param condition 
+	 * @param condition
 	 * @param statements
 	 */
-	public While(Expression condition, Statement whileStatement){
-		this.condition=condition;
+	public While(Expression condition, Statement whileStatement) {
+		this.condition = condition;
 		this.whileStatement = whileStatement;
 	}
-	
+
 	public Expression getCondition() {
 		return condition;
 	}
-	
+
 	public Statement getWhileStatement() {
 		return whileStatement;
 	}

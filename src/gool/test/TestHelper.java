@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.test;
 
 import gool.GOOLCompiler;
@@ -32,39 +28,40 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-
 public final class TestHelper {
-	
-
 
 	public static String surroundWithClassMain(String input, String className) {
 		return surroundWithClass("public static void main(String[] args){"
 				+ input + " } ", className, "");
 	}
 
-	public static String surroundWithClass(String input, String className, String accessModifier) {
-		return accessModifier + " class " + className + " { public " + className+ "(){} " + input + " } ";
+	public static String surroundWithClass(String input, String className,
+			String accessModifier) {
+		return accessModifier + " class " + className + " { public "
+				+ className + "(){} " + input + " } ";
 	}
-	
+
 	public static String generateCompileRun(Platform platform, String input,
 			String mainClassName) throws Exception, FileNotFoundException {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, input); 
+		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(
+				platform, input);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
 
 	public static List<File> generateCompile(Platform platform,
 			Collection<File> inputFiles, ClassDef classDef) throws Exception {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform, inputFiles);
+		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(
+				platform, inputFiles);
 		return ExecutorHelper.compile(files);
 	}
 
 	public static String generateCompileRun(Platform platform,
 			Collection<File> inputFiles, File file) throws Exception {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(platform,
-				inputFiles);
+		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(
+				platform, inputFiles);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
 

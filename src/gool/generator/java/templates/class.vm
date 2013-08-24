@@ -55,6 +55,7 @@
 
 ## Declare its methods
 #foreach( $method in $class.Methods )
+	#if($method.isGoolMethodImplementation())$method#else
     ${method.Header}#if($class.isInterface());#else {
 #if($method.isConstructor)
 	#foreach( $parentCall in $method.ParentCalls )
@@ -63,6 +64,6 @@
 #end        
 ${method.Block}
     }#end
-
+#end
 #end
 }

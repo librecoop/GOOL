@@ -15,27 +15,22 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
+public class TypeChar extends PrimitiveType {
 
-public class TypeChar extends PrimitiveType{
-	
 	public static final TypeChar INSTANCE = new TypeChar();
 
 	@Override
-	public String callGetCode(){
+	public String callGetCode() {
 		// TODO Auto-generated method stub
 		return getName();
 	}
 
 	@Override
-	public String getName()  {
+	public String getName() {
 		// TODO Auto-generated method stub
 		return GoolGeneratorController.generator().getCode(this);
 	}

@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.java;
 
 import gool.Settings;
@@ -32,13 +28,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This is the default Java Platform.
- * It uses the output folders specified in Settings.
- * It uses JavaCodePrinter for concrete Java generation.
- * It uses JavaCompiler for compiling and executing the generated concrete Java.
- * Since it is fully specified, and since there should only ever be one instance of it, this could almost have been a static class.
- * But since platforms in general are objects, this is not the case.
- * Still, we make sure that there is always only one instance of this object.
+ * This is the default Java Platform. It uses the output folders specified in
+ * Settings. It uses JavaCodePrinter for concrete Java generation. It uses
+ * JavaCompiler for compiling and executing the generated concrete Java. Since
+ * it is fully specified, and since there should only ever be one instance of
+ * it, this could almost have been a static class. But since platforms in
+ * general are objects, this is not the case. Still, we make sure that there is
+ * always only one instance of this object.
  */
 public final class JavaPlatform extends Platform {
 
@@ -47,35 +43,36 @@ public final class JavaPlatform extends Platform {
 	private JavaPlatform(Collection<File> myFile) {
 		super("JAVA", myFile);
 	}
-	
+
 	@Override
 	protected CodePrinter initializeCodeWriter() {
 		return new JavaCodePrinter(new File(outputDir), myFileToCopy);
 	}
-	
+
 	@Override
 	protected SpecificCompiler initializeCompiler() {
 		return new JavaCompiler(new File(outputDir), new ArrayList<File>());
 	}
-	
+
 	/**
-	 * What follows is to make sure that we always use the same instance of this object.
+	 * What follows is to make sure that we always use the same instance of this
+	 * object.
 	 */
-	
+
 	private static JavaPlatform instance = new JavaPlatform(myFileToCopy);
 
 	public static JavaPlatform getInstance(Collection<File> myF) {
 		myFileToCopy = myF;
 		return instance;
 	}
-	
+
 	public static JavaPlatform getInstance() {
-		if(myFileToCopy == null) {
+		if (myFileToCopy == null) {
 			myFileToCopy = new ArrayList<File>();
 		}
 		return instance;
 	}
-	
+
 	public static void newInstance() {
 		instance = new JavaPlatform(myFileToCopy);
 	}

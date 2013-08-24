@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.common;
 
 import gool.ast.constructs.ArrayAccess;
@@ -44,6 +40,7 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
+import gool.ast.constructs.GoolMethodImplementation;
 import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
@@ -122,9 +119,8 @@ import gool.ast.type.TypeVoid;
 import java.util.Collection;
 
 /**
- * Generates the concrete target from the abstract GOOL.
- * Many things are common to various target languages,
- * those are dealt with by CommonCodeGenerator.
+ * Generates the concrete target from the abstract GOOL. Many things are common
+ * to various target languages, those are dealt with by CommonCodeGenerator.
  */
 public interface CodeGenerator {
 
@@ -199,7 +195,7 @@ public interface CodeGenerator {
 	String getCode(Field field);
 
 	String getCode(FieldAccess sfa);
-	
+
 	String getCode(For forr);
 
 	String getCode(GoolCall goolCall);
@@ -321,7 +317,7 @@ public interface CodeGenerator {
 	String getCode(TypeBool typeBool);
 
 	String getCode(TypeBufferedReader typeBufferedReader);
-	
+
 	String getCode(TypeByte typeByte);
 
 	/**
@@ -332,7 +328,7 @@ public interface CodeGenerator {
 	String getCode(TypeClass typeClass);
 
 	String getCode(TypeDecimal typeReal);
-	
+
 	String getCode(TypeChar typeChar);
 
 	String getCode(TypeDependency typeDependency);
@@ -340,15 +336,15 @@ public interface CodeGenerator {
 	String getCode(TypeEntry typeEntry);
 
 	String getCode(TypeFile typeFile);
-	
+
 	String getCode(TypeFileReader typeFileReader);
-	
+
 	String getCode(TypeFileWriter typeFileWriter);
 
 	String getCode(TypeScanner typeScanner);
-	
+
 	String getCode(TypeInputStream typeInputStream);
-	
+
 	/**
 	 * Produces code for an integer type in the target language.
 	 * 
@@ -411,7 +407,7 @@ public interface CodeGenerator {
 	String getCode(UnaryOperation unaryOperation);
 
 	String getCode(VarAccess varAccess);
-	
+
 	/**
 	 * Produces code for a variable declaration.
 	 * 
@@ -430,7 +426,7 @@ public interface CodeGenerator {
 	String getCode(Identifier identifier);
 
 	String getCode(TypeUnknown typeUnknown);
-	
+
 	String getCode(ExpressionUnknown unknownExpression);
 
 	String getCode(ClassFree classFree);
@@ -444,9 +440,9 @@ public interface CodeGenerator {
 	String getCode(SystemCommandDependency systemCommandDependency);
 
 	String getCode(TypePackage typePackage);
-	
+
 	String getCode(TypeMethod typeMethod);
-	
+
 	String getCode(TypeVar typeVar);
 
 	String getCode(CompoundAssign compoundAssign);
@@ -467,4 +463,6 @@ public interface CodeGenerator {
 
 	String getCode(UnrecognizedDependency unrecognizedDependency);
 	
+	String getCode(GoolMethodImplementation goolMethodImplementation);
+
 }

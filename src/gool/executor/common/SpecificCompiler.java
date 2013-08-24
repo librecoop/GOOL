@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor.common;
 
 import gool.ast.constructs.ClassMain;
@@ -30,10 +26,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-
 public abstract class SpecificCompiler {
 
-	public static Logger logger = Logger.getLogger(SpecificCompiler.class.getName());
+	public static Logger logger = Logger.getLogger(SpecificCompiler.class
+			.getName());
 	/**
 	 * The output directory.
 	 */
@@ -58,7 +54,6 @@ public abstract class SpecificCompiler {
 
 	public static void cleanOutDir(File outDir) {
 
-		
 		File[] binFiles = outDir.listFiles();
 		if (binFiles != null) {
 			for (File file : binFiles) {
@@ -71,8 +66,9 @@ public abstract class SpecificCompiler {
 		dependencies.addAll(files);
 	}
 
-	public abstract File compileToExecutable(List<File> files, File mainFile, List<File> classPath, List<String> args) throws FileNotFoundException;
-
+	public abstract File compileToExecutable(List<File> files, File mainFile,
+			List<File> classPath, List<String> args)
+			throws FileNotFoundException;
 
 	public void compileUtils() {
 	}
@@ -95,7 +91,7 @@ public abstract class SpecificCompiler {
 	public List<File> getDependencies() {
 		return dependencies;
 	}
-	
+
 	/**
 	 * Gets the main class name.
 	 * 
@@ -110,11 +106,11 @@ public abstract class SpecificCompiler {
 	 * 
 	 * @return the output directory.
 	 */
-    public final File getOutputDir() {
-        if (!currentDir.exists())
-                currentDir.mkdirs();
-         return currentDir;
-    }
+	public final File getOutputDir() {
+		if (!currentDir.exists())
+			currentDir.mkdirs();
+		return currentDir;
+	}
 
 	public abstract String getSourceCodeExtension();
 
@@ -134,6 +130,7 @@ public abstract class SpecificCompiler {
 	public final void setMainClassName(String mainClassName) {
 		this.mainClassName = mainClassName;
 	}
+
 	/**
 	 * Sets the output directory.
 	 * 
@@ -143,9 +140,9 @@ public abstract class SpecificCompiler {
 	public final void setOutputDir(File outputDir) {
 		this.currentDir = outputDir;
 	}
-	
+
 	public abstract File compileToObjectFile(List<File> files, File mainFile,
-			List<File> classPath, List<String> args) throws FileNotFoundException;
-	
-	
+			List<File> classPath, List<String> args)
+			throws FileNotFoundException;
+
 }

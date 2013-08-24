@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor;
 
 import gool.ast.constructs.ClassDef;
@@ -45,10 +41,10 @@ public final class ExecutorHelper {
 
 	public static Iterable<? extends JavaFileObject> getJavaFileObjects(
 			Collection<? extends File> inputFiles) {
-		return ToolProvider.getSystemJavaCompiler().getStandardFileManager(
-				null, null, null).getJavaFileObjectsFromFiles(inputFiles);
+		return ToolProvider.getSystemJavaCompiler()
+				.getStandardFileManager(null, null, null)
+				.getJavaFileObjectsFromFiles(inputFiles);
 	}
-
 
 	public static ClassDef getMainClass(Collection<ClassDef> classDefs) {
 		for (ClassDef classDef : classDefs) {
@@ -78,18 +74,20 @@ public final class ExecutorHelper {
 
 	public static File getClassDefFile(ClassDef classDef) {
 		return new File(classDef.getPlatform().getCodePrinter().getOutputDir()
-				.getAbsolutePath(), StringUtils.replace(classDef
-				.getPackageName(), ".", File.separator));
+				.getAbsolutePath(), StringUtils.replace(
+				classDef.getPackageName(), ".", File.separator));
 	}
 
-	public static List<File> compile(Map<Platform, List<File>> files) throws FileNotFoundException {
+	public static List<File> compile(Map<Platform, List<File>> files)
+			throws FileNotFoundException {
 		List<File> result = new ArrayList<File>();
 		for (Entry<Platform, List<File>> item : files.entrySet()) {
 			SpecificCompiler compiler = item.getKey().getCompiler();
-			File outputFile = compiler.compileToExecutable(item.getValue(), null, null, null);	
+			File outputFile = compiler.compileToExecutable(item.getValue(),
+					null, null, null);
 			result.add(outputFile);
 		}
-	
+
 		return result;
 	}
 }

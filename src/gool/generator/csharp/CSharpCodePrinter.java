@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.csharp;
 
 import gool.generator.common.CodePrinter;
@@ -36,20 +32,21 @@ public class CSharpCodePrinter extends CodePrinter {
 	public CSharpCodePrinter(File outputDir, Collection<File> myF) {
 		super(new CSharpGenerator(), outputDir, myF);
 	}
-	
+
 	@Override
 	public String getTemplateDir() {
 		return TEMPLATE_DIR;
 	}
-	
-//	@Override
-//	public Collection<? extends File> print(ClassDef pclass) throws FileNotFoundException {
-//		if (pclass.getParentClass() != null) {
-//			pclass.getInterfaces().add(0, pclass.getParentClass());
-//		}
-//		super.print(pclass);
-//		return null;
-//	}
+
+	// @Override
+	// public Collection<? extends File> print(ClassDef pclass) throws
+	// FileNotFoundException {
+	// if (pclass.getParentClass() != null) {
+	// pclass.getInterfaces().add(0, pclass.getParentClass());
+	// }
+	// super.print(pclass);
+	// return null;
+	// }
 
 	@Override
 	public String getFileName(String className) {

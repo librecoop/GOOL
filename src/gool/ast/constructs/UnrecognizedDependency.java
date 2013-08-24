@@ -34,11 +34,8 @@ public class UnrecognizedDependency extends Dependency {
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 }
-
-
-

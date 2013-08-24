@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor.python;
 
 import gool.executor.Command;
@@ -52,10 +48,10 @@ public class PythonCompiler extends SpecificCompiler {
 	@Override
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
-		
+
 		Map<String, String> env = new HashMap<String, String>();
 		env.put("PYTHONPATH", getOutputDir().getAbsolutePath());
-		
+
 		List<String> params = new ArrayList<String>();
 		params.add("python");
 		params.add("-B"); // do not produce compiled files

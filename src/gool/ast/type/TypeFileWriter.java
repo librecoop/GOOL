@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.ast.constructs.ClassDef;
@@ -30,26 +26,27 @@ public class TypeFileWriter extends ReferenceType {
 	 * The class where the list was defined.
 	 */
 	private ClassDef classDef;
-	
-	public TypeFileWriter(){}
+
+	public TypeFileWriter() {
+	}
 
 	public TypeFileWriter(IType elementType) {
 		this();
 		addArgument(elementType);
 	}
-	
+
 	public IType getElementType() {
 		if (getTypeArguments().size() > 0) {
 			return getTypeArguments().get(0);
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 	public ClassDef getClassDef() {
 		return classDef;
 	}
@@ -60,9 +57,10 @@ public class TypeFileWriter extends ReferenceType {
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof TypeFile && getName().equals(((IType)obj).getName());
+		return obj instanceof TypeFile
+				&& getName().equals(((IType) obj).getName());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getName().hashCode();

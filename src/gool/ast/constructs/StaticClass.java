@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.common.Platform;
@@ -30,12 +26,12 @@ public class StaticClass extends ClassDef {
 		addModifier(Modifier.STATIC);
 	}
 
-	public void addMethod(Meth method){
+	public void addMethod(Meth method) {
 		super.addMethod(method);
 		method.addModifier(Modifier.STATIC);
 	}
-	
-	public void addField(Field field){
+
+	public void addField(Field field) {
 		super.addField(field);
 		field.addModifier(Modifier.STATIC);
 	}

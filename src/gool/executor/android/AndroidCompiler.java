@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor.android;
 
 import gool.Settings;
@@ -33,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class AndroidCompiler extends SpecificCompiler {
 
@@ -83,23 +78,23 @@ public class AndroidCompiler extends SpecificCompiler {
 			runApkOnPhone();
 			String returnString;
 			int waitTime = 0;
-			/*This waits until there is an output on the logcat file before continuing
-			 * as it may take some time, limited to a maximum of 10 seconds
-			 */			
+			/*
+			 * This waits until there is an output on the logcat file before
+			 * continuing as it may take some time, limited to a maximum of 10
+			 * seconds
+			 */
 			do {
 				Thread.sleep(2000);
 				// Reads the logCat file and returns the SysOut equivalent
-			returnString = execLogCatCommand("adb logcat -d raw JUnitSysOut:I *:S"); 
-			waitTime++;
-			}
-			while(returnString.equals("")||waitTime>10);
+				returnString = execLogCatCommand("adb logcat -d raw JUnitSysOut:I *:S");
+				waitTime++;
+			} while (returnString.equals("") || waitTime > 10);
 			return returnString;
 		} catch (IOException e) {
 			throw new CommandException(e);
 		} catch (InterruptedException e) {
 			throw new CommandException("It seems the process was killed", e);
 		}
-		
 
 	}
 
@@ -139,11 +134,12 @@ public class AndroidCompiler extends SpecificCompiler {
 			e.printStackTrace();
 
 		}
-		//Some formating is used to remove the signature
+		// Some formating is used to remove the signature
 		String pattern = "\n?I/JUnitSysOut\\(\\s*\\d*\\): ";
-		//String formattedString = returnString.replaceAll("I/JUnitSysOut(*): ", "");
-		
-		return returnString.replaceAll(pattern,"");
+		// String formattedString =
+		// returnString.replaceAll("I/JUnitSysOut(*): ", "");
+
+		return returnString.replaceAll(pattern, "");
 
 	}
 

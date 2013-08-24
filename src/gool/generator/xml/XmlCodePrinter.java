@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.xml;
 
 import java.io.File;
@@ -77,7 +73,7 @@ public class XmlCodePrinter extends CodePrinter {
 	private boolean classdefok = true;
 
 	public XmlCodePrinter(File outputDir, Collection<File> myF) {
-		//Chose you're favorite Generator for recognized.
+		// Chose you're favorite Generator for recognized.
 		super(new JavaGenerator(), outputDir, myF);
 	}
 
@@ -88,8 +84,8 @@ public class XmlCodePrinter extends CodePrinter {
 		Document document = null;
 		DocumentBuilderFactory fabrique = null;
 		List<File> result = new ArrayList<File>();
-//		Debugging info
-//		nbNode = 0;
+		// Debugging info
+		// nbNode = 0;
 
 		try {
 			// creat document structure
@@ -182,10 +178,10 @@ public class XmlCodePrinter extends CodePrinter {
 			Class<?> laCl = meth.getReturnType();
 			// check if the method return type is a node.
 			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl)
-					&& (meth.getParameterTypes().length == 0) /*&& nbNode<1000*/) {
-//				 Debug for recursion
-//				 nbNode++;
-//				 Log.d(laCl.getName() + "\n" + nbNode);
+					&& (meth.getParameterTypes().length == 0) /* && nbNode<1000 */) {
+				// Debug for recursion
+				// nbNode++;
+				// Log.d(laCl.getName() + "\n" + nbNode);
 				try {
 					gool.ast.constructs.Node newNode = (gool.ast.constructs.Node) meth
 							.invoke(node);
@@ -250,13 +246,13 @@ public class XmlCodePrinter extends CodePrinter {
 			}
 			// generate XML attribute for iser
 			else if (meth.getName().startsWith("is")
-						&& (meth.getParameterTypes().length == 0)) {
+					&& (meth.getParameterTypes().length == 0)) {
 				try {
 					if (!attrexclude.contains(meth.getName()))
 						newElement.setAttribute(meth.getName().substring(2),
-							meth.invoke(node) == null ? "null" : meth
-											.invoke(node).toString());
-					} catch (Exception e) {
+								meth.invoke(node) == null ? "null" : meth
+										.invoke(node).toString());
+				} catch (Exception e) {
 					Log.e(e);
 					System.exit(1);
 				}

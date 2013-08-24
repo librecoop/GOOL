@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
@@ -29,14 +25,15 @@ import gool.generator.GoolGeneratorController;
 public final class TypeVoid extends PrimitiveType {
 
 	public static final TypeVoid INSTANCE = new TypeVoid();
-	
+
 	private TypeVoid() {
 	}
+
 	@Override
 	public String callGetCode() {
 		return getName();
 	}
-	
+
 	@Override
 	public String getName() {
 		return GoolGeneratorController.generator().getCode(this);

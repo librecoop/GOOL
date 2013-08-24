@@ -15,12 +15,7 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.util;
-
 
 import java.util.Iterator;
 
@@ -36,10 +31,10 @@ public class HashMap<K, T> implements Iterable<HashMap.Entry<K, T>> {
 			return null;
 		}
 
-	}	
+	}
 
 	public HashMap() {
-		super(); 
+		super();
 	}
 
 	public MapIterator<K, T> newEntryIterator() {
@@ -82,9 +77,9 @@ public class HashMap<K, T> implements Iterable<HashMap.Entry<K, T>> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	/*public boolean containsValue(Object a){
-		return false;
-	}*/
+
+	/*
+	 * public boolean containsValue(Object a){ return false; }
+	 */
 
 }

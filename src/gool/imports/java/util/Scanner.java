@@ -15,35 +15,31 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.util;
 
 import java.io.InputStream;
 
 public class Scanner {
-	
-	public Scanner(){
+
+	public Scanner() {
 	}
-	
-	public Scanner(InputStream a){
+
+	public Scanner(InputStream a) {
 	}
-	
-	public String nextLine(){
+
+	public String nextLine() {
 		return null;
 	}
-	
-	public int nextInt(){
+
+	public int nextInt() {
 		return 0;
 	}
-	
-	public double nextDouble(){
+
+	public double nextDouble() {
 		return 0;
 	}
-	
-	public byte nextByte(){
+
+	public byte nextByte() {
 		return 0;
 	}
 

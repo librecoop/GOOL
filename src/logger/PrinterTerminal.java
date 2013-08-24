@@ -8,20 +8,19 @@ public class PrinterTerminal extends Printer {
 	public PrinterTerminal(Level lv, boolean t, String d) {
 		super(lv, t, d);
 	}
-	
+
 	@Override
 	public void print(Level lv, String message, Color color) {
-		if(lv.ordinal() >= level.ordinal()) {
+		if (lv.ordinal() >= level.ordinal()) {
 			message = super.formatedDate() + message;
-			
-			if(tag) {
+
+			if (tag) {
 				message = "[" + lv + "] " + message;
 			}
-			
-			if(lv.ordinal() >= Level.ERROR.ordinal()) {
+
+			if (lv.ordinal() >= Level.ERROR.ordinal()) {
 				System.err.println(message);
-			}
-			else {
+			} else {
 				System.out.println(message);
 			}
 		}
@@ -29,14 +28,14 @@ public class PrinterTerminal extends Printer {
 
 	@Override
 	public void printErr(Level lv, Exception e, Color color) {
-		if(lv.ordinal() >= level.ordinal()) {
+		if (lv.ordinal() >= level.ordinal()) {
 			System.err.println(super.formatedDate());
-			
-			if(tag) {
+
+			if (tag) {
 				System.err.println("[" + lv + "] ");
 			}
-			
-			e.printStackTrace();			
+
+			e.printStackTrace();
 		}
 	}
 }

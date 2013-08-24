@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.TypeNone;
@@ -41,22 +37,22 @@ public class EnhancedForLoop extends Expression {
 		this.expr = expr;
 		this.statements = statements;
 	}
-	
+
 	public VarDeclaration getVarDec() {
 		return varDec;
 	}
-	
+
 	public Expression getExpression() {
 		return expr;
 	}
-	
+
 	public Statement getStatements() {
 		return statements;
 	}
-	
+
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

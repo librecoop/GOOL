@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.util;
 
 public class ListIterator<T> {
@@ -32,4 +28,3 @@ public class ListIterator<T> {
 	}
 
 }
- 

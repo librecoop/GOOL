@@ -15,29 +15,25 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
-
 
 /**
  * This is the basic type Bool of the intermediate language.
  */
 public final class TypeBool extends PrimitiveType {
-	
+
 	public static final TypeBool INSTANCE = new TypeBool();
 
-	private TypeBool() {}
-	
+	private TypeBool() {
+	}
+
 	@Override
 	public String callGetCode() {
 		return getName();
 	}
-	
+
 	@Override
 	public String getName() {
 		return GoolGeneratorController.generator().getCode(this);

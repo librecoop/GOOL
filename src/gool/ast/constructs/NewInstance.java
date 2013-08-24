@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
@@ -26,10 +22,9 @@ import gool.generator.GoolGeneratorController;
 import java.util.Arrays;
 import java.util.List;
 
-
-
 /**
- * Represents the declaration and the creation of a new object instance in the intermediate language.
+ * Represents the declaration and the creation of a new object instance in the
+ * intermediate language.
  */
 public final class NewInstance extends Parameterizable {
 	/**
@@ -41,35 +36,32 @@ public final class NewInstance extends Parameterizable {
 		super(variable.getType());
 		this.variable = variable;
 	}
-	
-	private NewInstance(VarDeclaration variable, List<Expression> parameters){
+
+	private NewInstance(VarDeclaration variable, List<Expression> parameters) {
 		this(variable);
 		addParameters(parameters);
 	}
-		
+
 	public NewInstance(VarDeclaration variable, Expression expression) {
 		this(variable);
 		addParameter(expression);
 	}
 
-	public static NewInstance create(
-			VarDeclaration variable,
+	public static NewInstance create(VarDeclaration variable,
 			Expression... params) {
 		if (params != null) {
 			return new NewInstance(variable, Arrays.asList(params));
 		}
-		return new NewInstance(variable);	
+		return new NewInstance(variable);
 	}
 
 	public VarDeclaration getVariable() {
 		return variable;
 	}
-	
+
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-
-	
 
 }

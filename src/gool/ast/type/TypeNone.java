@@ -15,12 +15,7 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
-
 
 /**
  * A pseudo-type used when no any other type is appropriate. For example, to

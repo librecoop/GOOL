@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.java;
 
 import gool.generator.common.CodePrinter;
@@ -36,7 +32,7 @@ public class JavaCodePrinter extends CodePrinter {
 	public JavaCodePrinter(File outputDir, Collection<File> myF) {
 		super(new JavaGenerator(), outputDir, myF);
 	}
-	
+
 	@Override
 	public String getTemplateDir() {
 		return TEMPLATE_DIR;

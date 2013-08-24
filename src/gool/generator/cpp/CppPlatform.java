@@ -15,14 +15,9 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 /**
  * Once can have several C++ platforms, i.e. with different compilers etc.
  */
-
 
 package gool.generator.cpp;
 
@@ -42,26 +37,26 @@ public class CppPlatform extends Platform {
 	public CppPlatform(Collection<File> myFile) {
 		super("CPP", myFile);
 	}
-	
+
 	@Override
 	protected CodePrinter initializeCodeWriter() {
 		return new CppCodePrinter(new File(outputDir), myFileToCopy);
 	}
-	
+
 	@Override
 	protected SpecificCompiler initializeCompiler() {
 		return new CppCompiler(new File(outputDir), new ArrayList<File>());
 	}
-	private static CppPlatform instance = new CppPlatform(myFileToCopy);
 
+	private static CppPlatform instance = new CppPlatform(myFileToCopy);
 
 	public static CppPlatform getInstance(Collection<File> myF) {
 		myFileToCopy = myF;
 		return instance;
 	}
-	
+
 	public static CppPlatform getInstance() {
-		if(myFileToCopy == null) {
+		if (myFileToCopy == null) {
 			myFileToCopy = new ArrayList<File>();
 		}
 		return instance;

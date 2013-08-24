@@ -15,19 +15,18 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator;
 
 import gool.GOOLCompiler;
+import gool.GoolLibDefs.GoolClassAstBuilder;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
+import gool.ast.constructs.RecognizedDependency;
 import gool.generator.android.AndroidCodePrinter;
 import gool.generator.android.AndroidPlatform;
 import gool.ast.type.IType;
 import gool.generator.common.CodePrinter;
+import gool.generator.common.GeneratorMatcher;
 import gool.generator.common.Platform;
 import gool.methods.MethodManager;
 
@@ -48,122 +47,111 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.log4j.Logger;
 
 /**
- * This class helps generate the concrete target
- * from the abstract GOOL
- * It has a method starting the entire process
- * As well as some ancillary methods
+ * This class helps generate the concrete target from the abstract GOOL It has a
+ * method starting the entire process As well as some ancillary methods
  */
 public class GeneratorHelper {
-	
+
 	public static String joinParams(List<?> parameters) {
 		if (parameters == null) {
 			return "";
 		}
 		return StringUtils.join(parameters, ", ");
 	}
-	
+
 	/**
-	 * Used by velocity via the templates (e.g. templates/class.vm)
-	 * TODO: Might have been better placed in the CodePrinter?
-	 * Generated the code for the imports of a class
+	 * Used by velocity via the templates (e.g. templates/class.vm) TODO: Might
+	 * have been better placed in the CodePrinter? Generated the code for the
+	 * imports of a class
+	 * 
 	 * @param classDef
 	 * @return a set of strings, each importing one dependency
 	 */
 	public static Set<String> printDependencies(ClassDef classDef) {
 		Set<String> result = new HashSet<String>();
-		//go through each dependency, produce its toString, add it to the set.
+		// go through each dependency, produce its toString, add it to the set.
 		for (Dependency dep : classDef.getDependencies()) {
-			if (!dep.toString().equals(classDef.toString())){
+			if (!dep.toString().equals(classDef.toString())) {
 				result.add(dep.toString());
 			}
 		}
-		
+
 		return result;
 	}
 
-		/**
-		 * This is the entry point.
-		 * It generates code for the abstract GOOL classes classDefs
-		 * Listing them as a map (platform, file) in case there where different target platforms
-		 * For different classes.
-		 */
+	/**
+	 * This is the entry point. It generates code for the abstract GOOL classes
+	 * classDefs Listing them as a map (platform, file) in case there where
+	 * different target platforms For different classes.
+	 */
 	public static Map<Platform, List<File>> printClassDefs(
-			Collection<ClassDef> classDefs)
-			throws FileNotFoundException {
+			Collection<ClassDef> classDefs) throws FileNotFoundException {
 		Map<Platform, List<File>> compilationUnits = new HashMap<Platform, List<File>>();
-		
+
 		MethodManager.reset();
 		for (ClassDef classDef : classDefs) {
-			
-			System.out.println("Dépendances de la classe "+classDef.getName()+" :");
-			int x=0;
-			for(Dependency d : classDef.getDependencies()){
-				x++;
-				System.out.println("\tDep"+x+":"+d);
-			}
-			
-			
-			
-			//The target platform is held by the GOOL class, retrieve it.
+
+			// The target platform is held by the GOOL class, retrieve it.
 			Platform platform = (Platform) classDef.getPlatform();
-			//Get a codePrinter corresponding to that platform.
+			// Get a codePrinter corresponding to that platform.
 			CodePrinter currentPrinter = CodePrinter.getPrinter(platform);
-			//If that platform is not yet in the map, add it.
+			// If that platform is not yet in the map, add it.
 			if (!compilationUnits.containsKey(platform)) {
 				compilationUnits.put(platform, new ArrayList<File>());
 			}
-			//If the target output directory is not there yet, make it.
+			// If the target output directory is not there yet, make it.
 			if (!currentPrinter.getOutputDir().exists()) {
 				Log.i("Creating the output directory "
 						+ currentPrinter.getOutputDir());
 				currentPrinter.getOutputDir().mkdirs();
 			}
-			
-			//Just compile each abstract GOOL class and add it to the map.
 
-//			try {
-				compilationUnits.get(platform).addAll(
-						currentPrinter.print(classDef));
-//			} catch (ResourceNotFoundException e) {
-//				Log.e(String.format(
-//						"Impossible to produce file '%s': platforms should" +
-//						" either implements CodeGeneratorNoVelocity" +
-//						" or have a 'class.vm' template.",
-//						currentPrinter.getFileName(classDef.getName())));
-//			}
-				//compilationUnits.get(platform).addAll(
-						//currentPrinter.printPersonalLib());
-				
-				//compilationUnits.get(platform).addAll(
-						//currentPrinter.print(classDef));
-				
+			// Just compile each abstract GOOL class and add it to the map.
+
+			// try {
+			
+			
+			GeneratorMatcher.init(platform);
+			compilationUnits.get(platform).addAll(
+					currentPrinter.print(classDef));
+			
+			
+			// } catch (ResourceNotFoundException e) {
+			// Log.e(String.format(
+			// "Impossible to produce file '%s': platforms should" +
+			// " either implements CodeGeneratorNoVelocity" +
+			// " or have a 'class.vm' template.",
+			// currentPrinter.getFileName(classDef.getName())));
+			// }
+			// compilationUnits.get(platform).addAll(
+			// currentPrinter.printPersonalLib());
+
 		}
-		
-		
-		
-		
-		//If the platform is android a project has to be created and the files created
+
+		// If the platform is android a project has to be created and the files
+		// created
 		// above copied into the project.
-		if(compilationUnits.containsKey(AndroidPlatform.getInstance())) {
+		if (compilationUnits.containsKey(AndroidPlatform.getInstance())) {
 			Platform platform = AndroidPlatform.getInstance();
-			AndroidCodePrinter currentPrinter = (AndroidCodePrinter) CodePrinter.getPrinter(platform);
-			List<File> newFileList = currentPrinter.createAndroidProject(compilationUnits.get(platform));
+			AndroidCodePrinter currentPrinter = (AndroidCodePrinter) CodePrinter
+					.getPrinter(platform);
+			List<File> newFileList = currentPrinter
+					.createAndroidProject(compilationUnits.get(platform));
 			compilationUnits.put(platform, newFileList);
 		}
 		return compilationUnits;
 	}
-	
-	
-	//TODO =>  use in OBJC macro for delete pointer in param list for the name of a function. 
-	//Should be use in the OBJCGeneratorHelper
-	public static String removePointer(String s){
+
+	// TODO => use in OBJC macro for delete pointer in param list for the name
+	// of a function.
+	// Should be use in the OBJCGeneratorHelper
+	public static String removePointer(String s) {
 		return s.replaceAll("[\\s*]+$", "");
 	}
-	
-	//idem
+
+	// idem
 	public static String removePointer(IType type) {
 		return removePointer(type.toString());
 	}
-
 
 }

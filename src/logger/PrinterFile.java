@@ -11,12 +11,12 @@ import logger.Log.Level;
 public class PrinterFile extends Printer {
 
 	private List<FileWriter> fstreams;
-	
+
 	public PrinterFile(Level lv, boolean t, String d, List<String> outputs) {
 		super(lv, t, d);
 		fstreams = new ArrayList<FileWriter>();
-		
-		for(String output : outputs) {
+
+		for (String output : outputs) {
 			try {
 				fstreams.add(new FileWriter(output, true));
 			} catch (IOException e) {
@@ -26,13 +26,13 @@ public class PrinterFile extends Printer {
 
 	@Override
 	public void print(Level lv, String message, Color color) {
-		if(lv.ordinal() >= level.ordinal()) {
+		if (lv.ordinal() >= level.ordinal()) {
 			message = super.formatedDate() + message;
-			
-			if(tag) {
+
+			if (tag) {
 				message = "[" + lv + "] " + message;
 			}
-			
+
 			for (FileWriter fstream : fstreams) {
 				try {
 					fstream.write(message + "\n");
@@ -42,7 +42,7 @@ public class PrinterFile extends Printer {
 			}
 		}
 	}
-	
+
 	@Override
 	public void printErr(Level lv, Exception e, Color color) {
 		print(lv, e.toString(), color);

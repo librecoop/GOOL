@@ -24,21 +24,18 @@ import gool.generator.GoolGeneratorController;
  */
 public class RecognizedDependency extends Dependency {
 
-	private String goolLibName;
+	private String goolClassName;
 
 	public RecognizedDependency(String goolLibName) {
-		this.goolLibName = goolLibName;
+		this.goolClassName = goolLibName;
 	}
 
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 	public String getName() {
-		return goolLibName;
+		return goolClassName;
 	}
 }
-
-
-

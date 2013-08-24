@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.TypeVoid;
@@ -45,7 +41,7 @@ public class MainMeth extends Meth {
 	public String getHeader() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 	@Override
 	public boolean isMainMethod() {
 		return true;

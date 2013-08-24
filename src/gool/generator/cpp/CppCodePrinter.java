@@ -15,15 +15,9 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 /**
  * Creates C++ files during the C++ generation process
  */
-
-
 
 package gool.generator.cpp;
 
@@ -50,7 +44,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class CppCodePrinter extends CodePrinter {
 	private static final String TEMPLATE_DIR = "gool/generator/cpp/templates/";
-	
+
 	private void createFinallyInclude(File outputDir) {
 		FileOutputStream goolHelperOut;
 		byte[] buffer = new byte[1024];
@@ -59,28 +53,29 @@ public class CppCodePrinter extends CodePrinter {
 		// Helpers to create by copying the resource
 		List<String> goolHelperIn = new ArrayList<String>();
 		goolHelperIn.add("finally.h");
-		if (! outputDir.isDirectory() && ! outputDir.mkdirs()) {
-			Log.e(String.format("Impossible to create the directory '%s'", outputDir));
+		if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
+			Log.e(String.format("Impossible to create the directory '%s'",
+					outputDir));
 		} else {
 			// Print finally
-			for(String in : goolHelperIn) {
+			for (String in : goolHelperIn) {
 				InputStream helper;
 				try {
 					helper = CppPlatform.class.getResource(in).openStream();
-	
-					goolHelperOut = new FileOutputStream (outputDir+"/"+in);
+
+					goolHelperOut = new FileOutputStream(outputDir + "/" + in);
 					while ((noOfBytes = helper.read(buffer)) != -1) {
 						goolHelperOut.write(buffer, 0, noOfBytes);
 					}
 					goolHelperOut.close();
 					helper.close();
-				} catch (IOException e){
-					Log.e(String.format("Impossible to create the file '%s'", in));
+				} catch (IOException e) {
+					Log.e(String.format("Impossible to create the file '%s'",
+							in));
 				}
 			}
 		}
 	}
-		
 
 	public CppCodePrinter(File outputDir, Collection<File> myF) {
 		super(new CppGenerator(), outputDir, myF);
@@ -106,8 +101,9 @@ public class CppCodePrinter extends CodePrinter {
 		String headerFile = processTemplate("header.vm", pclass);
 		PrintWriter writer;
 
-		File dir = new File(getOutputDir().getAbsolutePath(), StringUtils
-				.replace(pclass.getPackageName(), ".", File.separator));
+		File dir = new File(getOutputDir().getAbsolutePath(),
+				StringUtils.replace(pclass.getPackageName(), ".",
+						File.separator));
 		dir.mkdirs();
 		File classFile = new File(dir, pclass.getName() + ".h");
 

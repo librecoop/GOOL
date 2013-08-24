@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.ast.constructs.ClassDef;
@@ -43,7 +39,7 @@ public class TypeClass extends ReferenceType {
 	 * The class definition.
 	 */
 	private ClassDef classDef;
-	
+
 	private boolean isEnum;
 
 	public TypeClass(String name) {
@@ -73,11 +69,11 @@ public class TypeClass extends ReferenceType {
 	public String getName() {
 		return name;
 	}
-	
+
 	public boolean isEnum() {
 		return isEnum;
 	}
-	
+
 	public void setIsEnum(boolean isEnum) {
 		this.isEnum = isEnum;
 	}

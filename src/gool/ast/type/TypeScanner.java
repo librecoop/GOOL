@@ -15,35 +15,30 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.ast.constructs.ClassDef;
 import gool.generator.GoolGeneratorController;
 
-public class TypeScanner extends ReferenceType{
-	
-	
-	
+public class TypeScanner extends ReferenceType {
+
 	private ClassDef classDef;
-	
-	public TypeScanner(){}
+
+	public TypeScanner() {
+	}
 
 	public TypeScanner(TypeInputStream im) {
 		this();
 		addArgument(im);
 	}
-	
+
 	public IType getElementType() {
 		if (getTypeArguments().size() > 0) {
 			return getTypeArguments().get(0);
 		}
 		return null;
 	}
-	
+
 	public ClassDef getClassDef() {
 		return classDef;
 	}
@@ -54,9 +49,10 @@ public class TypeScanner extends ReferenceType{
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof TypeScanner && getName().equals(((IType)obj).getName());
+		return obj instanceof TypeScanner
+				&& getName().equals(((IType) obj).getName());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
@@ -71,7 +67,5 @@ public class TypeScanner extends ReferenceType{
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
-
-
 
 }

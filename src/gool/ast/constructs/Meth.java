@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
@@ -30,9 +26,13 @@ import java.util.List;
 /**
  * This class accounts for method declarations in the intermediate language.
  * Hence it is an OOTDec.
- * @param T is the return type, if known at compile time, otherwise put OOTType. 
- * That way java generics grant us some level of type checking of the generated code at compiler design time.
- * Sometimes we will not be able to use this though, because we will not know T at compiler design time.
+ * 
+ * @param T
+ *            is the return type, if known at compile time, otherwise put
+ *            OOTType. That way java generics grant us some level of type
+ *            checking of the generated code at compiler design time. Sometimes
+ *            we will not be able to use this though, because we will not know T
+ *            at compiler design time.
  */
 public class Meth extends Dec {
 	/**
@@ -51,16 +51,14 @@ public class Meth extends Dec {
 	 * The list of Exceptions the method throws
 	 */
 	private List<IType> throwStatement = new ArrayList<IType>();
-	
-	
 
 	/**
 	 * Indicates if this method is inherited.
 	 */
 	private boolean inherited;
-	
+
 	private ClassDef classDef;
-	
+
 	public Meth(IType returnType, Modifier modifier, String name) {
 		super(returnType, name);
 		addModifier(modifier);
@@ -71,19 +69,18 @@ public class Meth extends Dec {
 		addModifier(Modifier.PUBLIC);
 	}
 
-	
-	public final void addParameter(VarDeclaration varParam){
+	public final void addParameter(VarDeclaration varParam) {
 		parameters.add(varParam);
 	}
-	
-	public final void addStatement(Statement statement){
+
+	public final void addStatement(Statement statement) {
 		block.addStatement(statement);
 	}
-	
-	public final void addStatements(List<Statement> statements){
+
+	public final void addStatements(List<Statement> statements) {
 		block.addStatements(statements);
 	}
-	
+
 	public final void addGenericType(IType type) {
 		genericTypes.add(type);
 	}
@@ -95,15 +92,15 @@ public class Meth extends Dec {
 	public Block getBlock() {
 		return block;
 	}
-	
+
 	public ClassDef getClassDef() {
 		return classDef;
 	}
-	
+
 	public void setClassDef(ClassDef classDef) {
 		this.classDef = classDef;
 	}
-	
+
 	public List<VarDeclaration> getParams() {
 		return parameters;
 	}
@@ -115,21 +112,19 @@ public class Meth extends Dec {
 	public void setInherited(boolean inherited) {
 		this.inherited = inherited;
 	}
-	
+
 	public List<IType> getGenericTypes() {
 		return genericTypes;
 	}
 
-	public boolean isConstructor(){
+	public boolean isConstructor() {
 		return false;
 	}
 
-	
-	public boolean isAbstract(){
+	public boolean isAbstract() {
 		return getModifiers().contains(Modifier.ABSTRACT);
 	}
 
-	
 	public String getHeader() {
 		return GoolGeneratorController.generator().getCode(this);
 	}
@@ -142,10 +137,11 @@ public class Meth extends Dec {
 	public List<IType> getThrowStatement() {
 		return throwStatement;
 	}
-	
+
 	public final void addThrowStatement(IType type) {
 		throwStatement.add(type);
 	}
-	
-	
+	public boolean isGoolMethodImplementation(){
+		return (this instanceof GoolMethodImplementation);
+	}
 }

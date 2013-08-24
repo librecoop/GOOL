@@ -15,28 +15,21 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.io;
 
-public class IOException{
+public class IOException {
 	public IOException(String arg) {
 		// TODO Auto-generated method stub
 	}
-	public IOException()
-	{
+
+	public IOException() {
 	}
-	
-	public IOException(String message,Throwable cause)
-	{
-		
+
+	public IOException(String message, Throwable cause) {
+
 	}
-	
-	public IOException(Throwable cause)
-	{
-		
+
+	public IOException(Throwable cause) {
+
 	}
 }
- 

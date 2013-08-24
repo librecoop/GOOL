@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
@@ -35,8 +31,7 @@ public class Finally extends Block {
 	 * The list of statements.
 	 */
 	private List<Statement> statements = new ArrayList<Statement>();
-	private Block b; 
-	
+	private Block b;
 
 	/**
 	 * Creates a new block with the specified expression.R
@@ -47,10 +42,10 @@ public class Finally extends Block {
 	public Finally(Statement statement) {
 		statements.add(statement);
 	}
-	
+
 	public Finally(Block block) {
-		this.b=block;
-		
+		this.b = block;
+
 	}
 
 	public Finally() {
@@ -96,12 +91,10 @@ public class Finally extends Block {
 	public void addStatements(List<Statement> statements) {
 		this.statements.addAll(statements);
 	}
-	
-	public Block getBlock()
-	{
-		
+
+	public Block getBlock() {
+
 		return b;
 	}
-
 
 }

@@ -15,13 +15,9 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.lang;
 
-public class Object{
+public class Object {
 	@Override
 	@Deprecated
 	public String toString() {
@@ -29,4 +25,3 @@ public class Object{
 		return super.toString();
 	}
 }
- 

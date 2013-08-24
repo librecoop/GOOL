@@ -15,21 +15,16 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
-
-public class MapMethCall extends Parameterizable{
+public class MapMethCall extends Parameterizable {
 
 	private Expression expression;
 
-	protected MapMethCall( IType type) {
+	protected MapMethCall(IType type) {
 		super(type);
 	}
 
@@ -37,12 +32,12 @@ public class MapMethCall extends Parameterizable{
 		super(type);
 		this.expression = expression;
 	}
-	
+
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
-	
+
 	public Expression getExpression() {
 		return expression;
 	}

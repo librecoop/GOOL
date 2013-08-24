@@ -15,15 +15,9 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
-
 package gool.ast.constructs;
 
 import gool.generator.GoolGeneratorController;
-
 
 import java.util.List;
 
@@ -32,7 +26,7 @@ public class Try extends Statement {
 	 * 
 	 */
 	private List<? extends Catch> catches;
-	
+
 	/**
 	 * 
 	 */
@@ -42,13 +36,13 @@ public class Try extends Statement {
 	 * 
 	 */
 	private Block finilyBlock;
-	
+
 	public Try(List<? extends Catch> catches, Block block, Block finilyBlock) {
 		this.catches = catches;
 		this.block = block;
 		this.finilyBlock = finilyBlock;
 	}
-	
+
 	public List<? extends Catch> getCatches() {
 		return catches;
 	}

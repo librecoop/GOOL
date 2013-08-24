@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
@@ -26,11 +22,10 @@ import gool.generator.GoolGeneratorController;
 
 import java.util.Collection;
 
-
 /**
  * This class captures a field (i.e. an attribute) declaration in abstract GOOL.
  * Hence it is a Dec.
-  */
+ */
 public final class Field extends Dec {
 	private Expression defaultValue;
 
@@ -38,22 +33,26 @@ public final class Field extends Dec {
 		super(type, name);
 		this.defaultValue = defaultValue;
 	}
+
 	/**
 	 * The type of the variable is T.
-	 * @param modifiers codes for the visibility of the variable and so on
-	 * @param name codes for the name of the variable
+	 * 
+	 * @param modifiers
+	 *            codes for the visibility of the variable and so on
+	 * @param name
+	 *            codes for the name of the variable
 	 */
-	public Field(Modifier modifier, String name, IType type, Expression defaultValue) {
+	public Field(Modifier modifier, String name, IType type,
+			Expression defaultValue) {
 		this(name, type, defaultValue);
 		addModifier(modifier);
 	}
-	
+
 	public Field(Collection<Modifier> listModifiers, String name, IType type,
 			Expression initialValue) {
 		this(name, type, initialValue);
 		addModifiers(listModifiers);
 	}
-
 
 	public Field(Modifier modifier, String name, IType type) {
 		this(modifier, name, type, null);
@@ -62,11 +61,11 @@ public final class Field extends Dec {
 	public Field(Collection<Modifier> modifiers, VarDeclaration var) {
 		this(modifiers, var.getName(), var.getType(), var.getInitialValue());
 	}
-	
+
 	public void setDefaultValue(Expression defaultValue) {
 		this.defaultValue = defaultValue;
 	}
-	
+
 	public Expression getDefaultValue() {
 		return defaultValue;
 	}

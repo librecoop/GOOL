@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
@@ -29,9 +25,9 @@ public class CompoundAssign extends Assign {
 	private Operator operator;
 	private String textualoperator;
 	private IType type;
-		
 
-	public CompoundAssign(Node var, Expression value, Operator operator, String textualoperator, IType type) {
+	public CompoundAssign(Node var, Expression value, Operator operator,
+			String textualoperator, IType type) {
 		super(var, value);
 		this.operator = operator;
 		this.textualoperator = textualoperator;

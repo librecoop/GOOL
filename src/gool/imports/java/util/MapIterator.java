@@ -15,27 +15,19 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.util;
 
-
-
-public class MapIterator<K,T> {
+public class MapIterator<K, T> {
 
 	public boolean hasNext() {
 		return false;
 	}
 
-	public HashMap.Entry<K,T> next() {
+	public HashMap.Entry<K, T> next() {
 		return null;
 	}
 
 	public void remove() {
 	}
 
-	
 }
- 

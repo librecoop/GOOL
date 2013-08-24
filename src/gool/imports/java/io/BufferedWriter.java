@@ -15,33 +15,28 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.io;
 
 public class BufferedWriter {
-	public BufferedWriter (FileWriter arg) {
+	public BufferedWriter(FileWriter arg) {
 		// TODO Auto-generated method stub
 	}
-	
-	public void write(String arg)
-	{
+
+	public void write(String arg) {
 	}
-	public void write(Integer arg)
-	{
+
+	public void write(Integer arg) {
 	}
-	public void close()
-	{
-		
+
+	public void close() {
+
 	}
-	public void flush()
-	{
-		
+
+	public void flush() {
+
 	}
-	public void newLine()
-	{
-		
+
+	public void newLine() {
+
 	}
 }

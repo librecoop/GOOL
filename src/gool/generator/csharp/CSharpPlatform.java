@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.csharp;
 
 import gool.Settings;
@@ -33,16 +29,17 @@ import java.util.Collection;
 
 public final class CSharpPlatform extends Platform {
 	private final String outputDir = Settings.get("csharp_out_dir");
+
 	private CSharpPlatform(Collection<File> myFile) {
 		super("CSHARP", myFile);
 	}
-	
+
 	@Override
 	protected CodePrinter initializeCodeWriter() {
-		//TODO a voir pour passer la liste des fichiers
+		// TODO a voir pour passer la liste des fichiers
 		return new CSharpCodePrinter(new File(outputDir), myFileToCopy);
 	}
-	
+
 	@Override
 	protected SpecificCompiler initializeCompiler() {
 		return new CSharpCompiler(new File(outputDir), new ArrayList<File>());
@@ -50,14 +47,13 @@ public final class CSharpPlatform extends Platform {
 
 	private static CSharpPlatform instance = new CSharpPlatform(myFileToCopy);
 
-
 	public static CSharpPlatform getInstance(Collection<File> myF) {
 		myFileToCopy = myF;
 		return instance;
 	}
-	
+
 	public static CSharpPlatform getInstance() {
-		if(myFileToCopy == null) {
+		if (myFileToCopy == null) {
 			myFileToCopy = new ArrayList<File>();
 		}
 		return instance;

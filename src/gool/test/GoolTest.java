@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.test;
 
 import gool.Settings;
@@ -38,16 +34,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GoolTest {
-	
+
 	private List<Platform> platforms = Arrays.asList(
-	(Platform)JavaPlatform.getInstance(),
+			(Platform) JavaPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
-		    (Platform) CSharpPlatform.getInstance(),
-	//	    (Platform) PythonPlatform.getInstance()
-	 (Platform) ObjcPlatform.getInstance()
-	//		 (Platform)AndroidPlatform.getInstance()	
-    );
-	
+			(Platform) CSharpPlatform.getInstance(),
+			// (Platform) PythonPlatform.getInstance()
+			(Platform) ObjcPlatform.getInstance()
+	// (Platform)AndroidPlatform.getInstance()
+			);
+
 	private static class GoolTestExecutor {
 		private static final String CLEAN_UP_REGEX = "Note:.*?[\r\n]|(\\w+>\\s)|[\\r\\n]+";
 		private String input;
@@ -58,7 +54,6 @@ public class GoolTest {
 			this.expected = expected;
 		}
 
-
 		public void compare(Platform platform) throws Exception {
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
@@ -67,12 +62,14 @@ public class GoolTest {
 				this.input = "package com.test; " + input;
 			}
 			String result = compileAndRun(platform);
-			//The following instruction is used to remove some logging data
-			//at the beginning of the result string
-			if(platform == ObjcPlatform.getInstance() && result.indexOf("] ")!=-1)
-				result=result.substring(result.indexOf("] ")+2);
-			
-			Assert.assertEquals(String.format("The platform %s", platform), expected, result);
+			// The following instruction is used to remove some logging data
+			// at the beginning of the result string
+			if (platform == ObjcPlatform.getInstance()
+					&& result.indexOf("] ") != -1)
+				result = result.substring(result.indexOf("] ") + 2);
+
+			Assert.assertEquals(String.format("The platform %s", platform),
+					expected, result);
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -88,7 +85,6 @@ public class GoolTest {
 
 	private static final String MAIN_CLASS_NAME = "Test";
 
-
 	@BeforeClass
 	public static void init() {
 	}
@@ -96,27 +92,23 @@ public class GoolTest {
 	@Test
 	public void helloWorld() throws Exception {
 		String input = TestHelper.surroundWithClassMain(
-				"System.out.println(\"Hello World\");"
-				, MAIN_CLASS_NAME);
+				"System.out.println(\"Hello World\");", MAIN_CLASS_NAME);
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+
 	@Test
 	public void simpleTryCatch() throws Exception {
-		String input = TestHelper.surroundWithClassMain(
-				"try {\n " +
-		        "System.out.println(\"hello\");" +
-				//"String s=null;" +
-				//"s.isEmpty();" +
-				"}" +
-				"catch(Exception e){" +
-				"System.out.println(\"world\");" +
-				"}", MAIN_CLASS_NAME);
+		String input = TestHelper.surroundWithClassMain("try {\n "
+				+ "System.out.println(\"hello\");"
+				+
+				// "String s=null;" +
+				// "s.isEmpty();" +
+				"}" + "catch(Exception e){" + "System.out.println(\"world\");"
+				+ "}", MAIN_CLASS_NAME);
 		String expected = "hello";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-
 
 	@Test
 	public void simpleChar() throws Exception {
@@ -220,7 +212,7 @@ public class GoolTest {
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+
 	@Test
 	public void mapForEach() throws Exception {
 		String input = "import gool.imports.java.util.HashMap;\n"
@@ -348,7 +340,7 @@ public class GoolTest {
 		String expected = "";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+
 	/**
 	 * First test using a file as a FileWriter constructor argument
 	 * 
@@ -356,8 +348,8 @@ public class GoolTest {
 
 	@Test
 	public void fileTest() throws Exception {
-		//String readFile = Settings.get("read_file_path");
-		//String readFile = Settings.get("read_file_path");
+		// String readFile = Settings.get("read_file_path");
+		// String readFile = Settings.get("read_file_path");
 		String writeFile = Settings.get("write_file_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
@@ -367,20 +359,22 @@ public class GoolTest {
 				+ "import gool.imports.java.io.IOException;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
-										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
-										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
-										+"BufferedReader br = new BufferedReader(new FileReader(b)); \n"
-										+" String testString = br.readLine();char c = (char)br.read(); \n"
-										+"br.close();\n"
-										+"  \n System.out.println(testString+c);\n "
-								
-								
-								+"} catch(IOException iox) \n { System.out.println(\"iox\");} \n catch(Exception e) \n {System.out.println(\"ex\");}\n",
+								"\n try{ \n "
+										+ "File b = new File (\""
+										+ writeFile
+										+ "\");\n if(b.exists() == true) \n {b.delete();} \n"
+										+ "BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
+										+ "bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
+										+ "BufferedReader br = new BufferedReader(new FileReader(b)); \n"
+										+ " String testString = br.readLine();char c = (char)br.read(); \n"
+										+ "br.close();\n"
+										+ "  \n System.out.println(testString+c);\n "
+
+										+ "} catch(IOException iox) \n { System.out.println(\"iox\");} \n catch(Exception e) \n {System.out.println(\"ex\");}\n",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1A");
 	}
-	
+
 	/**
 	 * Second test using a string as a FileWriter constructor argument
 	 * 
@@ -388,8 +382,8 @@ public class GoolTest {
 
 	@Test
 	public void fileTestSecond() throws Exception {
-		//String readFile = Settings.get("read_file_path");
-		//String readFile = Settings.get("read_file_path");
+		// String readFile = Settings.get("read_file_path");
+		// String readFile = Settings.get("read_file_path");
 		String writeFile = Settings.get("write_file_path");
 		String input = "import gool.imports.java.io.BufferedReader;\n"
 				+ "import gool.imports.java.io.FileReader;\n"
@@ -400,16 +394,21 @@ public class GoolTest {
 				+ "import gool.imports.java.io.EOFException;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
-										+"BufferedReader br = new BufferedReader(new FileReader(\""+writeFile+"\")); \n"
-										+" String testString = br.readLine();char c = (char)br.read(); \n"
-										+"br.close();\n"
-										+"  \n System.out.println(testString+c);\n "
-								
-+"} catch(FileNotFoundException fnf) \n { System.out.println(\"file not found\");} "
-								+" catch(EOFException eof) \n { System.out.println(\"eof\");} "
-								
-								+" catch(Exception ex) \n {System.out.println(\"ex\");}",
+								"\n try{ \n "
+										+ "File b = new File (\""
+										+ writeFile
+										+ "\");\n if(b.exists() == true) \n {b.delete();} \n"
+										+ "BufferedReader br = new BufferedReader(new FileReader(\""
+										+ writeFile
+										+ "\")); \n"
+										+ " String testString = br.readLine();char c = (char)br.read(); \n"
+										+ "br.close();\n"
+										+ "  \n System.out.println(testString+c);\n "
+
+										+ "} catch(FileNotFoundException fnf) \n { System.out.println(\"file not found\");} "
+										+ " catch(EOFException eof) \n { System.out.println(\"eof\");} "
+
+										+ " catch(Exception ex) \n {System.out.println(\"ex\");}",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "file not found");
 	}
@@ -417,50 +416,53 @@ public class GoolTest {
 	@Test
 	public void fileTestAppend() throws Exception {
 		try {
-		//String readFile = Settings.get("read_file_path");
-		//String readFile = Settings.get("read_file_path");
-		String writeFile = Settings.get("write_file_path");
-		String input = "import gool.imports.java.io.BufferedReader;\n"
-				+ "import gool.imports.java.io.FileReader;\n"
-				+ "import gool.imports.java.io.FileWriter;\n"
-				+ "import gool.imports.java.io.BufferedWriter;\n"
-				+ "import gool.imports.java.io.File;\n"
-				+ TestHelper
-						.surroundWithClassMain(
-								"\n try{ \n " + "File b = new File (\""+writeFile+"\");\n if(b.exists() == true) \n {b.delete();} \n"
-										+"BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
-										+"bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
-										+"BufferedWriter bw2 = new BufferedWriter(new FileWriter(b, true)); \n"
-										+"bw2.write(\"write2\");  \n bw2.flush(); \n bw2.close(); \n"
-										+"BufferedReader br = new BufferedReader(new FileReader(b)); \n"
-										+" String testString = br.readLine(); \n"
-										+" testString = testString + br.readLine(); \n"
-										+"br.close();\n"
-										+"  \n System.out.println(testString);\n "
-								
-								
-								+"} catch(Exception ex) \n {System.out.println(\"ex\");}",
-								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "line1Awrite2");
-		}
-		catch(Exception e) {
+			// String readFile = Settings.get("read_file_path");
+			// String readFile = Settings.get("read_file_path");
+			String writeFile = Settings.get("write_file_path");
+			String input = "import gool.imports.java.io.BufferedReader;\n"
+					+ "import gool.imports.java.io.FileReader;\n"
+					+ "import gool.imports.java.io.FileWriter;\n"
+					+ "import gool.imports.java.io.BufferedWriter;\n"
+					+ "import gool.imports.java.io.File;\n"
+					+ TestHelper
+							.surroundWithClassMain(
+									"\n try{ \n "
+											+ "File b = new File (\""
+											+ writeFile
+											+ "\");\n if(b.exists() == true) \n {b.delete();} \n"
+											+ "BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
+											+ "bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
+											+ "BufferedWriter bw2 = new BufferedWriter(new FileWriter(b, true)); \n"
+											+ "bw2.write(\"write2\");  \n bw2.flush(); \n bw2.close(); \n"
+											+ "BufferedReader br = new BufferedReader(new FileReader(b)); \n"
+											+ " String testString = br.readLine(); \n"
+											+ " testString = testString + br.readLine(); \n"
+											+ "br.close();\n"
+											+ "  \n System.out.println(testString);\n "
+
+											+ "} catch(Exception ex) \n {System.out.println(\"ex\");}",
+									MAIN_CLASS_NAME);
+			compareResultsDifferentPlatforms(input, "line1Awrite2");
+		} catch (Exception e) {
 			Assert.fail("Append is not supported by bufferedreader at the moment in C++");
 			return;
 		}
-		
+
 	}
-	
+
 	@Test
 	public void exceptionThrowTest() throws Exception {
-		String input = TestHelper.surroundWithClassMain(
-				"try {\n Test t=new Test(); t.print();\n}\n" +
-				"catch(Exception e) {\n System.out.println(\"e\");\n}\n}"		
-				+"\n public void print() throws IOException, Exception {System.out.println(2 + 2);"		
-				, MAIN_CLASS_NAME);
-		
+		String input = TestHelper
+				.surroundWithClassMain(
+						"try {\n Test t=new Test(); t.print();\n}\n"
+								+ "catch(Exception e) {\n System.out.println(\"e\");\n}\n}"
+								+ "\n public void print() throws IOException, Exception {System.out.println(2 + 2);",
+						MAIN_CLASS_NAME);
+
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
+
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected));

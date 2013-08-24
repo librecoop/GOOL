@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.executor.objc;
 
 import gool.Settings;
@@ -35,36 +31,40 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-public class ObjcCompiler extends SpecificCompiler{
+public class ObjcCompiler extends SpecificCompiler {
 
-	private static Logger logger = Logger.getLogger(ObjcCompiler.class.getName());
+	private static Logger logger = Logger.getLogger(ObjcCompiler.class
+			.getName());
 	@SuppressWarnings("unused")
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
-	
+
 	public ObjcCompiler(File outputDir, List<File> deps) {
 		super(outputDir, deps);
 	}
 
 	@Override
-	public File compileToExecutable(List<File> files, File mainFile, List<File> classPath, List<String> args)
+	public File compileToExecutable(List<File> files, File mainFile,
+			List<File> classPath, List<String> args)
 			throws FileNotFoundException {
-		
+
 		List<String> params = new ArrayList<String>();
 		if (mainFile == null) {
 			mainFile = files.get(0);
 		}
-		
+
 		logger.info("--->" + mainFile);
 		String execFileName = mainFile.getName().replace(".m", "");
-		params.addAll(Arrays.asList(Settings.get("objc_compiler_cmd")) );
+		params.addAll(Arrays.asList(Settings.get("objc_compiler_cmd")));
 		for (File file : files) {
-			if(!params.contains(file.toString()))
-					params.add(file.toString());
+			if (!params.contains(file.toString()))
+				params.add(file.toString());
 		}
-		// the -std=gnu99 option is used to allow initial declarations in 'for' loop
-		params.addAll(Arrays.asList("-std=gnu99","-lgnustep-base", "-o", execFileName));
-		
+		// the -std=gnu99 option is used to allow initial declarations in 'for'
+		// loop
+		params.addAll(Arrays.asList("-std=gnu99", "-lgnustep-base", "-o",
+				execFileName));
+
 		/*
 		 * Add the needed dependencies to be able to compile programs.
 		 */
@@ -73,22 +73,22 @@ public class ObjcCompiler extends SpecificCompiler{
 				params.add(dependency.getAbsolutePath());
 			}
 		}
-		
+
 		// The command getObjcFlags returns the flags that have to be added
 		// to the ObjC compilation command
 		List<String> getObjcFlags = new ArrayList<String>();
 		getObjcFlags.addAll(Arrays.asList("gnustep-config", "--objc-flags"));
-		String flags=Command.exec(getOutputDir(), getObjcFlags);
-		
+		String flags = Command.exec(getOutputDir(), getObjcFlags);
+
 		// Here, we add each flag to the command line parameters
-		while(flags.contains(" ")){
+		while (flags.contains(" ")) {
 			String flag = flags.substring(0, flags.indexOf(" "));
 			params.add(flag);
-			flags=flags.replace(flag+" ","");
+			flags = flags.replace(flag + " ", "");
 		}
-		if(!flags.isEmpty())
-			params.add(flags.substring(0,flags.length()-1));
-		
+		if (!flags.isEmpty())
+			params.add(flags.substring(0, flags.length() - 1));
+
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
 	}
@@ -97,6 +97,7 @@ public class ObjcCompiler extends SpecificCompiler{
 	public String getSourceCodeExtension() {
 		return "m";
 	}
+
 	@Override
 	public String run(File file, List<File> classPath)
 			throws FileNotFoundException {
@@ -113,7 +114,7 @@ public class ObjcCompiler extends SpecificCompiler{
 		}
 
 		Map<String, String> env = new HashMap<String, String>();
-		params.addAll(Arrays.asList("./"+file.getName()));
+		params.addAll(Arrays.asList("./" + file.getName()));
 		return Command.exec(getOutputDir(), params, env);
 	}
 

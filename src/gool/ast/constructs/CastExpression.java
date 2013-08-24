@@ -15,21 +15,17 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
-
 /**
  * Represents the conversion of an expression to a target type. In object
  * oriented languages, this construct represents an explicit cast.
  * 
- * @param <T> the target type.
+ * @param <T>
+ *            the target type.
  */
 public final class CastExpression extends Expression {
 
@@ -40,8 +36,11 @@ public final class CastExpression extends Expression {
 
 	/**
 	 * Creates a new cast using the target type and the expression to be casted.
-	 * @param targetType the target type.
-	 * @param expression the expression to be casted.
+	 * 
+	 * @param targetType
+	 *            the target type.
+	 * @param expression
+	 *            the expression to be casted.
 	 */
 	public CastExpression(IType targetType, Expression expression) {
 		super(targetType);
@@ -50,6 +49,7 @@ public final class CastExpression extends Expression {
 
 	/**
 	 * Gets the expression to be casted.
+	 * 
 	 * @return the expression to be casted.
 	 */
 	public Expression getExpression() {

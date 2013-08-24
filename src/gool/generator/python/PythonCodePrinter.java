@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.python;
 
 import gool.ast.constructs.ClassDef;
@@ -37,7 +33,6 @@ import java.util.List;
 import logger.Log;
 
 public class PythonCodePrinter extends CodePrinter {
-	
 
 	private void createGoolHelperModule(File outputDir) {
 		FileOutputStream goolHelperOut;
@@ -49,38 +44,40 @@ public class PythonCodePrinter extends CodePrinter {
 		goolHelperIn.add("goolHelper/__init__.py");
 		goolHelperIn.add("goolHelper/IO.py");
 		goolHelperIn.add("goolHelper/Util.py");
-		
+
 		// create the directory
-		File dir = new File(outputDir+"/goolHelper");
-		if (! dir.isDirectory() && ! dir.mkdirs()) {
-			Log.e(String.format("Impossible to create the module '%s/goolHelper'", outputDir));
+		File dir = new File(outputDir + "/goolHelper");
+		if (!dir.isDirectory() && !dir.mkdirs()) {
+			Log.e(String.format(
+					"Impossible to create the module '%s/goolHelper'",
+					outputDir));
 		} else {
 			// Print helpers
-			for(String in : goolHelperIn) {
+			for (String in : goolHelperIn) {
 				InputStream helper;
 				try {
 					helper = PythonPlatform.class.getResource(in).openStream();
-	
-					goolHelperOut = new FileOutputStream (outputDir+"/"+in);
+
+					goolHelperOut = new FileOutputStream(outputDir + "/" + in);
 					while ((noOfBytes = helper.read(buffer)) != -1) {
 						goolHelperOut.write(buffer, 0, noOfBytes);
 					}
 					goolHelperOut.close();
 					helper.close();
-				} catch (IOException e){
-					Log.e(String.format("Impossible to create the file '%s'", in));
+				} catch (IOException e) {
+					Log.e(String.format("Impossible to create the file '%s'",
+							in));
 				}
 			}
 		}
-		
-	}
 
+	}
 
 	public PythonCodePrinter(File outputDir, Collection<File> myF) {
 		super(new PythonGenerator(), outputDir, myF);
 		createGoolHelperModule(outputDir);
 	}
-	
+
 	@Override
 	public String getFileName(String className) {
 		return className + ".py";
@@ -94,20 +91,20 @@ public class PythonCodePrinter extends CodePrinter {
 	@Override
 	public List<File> print(ClassDef pclass) throws FileNotFoundException {
 		List<File> res = super.print(pclass);
-		
+
 		createInitFile(getOutputDir());
-		
-		return res;		
+
+		return res;
 	}
-	
+
 	private void createInitFile(File dir) {
-		File[] dirs = dir.listFiles(new FileFilter(){
-		  public boolean accept(File f) {
-		    return f.isDirectory();
-		  }
+		File[] dirs = dir.listFiles(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory();
+			}
 		});
-		
-		for(File d : dirs) {
+
+		for (File d : dirs) {
 			File init = new File(d, "__init__.py");
 			try {
 				init.createNewFile();

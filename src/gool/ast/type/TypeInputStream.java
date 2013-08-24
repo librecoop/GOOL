@@ -15,15 +15,11 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
-public class TypeInputStream extends ReferenceType{
+public class TypeInputStream extends ReferenceType {
 
 	@Override
 	public String getName() {

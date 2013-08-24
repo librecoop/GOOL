@@ -15,15 +15,10 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
-
 
 /**
  * This class captures function invocation. Hence is is an OOTExpr.
@@ -44,7 +39,6 @@ public class MethCall extends Parameterizable {
 	private String generalName;
 	private String library;
 
-	
 	public MethCall(IType type, Expression target) {
 		super(type);
 		this.target = target;
@@ -55,30 +49,32 @@ public class MethCall extends Parameterizable {
 		addParameter(param);
 	}
 
-//	public MethCall(IType type, Expression target, String methodName, Expression... params) {
-//		this(type, new MemberSelect(type, target, methodName));
-//		if (params != null){
-//			addParameters(Arrays.asList(params));
-//		}
-//		
-//	}
-	
+	// public MethCall(IType type, Expression target, String methodName,
+	// Expression... params) {
+	// this(type, new MemberSelect(type, target, methodName));
+	// if (params != null){
+	// addParameters(Arrays.asList(params));
+	// }
+	//
+	// }
+
 	public MethCall(IType type, String name) {
 		this(type, new Identifier(type, name));
 	}
-	
-	public MethCall(IType type, Expression target, String generalName, String library){
+
+	public MethCall(IType type, Expression target, String generalName,
+			String library) {
 		this(type, target);
 		this.generalName = generalName;
 		this.library = library;
 	}
 
-	public static MethCall  create(IType type,
-			Expression target, Meth meth,
+	public static MethCall create(IType type, Expression target, Meth meth,
 			Expression param) {
-		return new MethCall(type, new FieldAccess(target.getType(), target, meth.getName()), param);
+		return new MethCall(type, new FieldAccess(target.getType(), target,
+				meth.getName()), param);
 	}
-	
+
 	public static MethCall create(IType type, Expression expression) {
 		return new MethCall(type, expression);
 	}
@@ -86,18 +82,18 @@ public class MethCall extends Parameterizable {
 	public Expression getTarget() {
 		return target;
 	}
-	
+
 	public String getGeneralName() {
 		return this.generalName;
 	}
-	
-	public String getLibrary(){
+
+	public String getLibrary() {
 		return this.library;
 	}
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

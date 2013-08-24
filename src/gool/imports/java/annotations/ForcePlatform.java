@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.imports.java.annotations;
 
 import java.lang.annotation.ElementType;
@@ -28,4 +24,3 @@ import java.lang.annotation.Target;
 public @interface ForcePlatform {
 	String platform();
 }
- 

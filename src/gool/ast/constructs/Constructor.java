@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.TypeNone;
@@ -60,9 +56,9 @@ public class Constructor extends Meth {
 	public List<InitCall> getInitCalls() {
 		return initCalls;
 	}
-	
+
 	@Override
 	public String getHeader() {
-		return GoolGeneratorController.generator().getCode(this);		
+		return GoolGeneratorController.generator().getCode(this);
 	}
 }

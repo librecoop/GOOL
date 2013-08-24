@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.ast.constructs;
 
 import gool.ast.type.IType;
@@ -27,9 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class specifies that the respective GOOL node may have a list of parameters.
+ * This class specifies that the respective GOOL node may have a list of
+ * parameters.
  */
-public abstract class Parameterizable extends Expression{
+public abstract class Parameterizable extends Expression {
 
 	/**
 	 * The parameters needed to call the method.

@@ -9,36 +9,33 @@ import logger.Log.Level;
 public abstract class Printer {
 
 	protected Level level;
-	
+
 	protected boolean tag;
-	
+
 	private SimpleDateFormat dateFormat;
-	
+
 	public Printer(Level lv, boolean t, String d) {
 		level = lv;
 		tag = t;
-		if(!d.isEmpty()) {
+		if (!d.isEmpty()) {
 			try {
-				dateFormat = new SimpleDateFormat (d);
-			}
-			catch(Exception e) {
+				dateFormat = new SimpleDateFormat(d);
+			} catch (Exception e) {
 				dateFormat = null;
 			}
-		}
-		else {
+		} else {
 			dateFormat = null;
 		}
 	}
-	
+
 	public abstract void print(Level lv, String message, Color color);
-	
+
 	public abstract void printErr(Level lv, Exception e, Color color);
-	
+
 	protected String formatedDate() {
-		if(dateFormat!=null) {
+		if (dateFormat != null) {
 			return dateFormat.format(new Date());
-		}
-		else {
+		} else {
 			return "";
 		}
 	}

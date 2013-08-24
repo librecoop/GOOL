@@ -1,5 +1,4 @@
 
-
 /*
  * Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1 of this file.
  * Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2 of this file.    
@@ -16,10 +15,6 @@
  * You should have received a copy of the GNU General Public License along with GOOL,
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
-
-
 
 /**
  * The class that launches the other ones, thereby controlling the workflow.
@@ -53,42 +48,45 @@ import java.util.Map;
 import logger.Log;
 
 public class GOOLCompiler {
-	
 
 	/**
-	 * The main
-	 * - gets the folder to open from Settings
-	 * - opens the files
-	 * - creates an instance of this class
-	 * - triggers it upon the files, with argument the target platform.
+	 * The main - gets the folder to open from Settings - opens the files -
+	 * creates an instance of this class - triggers it upon the files, with
+	 * argument the target platform.
 	 */
 	public static void main(String[] args) {
-		
+
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = getFilesInFolder(folder, "java");
 			ArrayList<String> extToNCopy = new ArrayList<String>();
-			
-			try{
-				File t = new File(Settings.get("java_in_dir")+File.separator+".goolIgnore");
+
+			try {
+				File t = new File(Settings.get("java_in_dir") + File.separator
+						+ ".goolIgnore");
 				FileReader f = new FileReader(t);
 				BufferedReader g = new BufferedReader(f);
 				String ligne;
-				while((ligne = g.readLine()) !=null)
+				while ((ligne = g.readLine()) != null)
 					extToNCopy.add(ligne);
-			}
-			catch (Exception e){
+			} catch (Exception e) {
 				Log.e(e);
 			}
-			
-			Collection<File> filesNonChange = getFilesInFolderNonExe(folder, extToNCopy);
-			concreteJavaToConcretePlatform(  JavaPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(CSharpPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(   CppPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(PythonPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(   XmlPlatform.getInstance(filesNonChange), files);
-		    //TODO: same for android & Objc
-			concreteJavaToConcretePlatform(   AndroidPlatform.getInstance(), files);
+
+			Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
+					extToNCopy);
+			concreteJavaToConcretePlatform(
+					JavaPlatform.getInstance(filesNonChange), files);
+			concreteJavaToConcretePlatform(
+					CSharpPlatform.getInstance(filesNonChange), files);
+			concreteJavaToConcretePlatform(
+					CppPlatform.getInstance(filesNonChange), files);
+			concreteJavaToConcretePlatform(
+					PythonPlatform.getInstance(filesNonChange), files);
+			concreteJavaToConcretePlatform(
+					XmlPlatform.getInstance(filesNonChange), files);
+			// TODO: same for android & Objc
+			concreteJavaToConcretePlatform(AndroidPlatform.getInstance(), files);
 			concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);
 
 		} catch (Exception e) {
@@ -98,52 +96,52 @@ public class GOOLCompiler {
 
 	public static Collection<File> getFilesInFolder(File folder, String ext) {
 		Collection<File> files = new ArrayList<File>();
-		for(File f : folder.listFiles()) {
-			if(f.isDirectory()) {
+		for (File f : folder.listFiles()) {
+			if (f.isDirectory()) {
 				files.addAll(getFilesInFolder(f, ext));
-			}
-			else if ( f.getName().endsWith(ext)) {
+			} else if (f.getName().endsWith(ext)) {
 				files.add(f);
 			}
 		}
 		return files;
 	}
-	
-	private static Collection<File> getFilesInFolderNonExe(File folder, ArrayList<String> ext) {
-		
+
+	private static Collection<File> getFilesInFolderNonExe(File folder,
+			ArrayList<String> ext) {
+
 		Collection<File> files = new ArrayList<File>();
 
-			
-			
-			for(File f : folder.listFiles()) {
-				if(f.isDirectory()) {
-					files.addAll(getFilesInFolderNonExe(f, ext));
+		for (File f : folder.listFiles()) {
+			if (f.isDirectory()) {
+				files.addAll(getFilesInFolderNonExe(f, ext));
+			} else {
+				boolean trouve = false;
+				for (String s : ext) {
+					if (f.getName().endsWith(s))
+						trouve = true;
 				}
-				else{
-					boolean trouve = false;
-					for(String s : ext){
-						if(f.getName().endsWith(s))
-							trouve = true;
-					}
-					if(!trouve)
-						files.add(f);
-					trouve = false;
-					
-				}
+				if (!trouve)
+					files.add(f);
+				trouve = false;
+
 			}
+		}
 		return files;
 	}
 
-
 	/**
-	 * Taking concrete Java into concrete Target is done in two steps:
-	 * - we parse the concrete Java into abstract GOOL;
-	 * - we flatten the abstract GOOL into concrete Target.
-	 * Notice that the Target is specified at this stage already: it will be carried kept in the abstract GOOL.
-	 * This choice is justified if we want to do multi-platform compilation, 
-	 * i.e. have some pieces of the abstract GOOL to compile in some Target, and another piece is some other Target.
-	 * @param destPlatform: the Target language
-	 * @param input: the concrete Java, as a string
+	 * Taking concrete Java into concrete Target is done in two steps: - we
+	 * parse the concrete Java into abstract GOOL; - we flatten the abstract
+	 * GOOL into concrete Target. Notice that the Target is specified at this
+	 * stage already: it will be carried kept in the abstract GOOL. This choice
+	 * is justified if we want to do multi-platform compilation, i.e. have some
+	 * pieces of the abstract GOOL to compile in some Target, and another piece
+	 * is some other Target.
+	 * 
+	 * @param destPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Java, as a string
 	 * @return a map of the compiled files for the different platforms
 	 * @throws Exception
 	 */
@@ -162,11 +160,13 @@ public class GOOLCompiler {
 		return abstractGool2Target(classDefs);
 	}
 
-		
 	/**
 	 * Parsing the concrete Java into abstract GOOL is done by JavaParser.
-	 * @param destPlatform: the Target language
-	 * @param input: the concrete Java, as a string
+	 * 
+	 * @param destPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Java, as a string
 	 * @return abstract GOOL classes
 	 * @throws Exception
 	 */
@@ -182,17 +182,17 @@ public class GOOLCompiler {
 				ExecutorHelper.getJavaFileObjects(inputFiles));
 	}
 
-	
 	/**
-	 * Flattening the abstract GOOL into concrete Target is done by GeneratorHelper.
+	 * Flattening the abstract GOOL into concrete Target is done by
+	 * GeneratorHelper.
+	 * 
 	 * @param classDefs
 	 * @return a map of the compiled files for the different platforms
 	 * @throws FileNotFoundException
 	 */
 	private static Map<Platform, List<File>> abstractGool2Target(
 			Collection<ClassDef> classDefs) throws FileNotFoundException {
-		return GeneratorHelper.printClassDefs(classDefs);		
+		return GeneratorHelper.printClassDefs(classDefs);
 	}
-
 
 }

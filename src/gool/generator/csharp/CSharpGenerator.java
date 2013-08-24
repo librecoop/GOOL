@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 package gool.generator.csharp;
 
 import gool.ast.constructs.BinaryOperation;
@@ -91,17 +87,19 @@ import org.apache.commons.lang.StringUtils;
 /**
  * It generates specific C# code for certain GOOL nodes.
  */
-public class CSharpGenerator extends CommonCodeGenerator implements CodeGeneratorNoVelocity {
+public class CSharpGenerator extends CommonCodeGenerator implements
+		CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(TypeBool typeBool) {
 		return "bool";
 	}
-	
+
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		if (!(binaryOp.getLeft() instanceof Constant) && binaryOp.getOperator() == Operator.EQUAL) {
-			return String.format("%s.Equals(%s)", binaryOp.getLeft(), binaryOp
-					.getRight());
+		if (!(binaryOp.getLeft() instanceof Constant)
+				&& binaryOp.getOperator() == Operator.EQUAL) {
+			return String.format("%s.Equals(%s)", binaryOp.getLeft(),
+					binaryOp.getRight());
 		} else {
 			return super.getCode(binaryOp);
 		}
@@ -116,7 +114,7 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 	public String getCode(TypeByte t) {
 		return "byte";
 	}
-	
+
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "char";
@@ -130,8 +128,8 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 	 * @return the formatted object instantiation.
 	 */
 	public String getCode(ClassNew classNew) {
-		return String.format("new %s( %s )", classNew.getType(), GeneratorHelper
-				.joinParams(classNew.getParameters()));
+		return String.format("new %s( %s )", classNew.getType(),
+				GeneratorHelper.joinParams(classNew.getParameters()));
 	}
 
 	@Override
@@ -147,32 +145,32 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(ListAddCall lac) {
 		String method = lac.getParameters().size() > 1 ? "Insert" : "Add";
-		return String.format("%s.%s(%s)", lac.getExpression(), method, GeneratorHelper
-				.joinParams(lac.getParameters()));
+		return String.format("%s.%s(%s)", lac.getExpression(), method,
+				GeneratorHelper.joinParams(lac.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		return String.format("%s.Remove(%s)", lrc.getExpression(), GeneratorHelper
-				.joinParams(lrc.getParameters()));
+		return String.format("%s.Remove(%s)", lrc.getExpression(),
+				GeneratorHelper.joinParams(lrc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("%s.RemoveAt(%s)", lrc.getExpression(), GeneratorHelper
-				.joinParams(lrc.getParameters()));
+		return String.format("%s.RemoveAt(%s)", lrc.getExpression(),
+				GeneratorHelper.joinParams(lrc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s.Contains(%s)", lcc.getExpression(), GeneratorHelper
-				.joinParams(lcc.getParameters()));
+		return String.format("%s.Contains(%s)", lcc.getExpression(),
+				GeneratorHelper.joinParams(lcc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s[%s]", lgc.getExpression(), GeneratorHelper
-				.joinParams(lgc.getParameters()));
+		return String.format("%s[%s]", lgc.getExpression(),
+				GeneratorHelper.joinParams(lgc.getParameters()));
 	}
 
 	@Override
@@ -193,7 +191,7 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 	@Override
 	public String getCode(TypeDependency typeDependency) {
 		if (typeDependency.getType() instanceof TypeList) {
-			if (((TypeList)typeDependency.getType()).getElementType() == null) {
+			if (((TypeList) typeDependency.getType()).getElementType() == null) {
 				return "System.Collections";
 			}
 			return "System.Collections.Generic";
@@ -213,12 +211,12 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (typeDependency.getType() instanceof TypeInt) {
 			return "noprint";
 		}
-		if (typeDependency.getType() instanceof TypeClass ) {
+		if (typeDependency.getType() instanceof TypeClass) {
 			return "noprint";
 		}
 		return super.getCode(typeDependency);
 	}
-	
+
 	@Override
 	public String getCode(ClassDef classDef) {
 		if (classDef.getPpackage() == null) {
@@ -247,8 +245,8 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		return String.format("Console.WriteLine(%s)", GeneratorHelper
-				.joinParams(systemOutPrintCall.getParameters()));
+		return String.format("Console.WriteLine(%s)",
+				GeneratorHelper.joinParams(systemOutPrintCall.getParameters()));
 	}
 
 	@Override
@@ -276,8 +274,9 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 		customizeModifiers(meth);
 
-		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()), meth
-				.getType(), name, GeneratorHelper.joinParams(meth.getParams()));
+		return String.format("%s %s %s(%s)", getCode(meth.getModifiers()),
+				meth.getType(), name,
+				GeneratorHelper.joinParams(meth.getParams()));
 	}
 
 	private void customizeModifiers(Meth meth) {
@@ -300,7 +299,10 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 		if (meth.getModifiers().contains(Modifier.PUBLIC) && meth.isInherited()) {
 			if (name.equals("toString") && meth.getParams().isEmpty()) {
 				return "ToString";
-			} else if (name.equals("equals") && meth.getParams().size()==1&&meth.getParams().get(0).getType().equals(TypeObject.INSTANCE)) {
+			} else if (name.equals("equals")
+					&& meth.getParams().size() == 1
+					&& meth.getParams().get(0).getType()
+							.equals(TypeObject.INSTANCE)) {
 				return "Equals";
 			} else if (name.equals("hashCode") && meth.getParams().isEmpty()) {
 				return "GetHashCode";
@@ -348,7 +350,9 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
-		return String.format("%s[%s] = %s", mapPutCall.getExpression(), mapPutCall.getParameters().get(0), mapPutCall.getParameters().get(1));
+		return String.format("%s[%s] = %s", mapPutCall.getExpression(),
+				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
+						.get(1));
 	}
 
 	@Override
@@ -358,21 +362,21 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		return String.format("(%s.GetIterator() == 0)", mapGetIteratorCall
-				.getExpression());
+		return String.format("(%s.GetIterator() == 0)",
+				mapGetIteratorCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String.format("%s[%s]", mapGetCall.getExpression(), GeneratorHelper
-				.joinParams(mapGetCall.getParameters()));
+		return String.format("%s[%s]", mapGetCall.getExpression(),
+				GeneratorHelper.joinParams(mapGetCall.getParameters()));
 	}
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
-		return String.format("%s.ContainsKey(%s)", mapContainsKeyCall
-				.getExpression(), GeneratorHelper.joinParams(mapContainsKeyCall
-				.getParameters()));
+		return String.format("%s.ContainsKey(%s)",
+				mapContainsKeyCall.getExpression(),
+				GeneratorHelper.joinParams(mapContainsKeyCall.getParameters()));
 	}
 
 	@Override
@@ -383,9 +387,9 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		return String.format("foreach(%s in %s){%s}", enhancedForLoop
-				.getVarDec(), enhancedForLoop.getExpression(), enhancedForLoop
-				.getStatements());
+		return String.format("foreach(%s in %s){%s}",
+				enhancedForLoop.getVarDec(), enhancedForLoop.getExpression(),
+				enhancedForLoop.getStatements());
 	}
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
@@ -393,15 +397,14 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 	public String getCode(CustomDependency customDependency) {
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			throw new IllegalArgumentException(
-					String
-							.format(
-									"There is no equivalent type in C# for the GOOL type '%s'.",
-									customDependency.getName()));
+					String.format(
+							"There is no equivalent type in C# for the GOOL type '%s'.",
+							customDependency.getName()));
 		}
 
 		Dependency dependency = customDependencies.get(customDependency
 				.getName());
-		
+
 		if (dependency instanceof ClassDef) { // It is already a package.
 			// Return only the package. C# does not support individual class
 			// importation.
@@ -434,8 +437,8 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		return String.format("%s.Equals(%s)", equalsCall.getTarget(), GeneratorHelper
-				.joinParams(equalsCall.getParameters()));
+		return String.format("%s.Equals(%s)", equalsCall.getTarget(),
+				GeneratorHelper.joinParams(equalsCall.getParameters()));
 	}
 
 	@Override
@@ -456,43 +459,45 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String printClass(ClassDef classDef) {
-		StringBuilder sb = new StringBuilder (String.format("// Platform: %s\n\n", classDef.getPlatform()));
-		
+		StringBuilder sb = new StringBuilder(String.format(
+				"// Platform: %s\n\n", classDef.getPlatform()));
 
 		// BUG: yield a stack overflow
-		Set<String> dependencies =  GeneratorHelper.printDependencies(classDef);
-		if (! dependencies.isEmpty()) {
+		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
+		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies)
 				sb = sb.append(String.format("using %s;\n", dependency));
 			sb = sb.append("\n");
 		}
 
 		if (classDef.getPpackage() != null)
-			sb = sb.append(String.format("namespace %s;\n\n", classDef.getPackageName()));
-		
-		
+			sb = sb.append(String.format("namespace %s;\n\n",
+					classDef.getPackageName()));
+
 		// print the class prototype
 		sb = sb.append(String.format("%s %s %s",
 				StringUtils.join(classDef.getModifiers(), ' '),
-				classDef.isInterface()?"interface":"class",
+				classDef.isInterface() ? "interface" : "class",
 				classDef.getName()));
 		if (classDef.getParentClass() != null)
-			sb = sb.append(String.format(" : %s",classDef.getParentClass()));
-		if (! classDef.getInterfaces().isEmpty())
-			sb = sb.append(String.format(" : %s",StringUtils.join(classDef.getInterfaces(),", ")));
+			sb = sb.append(String.format(" : %s", classDef.getParentClass()));
+		if (!classDef.getInterfaces().isEmpty())
+			sb = sb.append(String.format(" : %s",
+					StringUtils.join(classDef.getInterfaces(), ", ")));
 		sb = sb.append(" {\n\n");
 		// print the fields
 		for (Field field : classDef.getFields())
 			sb = sb.append(formatIndented("%-1%s;\n\n", field));
 		// print the methods
-		for (Meth meth : classDef.getMethods()){
+		for (Meth meth : classDef.getMethods()) {
 			// TODO: deal with constructors ?
 			if (classDef.isInterface())
 				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
 			else
-				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(), meth.getBlock()));
+				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n",
+						meth.getHeader(), meth.getBlock()));
 		}
-		
+
 		return sb.toString() + "}";
 	}
 
@@ -515,20 +520,20 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 
 	@Override
 	public String getCode(Catch catchStatement) {
-		return formatIndented("catch (%s %s)\n{%1}\n",
-				catchStatement.getParameter().getType(),
-				catchStatement.getParameter().getName(),
-				catchStatement.getBlock());
+		return formatIndented("catch (%s %s)\n{%1}\n", catchStatement
+				.getParameter().getType(), catchStatement.getParameter()
+				.getName(), catchStatement.getBlock());
 	}
 
 	@Override
 	public String getCode(Try tryStatement) {
 		String ret = formatIndented("try\n{%1}", tryStatement.getBlock());
-		for (Catch c: tryStatement.getCatches()) {
+		for (Catch c : tryStatement.getCatches()) {
 			ret += "\n" + c;
 		}
 		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
-			ret += formatIndented(" finally\n{%1}", tryStatement.getFinilyBlock());
+			ret += formatIndented(" finally\n{%1}",
+					tryStatement.getFinilyBlock());
 		return ret;
 	}
 
@@ -557,5 +562,5 @@ public class CSharpGenerator extends CommonCodeGenerator implements CodeGenerato
 			return typeException.getName();
 		}
 	}
-	
+
 }
