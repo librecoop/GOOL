@@ -1,0 +1,8 @@
+	public GoolFileReader(String name){
+		try{
+		this.outputlangobject = new FileReader(name);
+		this.filename = name;
+		}catch(Exception e){
+		System.out.println(e.toString());
+		}
+	}

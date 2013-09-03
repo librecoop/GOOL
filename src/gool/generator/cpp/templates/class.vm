@@ -35,8 +35,9 @@
 #end
 
 #foreach( $method in $class.Methods )
+	#if($method.isGoolMethodImplementation())$method#else
 	${method.Header}#if($class.isInterface() || $method.isAbstract() );#else {
 $method.Block
 }#end
-
+#end
 #end

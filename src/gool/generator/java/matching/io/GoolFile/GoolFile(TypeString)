@@ -1,0 +1,4 @@
+	public GoolFile(String name){
+		this.outputlangobject = new File(name);
+		this.filename = name;
+	}

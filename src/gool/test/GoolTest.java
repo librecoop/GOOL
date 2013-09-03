@@ -36,12 +36,12 @@ import org.junit.Test;
 public class GoolTest {
 
 	private List<Platform> platforms = Arrays.asList(
-			(Platform) JavaPlatform.getInstance(),
-			(Platform) CppPlatform.getInstance(),
-			(Platform) CSharpPlatform.getInstance(),
-			// (Platform) PythonPlatform.getInstance()
-			(Platform) ObjcPlatform.getInstance()
-	// (Platform)AndroidPlatform.getInstance()
+			(Platform) JavaPlatform.getInstance()
+			//(Platform) CppPlatform.getInstance()
+			//(Platform) CSharpPlatform.getInstance()
+			//(Platform) PythonPlatform.getInstance(),
+			//(Platform) ObjcPlatform.getInstance()
+			//(Platform)AndroidPlatform.getInstance()
 			);
 
 	private static class GoolTestExecutor {
@@ -96,6 +96,132 @@ public class GoolTest {
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
 	}
+	
+	@Test
+	public void libSystemTest() throws Exception {
+		String input = "import java.io.File;" +
+				TestHelper.surroundWithClassMain(
+						"/* création puis suppression d'un fichier qui n'existait pas */"+
+						"File f = new File(\"/home/zalgo/truc.txt\");"+
+						
+						"if(f.exists()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\");}"+
+						
+						"if(f.createNewFile()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\"); }"+
+						
+						"if(f.exists()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\");}"+
+						
+						"if(f.delete()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\"); }"+
+						
+						"if(f.exists()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\");}"
+						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+		String expected = "false"+"true"+"true"+"true"+"false";
+		System.out.println(input);
+		compareResultsDifferentPlatforms(input, expected);
+	}
+
+	@Test
+	public void libSystemTest2() throws Exception {
+		String input = "import java.io.File;" +
+					   "import java.io.BufferedReader;" +
+					   "import java.io.FileReader;" +
+					   "import java.io.BufferedWriter;"+
+					   "import java.io.FileWriter;"+
+	
+				TestHelper.surroundWithClassMain(
+						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
+						
+						"File f = new File(\"/home/zalgo/truc.txt\");"+
+						"f.createNewFile();"+
+						
+						"FileWriter fw=new FileWriter(f);"+
+						"BufferedWriter bw=new BufferedWriter(fw);"+
+						"bw.write('a'); bw.write('b'); bw.close();"+
+						
+						"FileReader fr=new FileReader(f);"+
+						"BufferedReader br=new BufferedReader(fr);"+
+						"char c1=(char)br.read(), c2=(char)br.read(); br.close();"+
+						"System.out.println(c1+\"\"+c2);"+
+						
+						"f.delete();"
+						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+		String expected = "ab";
+		System.out.println(input);
+		compareResultsDifferentPlatforms(input, expected);
+	}
+	
+	@Test
+	public void libSystemTest3() throws Exception {
+		String input = "import java.io.File;" +
+					   "import java.io.BufferedReader;" +
+					   "import java.io.FileReader;" +
+					   "import java.io.BufferedWriter;"+
+					   "import java.io.FileWriter;"+
+	
+				TestHelper.surroundWithClassMain(
+						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
+						
+						"File f = new File(\"/home/zalgo/truc.txt\");"+
+						"f.createNewFile();"+
+						
+						"FileWriter fw=new FileWriter(f);"+
+						"BufferedWriter bw=new BufferedWriter(fw);"+
+						"String s=\"hello world\\n42\\n\";"+
+						"bw.write(s,0,s.length()); bw.close();"+
+						
+						"FileReader fr=new FileReader(f);"+
+						"BufferedReader br=new BufferedReader(fr);"+
+						"String line=br.readLine();"+
+						"while(line!=null){"+
+						"System.out.println(line);"+
+						"line=br.readLine();"+
+						"}"+
+						"br.close();"+
+						"f.delete();"
+						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+		String expected = "hello world42";
+		System.out.println(input);
+		compareResultsDifferentPlatforms(input, expected);
+	}
+	
+	
+	@Test
+	public void libSystemTest4() throws Exception {
+		String input = "import gool.imports.java.io.GoolBufferedReader;" +
+					   "import gool.imports.java.io.GoolBufferedWriter;" +
+				       "import gool.imports.java.io.GoolFile;"+
+	
+				TestHelper.surroundWithClassMain(
+						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
+						"GoolFile gf = new GoolFile(\"/home/zalgo/truc.txt\");"+
+						"gf.createNewFile();"+
+						
+						/*
+						"GoolBufferedWriter gbw=new GoolBufferedWriter(gf)"+
+						"String s=\"hello world\\n42\\n\";"+
+						"gbw.write(s,0,s.length()); gbw.close();"+
+
+						"GoolBufferedReader gbr=new GoolBufferedReader(gf)"+
+						"String line=gbr.readLine();"+
+						"while(line!=null){"+
+						"System.out.println(line);"+
+						"line=gbr.readLine();"+
+						"}"+
+						"gbr.close();"+*/
+						
+						"gf.deleteFile();"
+						
+						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+		String expected = "hello world42";
+		System.out.println(input);
+		compareResultsDifferentPlatforms(input, expected);
+	}
+	
+	
 
 	@Test
 	public void simpleTryCatch() throws Exception {
@@ -355,7 +481,7 @@ public class GoolTest {
 				+ "import gool.imports.java.io.FileReader;\n"
 				+ "import gool.imports.java.io.FileWriter;\n"
 				+ "import gool.imports.java.io.BufferedWriter;\n"
-				+ "import gool.imports.java.io.File;\n"
+				+ "import gool.imports.java.io.GoolFile;\n"
 				+ "import gool.imports.java.io.IOException;\n"
 				+ TestHelper
 						.surroundWithClassMain(

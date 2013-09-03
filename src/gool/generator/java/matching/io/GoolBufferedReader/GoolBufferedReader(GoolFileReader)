@@ -1,0 +1,8 @@
+	public GoolBufferedReader(GoolFileReader goolFileReader){
+		try{
+		this.filename = goolFileReader.getFilename();
+		this.outputlangobject = new BufferedReader(goolFileReader.getOutputlangobject());
+		}catch(Exception e){
+		System.out.println(e.toString());
+		}
+	}

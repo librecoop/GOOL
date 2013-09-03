@@ -1,0 +1,3 @@
+	public bool exists(){
+		return File.Exists(filename);
+	}

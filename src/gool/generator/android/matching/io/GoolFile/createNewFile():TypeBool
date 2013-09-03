@@ -1,0 +1,8 @@
+	public boolean createNewFile(){
+		try{
+		return outputlangobject.createNewFile();
+		}catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		return false;
+	}

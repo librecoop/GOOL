@@ -37,11 +37,12 @@ import gool.recognizer.common.MethodSignature;
 
 public class RecognizerMatcher {
 
-	private static Platform InputLang;
+	//private static Platform InputLang;
+	private static String InputLang;
 	private static HashMap<String, ArrayList<String>> ClassMatchTable;
 	private static HashMap<String, ArrayList<String>> MethodMatchTable;
 
-	static public void init(Platform inputLang) {
+	static public void init(/*Platform inputLang*/ String inputLang) {
 		// Initialization of data structures
 		InputLang = inputLang;
 		ClassMatchTable = new HashMap<String, ArrayList<String>>();
@@ -60,9 +61,9 @@ public class RecognizerMatcher {
 		return !goolClasses.isEmpty();
 	}
 
-	public static String matchClass(String inputLangClass) {
+	public static String matchClass(String inputLangClass) {	
 		for (String goolClass : ClassMatchTable.keySet())
-			if (ClassMatchTable.get(goolClass).contains(inputLangClass))
+			if (ClassMatchTable.get(goolClass).contains(inputLangClass) || goolClass.endsWith("."+inputLangClass))
 				return goolClass;
 		return null;
 	}
@@ -75,14 +76,11 @@ public class RecognizerMatcher {
 		return null;
 	}
 
-	/*
-	 * public static void matchClassNew(ClassNew ClassNew){
-	 * if(ClassNew.getType() instanceof TypeUnknown){ String InputLangClass =
-	 * ClassNew.getType().getName(); String GoolClass =
-	 * matchClass(InputLangClass); ClassNew.setType(new TypeUnknown(GoolClass));
-	 * } }
-	 */
+	
+	
 	private static void enableRecognition(String goolClass) {
+		if(ClassMatchTable.keySet().contains(goolClass))
+			return;
 		System.out
 				.println("[RecognizerMatcher] Enabling the recognition of the GOOL class: "
 						+ goolClass + ".");
@@ -131,12 +129,21 @@ public class RecognizerMatcher {
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
-		printMatchTables();
 	}
 
 	static private ArrayList<String> getGoolClassesFromImport(
 			String inputLangImport) {
-		ArrayList<String> defaultGoolClasses = new ArrayList<String>();
+		ArrayList<String> goolClasses = new ArrayList<String>();
+		
+		if(inputLangImport.startsWith("gool.imports."+InputLang.toLowerCase()+".")){
+			for(String goolClass : ClassMatchTable.keySet()){
+				if(inputLangImport.endsWith("."+goolClass)){
+					goolClasses.add(goolClass);
+					return goolClasses;
+				}
+			}
+		}
+		
 		try {
 			InputStream ips = new FileInputStream(
 					getPathOfInputImportMatchFile());
@@ -149,14 +156,14 @@ public class RecognizerMatcher {
 					String currentGoolClass = getLeftPartOfInputMatchLine(line);
 					ArrayList<String> currentInputImports = parseCommaSeparatedValues(getRightPartOfInputMatchLine(line));
 					if (currentInputImports.contains(inputLangImport))
-						defaultGoolClasses.add(currentGoolClass);
+						goolClasses.add(currentGoolClass);
 				}
 			}
 			br.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
-		return defaultGoolClasses;
+		return goolClasses;
 	}
 
 	static private ArrayList<String> getGoolMethodsFromGoolClass(
@@ -184,6 +191,12 @@ public class RecognizerMatcher {
 		return goolMethods;
 	}
 
+	
+	
+	
+	
+	
+	
 	/*
 	 * methods used by the GoolMatcher to parse each line of a match file
 	 */

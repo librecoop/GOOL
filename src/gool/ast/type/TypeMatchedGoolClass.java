@@ -22,7 +22,7 @@ import gool.generator.GoolGeneratorController;
 /**
  * 
  */
-public final class TypeMatchedGoolClass extends PrimitiveType {
+public final class TypeMatchedGoolClass extends ReferenceType {
 
 	private String goolclassname;
 

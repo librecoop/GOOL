@@ -1,0 +1,9 @@
+	public String readLine(){
+		String res=null;
+		try{
+		res=this.outputlangobject.readLine();
+		}catch(Exception e){
+		System.out.println(e.toString());
+		}
+		return res;
+	}

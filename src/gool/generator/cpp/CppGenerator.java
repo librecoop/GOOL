@@ -34,6 +34,7 @@ import gool.ast.constructs.EqualsCall;
 import gool.ast.constructs.Expression;
 import gool.ast.constructs.Field;
 import gool.ast.constructs.Finally;
+import gool.ast.constructs.GoolMethodImplementation;
 import gool.ast.constructs.MainMeth;
 import gool.ast.constructs.MemberSelect;
 import gool.ast.constructs.Meth;
@@ -41,6 +42,7 @@ import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.ThisCall;
 import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
@@ -78,6 +80,7 @@ import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
+import gool.ast.type.TypeMatchedGoolClass;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeScanner;
@@ -85,6 +88,7 @@ import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
+import gool.generator.common.GeneratorMatcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,8 +98,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class CppGenerator extends CommonCodeGenerator implements
-		CodeGeneratorNoVelocity {
+public class CppGenerator extends CommonCodeGenerator /*implements
+		CodeGeneratorNoVelocity*/ {
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
@@ -569,7 +573,7 @@ public class CppGenerator extends CommonCodeGenerator implements
 		return null;
 	}
 
-	@Override
+	//@Override
 	public String printClass(ClassDef classDef) {
 		StringBuilder sb = new StringBuilder(String.format(
 				"// Platform: %s\n\n", classDef.getPlatform()));
@@ -650,6 +654,30 @@ public class CppGenerator extends CommonCodeGenerator implements
 			return "exception";
 		default:
 			return typeException.getName();
+		}
+	}
+	
+	@Override
+	public String getCode(RecognizedDependency recognizedDependency){
+		return recognizedDependency.getName().replace(".", "/")+".h";
+	}
+	
+	@Override
+	public String getCode(TypeMatchedGoolClass typeMatchedGoolClass) {
+		String name = typeMatchedGoolClass.getGoolclassname();
+		return name.substring(name.lastIndexOf(".")+1)+"*";
+	}
+	@Override
+	public String getHeader(GoolMethodImplementation goolMethodImplementation){
+		String result = GeneratorMatcher.matchGoolMethod(
+				goolMethodImplementation.getGoolClass(),
+				goolMethodImplementation.getMethodSignature());
+		if (result!=null && !result.equals("") && result.contains("{")) {
+			return "public: "+result.substring(0,result.indexOf("{")).replace(goolMethodImplementation.getGoolClass().substring(goolMethodImplementation.getGoolClass().lastIndexOf(".")+1)+"::", "")+";\n\n";
+		} else {
+			return "/* The GOOL method "
+					+ goolMethodImplementation.getMethodSignature()
+					+ " has not been implemented yet for this output language. */\n\n";
 		}
 	}
 

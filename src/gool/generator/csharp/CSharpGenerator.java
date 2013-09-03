@@ -35,6 +35,7 @@ import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.Package;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
 import gool.ast.constructs.Try;
@@ -87,8 +88,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * It generates specific C# code for certain GOOL nodes.
  */
-public class CSharpGenerator extends CommonCodeGenerator implements
-		CodeGeneratorNoVelocity {
+public class CSharpGenerator extends CommonCodeGenerator /*implements
+		CodeGeneratorNoVelocity*/ {
 	@Override
 	public String getCode(TypeBool typeBool) {
 		return "bool";
@@ -457,7 +458,7 @@ public class CSharpGenerator extends CommonCodeGenerator implements
 		return null;
 	}
 
-	@Override
+	//@Override
 	public String printClass(ClassDef classDef) {
 		StringBuilder sb = new StringBuilder(String.format(
 				"// Platform: %s\n\n", classDef.getPlatform()));
@@ -561,6 +562,11 @@ public class CSharpGenerator extends CommonCodeGenerator implements
 		default:
 			return typeException.getName();
 		}
+	}
+	
+	@Override
+	public String getCode(RecognizedDependency recognizedDependency){
+		return recognizedDependency.getName().substring(0, recognizedDependency.getName().lastIndexOf("."));
 	}
 
 }

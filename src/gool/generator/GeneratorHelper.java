@@ -72,7 +72,9 @@ public class GeneratorHelper {
 		// go through each dependency, produce its toString, add it to the set.
 		for (Dependency dep : classDef.getDependencies()) {
 			if (!dep.toString().equals(classDef.toString())) {
-				result.add(dep.toString());
+				String s=dep.toString();
+				result.add(s);
+				System.out.println("[printDependencies] dependance ajoutée à la classe "+classDef.getName()+": "+s);
 			}
 		}
 

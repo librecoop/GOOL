@@ -39,7 +39,9 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.MethCall;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
+import gool.ast.constructs.OutputImportDependency;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Return;
 import gool.ast.constructs.This;
 import gool.ast.constructs.ThisCall;
@@ -91,6 +93,7 @@ import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
+import gool.generator.common.GeneratorMatcher;
 import gool.methods.MethodManager;
 
 import java.util.ArrayList;
@@ -831,6 +834,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		if (field.getDefaultValue() != null) {
 			out = String.format("%s = %s", out, field.getDefaultValue());
 		}
+		if (field.getType().toString().equals("noprint"))
+			return "";
 		return out;
 	}
 
@@ -865,4 +870,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public String getCode(RecognizedDependency recognizedDependency){
+		return recognizedDependency.getName().replace(".", "/")+".h";
+	}
+	
 }

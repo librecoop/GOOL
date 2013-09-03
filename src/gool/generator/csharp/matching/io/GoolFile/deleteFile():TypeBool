@@ -1,0 +1,6 @@
+	public bool deleteFile(){
+		if(!File.Exists(filename))
+			return false;
+		File.Delete(filename);
+		return !File.Exists(filename);
+	}

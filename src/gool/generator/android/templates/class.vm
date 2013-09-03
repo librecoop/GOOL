@@ -57,7 +57,8 @@ import android.util.Log;
 
 ## Declare its methods
 #foreach( $method in $class.Methods )
-    ${method.Header}#if($class.isInterface());#else {
+	#if($method.isGoolMethodImplementation())$method
+    #else${method.Header}#if($class.isInterface());#else {
 #if($method.isConstructor)
 	#foreach( $parentCall in $method.ParentCalls )
 		$parentCall
@@ -66,5 +67,5 @@ import android.util.Log;
         ${method.Block}
     }#end
 
-#end
+#end#end
 }

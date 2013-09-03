@@ -35,6 +35,7 @@ import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
 import gool.ast.constructs.GoolMethodImplementation;
+import gool.ast.constructs.OutputImportDependency;
 import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
@@ -311,6 +312,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(Field field) {
 		String out = String.format("%s %s %s", getCode(field.getModifiers()),
 				field.getType(), field.getName());
+		if (field.getType().toString().equals("noprint"))
+			return "";
 		if (field.getDefaultValue() != null) {
 			// Notice that this will call a toString() on the field.defaultValue
 			// Which will become a JavaGenerator.getCode(defaultValue)
@@ -650,7 +653,8 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(TypeMatchedGoolClass typeMatchedGoolClass) {
-		return typeMatchedGoolClass.getGoolclassname();
+		String name = typeMatchedGoolClass.getGoolclassname();
+		return name.substring(name.lastIndexOf(".") + 1);
 	}
 
 	@Override
@@ -660,8 +664,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		if (res == null)
 			return typeGoolClassToMatch.getGoolclassname()
 					+ " /* there is no corresponding class for this GoolClass in this output language, passing on */";
-		else
+		else {
 			return res;
+		}
 	}
 
 	public String getCode(RecognizedDependency recognizedDependency) {
@@ -669,21 +674,43 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	}
 
 	public String getCode(UnrecognizedDependency unrecognizedDependency) {
-		return unrecognizedDependency.getName() + " /* The import "
-				+ unrecognizedDependency.getName()
+		return "/* The import " + unrecognizedDependency.getName()
 				+ " is unknown to the GOOL library system. */";
 	}
 
 	public String getCode(GoolMethodImplementation goolMethodImplementation) {
-		String result = null;
-		if ((result = GeneratorMatcher.matchGoolMethod(
+		String result = GeneratorMatcher.matchGoolMethod(
 				goolMethodImplementation.getGoolClass(),
-				goolMethodImplementation.getMethodSignature())) != null) {
-			return result;
+				goolMethodImplementation.getMethodSignature());
+		if (result != null && !result.equals("")) {
+			return result + "\n\n";
 		} else {
 			return "/* The GOOL method "
 					+ goolMethodImplementation.getMethodSignature()
-					+ " has not been implemented yet for this output language. */\n";
+					+ " has not been implemented yet for this output language. */\n\n";
+		}
+	}
+
+	public String getCode(OutputImportDependency outputImportDependency) {
+		String result = GeneratorMatcher
+				.matchImportDependency(outputImportDependency.getGoolClass());
+		if (result != null && !result.equals("")) {
+			return result + "\n\n";
+		} else {
+			return "noprint";
+		}
+	}
+
+	public String getHeader(GoolMethodImplementation goolMethodImplementation) {
+		String result = GeneratorMatcher.matchGoolMethod(
+				goolMethodImplementation.getGoolClass(),
+				goolMethodImplementation.getMethodSignature());
+		if (result != null && !result.equals("") && result.contains("{")) {
+			return result.substring(0, result.indexOf("{")) + ";\n\n";
+		} else {
+			return "/* The GOOL method "
+					+ goolMethodImplementation.getMethodSignature()
+					+ " has not been implemented yet for this output language. */\n\n";
 		}
 	}
 }

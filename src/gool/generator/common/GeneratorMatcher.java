@@ -48,17 +48,19 @@ public class GeneratorMatcher {
 		return null;
 	}
 
-	public static String matchGoolMethod(String goolClass, String goolMethodSignature) {
-		String methodImplementation=null;
+	public static String matchGoolMethod(String goolClass,
+			String goolMethodSignature) {
+		String methodImplementation = null;
 		try {
 			InputStream ips = new FileInputStream(
-					getPathOfOutputMethodImplementationFile(goolClass, goolMethodSignature));
+					getPathOfOutputMethodImplementationFile(goolClass,
+							goolMethodSignature));
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
-			methodImplementation="";
+			methodImplementation = "";
 			while ((line = br.readLine()) != null) {
-				methodImplementation+=(line+"\n");
+				methodImplementation += (line + "\n");
 			}
 			br.close();
 		} catch (Exception e) {
@@ -66,7 +68,26 @@ public class GeneratorMatcher {
 		}
 		return methodImplementation;
 	}
-	
+
+	public static String matchImportDependency(String goolClass) {
+		String imports = null;
+		try {
+			InputStream ips = new FileInputStream(
+					getPathOfOutputImportFile(goolClass));
+			InputStreamReader ipsr = new InputStreamReader(ips);
+			BufferedReader br = new BufferedReader(ipsr);
+			String line;
+			imports = "";
+			while ((line = br.readLine()) != null) {
+				imports += (line + "\n");
+			}
+			br.close();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		return imports;
+	}
+
 	static private String getPathOfOutputMatchDir(String goolClass) {
 		String goolPackageName = goolClass.replace('.', '/');
 		return "src/gool/generator/" + OutputLang.toString().toLowerCase()
@@ -84,6 +105,12 @@ public class GeneratorMatcher {
 		return getPathOfOutputMatchDir(goolClass) + goolMethodSignature;
 	}
 
+	static private String getPathOfOutputImportFile(String goolClass) {
+		return getPathOfOutputMatchDir(goolClass.substring(0,
+				goolClass.lastIndexOf(".")))
+				+ goolClass.substring(goolClass.lastIndexOf(".") + 1)
+				+ ".imports";
+	}
 
 	static private String removeSpaces(String line) {
 		for (int i = 0; i < line.length(); i++) {
@@ -98,15 +125,17 @@ public class GeneratorMatcher {
 	static private boolean isCommentLine(String line) {
 		return line.startsWith("#");
 	}
+
 	static private boolean isOutputMatchLine(String line) {
 		return !isCommentLine(line) && line.contains("->");
 	}
+
 	static private String getLeftPartOfOutputMatchLine(String OutputMatchLine) {
 		return OutputMatchLine.substring(0, OutputMatchLine.indexOf("->"));
 	}
+
 	static private String getRightPartOfOutputMatchLine(String OutputMatchLine) {
 		return OutputMatchLine.substring(OutputMatchLine.indexOf("->") + 2);
 	}
-	
-	
+
 }

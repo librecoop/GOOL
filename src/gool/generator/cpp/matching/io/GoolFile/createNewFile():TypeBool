@@ -1,0 +1,11 @@
+	bool GoolFile::createNewFile(){
+		//const char *tmp = filename->c_str();
+		//fopen(tmp, "rw");
+		//std::ifstream fichier(tmp);
+		//return !fichier.fail();
+		if(exists())
+			return false;
+		const char *tmp = filename->c_str();
+		outputlangobject=fopen(tmp,"rw");
+		return true;
+	}

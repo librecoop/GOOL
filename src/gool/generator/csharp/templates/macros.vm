@@ -41,6 +41,9 @@
 #end
 
 #macro ( includes $dependencies )
-#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))using ${dep};#end
+#foreach( $dep in $dependencies )
+#if($dep.startsWith("/*")||$dep.startsWith("//")||$dep.startsWith("using"))
+$dep
+#elseif(!$dep.equals("noprint"))using ${dep};#end
 #end
 #end

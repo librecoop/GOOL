@@ -35,19 +35,20 @@ enum $class.Name {
 #elseif(!$class.isInterface())
 @interface $class.Name :#if($class.ParentClass) #type($class.ParentClass) #set($dp = 1)#else NSObject #end #if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
 	@private
-	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "private")
+	#foreach( $field in $class.Fields )
+	#if($field.getAccessModifier() == "private" && !$field.toString().equals(""))
 	$field;
 	#end
 #end
 
 	@protected
-	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "protected")
+	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "protected" && !$field.toString().equals(""))
 	$field;
 	#end
 #end
 
 	@public
-	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "public")
+	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "public" && !$field.toString().equals(""))
 	$field;
 	#end
 #end
@@ -56,8 +57,9 @@ enum $class.Name {
 	#foreach( $method in $class.Methods )
 		#set($p = 1)#foreach($mod in $method.getModifiers())#if($mod == "private")#set($p = 0)#end#end
 		#if($p != 0)
-		
-	#if($method.isConstructor())-($method.getClassDef().getName() *)init#foreach( $p in $method.getParams())#if($velocityCount == 1)With#elseif($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end#end#if($method.getName() == "toString")#set($ts=0)#end
+	#if($method.isGoolMethodImplementation())
+	$method.getHeader()	
+	#elseif($method.isConstructor())-($method.getClassDef().getName() *)init#foreach( $p in $method.getParams())#if($velocityCount == 1)With#elseif($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end#end#if($method.getName() == "toString")#set($ts=0)#end
 	#end
 	
 	#if($ts==1)-(NSString *)toString;#end

@@ -41,7 +41,14 @@
 #end
 
 #macro ( includes $dependencies )
-#foreach( $dep in $dependencies )#if(!$dep.equals("noprint"))#import "${dep}"
+
+#if(!$dependencies.contains("Foundation/Foundation.h"))
+#import "Foundation/Foundation.h"
+#end
+#foreach( $dep in $dependencies )
+#if($dep.startsWith("/*")||$dep.startsWith("//")||$dep.startsWith("#import"))
+$dep
+#elseif(!$dep.equals("noprint"))#import "${dep}"
 #end
 #end
 #end

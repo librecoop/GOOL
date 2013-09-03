@@ -1,0 +1,7 @@
+	public void write(int x){
+		try{
+		this.outputlangobject.write(x);
+		}catch(Exception e){
+		System.out.println(e.toString());
+		}
+	}

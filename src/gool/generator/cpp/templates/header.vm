@@ -39,7 +39,9 @@ class $class.Name #if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfac
 #end
 
 #foreach( $method in $class.Methods )
-    #if(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
+	#if($method.isGoolMethodImplementation())
+	$method.getHeader()
+	#elseif(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
 
 #end
 };

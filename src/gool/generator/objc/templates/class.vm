@@ -28,7 +28,8 @@
 @implementation ${class.Name}
 
 #foreach( $method in $class.Methods )
-	#if(!${method.isMainMethod()} && !$method.isAbstract())
+#if($method.isGoolMethodImplementation())$method
+	#elseif(!${method.isMainMethod()} && !$method.isAbstract())
 ${method.Header}#if($class.isInterface());#else
 {
 ##if(${method.isConstructor()})

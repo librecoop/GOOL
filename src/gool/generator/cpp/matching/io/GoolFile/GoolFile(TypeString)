@@ -1,0 +1,5 @@
+	GoolFile::GoolFile(std::string* name){
+		const char *tmp = name->c_str();
+		outputlangobject = fopen(tmp, "rw");
+		filename = name;
+	}
