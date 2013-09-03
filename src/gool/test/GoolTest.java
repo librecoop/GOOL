@@ -37,11 +37,11 @@ public class GoolTest {
 
 	private List<Platform> platforms = Arrays.asList(
 			(Platform) JavaPlatform.getInstance()
-			//(Platform) CppPlatform.getInstance()
 			//(Platform) CSharpPlatform.getInstance()
+			//(Platform) CppPlatform.getInstance()
+			//(Platform) AndroidPlatform.getInstance()
 			//(Platform) PythonPlatform.getInstance(),
 			//(Platform) ObjcPlatform.getInstance()
-			//(Platform)AndroidPlatform.getInstance()
 			);
 
 	private static class GoolTestExecutor {

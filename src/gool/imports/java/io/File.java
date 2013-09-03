@@ -26,15 +26,22 @@ public class File {
 		return null;
 	}
 
+	/*
 	public Boolean isFile() {
 		return null;
-	}
-
+	}*/
+	
+	/*
 	public Boolean isDirectory() {
 		return null;
-	}
+	}*/
 
 	public Boolean exists() {
 		return null;
 	}
+	
+	public Boolean createNewFile(){
+		return null;
+	}
+
 }
