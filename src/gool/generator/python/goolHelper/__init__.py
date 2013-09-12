@@ -1,5 +1,5 @@
-# Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1 of this file.
-# Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2 of this file.    
+# Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1.
+# Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2.    
 #
 # This file is part of GOOL.
 #

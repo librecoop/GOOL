@@ -1,6 +1,6 @@
 /*
- * Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1 of this file.
- * Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2 of this file.    
+ * Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1.
+ * Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2.    
  *
  * This file is part of GOOL.
  *
@@ -211,7 +211,7 @@ import com.sun.tools.javac.tree.TreeInfo;
  * abstract GOOL. The documentation of abstract Java is at
  * http://docs.oracle.com
  * /javase/7/docs/api/javax/lang/model/package-summary.html The class Context is
- * necessary for that and is declared at the bottom of this file.
+ * necessary for that and is declared at the bottom.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
