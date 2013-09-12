@@ -61,18 +61,27 @@ public class RecognizerMatcher {
 		return !goolClasses.isEmpty();
 	}
 
-	public static String matchClass(String inputLangClass) {	
-		for (String goolClass : ClassMatchTable.keySet())
+	public static String matchClass(String inputLangClass) {
+		/*for (String goolClass : ClassMatchTable.keySet())
 			if (ClassMatchTable.get(goolClass).contains(inputLangClass) || goolClass.endsWith("."+inputLangClass))
-				return goolClass;
+				return goolClass;*/
+		//String tmp=inputLangClass.substring(inputLangClass.lastIndexOf(".")+1);
+		for (String goolClass : ClassMatchTable.keySet())
+		if (ClassMatchTable.get(goolClass).contains(inputLangClass) /*|| goolClass.endsWith(".Gool"+tmp)*/)
+			return goolClass;
 		return null;
 	}
 
 	public static String matchMethod(String inputLangMethodSignature) {
+		
+		//  if(inputLangMethodSignature.contains("gool.imports."+InputLang.toLowerCase()+"."))
+		//	inputLangMethodSignature=inputLangMethodSignature.replace("gool.imports."+InputLang.toLowerCase()+".","");
 		for (String goolMethod : MethodMatchTable.keySet())
 			if (MethodMatchTable.get(goolMethod).contains(
 					inputLangMethodSignature))
 				return goolMethod;
+		
+		
 		return null;
 	}
 
@@ -136,12 +145,16 @@ public class RecognizerMatcher {
 		ArrayList<String> goolClasses = new ArrayList<String>();
 		
 		if(inputLangImport.startsWith("gool.imports."+InputLang.toLowerCase()+".")){
-			for(String goolClass : ClassMatchTable.keySet()){
-				if(inputLangImport.endsWith("."+goolClass)){
-					goolClasses.add(goolClass);
+				String goolClass=inputLangImport.substring(inputLangImport.lastIndexOf(".")+1);
+				if(goolClass.equals("File")||goolClass.equals("GoolFile"))
+					goolClasses.add("io.GoolFile");
+				if(goolClass.equals("BufferedReader")||goolClass.equals("GoolBufferedReader"))
+					goolClasses.add("io.GoolBufferedReader");
+				if(goolClass.equals("BufferedWriter")||goolClass.equals("GoolBufferedWriter"))
+					goolClasses.add("io.GoolBufferedWriter");
+				
 					return goolClasses;
-				}
-			}
+				
 		}
 		
 		try {

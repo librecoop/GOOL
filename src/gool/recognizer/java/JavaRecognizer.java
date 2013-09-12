@@ -403,8 +403,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// else, if it is indeed a new dependency, we add it to the context
 			// System.out.println("default lib: Ajout de la dépendance "+newDep+" au contexte de la classe courante.");
 			context.getClassDef().addDependency(newDep);
-			System.out.println("Ajout d'une dépendance <" + newDep
-					+ "> à la classe courante.");
+			System.out.println("Dependency "+ newDep +" added");
 		}
 	}
 
@@ -493,7 +492,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// String
 		// shortTypeName=typeMirror.toString().substring(typeMirror.toString().lastIndexOf(".")+1);
 
-		System.out.println("Occurence du type <" + typeMirror + "> trouvée.");
+		System.out.println("Type " + typeMirror);
 		String goolClass = RecognizerMatcher.matchClass(typeMirror.toString());
 		if (goolClass != null) {
 			addDependencyToContext(context, new RecognizedDependency(goolClass));
@@ -1737,7 +1736,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		String signature = (method.owner + "." + method.name + method.type)
 				.replace(")", "):");
-		System.out.println("visitMethodInvocation: " + signature);
+		System.out.println("Method " + signature);
 
 		Expression target;
 

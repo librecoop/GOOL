@@ -37,7 +37,7 @@ public class GoolTest {
 
 	private List<Platform> platforms = Arrays.asList(
 			(Platform) JavaPlatform.getInstance()
-			//(Platform) CSharpPlatform.getInstance()
+			//(Platform) CSharpPlatform.getInstance(),
 			//(Platform) CppPlatform.getInstance()
 			//(Platform) AndroidPlatform.getInstance()
 			//(Platform) PythonPlatform.getInstance(),
@@ -99,7 +99,8 @@ public class GoolTest {
 	
 	@Test
 	public void libSystemTest() throws Exception {
-		String input = "import java.io.File;" +
+		String input = 
+				"import java.io.File;" +
 				TestHelper.surroundWithClassMain(
 						"/* création puis suppression d'un fichier qui n'existait pas */"+
 						"File f = new File(\"/home/zalgo/truc.txt\");"+
@@ -120,9 +121,36 @@ public class GoolTest {
 						"else{ System.out.println(\"false\");}"
 						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
 		String expected = "false"+"true"+"true"+"true"+"false";
-		System.out.println(input);
 		compareResultsDifferentPlatforms(input, expected);
 	}
+	
+	@Test
+	public void libSystemTestNotLegacyUser() throws Exception {
+		String input = 
+				"import gool.imports.java.io.GoolFile;" +
+				TestHelper.surroundWithClassMain(
+						"/* création puis suppression d'un fichier qui n'existait pas */"+
+						"GoolFile f = new GoolFile(\"/home/zalgo/truc.txt\");"+
+						
+						"if(f.exists()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\");}"+
+						
+						"if(f.createNewFile()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\"); }"+
+						
+						"if(f.exists()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\");}"+
+						
+						"if(f.deleteFile()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\"); }"+
+						
+						"if(f.exists()){ System.out.println(\"true\"); }"+
+						"else{ System.out.println(\"false\");}"
+						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+		String expected = "false"+"true"+"true"+"true"+"false";
+		compareResultsDifferentPlatforms(input, expected);
+	}
+	
 
 	@Test
 	public void libSystemTest2() throws Exception {
@@ -150,7 +178,6 @@ public class GoolTest {
 						"f.delete();"
 						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
 		String expected = "ab";
-		System.out.println(input);
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -184,7 +211,6 @@ public class GoolTest {
 						"f.delete();"
 						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
 		String expected = "hello world42";
-		System.out.println(input);
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -199,8 +225,7 @@ public class GoolTest {
 						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
 						"GoolFile gf = new GoolFile(\"/home/zalgo/truc.txt\");"+
 						"gf.createNewFile();"+
-						
-						/*
+
 						"GoolBufferedWriter gbw=new GoolBufferedWriter(gf)"+
 						"String s=\"hello world\\n42\\n\";"+
 						"gbw.write(s,0,s.length()); gbw.close();"+
@@ -211,13 +236,12 @@ public class GoolTest {
 						"System.out.println(line);"+
 						"line=gbr.readLine();"+
 						"}"+
-						"gbr.close();"+*/
+						"gbr.close();"+
 						
 						"gf.deleteFile();"
 						
 						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
 		String expected = "hello world42";
-		System.out.println(input);
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
