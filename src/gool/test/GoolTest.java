@@ -36,11 +36,11 @@ import org.junit.Test;
 public class GoolTest {
 
 	private List<Platform> platforms = Arrays.asList(
-			(Platform) JavaPlatform.getInstance()
-			//(Platform) CSharpPlatform.getInstance(),
-			//(Platform) CppPlatform.getInstance()
+			//(Platform) JavaPlatform.getInstance()
+			//(Platform) CSharpPlatform.getInstance()
+			(Platform) CppPlatform.getInstance()
 			//(Platform) AndroidPlatform.getInstance()
-			//(Platform) PythonPlatform.getInstance(),
+			//(Platform) PythonPlatform.getInstance()
 			//(Platform) ObjcPlatform.getInstance()
 			);
 
@@ -119,17 +119,16 @@ public class GoolTest {
 						
 						"if(f.exists()){ System.out.println(\"true\"); }"+
 						"else{ System.out.println(\"false\");}"
-						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+						, MAIN_CLASS_NAME);
 		String expected = "false"+"true"+"true"+"true"+"false";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+	/*
 	@Test
 	public void libSystemTestNotLegacyUser() throws Exception {
 		String input = 
 				"import gool.imports.java.io.GoolFile;" +
 				TestHelper.surroundWithClassMain(
-						"/* création puis suppression d'un fichier qui n'existait pas */"+
 						"GoolFile f = new GoolFile(\"/home/zalgo/truc.txt\");"+
 						
 						"if(f.exists()){ System.out.println(\"true\"); }"+
@@ -150,7 +149,7 @@ public class GoolTest {
 		String expected = "false"+"true"+"true"+"true"+"false";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+	*/
 
 	@Test
 	public void libSystemTest2() throws Exception {
@@ -209,12 +208,12 @@ public class GoolTest {
 						"}"+
 						"br.close();"+
 						"f.delete();"
-						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+						, MAIN_CLASS_NAME);
 		String expected = "hello world42";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
-	
+	/*
 	@Test
 	public void libSystemTest4() throws Exception {
 		String input = "import gool.imports.java.io.GoolBufferedReader;" +
@@ -222,7 +221,6 @@ public class GoolTest {
 				       "import gool.imports.java.io.GoolFile;"+
 	
 				TestHelper.surroundWithClassMain(
-						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
 						"GoolFile gf = new GoolFile(\"/home/zalgo/truc.txt\");"+
 						"gf.createNewFile();"+
 
@@ -240,11 +238,11 @@ public class GoolTest {
 						
 						"gf.deleteFile();"
 						
-						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+						, MAIN_CLASS_NAME);
 		String expected = "hello world42";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+	*/
 	
 
 	@Test
@@ -495,17 +493,16 @@ public class GoolTest {
 	 * First test using a file as a FileWriter constructor argument
 	 * 
 	 */
-
+	/*
 	@Test
 	public void fileTest() throws Exception {
 		// String readFile = Settings.get("read_file_path");
 		// String readFile = Settings.get("read_file_path");
 		String writeFile = Settings.get("write_file_path");
-		String input = "import gool.imports.java.io.BufferedReader;\n"
-				+ "import gool.imports.java.io.FileReader;\n"
-				+ "import gool.imports.java.io.FileWriter;\n"
-				+ "import gool.imports.java.io.BufferedWriter;\n"
-				+ "import gool.imports.java.io.GoolFile;\n"
+		String input = "import java.io.BufferedReader;\n"
+				+ "import java.io.FileReader;\n"
+				+ "import java.io.FileWriter;\n"
+				+ "import java.io.BufferedWriter;\n"
 				+ "import gool.imports.java.io.IOException;\n"
 				+ TestHelper
 						.surroundWithClassMain(
@@ -523,13 +520,13 @@ public class GoolTest {
 										+ "} catch(IOException iox) \n { System.out.println(\"iox\");} \n catch(Exception e) \n {System.out.println(\"ex\");}\n",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "line1A");
-	}
+	}*/
 
 	/**
 	 * Second test using a string as a FileWriter constructor argument
 	 * 
 	 */
-
+	/*
 	@Test
 	public void fileTestSecond() throws Exception {
 		// String readFile = Settings.get("read_file_path");
@@ -562,7 +559,8 @@ public class GoolTest {
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "file not found");
 	}
-
+	*/
+/*
 	@Test
 	public void fileTestAppend() throws Exception {
 		try {
@@ -599,14 +597,14 @@ public class GoolTest {
 		}
 
 	}
-
+*/
 	@Test
 	public void exceptionThrowTest() throws Exception {
 		String input = TestHelper
 				.surroundWithClassMain(
-						"try {\n Test t=new Test(); t.print();\n}\n"
+						"try {\n Test t=new Test(); t.printr();\n}\n"
 								+ "catch(Exception e) {\n System.out.println(\"e\");\n}\n}"
-								+ "\n public void print() throws IOException, Exception {System.out.println(2 + 2);",
+								+ "\n public void printr() throws IOException, Exception {System.out.println(2 + 2);",
 						MAIN_CLASS_NAME);
 
 		String expected = "4";

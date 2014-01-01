@@ -33,7 +33,6 @@ import gool.generator.common.Platform;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import gool.recognizer.common.MethodSignature;
 
 public class RecognizerMatcher {
 
@@ -143,7 +142,7 @@ public class RecognizerMatcher {
 	static private ArrayList<String> getGoolClassesFromImport(
 			String inputLangImport) {
 		ArrayList<String> goolClasses = new ArrayList<String>();
-		
+		/*
 		if(inputLangImport.startsWith("gool.imports."+InputLang.toLowerCase()+".")){
 				String goolClass=inputLangImport.substring(inputLangImport.lastIndexOf(".")+1);
 				if(goolClass.equals("File")||goolClass.equals("GoolFile"))
@@ -155,7 +154,7 @@ public class RecognizerMatcher {
 				
 					return goolClasses;
 				
-		}
+		}*/
 		
 		try {
 			InputStream ips = new FileInputStream(

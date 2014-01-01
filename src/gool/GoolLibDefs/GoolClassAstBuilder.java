@@ -20,7 +20,6 @@ import gool.ast.constructs.VarDeclaration;
 import gool.ast.constructs.Package;
 import gool.ast.type.*;
 import gool.generator.common.Platform;
-import gool.recognizer.common.MethodSignature;
 
 public class GoolClassAstBuilder {
 

@@ -1539,9 +1539,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		
 		
 		// GoolMatcher init call
-		
 		RecognizerMatcher.init("java");
-		//RecognizerMatcher.init(JavaPlatform.getInstance());
 		
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
