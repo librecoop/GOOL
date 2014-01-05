@@ -36,7 +36,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import javax.xml.parsers.*;
 import logger.Log;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
 import gool.generator.java.JavaGenerator;
 
@@ -158,10 +158,10 @@ public class XmlCodePrinter extends CodePrinter {
 				|| node.getClass().getName()
 						.equals("gool.generator.xml.XmlPlatform"))
 			return null;
-		if (node.getClass().isAssignableFrom(gool.ast.constructs.Node.class)) {
+		if (node.getClass().isAssignableFrom(gool.ast.core.Node.class)) {
 			return null;
 		}
-		if (node.getClass().getName().equals("gool.ast.constructs.ClassDef")) {
+		if (node.getClass().getName().equals("gool.ast.core.ClassDef")) {
 			if (classdefok)
 				classdefok = false;
 			else
@@ -177,13 +177,13 @@ public class XmlCodePrinter extends CodePrinter {
 		for (Method meth : meths) {
 			Class<?> laCl = meth.getReturnType();
 			// check if the method return type is a node.
-			if (gool.ast.constructs.Node.class.isAssignableFrom(laCl)
+			if (gool.ast.core.Node.class.isAssignableFrom(laCl)
 					&& (meth.getParameterTypes().length == 0) /* && nbNode<1000 */) {
 				// Debug for recursion
 				// nbNode++;
 				// Log.d(laCl.getName() + "\n" + nbNode);
 				try {
-					gool.ast.constructs.Node newNode = (gool.ast.constructs.Node) meth
+					gool.ast.core.Node newNode = (gool.ast.core.Node) meth
 							.invoke(node);
 					// detect recursion risk.
 					boolean recursionRisk = (newNode == node) ? true : false;

@@ -17,7 +17,7 @@
 
 package gool.generator.common;
 
-import gool.ast.constructs.Dependency;
+import gool.ast.core.Dependency;
 import gool.ast.type.PrimitiveType;
 import gool.executor.common.SpecificCompiler;
 

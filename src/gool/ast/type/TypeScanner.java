@@ -17,7 +17,7 @@
 
 package gool.ast.type;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.generator.GoolGeneratorController;
 
 public class TypeScanner extends ReferenceType {

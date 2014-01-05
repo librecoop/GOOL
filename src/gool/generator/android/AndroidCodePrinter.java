@@ -18,8 +18,8 @@
 package gool.generator.android;
 
 import gool.Settings;
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.Dependency;
+import gool.ast.core.ClassDef;
+import gool.ast.core.Dependency;
 import gool.generator.common.CodePrinter;
 
 import java.io.File;

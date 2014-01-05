@@ -1,11 +1,11 @@
 package gool.generator.common;
 
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.Field;
-import gool.ast.constructs.Language;
-import gool.ast.constructs.Meth;
-import gool.ast.constructs.Modifier;
-import gool.ast.constructs.VarDeclaration;
+import gool.ast.core.ClassDef;
+import gool.ast.core.Field;
+import gool.ast.core.Language;
+import gool.ast.core.Meth;
+import gool.ast.core.Modifier;
+import gool.ast.core.VarDeclaration;
 import gool.ast.type.IType;
 import gool.ast.type.TypeUnknown;
 

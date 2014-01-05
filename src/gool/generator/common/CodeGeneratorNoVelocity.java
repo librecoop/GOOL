@@ -17,7 +17,7 @@
 
 package gool.generator.common;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.generator.common.CodeGenerator;
 
 /**

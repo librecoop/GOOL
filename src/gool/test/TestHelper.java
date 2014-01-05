@@ -18,7 +18,7 @@
 package gool.test;
 
 import gool.GOOLCompiler;
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.common.Platform;
 

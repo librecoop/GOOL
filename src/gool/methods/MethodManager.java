@@ -1,7 +1,7 @@
 package gool.methods;
 
-import gool.ast.constructs.Expression;
-import gool.ast.constructs.Language;
+import gool.ast.core.Expression;
+import gool.ast.core.Language;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

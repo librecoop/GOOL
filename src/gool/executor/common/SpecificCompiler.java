@@ -17,7 +17,7 @@
 
 package gool.executor.common;
 
-import gool.ast.constructs.ClassMain;
+import gool.ast.core.ClassMain;
 
 import java.io.File;
 import java.io.FileNotFoundException;

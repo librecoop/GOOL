@@ -17,46 +17,46 @@
 
 package gool.generator.common;
 
-import gool.ast.constructs.ArrayAccess;
-import gool.ast.constructs.ArrayNew;
-import gool.ast.constructs.Assign;
-import gool.ast.constructs.BinaryOperation;
-import gool.ast.constructs.Block;
-import gool.ast.constructs.CastExpression;
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.ClassFree;
-import gool.ast.constructs.Comment;
-import gool.ast.constructs.CompoundAssign;
-import gool.ast.constructs.Constant;
-import gool.ast.constructs.Constructor;
-import gool.ast.constructs.ExpressionUnknown;
-import gool.ast.constructs.Field;
-import gool.ast.constructs.FieldAccess;
-import gool.ast.constructs.For;
-import gool.ast.constructs.GoolCall;
-import gool.ast.constructs.RecognizedDependency;
-import gool.ast.constructs.Identifier;
-import gool.ast.constructs.If;
-import gool.ast.constructs.ListMethCall;
-import gool.ast.constructs.MapEntryMethCall;
-import gool.ast.constructs.MapMethCall;
-import gool.ast.constructs.MemberSelect;
-import gool.ast.constructs.Meth;
-import gool.ast.constructs.MethCall;
-import gool.ast.constructs.Modifier;
-import gool.ast.constructs.NewInstance;
-import gool.ast.constructs.Operator;
-import gool.ast.constructs.Package;
-import gool.ast.constructs.Return;
-import gool.ast.constructs.Statement;
-import gool.ast.constructs.This;
-import gool.ast.constructs.ThisCall;
-import gool.ast.constructs.TypeDependency;
-import gool.ast.constructs.UnaryOperation;
-import gool.ast.constructs.UnrecognizedDependency;
-import gool.ast.constructs.VarAccess;
-import gool.ast.constructs.VarDeclaration;
-import gool.ast.constructs.While;
+import gool.ast.core.ArrayAccess;
+import gool.ast.core.ArrayNew;
+import gool.ast.core.Assign;
+import gool.ast.core.BinaryOperation;
+import gool.ast.core.Block;
+import gool.ast.core.CastExpression;
+import gool.ast.core.ClassDef;
+import gool.ast.core.ClassFree;
+import gool.ast.core.Comment;
+import gool.ast.core.CompoundAssign;
+import gool.ast.core.Constant;
+import gool.ast.core.Constructor;
+import gool.ast.core.ExpressionUnknown;
+import gool.ast.core.Field;
+import gool.ast.core.FieldAccess;
+import gool.ast.core.For;
+import gool.ast.core.GoolCall;
+import gool.ast.core.Identifier;
+import gool.ast.core.If;
+import gool.ast.core.ListMethCall;
+import gool.ast.core.MapEntryMethCall;
+import gool.ast.core.MapMethCall;
+import gool.ast.core.MemberSelect;
+import gool.ast.core.Meth;
+import gool.ast.core.MethCall;
+import gool.ast.core.Modifier;
+import gool.ast.core.NewInstance;
+import gool.ast.core.Operator;
+import gool.ast.core.Package;
+import gool.ast.core.RecognizedDependency;
+import gool.ast.core.Return;
+import gool.ast.core.Statement;
+import gool.ast.core.This;
+import gool.ast.core.ThisCall;
+import gool.ast.core.TypeDependency;
+import gool.ast.core.UnaryOperation;
+import gool.ast.core.UnrecognizedDependency;
+import gool.ast.core.VarAccess;
+import gool.ast.core.VarDeclaration;
+import gool.ast.core.While;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
@@ -682,22 +682,6 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			return res;
 		}
 	}
-
-	/*public String getCode(RecognizedDependency recognizedDependency) {
-		System.out.println("GETCODE RECOGNIZED DEPENDENCY");
-		ArrayList<String> imports = new ArrayList<String>();
-		for(String Import : GeneratorMatcher.matchImports(recognizedDependency.getName())){
-			if(Import.startsWith("+"))
-				imports.add(Import.substring(1));
-			else
-				imports.add(Import);
-		}
-		//TODO: faire pas que pour le premier
-		if(!imports.isEmpty())
-			return imports.get(0);
-		else
-			return recognizedDependency.getName();
-	}*/
 
 	public String getCode(UnrecognizedDependency unrecognizedDependency) {
 		return "/* "+ unrecognizedDependency.getName()

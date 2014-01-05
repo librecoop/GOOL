@@ -17,7 +17,7 @@
 
 package gool.ast.type;
 
-import gool.ast.constructs.Node;
+import gool.ast.core.Node;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -25,7 +25,7 @@
 
 package gool;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.GeneratorHelper;
 import gool.generator.android.AndroidPlatform;

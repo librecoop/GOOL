@@ -18,9 +18,9 @@
 package gool.generator;
 
 import gool.GOOLCompiler;
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.Dependency;
-import gool.ast.constructs.RecognizedDependency;
+import gool.ast.core.ClassDef;
+import gool.ast.core.Dependency;
+import gool.ast.core.RecognizedDependency;
 import gool.generator.android.AndroidCodePrinter;
 import gool.generator.android.AndroidPlatform;
 import gool.ast.type.IType;
@@ -122,7 +122,6 @@ public class GeneratorHelper {
 
 			// try {
 			
-			System.out.println("INITIALISATION GENERATOR MATCHER");
 			GeneratorMatcher.init(platform);
 			compilationUnits.get(platform).addAll(
 					currentPrinter.print(classDef));

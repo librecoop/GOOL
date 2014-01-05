@@ -26,36 +26,54 @@ import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 import gool.generator.objc.ObjcPlatform;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GoolTest {
 
 	private List<Platform> platforms = Arrays.asList(
-			(Platform) JavaPlatform.getInstance(),
-			(Platform) CSharpPlatform.getInstance(),
-			(Platform) CppPlatform.getInstance()
-			//(Platform) AndroidPlatform.getInstance()
-			//(Platform) PythonPlatform.getInstance()
-			//(Platform) ObjcPlatform.getInstance()
+
+			 (Platform) JavaPlatform.getInstance() ,
+			 (Platform) CSharpPlatform.getInstance() ,
+			 (Platform) CppPlatform.getInstance() //,
+			// (Platform) PythonPlatform.getInstance() ,
+			// (Platform) AndroidPlatform.getInstance() ,
+			// (Platform) ObjcPlatform.getInstance()
+
 			);
 
 	private static class GoolTestExecutor {
 		private static final String CLEAN_UP_REGEX = "Note:.*?[\r\n]|(\\w+>\\s)|[\\r\\n]+";
 		private String input;
 		private String expected;
+		private List<Platform> testedPlatforms;
+		private List<Platform> excludedPlatforms;
 
-		public GoolTestExecutor(String input, String expected) {
+		public GoolTestExecutor(String input, String expected,
+				List<Platform> testedPlatforms, List<Platform> excludedPlatforms) {
 			this.input = input;
 			this.expected = expected;
+			this.testedPlatforms = testedPlatforms;
+			this.excludedPlatforms = excludedPlatforms;
 		}
 
 		public void compare(Platform platform) throws Exception {
+			if (excludedPlatforms.contains(platform)) {
+				String errorMsg = "The following target platform(s) have been excluded for this test: ";
+				for (Platform p : excludedPlatforms)
+					if (testedPlatforms.contains(p))
+						errorMsg += p + " ";
+				Assert.fail(errorMsg
+						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+			}
+
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
 			// properties file
@@ -86,10 +104,17 @@ public class GoolTest {
 
 	private static final String MAIN_CLASS_NAME = "Test";
 
+	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
+
+	private void excludePlatformForThisTest(Platform platform) {
+		testNotImplementedOnPlatforms.add(platform);
+	}
+
 	@BeforeClass
 	public static void init() {
 	}
 
+	@Before
 	@Test
 	public void helloWorld() throws Exception {
 		String input = TestHelper.surroundWithClassMain(
@@ -97,104 +122,135 @@ public class GoolTest {
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+
 	@Test
 	public void goolLibraryTest1() throws Exception {
-		String input = 
-				"import java.io.File;" +
-				TestHelper.surroundWithClassMain(
-						"/* création puis suppression d'un fichier qui n'existait pas */"+
-					    "try{"+
-						"File f = new File(\"../testGool.txt\");"+
-						
-						"if(f.exists()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\");}"+
-						
-						"if(f.createNewFile()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\"); }"+
-						
-						"if(f.exists()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\");}"+
-						
-						"if(f.delete()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\"); }"+
-						
-						"if(f.exists()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\");}"+
-						"}catch(Exception e){"+
-						"}"
-						, MAIN_CLASS_NAME);
-		String expected = "false"+"true"+"true"+"true"+"false";
+		String input = "import java.io.File;"
+				+ TestHelper
+						.surroundWithClassMain(
+								"/* création puis suppression d'un fichier qui n'existait pas */"
+										+ "try{"
+										+ "File f = new File(\"../testGool.txt\");"
+										+
+
+										"if(f.exists()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\");}"
+										+
+
+										"if(f.createNewFile()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+
+
+										"if(f.exists()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\");}"
+										+
+
+										"if(f.delete()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+
+
+										"if(f.exists()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\");}"
+										+ "}catch(Exception e){" + "}",
+								MAIN_CLASS_NAME);
+		String expected = "false" + "true" + "true" + "true" + "false";
+
+		// Matching of the GoolFile library class and of its method
+		// work only for the Java target language at the moment,
+		// so we exclude the other platforms for this test.
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
+		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	@Test
 	public void goolLibraryTest2() throws Exception {
-		String input = "import java.io.File;" +
-					   "import java.io.BufferedReader;" +
-					   "import java.io.FileReader;" +
-					   "import java.io.BufferedWriter;"+
-					   "import java.io.FileWriter;"+
-	
-				TestHelper.surroundWithClassMain(
-						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
-						"try{"+
-						"File f = new File(\"../testGool.txt\");"+
-						"f.createNewFile();"+
-						
-						"FileWriter fw=new FileWriter(f);"+
-						"BufferedWriter bw=new BufferedWriter(fw);"+
-						"bw.write('a'); bw.write('b'); bw.close();"+
-						
-						"FileReader fr=new FileReader(f);"+
-						"BufferedReader br=new BufferedReader(fr);"+
-						"char c1=(char)br.read(), c2=(char)br.read(); br.close();"+
-						"System.out.println(c1+\"\"+c2);"+
-						
-						"f.delete();"+
-						"}catch(Exception e){"+
-						"}"
-						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
+		String input = "import java.io.File;"
+				+ "import java.io.BufferedReader;"
+				+ "import java.io.FileReader;"
+				+ "import java.io.BufferedWriter;"
+				+ "import java.io.FileWriter;"
+				+
+
+				TestHelper
+						.surroundWithClassMain(
+								"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"
+										+ "try{"
+										+ "File f = new File(\"../testGool.txt\");"
+										+ "f.createNewFile();"
+										+
+
+										"FileWriter fw=new FileWriter(f);"
+										+ "BufferedWriter bw=new BufferedWriter(fw);"
+										+ "bw.write('a'); bw.write('b'); bw.close();"
+										+
+
+										"FileReader fr=new FileReader(f);"
+										+ "BufferedReader br=new BufferedReader(fr);"
+										+ "char c1=(char)br.read(), c2=(char)br.read(); br.close();"
+										+ "System.out.println(c1+\"\"+c2);" +
+
+										"f.delete();" + "}catch(Exception e){"
+										+ "}", MAIN_CLASS_NAME);
 		String expected = "ab";
+
+		// Matching of the io GOOL library with classes and methods
+		// of the output language work only for the Java target at the moment,
+		// so we exclude the other platforms for this test.
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
+		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
+
 	@Test
 	public void goolLibraryTest3() throws Exception {
-		String input = "import java.io.File;" +
-					   "import java.io.BufferedReader;" +
-					   "import java.io.FileReader;" +
-					   "import java.io.BufferedWriter;"+
-					   "import java.io.FileWriter;"+
-	
+		String input = "import java.io.File;"
+				+ "import java.io.BufferedReader;"
+				+ "import java.io.FileReader;"
+				+ "import java.io.BufferedWriter;"
+				+ "import java.io.FileWriter;"
+				+
+
 				TestHelper.surroundWithClassMain(
-						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
-						"try{"+
-						"File f = new File(\"../testGool.txt\");"+
-						"f.createNewFile();"+
-						
-						"FileWriter fw=new FileWriter(f);"+
-						"BufferedWriter bw=new BufferedWriter(fw);"+
-						"String s=\"hello world\\n42\\n\";"+
-						"bw.write(s,0,s.length()); bw.close();"+
-						
-						"FileReader fr=new FileReader(f);"+
-						"BufferedReader br=new BufferedReader(fr);"+
-						"String line=br.readLine();"+
-						"while(line!=null){"+
-						"System.out.println(line);"+
-						"line=br.readLine();"+
-						"}"+
-						"br.close();"+
-						"f.delete();"+
-						"}catch(Exception e){"+
-						"}"
-						, MAIN_CLASS_NAME);
+						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"
+								+ "try{"
+								+ "File f = new File(\"../testGool.txt\");"
+								+ "f.createNewFile();" +
+
+								"FileWriter fw=new FileWriter(f);"
+								+ "BufferedWriter bw=new BufferedWriter(fw);"
+								+ "String s=\"hello world\\n42\\n\";"
+								+ "bw.write(s,0,s.length()); bw.close();" +
+
+								"FileReader fr=new FileReader(f);"
+								+ "BufferedReader br=new BufferedReader(fr);"
+								+ "String line=br.readLine();"
+								+ "while(line!=null){"
+								+ "System.out.println(line);"
+								+ "line=br.readLine();" + "}" + "br.close();"
+								+ "f.delete();" + "}catch(Exception e){" + "}",
+						MAIN_CLASS_NAME);
 		String expected = "hello world42";
+
+		// Matching of the io GOOL library with classes and methods
+		// of the output language work only for the Java target at the moment,
+		// so we exclude the other platforms for this test.
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
+		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	
-	
 
 	@Test
 	public void simpleTryCatch() throws Exception {
@@ -206,6 +262,13 @@ public class GoolTest {
 				"}" + "catch(Exception e){" + "System.out.println(\"world\");"
 				+ "}", MAIN_CLASS_NAME);
 		String expected = "hello";
+
+		// Generation of exceptions do not work in some of the target language at the
+		// moment, so we exclude their respective platform for this test.
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
+		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -293,6 +356,12 @@ public class GoolTest {
 						"Printer", "");
 		String expected = "4";
 		System.out.println(input);
+		
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+		
+		
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -309,6 +378,12 @@ public class GoolTest {
 										+ "System.out.println(total);",
 								MAIN_CLASS_NAME);
 		String expected = "4";
+
+		// There is a code generation problem to be fixed for this test in
+		// Objective C, so we exclude the ObjC platform for this test.
+		// (see GOOL wiki for further documentation)
+		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -378,7 +453,8 @@ public class GoolTest {
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");System.out.println(l.isEmpty());",
 								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(new GoolTestExecutor(input, "true") {
+		compareResultsDifferentPlatforms(new GoolTestExecutor(input, "true",
+				platforms, testNotImplementedOnPlatforms) {
 			@Override
 			protected String compileAndRun(Platform platform) throws Exception {
 				String output = super.compileAndRun(platform).toLowerCase();
@@ -423,115 +499,6 @@ public class GoolTest {
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
-	/**
-	 * First test using a file as a FileWriter constructor argument
-	 * 
-	 */
-	/*
-	@Test
-	public void fileTest() throws Exception {
-		// String readFile = Settings.get("read_file_path");
-		// String readFile = Settings.get("read_file_path");
-		String writeFile = Settings.get("write_file_path");
-		String input = "import java.io.BufferedReader;\n"
-				+ "import java.io.FileReader;\n"
-				+ "import java.io.FileWriter;\n"
-				+ "import java.io.BufferedWriter;\n"
-				+ "import gool.imports.java.io.IOException;\n"
-				+ TestHelper
-						.surroundWithClassMain(
-								"\n try{ \n "
-										+ "File b = new File (\""
-										+ writeFile
-										+ "\");\n if(b.exists() == true) \n {b.delete();} \n"
-										+ "BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
-										+ "bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
-										+ "BufferedReader br = new BufferedReader(new FileReader(b)); \n"
-										+ " String testString = br.readLine();char c = (char)br.read(); \n"
-										+ "br.close();\n"
-										+ "  \n System.out.println(testString+c);\n "
-
-										+ "} catch(IOException iox) \n { System.out.println(\"iox\");} \n catch(Exception e) \n {System.out.println(\"ex\");}\n",
-								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "line1A");
-	}*/
-
-	/**
-	 * Second test using a string as a FileWriter constructor argument
-	 * 
-	 */
-	/*
-	@Test
-	public void fileTestSecond() throws Exception {
-		// String readFile = Settings.get("read_file_path");
-		// String readFile = Settings.get("read_file_path");
-		String writeFile = Settings.get("write_file_path");
-		String input = "import gool.imports.java.io.BufferedReader;\n"
-				+ "import gool.imports.java.io.FileReader;\n"
-				+ "import gool.imports.java.io.FileWriter;\n"
-				+ "import gool.imports.java.io.BufferedWriter;\n"
-				+ "import gool.imports.java.io.File;\n"
-				+ "import gool.imports.java.io.FileNotFoundException;\n"
-				+ "import gool.imports.java.io.EOFException;\n"
-				+ TestHelper
-						.surroundWithClassMain(
-								"\n try{ \n "
-										+ "File b = new File (\""
-										+ writeFile
-										+ "\");\n if(b.exists() == true) \n {b.delete();} \n"
-										+ "BufferedReader br = new BufferedReader(new FileReader(\""
-										+ writeFile
-										+ "\")); \n"
-										+ " String testString = br.readLine();char c = (char)br.read(); \n"
-										+ "br.close();\n"
-										+ "  \n System.out.println(testString+c);\n "
-
-										+ "} catch(FileNotFoundException fnf) \n { System.out.println(\"file not found\");} "
-										+ " catch(EOFException eof) \n { System.out.println(\"eof\");} "
-
-										+ " catch(Exception ex) \n {System.out.println(\"ex\");}",
-								MAIN_CLASS_NAME);
-		compareResultsDifferentPlatforms(input, "file not found");
-	}
-	*/
-/*
-	@Test
-	public void fileTestAppend() throws Exception {
-		try {
-			// String readFile = Settings.get("read_file_path");
-			// String readFile = Settings.get("read_file_path");
-			String writeFile = Settings.get("write_file_path");
-			String input = "import gool.imports.java.io.BufferedReader;\n"
-					+ "import gool.imports.java.io.FileReader;\n"
-					+ "import gool.imports.java.io.FileWriter;\n"
-					+ "import gool.imports.java.io.BufferedWriter;\n"
-					+ "import gool.imports.java.io.File;\n"
-					+ TestHelper
-							.surroundWithClassMain(
-									"\n try{ \n "
-											+ "File b = new File (\""
-											+ writeFile
-											+ "\");\n if(b.exists() == true) \n {b.delete();} \n"
-											+ "BufferedWriter bw = new BufferedWriter(new FileWriter(b)); \n"
-											+ "bw.write(\"line1\"); bw.newLine();bw.write(65); \n bw.flush(); \n bw.close(); \n"
-											+ "BufferedWriter bw2 = new BufferedWriter(new FileWriter(b, true)); \n"
-											+ "bw2.write(\"write2\");  \n bw2.flush(); \n bw2.close(); \n"
-											+ "BufferedReader br = new BufferedReader(new FileReader(b)); \n"
-											+ " String testString = br.readLine(); \n"
-											+ " testString = testString + br.readLine(); \n"
-											+ "br.close();\n"
-											+ "  \n System.out.println(testString);\n "
-
-											+ "} catch(Exception ex) \n {System.out.println(\"ex\");}",
-									MAIN_CLASS_NAME);
-			compareResultsDifferentPlatforms(input, "line1Awrite2");
-		} catch (Exception e) {
-			Assert.fail("Append is not supported by bufferedreader at the moment in C++");
-			return;
-		}
-
-	}
-*/
 	@Test
 	public void exceptionThrowTest() throws Exception {
 		String input = TestHelper
@@ -542,12 +509,21 @@ public class GoolTest {
 						MAIN_CLASS_NAME);
 
 		String expected = "4";
+
+		// Generation of exceptions do not work in some of the target language at the
+		// moment, so we exclude their respective platform for this test.
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
+		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
-		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected));
+		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
+				platforms, testNotImplementedOnPlatforms));
+		this.testNotImplementedOnPlatforms = new ArrayList<Platform>();
 	}
 
 	private void compareResultsDifferentPlatforms(GoolTestExecutor executor)

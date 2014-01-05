@@ -2,9 +2,9 @@ package gool.generator.common;
 
 import java.util.ArrayList;
 
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.Modifier;
-import gool.ast.constructs.Package;
+import gool.ast.core.ClassDef;
+import gool.ast.core.Modifier;
+import gool.ast.core.Package;
 
 public class GeneratorMatcherTest {
 

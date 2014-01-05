@@ -17,8 +17,8 @@
 
 package gool.ast.list;
 
-import gool.ast.constructs.Expression;
-import gool.ast.constructs.ListMethCall;
+import gool.ast.core.Expression;
+import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 

@@ -17,8 +17,8 @@
 
 package gool.ast.map;
 
-import gool.ast.constructs.Expression;
-import gool.ast.constructs.MapMethCall;
+import gool.ast.core.Expression;
+import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 

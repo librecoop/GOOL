@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.Field;
-import gool.ast.constructs.Meth;
-import gool.ast.constructs.Modifier;
-import gool.ast.constructs.RecognizedDependency;
-import gool.ast.constructs.VarDeclaration;
-import gool.ast.constructs.Package;
+import gool.ast.core.ClassDef;
+import gool.ast.core.Field;
+import gool.ast.core.Meth;
+import gool.ast.core.Modifier;
+import gool.ast.core.Package;
+import gool.ast.core.RecognizedDependency;
+import gool.ast.core.VarDeclaration;
 import gool.ast.type.*;
 import gool.generator.common.Platform;
 

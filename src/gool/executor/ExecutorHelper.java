@@ -17,7 +17,7 @@
 
 package gool.executor;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.executor.common.SpecificCompiler;
 import gool.generator.common.Platform;
 

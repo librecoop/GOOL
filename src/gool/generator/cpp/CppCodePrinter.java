@@ -21,7 +21,7 @@
 
 package gool.generator.cpp;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 

@@ -18,7 +18,7 @@
 package gool.parser.java;
 
 import gool.Settings;
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.generator.GoolGeneratorController;
 import gool.generator.common.Platform;
 import gool.recognizer.java.JavaRecognizer;

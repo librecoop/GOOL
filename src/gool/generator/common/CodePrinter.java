@@ -17,9 +17,9 @@
 
 package gool.generator.common;
 
-import gool.ast.constructs.ClassDef;
-import gool.ast.constructs.Dependency;
-import gool.ast.constructs.Node;
+import gool.ast.core.ClassDef;
+import gool.ast.core.Dependency;
+import gool.ast.core.Node;
 import gool.ast.type.IType;
 import gool.generator.GeneratorHelper;
 import gool.generator.GoolGeneratorController;

@@ -17,7 +17,7 @@
 
 package gool.generator.objc;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
 import gool.methods.MethodManager;
 
@@ -88,7 +88,6 @@ public class ObjcCodePrinter extends CodePrinter {
 			String classCode = processTemplate("classPerso.vm", s);
 			PrintWriter writer;
 
-			System.out.println(MethodManager.getDependencies());
 
 			File dir = new File(getOutputDir().getAbsolutePath());
 			dir.mkdirs();

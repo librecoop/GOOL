@@ -17,7 +17,7 @@
 
 package gool.generator.python;
 
-import gool.ast.constructs.ClassDef;
+import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
 
 import java.io.File;

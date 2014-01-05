@@ -17,7 +17,7 @@
 
 package gool.ast.system;
 
-import gool.ast.constructs.Dependency;
+import gool.ast.core.Dependency;
 import gool.generator.GoolGeneratorController;
 
 public class SystemOutDependency extends Dependency {

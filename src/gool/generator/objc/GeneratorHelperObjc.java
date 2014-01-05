@@ -17,12 +17,12 @@
 
 package gool.generator.objc;
 
-import gool.ast.constructs.ArrayAccess;
-import gool.ast.constructs.BinaryOperation;
-import gool.ast.constructs.Expression;
-import gool.ast.constructs.MemberSelect;
-import gool.ast.constructs.MethCall;
-import gool.ast.constructs.VarAccess;
+import gool.ast.core.ArrayAccess;
+import gool.ast.core.BinaryOperation;
+import gool.ast.core.Expression;
+import gool.ast.core.MemberSelect;
+import gool.ast.core.MethCall;
+import gool.ast.core.VarAccess;
 import gool.ast.type.IType;
 import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeBool;
