@@ -22,7 +22,6 @@
 
 package gool.recognizer.java;
 
-import gool.GoolLibDefs.GoolClassAstBuilder;
 import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Language;
 import gool.ast.constructs.ArrayAccess;
@@ -117,6 +116,7 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
+import gool.classdeclarations.GoolClassAstBuilder;
 import gool.generator.common.Platform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.objc.ObjcPlatform;
@@ -396,14 +396,24 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 			// if the new dependency has already been added to the context,
 			// there is nothing to do
-			for (Dependency d : context.getClassDef().getDependencies())
-				if (d.toString().equals(newDep.toString()))
+			for (Dependency d : context.getClassDef().getDependencies()){
+				String dString, newDepString;
+				if(d instanceof RecognizedDependency)
+					dString=((RecognizedDependency) d).getName();
+				else
+					dString=d.toString();
+				if(newDep instanceof RecognizedDependency)
+					newDepString=((RecognizedDependency) newDep).getName();
+				else
+					newDepString=newDep.toString();
+					
+				if (dString.equals(newDepString))
 					return;
+			}
 
 			// else, if it is indeed a new dependency, we add it to the context
 			// System.out.println("default lib: Ajout de la dépendance "+newDep+" au contexte de la classe courante.");
 			context.getClassDef().addDependency(newDep);
-			System.out.println("Dependency "+ newDep +" added");
 		}
 	}
 
@@ -1571,23 +1581,25 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		
 
-		System.out.println("[JavaRecognizer] Visite des dépendances des classes...");
+		//System.out.println("[JavaRecognizer] Visite des dépendances des classes...");
 		for (ClassDef classDef : getGoolClasses()) {
-			System.out.println("[JavaRecognizer] - Dépendances de la classe " + classDef.getName()
-					+ " :");
+			//System.out.println("[JavaRecognizer] - Dépendances de la classe " + classDef.getName()+ " :");
 			GoolClassAstBuilder.init(defaultPlatform);
 			int x = 0;
 			for (Dependency dep : classDef.getDependencies()) {
 				x++;
-				System.out.println("\tDep" + x + ":" + dep);
+				//System.out.print("\tDep" + x + ":" + dep);
 				if(dep instanceof RecognizedDependency){
+					//System.out.print(" (RecognizedDependency)");
 					GoolClassAstBuilder.buildGoolClass(((RecognizedDependency) dep).getName());
 				}
+				//System.out.println();
 			}
 		}
 		for(ClassDef goolClassAst : GoolClassAstBuilder.getBuiltAsts())
 			goolClasses.put(goolClassAst.getType(), goolClassAst);
 		System.out.println("[JavaRecognizer] END of visitCompilationUnit.");
+		
 		return null;
 	}
 
@@ -1737,6 +1749,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		System.out.println("Method " + signature);
 
 		Expression target;
+		String goolMethod=null;
 
 		if (n.getMethodSelect().toString().equals("System.out.println")) {
 			context.getClassDef().addDependency(new SystemOutDependency());
@@ -1755,12 +1768,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// Here is when we possibly visitMemberSelect().
 			target = (Expression) n.getMethodSelect().accept(this, context);
 
-			String goolMethod = RecognizerMatcher.matchMethod(signature);
-
-			if (goolMethod != null && target instanceof MemberSelect) {
+			goolMethod = RecognizerMatcher.matchMethod(signature);
+				
+			/*if (goolMethod != null && target instanceof MemberSelect) {
 				((MemberSelect) target).setIdentifier(goolMethod
 						.substring(goolMethod.lastIndexOf(".") + 1));
-			}
+			}*/
 
 		}
 
@@ -1786,6 +1799,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		 * +target+"   (type: "+target.getType()+")");
 		 * GoolMatcher.matchMethCall((MethCall)target); }
 		 */
+		if((target instanceof MethCall) && (goolMethod!=null))
+			((MethCall) target).setGoolLibraryMethod(goolMethod);
+		
 		return target;
 	}
 

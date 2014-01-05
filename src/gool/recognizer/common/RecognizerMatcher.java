@@ -21,14 +21,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import gool.ast.constructs.*;
-import gool.ast.type.*;
-import gool.generator.common.Platform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,26 +53,17 @@ public class RecognizerMatcher {
 	}
 
 	public static String matchClass(String inputLangClass) {
-		/*for (String goolClass : ClassMatchTable.keySet())
-			if (ClassMatchTable.get(goolClass).contains(inputLangClass) || goolClass.endsWith("."+inputLangClass))
-				return goolClass;*/
-		//String tmp=inputLangClass.substring(inputLangClass.lastIndexOf(".")+1);
 		for (String goolClass : ClassMatchTable.keySet())
-		if (ClassMatchTable.get(goolClass).contains(inputLangClass) /*|| goolClass.endsWith(".Gool"+tmp)*/)
+		if (ClassMatchTable.get(goolClass).contains(inputLangClass))
 			return goolClass;
 		return null;
 	}
 
 	public static String matchMethod(String inputLangMethodSignature) {
-		
-		//  if(inputLangMethodSignature.contains("gool.imports."+InputLang.toLowerCase()+"."))
-		//	inputLangMethodSignature=inputLangMethodSignature.replace("gool.imports."+InputLang.toLowerCase()+".","");
-		for (String goolMethod : MethodMatchTable.keySet())
+			for (String goolMethod : MethodMatchTable.keySet())
 			if (MethodMatchTable.get(goolMethod).contains(
 					inputLangMethodSignature))
 				return goolMethod;
-		
-		
 		return null;
 	}
 
@@ -142,19 +125,6 @@ public class RecognizerMatcher {
 	static private ArrayList<String> getGoolClassesFromImport(
 			String inputLangImport) {
 		ArrayList<String> goolClasses = new ArrayList<String>();
-		/*
-		if(inputLangImport.startsWith("gool.imports."+InputLang.toLowerCase()+".")){
-				String goolClass=inputLangImport.substring(inputLangImport.lastIndexOf(".")+1);
-				if(goolClass.equals("File")||goolClass.equals("GoolFile"))
-					goolClasses.add("io.GoolFile");
-				if(goolClass.equals("BufferedReader")||goolClass.equals("GoolBufferedReader"))
-					goolClasses.add("io.GoolBufferedReader");
-				if(goolClass.equals("BufferedWriter")||goolClass.equals("GoolBufferedWriter"))
-					goolClasses.add("io.GoolBufferedWriter");
-				
-					return goolClasses;
-				
-		}*/
 		
 		try {
 			InputStream ips = new FileInputStream(

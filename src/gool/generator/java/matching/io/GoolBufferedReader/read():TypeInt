@@ -1,9 +1,0 @@
-	public int read(){
-		int res=0;
-		try{
-		res=this.outputlangobject.read();
-		}catch(Exception e){
-		System.out.println(e.toString());
-		}
-		return res;
-	}

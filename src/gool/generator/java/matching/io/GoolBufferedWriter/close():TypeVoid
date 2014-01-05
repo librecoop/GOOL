@@ -1,7 +1,0 @@
-	public void close(){
-		try{
-		this.outputlangobject.close();
-		}catch(Exception e){
-		System.out.println(e.toString());
-		}
-	}

@@ -25,6 +25,7 @@
 
 
 #includes ($Helper.printDependencies($class))
+$Helper.printRecognizedDependencies($class)
 
 #if ($class.isEnum())
 enum $class.Name {

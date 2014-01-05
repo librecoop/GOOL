@@ -142,6 +142,6 @@ public class Meth extends Dec {
 		throwStatement.add(type);
 	}
 	public boolean isGoolMethodImplementation(){
-		return (this instanceof GoolMethodImplementation);
+		return false;
 	}
 }

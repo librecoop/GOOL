@@ -1,3 +1,0 @@
-	public FileReader getOutputlangobject(){
-		return this.outputlangobject;
-	}

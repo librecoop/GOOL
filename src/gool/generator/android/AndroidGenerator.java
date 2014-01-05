@@ -40,6 +40,7 @@ import gool.ast.constructs.Meth;
 import gool.ast.constructs.Modifier;
 import gool.ast.constructs.Operator;
 import gool.ast.constructs.ParentCall;
+import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Statement;
 import gool.ast.constructs.Throw;
 import gool.ast.constructs.ToStringCall;
@@ -84,6 +85,7 @@ import gool.ast.type.TypeObject;
 import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.generator.common.CommonCodeGenerator;
+import gool.generator.common.GeneratorMatcher;
 
 public class AndroidGenerator extends CommonCodeGenerator {
 
@@ -497,5 +499,17 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	public String getCode(TypeException typeException) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public String getCode(RecognizedDependency recognizedDependency) {
+		String result = "";
+		for (String Import : GeneratorMatcher.matchImports(recognizedDependency
+				.getName())) {
+			if (Import.startsWith("+"))
+				Import = Import.substring(1);
+			result += "import " + Import + ";\n";
+		}
+
+		return result;
 	}
 }

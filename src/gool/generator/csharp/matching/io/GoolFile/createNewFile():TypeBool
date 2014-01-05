@@ -1,4 +1,0 @@
-	public bool createNewFile(){
-		File.Create(filename);
-		return File.Exists(filename);
-	}

@@ -29,6 +29,8 @@
 \#include "${class.Name}.h"
 
 #includes ($Helper.printDependencies($class))
+$Helper.printRecognizedDependencies($class)
+
 #foreach( $field in $class.Fields )
 #if($field.DefaultValue)$field.Type$class.Name::$field.Name = $field.DefaultValue;
 #end

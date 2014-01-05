@@ -23,6 +23,7 @@ package gool.generator.cpp;
 
 import gool.ast.constructs.ClassDef;
 import gool.generator.common.CodePrinter;
+import gool.generator.common.GeneratorMatcher;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -89,11 +90,17 @@ public class CppCodePrinter extends CodePrinter {
 
 	@Override
 	public List<File> print(ClassDef pclass) throws FileNotFoundException {
+
+		// GOOL library classes are printed in a different manner
+		if (pclass.isGoolLibraryClass()) {
+			return printGoolLibraryClass(pclass);
+		}
 		/*
 		 * In C++ the parent class and the interfaces are used in the same
 		 * statement. Example: class Foo : public ClassBar1, InterfaceBar2 ...
 		 * {}
 		 */
+
 		if (pclass.getParentClass() != null) {
 			pclass.getInterfaces().add(0, pclass.getParentClass());
 		}
@@ -122,6 +129,49 @@ public class CppCodePrinter extends CodePrinter {
 		} else {
 			return super.print(pclass);
 		}
+	}
+
+	@Override
+	public List<File> printGoolLibraryClass(ClassDef pclass)
+			throws FileNotFoundException {
+		String goolClass = pclass.getPackageName() + "." + pclass.getName();
+
+		ArrayList<String> goolClassImplems = new ArrayList<String>();
+		for (String Import : GeneratorMatcher.matchImports(goolClass))
+			if (Import.startsWith("+"))
+				goolClassImplems.add(Import.substring(1));
+
+		List<File> result = new ArrayList<File>();
+		for (String goolClassImplem : goolClassImplems) {
+			String goolClassImplemName = goolClassImplem
+					.substring(goolClassImplem.lastIndexOf(".") + 1);
+			String goolClassImplemPackage = goolClassImplem.substring(0,
+					goolClassImplem.lastIndexOf("."));
+			String implemFileName = goolClassImplemName+".cpp";
+			String headerFileName = goolClassImplemName+".h";
+			String codeImplem = GeneratorMatcher.matchGoolClassImplementation(
+					goolClass, implemFileName);
+			String codeHeader = GeneratorMatcher.matchGoolClassImplementation(
+					goolClass, headerFileName);
+			File dir = new File(getOutputDir().getAbsolutePath(),
+					StringUtils.replace(goolClassImplemPackage, ".",
+							File.separator));
+			dir.mkdirs();
+			File implemFile = new File(dir, implemFileName);
+			File headerFile = new File(dir, headerFileName);
+			
+			//print implementation file
+			PrintWriter writer = new PrintWriter(implemFile);
+			writer.println(codeImplem);
+			writer.close();
+			
+			//print header file
+			writer = new PrintWriter(headerFile);
+			writer.println(codeHeader);
+			writer.close();
+		}
+		printedClasses.add(pclass);
+		return result;
 	}
 
 	@Override

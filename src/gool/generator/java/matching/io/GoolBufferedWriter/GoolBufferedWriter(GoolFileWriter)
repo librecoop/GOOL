@@ -1,8 +1,0 @@
-	public GoolBufferedWriter(GoolFileWriter goolFileWriter){
-		try{		
-		this.filename = goolFileWriter.getFilename();
-		this.outputlangobject = new BufferedWriter(goolFileWriter.getOutputlangobject());
-		}catch(Exception e){
-		System.out.println(e.toString());
-		}
-	}

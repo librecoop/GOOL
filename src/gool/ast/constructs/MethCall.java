@@ -38,6 +38,7 @@ public class MethCall extends Parameterizable {
 	private Expression target;
 	private String generalName;
 	private String library;
+	private String goolLibraryMethod;
 
 	public MethCall(IType type, Expression target) {
 		super(type);
@@ -91,6 +92,14 @@ public class MethCall extends Parameterizable {
 		return this.library;
 	}
 
+	public void setGoolLibraryMethod(String goolLibraryMethod){
+		this.goolLibraryMethod = goolLibraryMethod;
+	}
+	
+	public String getGoolLibraryMethod(){
+		return this.goolLibraryMethod;
+	}
+	
 	@Override
 	public String callGetCode() {
 		return GoolGeneratorController.generator().getCode(this);

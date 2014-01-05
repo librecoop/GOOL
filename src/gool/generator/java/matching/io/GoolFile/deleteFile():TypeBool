@@ -1,3 +1,0 @@
-	public boolean deleteFile(){
-		return outputlangobject.delete();
-	}

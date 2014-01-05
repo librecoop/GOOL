@@ -1,3 +1,0 @@
-	public GoolFile(string name){
-		filename = name;
-	}

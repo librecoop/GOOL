@@ -40,8 +40,6 @@ import gool.ast.constructs.Field;
 import gool.ast.constructs.FieldAccess;
 import gool.ast.constructs.For;
 import gool.ast.constructs.GoolCall;
-import gool.ast.constructs.GoolMethodImplementation;
-import gool.ast.constructs.OutputImportDependency;
 import gool.ast.constructs.RecognizedDependency;
 import gool.ast.constructs.Identifier;
 import gool.ast.constructs.If;
@@ -463,11 +461,5 @@ public interface CodeGenerator {
 	String getCode(RecognizedDependency recognizedDependency);
 
 	String getCode(UnrecognizedDependency unrecognizedDependency);
-	
-	String getCode(GoolMethodImplementation goolMethodImplementation);
-	
-	String getHeader(GoolMethodImplementation goolMethodImplementation);
-	
-	String getCode(OutputImportDependency outputImportDependency);
 
 }

@@ -47,45 +47,73 @@ public class GeneratorMatcher {
 		}
 		return null;
 	}
-
-	public static String matchGoolMethod(String goolClass,
-			String goolMethodSignature) {
-		String methodImplementation = null;
+	
+	public static String matchGoolMethod(String goolMethod) {
 		try {
 			InputStream ips = new FileInputStream(
-					getPathOfOutputMethodImplementationFile(goolClass,
-							goolMethodSignature));
+					getPathOfOutputMethodMatchFile(goolMethod.substring(0, goolMethod.lastIndexOf("."))));
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
-			methodImplementation = "";
 			while ((line = br.readLine()) != null) {
-				methodImplementation += (line + "\n");
+				line = removeSpaces(line);
+				if (isOutputMatchLine(line)) {
+					String currentGoolMethod = getLeftPartOfOutputMatchLine(line);
+					String currentOutputMethod = getRightPartOfOutputMatchLine(line);
+					if (currentGoolMethod.equals(goolMethod))
+						return currentOutputMethod;
+				}
 			}
 			br.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
-		return methodImplementation;
+		return null;
 	}
 
-	public static String matchImportDependency(String goolClass) {
-		String imports = null;
+	public static String matchGoolClassImplementation(String goolClass,
+			String implementationFileName) {
+		
+		String classImplementation = null;
 		try {
 			InputStream ips = new FileInputStream(
-					getPathOfOutputImportFile(goolClass));
+					getPathOfOutputClassImplementationFile(goolClass,
+							implementationFileName));
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
-			imports = "";
+			classImplementation = "";
 			while ((line = br.readLine()) != null) {
-				imports += (line + "\n");
+				classImplementation += (line + "\n");
 			}
 			br.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
-		return imports;
+		return classImplementation;
+	}
+	
+	public static ArrayList<String> matchImports(String goolClass){
+		try {
+			InputStream ips = new FileInputStream(
+					getPathOfOutputImportMatchFile(goolClass));
+			InputStreamReader ipsr = new InputStreamReader(ips);
+			BufferedReader br = new BufferedReader(ipsr);
+			String line;
+			while ((line = br.readLine()) != null) {
+				line = removeSpaces(line);
+				if (isOutputMatchLine(line)) {
+					String currentGoolClass = getLeftPartOfOutputMatchLine(line);
+					ArrayList<String> currentImports = parseCommaSeparatedValues(getRightPartOfOutputMatchLine(line));
+					if (currentGoolClass.equals(goolClass))
+						return currentImports;
+				}
+			}
+			br.close();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		return null;
 	}
 
 	static private String getPathOfOutputMatchDir(String goolClass) {
@@ -99,17 +127,23 @@ public class GeneratorMatcher {
 				goolClass.lastIndexOf(".")))
 				+ "ClassMatching.properties";
 	}
-
-	static private String getPathOfOutputMethodImplementationFile(
-			String goolClass, String goolMethodSignature) {
-		return getPathOfOutputMatchDir(goolClass) + goolMethodSignature;
-	}
-
-	static private String getPathOfOutputImportFile(String goolClass) {
+	
+	static private String getPathOfOutputMethodMatchFile(String goolClass) {
 		return getPathOfOutputMatchDir(goolClass.substring(0,
 				goolClass.lastIndexOf(".")))
-				+ goolClass.substring(goolClass.lastIndexOf(".") + 1)
-				+ ".imports";
+				+ "MethodMatching.properties";
+	}
+	
+	static private String getPathOfOutputClassImplementationFile(String goolClass, String implementationFileName) {
+		return getPathOfOutputMatchDir(goolClass.substring(0,
+				goolClass.lastIndexOf(".")))
+				+ implementationFileName;
+	}
+
+	static private String getPathOfOutputImportMatchFile(String goolClass) {
+		return getPathOfOutputMatchDir(goolClass.substring(0,
+				goolClass.lastIndexOf(".")))
+				+ "ImportMatching.properties";
 	}
 
 	static private String removeSpaces(String line) {
@@ -122,6 +156,23 @@ public class GeneratorMatcher {
 		return line;
 	}
 
+	static private ArrayList<String> parseCommaSeparatedValues(String csv) {
+		ArrayList<String> parsedValues = new ArrayList<String>();
+		csv+=";";
+		while (!csv.isEmpty()) {
+			int ind1 = csv.indexOf(",");
+			int ind2 = csv.indexOf(";");
+			if (ind1 != -1) {
+				parsedValues.add(csv.substring(0, ind1));
+				csv = csv.substring(ind1 + 1);
+			} else {
+				parsedValues.add(csv.substring(0, ind2));
+				csv = csv.substring(ind2 + 1);
+			}
+		}
+		return parsedValues;
+	}
+	
 	static private boolean isCommentLine(String line) {
 		return line.startsWith("#");
 	}

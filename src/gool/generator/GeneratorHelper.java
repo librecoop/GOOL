@@ -18,13 +18,13 @@
 package gool.generator;
 
 import gool.GOOLCompiler;
-import gool.GoolLibDefs.GoolClassAstBuilder;
 import gool.ast.constructs.ClassDef;
 import gool.ast.constructs.Dependency;
 import gool.ast.constructs.RecognizedDependency;
 import gool.generator.android.AndroidCodePrinter;
 import gool.generator.android.AndroidPlatform;
 import gool.ast.type.IType;
+import gool.classdeclarations.GoolClassAstBuilder;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 import gool.generator.common.Platform;
@@ -71,13 +71,24 @@ public class GeneratorHelper {
 		Set<String> result = new HashSet<String>();
 		// go through each dependency, produce its toString, add it to the set.
 		for (Dependency dep : classDef.getDependencies()) {
-			if (!dep.toString().equals(classDef.toString())) {
+			if (!(dep instanceof RecognizedDependency) && !dep.toString().equals(classDef.toString())) {
 				String s=dep.toString();
 				result.add(s);
-				System.out.println("[printDependencies] dependance ajoutée à la classe "+classDef.getName()+": "+s);
 			}
 		}
 
+		return result;
+	}
+	
+	public static String printRecognizedDependencies(ClassDef classDef) {
+		String result = "";
+		//List<String> dependencies = new ArrayList<String>();
+		// go through each dependency, produce its toString, add it to the set.
+		for (Dependency dep : classDef.getDependencies()) {
+			if (dep instanceof RecognizedDependency) {
+				result+=dep.toString()+"\n";
+			}
+		}
 		return result;
 	}
 
@@ -90,7 +101,6 @@ public class GeneratorHelper {
 			Collection<ClassDef> classDefs) throws FileNotFoundException {
 		Map<Platform, List<File>> compilationUnits = new HashMap<Platform, List<File>>();
 
-		MethodManager.reset();
 		for (ClassDef classDef : classDefs) {
 
 			// The target platform is held by the GOOL class, retrieve it.
@@ -112,7 +122,7 @@ public class GeneratorHelper {
 
 			// try {
 			
-			
+			System.out.println("INITIALISATION GENERATOR MATCHER");
 			GeneratorMatcher.init(platform);
 			compilationUnits.get(platform).addAll(
 					currentPrinter.print(classDef));

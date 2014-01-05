@@ -27,6 +27,7 @@ import gool.generator.python.PythonPlatform;
 import gool.generator.objc.ObjcPlatform;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Assert;
@@ -36,8 +37,8 @@ import org.junit.Test;
 public class GoolTest {
 
 	private List<Platform> platforms = Arrays.asList(
-			//(Platform) JavaPlatform.getInstance()
-			//(Platform) CSharpPlatform.getInstance()
+			(Platform) JavaPlatform.getInstance(),
+			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance()
 			//(Platform) AndroidPlatform.getInstance()
 			//(Platform) PythonPlatform.getInstance()
@@ -103,7 +104,8 @@ public class GoolTest {
 				"import java.io.File;" +
 				TestHelper.surroundWithClassMain(
 						"/* création puis suppression d'un fichier qui n'existait pas */"+
-						"File f = new File(\"/home/zalgo/truc.txt\");"+
+					    "try{"+
+						"File f = new File(\"../testGool.txt\");"+
 						
 						"if(f.exists()){ System.out.println(\"true\"); }"+
 						"else{ System.out.println(\"false\");}"+
@@ -118,38 +120,13 @@ public class GoolTest {
 						"else{ System.out.println(\"false\"); }"+
 						
 						"if(f.exists()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\");}"
+						"else{ System.out.println(\"false\");}"+
+						"}catch(Exception e){"+
+						"}"
 						, MAIN_CLASS_NAME);
 		String expected = "false"+"true"+"true"+"true"+"false";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-	/*
-	@Test
-	public void libSystemTestNotLegacyUser() throws Exception {
-		String input = 
-				"import gool.imports.java.io.GoolFile;" +
-				TestHelper.surroundWithClassMain(
-						"GoolFile f = new GoolFile(\"/home/zalgo/truc.txt\");"+
-						
-						"if(f.exists()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\");}"+
-						
-						"if(f.createNewFile()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\"); }"+
-						
-						"if(f.exists()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\");}"+
-						
-						"if(f.deleteFile()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\"); }"+
-						
-						"if(f.exists()){ System.out.println(\"true\"); }"+
-						"else{ System.out.println(\"false\");}"
-						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
-		String expected = "false"+"true"+"true"+"true"+"false";
-		compareResultsDifferentPlatforms(input, expected);
-	}
-	*/
 
 	@Test
 	public void libSystemTest2() throws Exception {
@@ -161,8 +138,8 @@ public class GoolTest {
 	
 				TestHelper.surroundWithClassMain(
 						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
-						
-						"File f = new File(\"/home/zalgo/truc.txt\");"+
+						"try{"+
+						"File f = new File(\"../testGool.txt\");"+
 						"f.createNewFile();"+
 						
 						"FileWriter fw=new FileWriter(f);"+
@@ -174,7 +151,9 @@ public class GoolTest {
 						"char c1=(char)br.read(), c2=(char)br.read(); br.close();"+
 						"System.out.println(c1+\"\"+c2);"+
 						
-						"f.delete();"
+						"f.delete();"+
+						"}catch(Exception e){"+
+						"}"
 						, MAIN_CLASS_NAME);//+TestHelper.surroundWithClass("public Coucou(String s){}", "Coucou", "public");
 		String expected = "ab";
 		compareResultsDifferentPlatforms(input, expected);
@@ -190,8 +169,8 @@ public class GoolTest {
 	
 				TestHelper.surroundWithClassMain(
 						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"+
-						
-						"File f = new File(\"/home/zalgo/truc.txt\");"+
+						"try{"+
+						"File f = new File(\"../testGool.txt\");"+
 						"f.createNewFile();"+
 						
 						"FileWriter fw=new FileWriter(f);"+
@@ -207,7 +186,9 @@ public class GoolTest {
 						"line=br.readLine();"+
 						"}"+
 						"br.close();"+
-						"f.delete();"
+						"f.delete();"+
+						"}catch(Exception e){"+
+						"}"
 						, MAIN_CLASS_NAME);
 		String expected = "hello world42";
 		compareResultsDifferentPlatforms(input, expected);
@@ -297,7 +278,7 @@ public class GoolTest {
 
 	@Test
 	public void listAddGet() throws Exception {
-		String input = "import gool.imports.java.util.ArrayList;\n"
+		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"ArrayList<Integer> l = new ArrayList<Integer>(); l.add(4); System.out.println(l.get(0));",
@@ -311,7 +292,7 @@ public class GoolTest {
 		// String input =
 		// TestHelper.surroundWithClassMain("HashMap<String, Integer > m = new HashMap<String, Integer>();",
 		// "Test");
-		String input = "import gool.imports.java.util.HashMap;\n"
+		String input = "import java.util.HashMap;\n"
 				+
 
 				TestHelper
@@ -347,7 +328,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleForEach() throws Exception {
-		String input = "import gool.imports.java.util.ArrayList;\n"
+		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"Integer total = 0;"
@@ -363,7 +344,7 @@ public class GoolTest {
 
 	@Test
 	public void mapForEach() throws Exception {
-		String input = "import gool.imports.java.util.HashMap;\n"
+		String input = "import java.util.HashMap;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"Integer total = 0;"
@@ -376,11 +357,11 @@ public class GoolTest {
 								MAIN_CLASS_NAME);
 		String expected = "6";
 		compareResultsDifferentPlatforms(input, expected);
-	}
+		}
 
 	@Test
 	public void listWithDifferentTypeElement() throws Exception {
-		String input = "import gool.imports.java.util.ArrayList;\n"
+		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
@@ -391,7 +372,7 @@ public class GoolTest {
 	@Test
 	public void mapWithoutTypes() throws Exception {
 		try {
-			String input = "import gool.imports.java.util.HashMap;\n"
+			String input = "import java.util.HashMap;\n"
 					+ TestHelper
 							.surroundWithClassMain(
 									"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
@@ -409,7 +390,7 @@ public class GoolTest {
 
 	@Test
 	public void removeElementsFromUntypedList() throws Exception {
-		String input = "import gool.imports.java.util.ArrayList;\n"
+		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
@@ -419,7 +400,7 @@ public class GoolTest {
 
 	@Test
 	public void removeElementsFromIntegerList() throws Exception {
-		String input = "import gool.imports.java.util.ArrayList;\n"
+		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.removeAt(1);System.out.println(l.size());",
@@ -429,7 +410,7 @@ public class GoolTest {
 
 	@Test
 	public void removeElementsFromMap() throws Exception {
-		String input = "import gool.imports.java.util.HashMap;\n"
+		String input = "import java.util.HashMap;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();m.put(1, 2);m.put(2, 3);m.remove(2);System.out.println(m.size());",
@@ -439,7 +420,7 @@ public class GoolTest {
 
 	@Test
 	public void isEmptyList() throws Exception {
-		String input = "import gool.imports.java.util.ArrayList;\n"
+		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");System.out.println(l.isEmpty());",
@@ -463,7 +444,7 @@ public class GoolTest {
 
 	@Test
 	public void listContainsElement() throws Exception {
-		String input = "import gool.imports.java.util.ArrayList;\n"
+		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");l.add(\"hola\");System.out.println(l.contains(\"hola\"));",

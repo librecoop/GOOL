@@ -77,6 +77,8 @@ public class ClassDef extends Dependency {
 	private boolean isInterface;
 
 	private boolean isMainClass;
+	
+	private boolean isGoolLibraryClass;
 
 	private Package ppackage;
 
@@ -407,5 +409,13 @@ public class ClassDef extends Dependency {
 	public boolean isEnum() {
 		return (classType instanceof TypeClass)
 				&& ((TypeClass) classType).isEnum();
+	}
+	
+	public void setIsGoolLibraryClass(boolean isGoolLibraryClass) {
+		this.isGoolLibraryClass = isGoolLibraryClass;
+	}
+
+	public boolean isGoolLibraryClass() {
+		return this.isGoolLibraryClass;
 	}
 }

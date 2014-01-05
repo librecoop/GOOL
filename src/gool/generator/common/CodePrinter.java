@@ -245,6 +245,11 @@ public abstract class CodePrinter {
 	 *             have been processed
 	 */
 	public List<File> print(ClassDef pclass) throws FileNotFoundException {
+		// GOOL library classes are printed in a different manner
+		if(pclass.isGoolLibraryClass()){
+			return printGoolLibraryClass(pclass);
+		}
+		
 		/*
 		 * Delegate the code generation to the ClassDef object, which may decide
 		 * that the currentPrinter need be changed since platforms are decided
@@ -286,6 +291,34 @@ public abstract class CodePrinter {
 			}
 		}
 		return result;
+	}
+	
+	public List<File> printGoolLibraryClass(ClassDef pclass) throws FileNotFoundException {
+			String goolClass = pclass.getPackageName()+"."+pclass.getName();
+			
+			ArrayList<String> goolClassImplems = new ArrayList<String>();
+			for(String Import : GeneratorMatcher.matchImports(goolClass))
+				if(Import.startsWith("+"))
+					goolClassImplems.add(Import.substring(1));
+			
+			List<File> result = new ArrayList<File>();
+			for(String goolClassImplem : goolClassImplems){
+				String goolClassImplemName = goolClassImplem.substring(goolClassImplem.lastIndexOf(".")+1);
+				String goolClassImplemPackage = goolClassImplem.substring(0, goolClassImplem.lastIndexOf("."));
+				String implemFileName = pclass.getPlatform().getCodePrinter().getFileName(goolClassImplemName);
+				String code = GeneratorMatcher.matchGoolClassImplementation(goolClass, implemFileName);
+				File dir = new File(getOutputDir().getAbsolutePath(),
+						StringUtils.replace(goolClassImplemPackage, ".",
+								File.separator));
+				dir.mkdirs();
+				File implemFile = new File(dir, implemFileName);
+				PrintWriter writer = new PrintWriter(implemFile);
+				writer.println(code);
+				writer.close();
+			}
+			printedClasses.add(pclass);
+			return result;
+		
 	}
 
 	/**

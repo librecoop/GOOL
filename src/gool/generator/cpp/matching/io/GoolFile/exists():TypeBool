@@ -1,5 +1,0 @@
-	bool GoolFile::exists(){
-		const char *tmp = filename->c_str();
-		std::ifstream tmpfile(tmp);
-		return !tmpfile.fail();
-	}

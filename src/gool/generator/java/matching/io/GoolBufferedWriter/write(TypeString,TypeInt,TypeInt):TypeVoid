@@ -1,7 +1,0 @@
-	public void write(String s, int off, int len){
-		try{
-		this.outputlangobject.write(s, off, len);
-		}catch(Exception e){
-		System.out.println(e.toString());
-		}
-	}

@@ -40,6 +40,7 @@
 
 ## Print out the imports
 #includes ($Helper.printDependencies($class))
+$Helper.printRecognizedDependencies($class)
 
 ## Declare the class with the format: 
 ## [modifiers] interface/class [extends ...] [implements ...]

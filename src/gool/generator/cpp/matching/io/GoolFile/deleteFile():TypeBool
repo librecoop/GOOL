@@ -1,7 +1,0 @@
-	bool GoolFile::deleteFile(){
-		const char *tmp = filename->c_str();
-		if(remove(tmp)==0)
-			return true;
-		else
-			return false;
-	}

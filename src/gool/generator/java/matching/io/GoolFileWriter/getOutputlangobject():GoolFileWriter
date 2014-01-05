@@ -1,3 +1,0 @@
-	public FileWriter getOutputlangobject(){
-		return this.outputlangobject;
-	}
