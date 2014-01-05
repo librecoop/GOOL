@@ -99,7 +99,7 @@ public class GoolTest {
 	}
 	
 	@Test
-	public void libSystemTest() throws Exception {
+	public void goolLibraryTest1() throws Exception {
 		String input = 
 				"import java.io.File;" +
 				TestHelper.surroundWithClassMain(
@@ -129,7 +129,7 @@ public class GoolTest {
 	}
 
 	@Test
-	public void libSystemTest2() throws Exception {
+	public void goolLibraryTest2() throws Exception {
 		String input = "import java.io.File;" +
 					   "import java.io.BufferedReader;" +
 					   "import java.io.FileReader;" +
@@ -160,7 +160,7 @@ public class GoolTest {
 	}
 	
 	@Test
-	public void libSystemTest3() throws Exception {
+	public void goolLibraryTest3() throws Exception {
 		String input = "import java.io.File;" +
 					   "import java.io.BufferedReader;" +
 					   "import java.io.FileReader;" +
@@ -194,36 +194,6 @@ public class GoolTest {
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
-	/*
-	@Test
-	public void libSystemTest4() throws Exception {
-		String input = "import gool.imports.java.io.GoolBufferedReader;" +
-					   "import gool.imports.java.io.GoolBufferedWriter;" +
-				       "import gool.imports.java.io.GoolFile;"+
-	
-				TestHelper.surroundWithClassMain(
-						"GoolFile gf = new GoolFile(\"/home/zalgo/truc.txt\");"+
-						"gf.createNewFile();"+
-
-						"GoolBufferedWriter gbw=new GoolBufferedWriter(gf)"+
-						"String s=\"hello world\\n42\\n\";"+
-						"gbw.write(s,0,s.length()); gbw.close();"+
-
-						"GoolBufferedReader gbr=new GoolBufferedReader(gf)"+
-						"String line=gbr.readLine();"+
-						"while(line!=null){"+
-						"System.out.println(line);"+
-						"line=gbr.readLine();"+
-						"}"+
-						"gbr.close();"+
-						
-						"gf.deleteFile();"
-						
-						, MAIN_CLASS_NAME);
-		String expected = "hello world42";
-		compareResultsDifferentPlatforms(input, expected);
-	}
-	*/
 	
 
 	@Test
@@ -341,23 +311,6 @@ public class GoolTest {
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-
-	@Test
-	public void mapForEach() throws Exception {
-		String input = "import java.util.HashMap;\n"
-				+ TestHelper
-						.surroundWithClassMain(
-								"Integer total = 0;"
-										+ " HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();"
-										+ " m.put(0, 1); m.put(2, 3);"
-										+ " for(HashMap.Entry<Integer, Integer> entry : m){"
-										+ "total = total + entry.getKey();"
-										+ "total = total + entry.getValue();"
-										+ "}" + "System.out.println(total);",
-								MAIN_CLASS_NAME);
-		String expected = "6";
-		compareResultsDifferentPlatforms(input, expected);
-		}
 
 	@Test
 	public void listWithDifferentTypeElement() throws Exception {
