@@ -38,12 +38,20 @@ import org.junit.Test;
 
 public class GoolTest {
 
+	/*
+	 * At this day, the GOOL system supports 6 output languages that are
+	 * symbolized by Platforms. You may comment/uncomment these platforms to
+	 * enable/disable tests for the corresponding output language.
+	 * 
+	 * You may also add your own tests by creating a new method within this
+	 * class preceded by a @Test annotation.
+	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			 (Platform) JavaPlatform.getInstance()
-			// (Platform) CSharpPlatform.getInstance() ,
-			// (Platform) CppPlatform.getInstance() ,
-			// (Platform) PythonPlatform.getInstance() //,
+			(Platform) JavaPlatform.getInstance(),
+			(Platform) CSharpPlatform.getInstance(),
+			(Platform) CppPlatform.getInstance(),
+			(Platform) PythonPlatform.getInstance()// ,
 			// (Platform) AndroidPlatform.getInstance() ,
 			// (Platform) ObjcPlatform.getInstance()
 
@@ -263,7 +271,8 @@ public class GoolTest {
 				+ "}", MAIN_CLASS_NAME);
 		String expected = "hello";
 
-		// Generation of exceptions do not work in some of the target language at the
+		// Generation of exceptions do not work in some of the target language
+		// at the
 		// moment, so we exclude their respective platform for this test.
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
 		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
@@ -356,12 +365,11 @@ public class GoolTest {
 						"Printer", "");
 		String expected = "4";
 		System.out.println(input);
-		
+
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
 		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
-		
-		
+
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -510,7 +518,8 @@ public class GoolTest {
 
 		String expected = "4";
 
-		// Generation of exceptions do not work in some of the target language at the
+		// Generation of exceptions do not work in some of the target language
+		// at the
 		// moment, so we exclude their respective platform for this test.
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
 		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
