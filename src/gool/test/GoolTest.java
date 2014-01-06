@@ -52,8 +52,8 @@ public class GoolTest {
 			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
-			// (Platform) AndroidPlatform.getInstance() ,
-			// (Platform) ObjcPlatform.getInstance()
+//			 (Platform) AndroidPlatform.getInstance() ,
+//			 (Platform) ObjcPlatform.getInstance()
 
 			);
 
@@ -439,7 +439,7 @@ public class GoolTest {
 		String input = "import java.util.ArrayList;\n"
 				+ TestHelper
 						.surroundWithClassMain(
-								"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.removeAt(1);System.out.println(l.size());",
+								"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.remove(1);System.out.println(l.size());",
 								MAIN_CLASS_NAME);
 		compareResultsDifferentPlatforms(input, "1");
 	}
@@ -513,7 +513,7 @@ public class GoolTest {
 				.surroundWithClassMain(
 						"try {\n Test t=new Test(); t.printr();\n}\n"
 								+ "catch(Exception e) {\n System.out.println(\"e\");\n}\n}"
-								+ "\n public void printr() throws IOException, Exception {System.out.println(2 + 2);",
+								+ "\n public void printr() throws Exception, Exception {System.out.println(2 + 2);",
 						MAIN_CLASS_NAME);
 
 		String expected = "4";
