@@ -101,7 +101,7 @@ import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
-import gool.ast.type.TypeMatchedGoolClass;
+import gool.ast.type.TypeGoolLibraryClass;
 import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
@@ -111,10 +111,10 @@ import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
-import gool.classdeclarations.GoolClassAstBuilder;
 import gool.generator.common.Platform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.objc.ObjcPlatform;
+import gool.recognizer.common.GoolLibraryClassAstBuilder;
 import gool.recognizer.common.RecognizerMatcher;
 
 import java.io.BufferedReader;
@@ -504,7 +504,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// this dependency will get generated into imports in the target
 			// language
 			addDependencyToContext(context, new RecognizedDependency(goolClass));
-			return new TypeMatchedGoolClass(goolClass);
+			return new TypeGoolLibraryClass(goolClass);
 		}
 
 		// Dealing with non-primitive types.
@@ -1539,18 +1539,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 
 		for (ClassDef classDef : getGoolClasses()) {
-			GoolClassAstBuilder.init(defaultPlatform);
+			GoolLibraryClassAstBuilder.init(defaultPlatform);
 			int x = 0;
 			for (Dependency dep : classDef.getDependencies()) {
 				x++;
 				if (dep instanceof RecognizedDependency) {
-					GoolClassAstBuilder
+					GoolLibraryClassAstBuilder
 							.buildGoolClass(((RecognizedDependency) dep)
 									.getName());
 				}
 			}
 		}
-		for (ClassDef goolClassAst : GoolClassAstBuilder.getBuiltAsts()) {
+		for (ClassDef goolClassAst : GoolLibraryClassAstBuilder.getBuiltAsts()) {
 			goolClasses.put(goolClassAst.getType(), goolClassAst);
 			/*System.out
 					.println("[JavaRecognizer] A GOOL library AST has been successfully built and added to the current AST collection: "

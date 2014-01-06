@@ -40,10 +40,10 @@ public class GoolTest {
 
 	private List<Platform> platforms = Arrays.asList(
 
-			 (Platform) JavaPlatform.getInstance() ,
-			 (Platform) CSharpPlatform.getInstance() ,
-			 (Platform) CppPlatform.getInstance() ,
-			 (Platform) PythonPlatform.getInstance() //,
+			 (Platform) JavaPlatform.getInstance()
+			// (Platform) CSharpPlatform.getInstance() ,
+			// (Platform) CppPlatform.getInstance() ,
+			// (Platform) PythonPlatform.getInstance() //,
 			// (Platform) AndroidPlatform.getInstance() ,
 			// (Platform) ObjcPlatform.getInstance()
 

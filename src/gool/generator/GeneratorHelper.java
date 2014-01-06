@@ -24,10 +24,10 @@ import gool.ast.core.RecognizedDependency;
 import gool.generator.android.AndroidCodePrinter;
 import gool.generator.android.AndroidPlatform;
 import gool.ast.type.IType;
-import gool.classdeclarations.GoolClassAstBuilder;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 import gool.generator.common.Platform;
+import gool.recognizer.common.GoolLibraryClassAstBuilder;
 
 import java.io.File;
 import java.io.FileNotFoundException;

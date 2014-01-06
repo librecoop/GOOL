@@ -11,31 +11,14 @@
 
 
 class GoolFileImpl  {
-    private:  FILE* outputlangobject;
-    private:  std::string* filename;
 
 		public: 	GoolFileImpl(std::string* name);
 
-
-	
 		public: 	bool createNewFile();
 
-
-	
 		public: 	bool exists();
 
-
-	
 		public: 	bool deleteFile();
-
-
-	
-		/* The GOOL method getOutputlangobject():GoolFileImpl has not been implemented yet for this output language. */
-
-
-	
-		/* The GOOL method getFilename():TypeString has not been implemented yet for this output language. */
-
 
 	
 };

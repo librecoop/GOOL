@@ -78,7 +78,7 @@ import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
-import gool.ast.type.TypeMatchedGoolClass;
+import gool.ast.type.TypeGoolLibraryClass;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
@@ -665,7 +665,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	}
 	
 	@Override
-	public String getCode(TypeMatchedGoolClass typeMatchedGoolClass) {
+	public String getCode(TypeGoolLibraryClass typeMatchedGoolClass) {
 		String res = GeneratorMatcher.matchGoolClass(typeMatchedGoolClass
 				.getGoolclassname());
 		if (res == null)
