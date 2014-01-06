@@ -19,7 +19,6 @@ package gool.generator.objc;
 
 import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
-import gool.methods.MethodManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -77,34 +76,6 @@ public class ObjcCodePrinter extends CodePrinter {
 			return super.print(pclass);
 		}
 
-	}
-
-	@Override
-	public List<File> printPersonalLib() throws FileNotFoundException {
-		List<File> r = new ArrayList<File>();
-
-		for (String s : MethodManager.getMethPerso().keySet()) {
-			String headerCode = processTemplate("headerPerso.vm", s);
-			String classCode = processTemplate("classPerso.vm", s);
-			PrintWriter writer;
-
-
-			File dir = new File(getOutputDir().getAbsolutePath());
-			dir.mkdirs();
-
-			File headerFile = new File(dir, s + "OBJC.h");
-			writer = new PrintWriter(headerFile);
-			writer.println(headerCode);
-			writer.close();
-
-			File classFile = new File(dir, s + "OBJC.m");
-			writer = new PrintWriter(classFile);
-			writer.println(classCode);
-			writer.close();
-
-			r.add(classFile);
-		}
-		return r;
 	}
 
 }

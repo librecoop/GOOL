@@ -28,7 +28,6 @@ import gool.classdeclarations.GoolClassAstBuilder;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 import gool.generator.common.Platform;
-import gool.methods.MethodManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;

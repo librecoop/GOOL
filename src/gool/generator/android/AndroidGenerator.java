@@ -69,20 +69,14 @@ import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
-import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
-import gool.ast.type.TypeFile;
-import gool.ast.type.TypeFileReader;
-import gool.ast.type.TypeFileWriter;
-import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
 import gool.ast.type.TypeObject;
-import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.GeneratorMatcher;
@@ -327,18 +321,7 @@ public class AndroidGenerator extends CommonCodeGenerator {
 		if (typeDependency.getType() instanceof TypeEntry) {
 			return "java.util.Map";
 		}
-		if (typeDependency.getType() instanceof TypeFile) {
-			return "java.io.File;" + "\n import android.os.Environment\n";
-		}
-		if (typeDependency.getType() instanceof TypeFileReader) {
-			return "java.io.FileReader";
-		}
-		if (typeDependency.getType() instanceof TypeBufferedReader) {
-			return "java.io.BufferedReader";
-		}
-		if (typeDependency.getType() instanceof TypeFileWriter) {
-			return "java.io.FileWriter";
-		}
+
 		return super.getCode(typeDependency);
 	}
 
@@ -404,31 +387,6 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(TypeFile typeFile) {
-
-		return "File";
-
-	}
-
-	@Override
-	public String getCode(TypeFileReader typeFileReader) {
-
-		return "FileReader";
-	}
-
-	@Override
-	public String getCode(TypeBufferedReader typeBufferedReader) {
-
-		return "BufferedReader";
-	}
-
-	@Override
-	public String getCode(TypeFileWriter typeFileWriter) {
-
-		return "FileWriter";
-	}
-
-	@Override
 	public String getCode(Try t) {
 		StringBuilder result = new StringBuilder();
 		result.append("try{\n");
@@ -477,17 +435,6 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	}
 
-	@Override
-	public String getCode(TypeScanner typeScanner) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(TypeInputStream typeInputStream) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String getCode(Throw throwStatement) {

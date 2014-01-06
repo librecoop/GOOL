@@ -84,23 +84,17 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
-import gool.ast.type.TypeBufferedReader;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
-import gool.ast.type.TypeFile;
-import gool.ast.type.TypeFileReader;
-import gool.ast.type.TypeFileWriter;
-import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
-import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVoid;
@@ -747,14 +741,6 @@ public class PythonGenerator extends CommonCodeGenerator implements
 		}
 		if (typeDependency.getType() instanceof TypeEntry)
 			return "noprint";
-		if (typeDependency.getType() instanceof TypeFile)
-			return "noprint";
-		if (typeDependency.getType() instanceof TypeFileReader)
-			return "noprint";
-		if (typeDependency.getType() instanceof TypeFileWriter)
-			return "noprint";
-		if (typeDependency.getType() instanceof TypeScanner)
-			return "noprint";
 		return super.getCode(typeDependency);
 	}
 
@@ -763,31 +749,6 @@ public class PythonGenerator extends CommonCodeGenerator implements
 		// it's just a tuple
 		return String.format("(%s, %s)", typeEntry.getKeyType(),
 				typeEntry.getElementType());
-	}
-
-	@Override
-	public String getCode(TypeFile typeFile) {
-		return "goolHelper.IO.File";
-	}
-
-	@Override
-	public String getCode(TypeFileReader typeFileReader) {
-		return "goolHelper.IO.FileReader";
-	}
-
-	@Override
-	public String getCode(TypeFileWriter typeFileWriter) {
-		return "goolHelper.IO.FileWriter";
-	}
-
-	@Override
-	public String getCode(TypeBufferedReader tbr) {
-		return "goolHelper.IO.BufferedReader";
-	}
-
-	@Override
-	public String getCode(TypeScanner typeScanner) {
-		return "goolHelper.Util.Scanner";
 	}
 
 	@Override
@@ -1151,11 +1112,6 @@ public class PythonGenerator extends CommonCodeGenerator implements
 	@Override
 	public String getCode(TypeChar typeChar) {
 		return "str";
-	}
-
-	@Override
-	public String getCode(TypeInputStream typeInputStream) {
-		return "noprint";
 	}
 
 	public String getCode(Throw throwStatement) {

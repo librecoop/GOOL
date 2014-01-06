@@ -42,8 +42,8 @@ public class GoolTest {
 
 			 (Platform) JavaPlatform.getInstance() ,
 			 (Platform) CSharpPlatform.getInstance() ,
-			 (Platform) CppPlatform.getInstance() //,
-			// (Platform) PythonPlatform.getInstance() ,
+			 (Platform) CppPlatform.getInstance() ,
+			 (Platform) PythonPlatform.getInstance() //,
 			// (Platform) AndroidPlatform.getInstance() ,
 			// (Platform) ObjcPlatform.getInstance()
 

@@ -24,8 +24,6 @@ import gool.ast.type.IType;
 import gool.generator.GeneratorHelper;
 import gool.generator.GoolGeneratorController;
 import gool.generator.common.exception.VelocityException;
-import gool.methods.MethodManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -440,7 +438,6 @@ public abstract class CodePrinter {
 			context.put("class", className);
 			context.put("macros", getTemplateDir() + "macros.vm");
 			context.put("Helper", GeneratorHelper.class);
-			context.put("MManager", MethodManager.class);
 
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);

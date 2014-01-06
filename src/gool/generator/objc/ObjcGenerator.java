@@ -79,8 +79,6 @@ import gool.ast.type.TypeClass;
 import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeEntry;
 import gool.ast.type.TypeException;
-import gool.ast.type.TypeFile;
-import gool.ast.type.TypeInputStream;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeList;
 import gool.ast.type.TypeMap;
@@ -88,12 +86,10 @@ import gool.ast.type.TypeMethod;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
-import gool.ast.type.TypeScanner;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.GeneratorMatcher;
-import gool.methods.MethodManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -389,98 +385,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 						generalName.replaceAll("\\s", ""), library);
 	}
 
-	// Génère l'appel d'une méthode généré automatiquement
-	private String methPerso(MethCall methodCall, String specificName) {
-		ArrayList<String> typeParam = new ArrayList<String>();
-		ArrayList<Expression> param = new ArrayList<Expression>();
-		String arg;
-		Expression firstParam = getTarget(methodCall.getTarget());
-
-		if (MethodManager.isParam(firstParam, specificName)) {
-			param.add(firstParam);
-			typeParam.add(firstParam.getType().toString());
-		}
-
-		for (Expression s : methodCall.getParameters()) {
-			if (MethodManager.isParam(s, specificName)) {
-				typeParam.add(s.getType().toString());
-				param.add(s);
-			}
-		}
-
-		MethodManager.addMeth(methodCall.getGeneralName(), specificName,
-				methodCall.getLibrary(), typeParam);
-
-		arg = getMethCallName(param, false);
-
-		return String.format("[%sOBJC %s:%s]", methodCall.getLibrary(),
-				methodCall.getGeneralName(), arg);
-	}
-
-	// Génère l'appel d'une méthode présente dans le langage
-	private String methKnow(MethCall methodCall, String specificName) {
-		specificName = specificName.substring(0, specificName.indexOf("("));
-		String p;
-		String arg = "";
-
-		for (Expression e : methodCall.getParameters()) {
-			String nsString = GeneratorHelperObjc.staticStringMini(e);
-			String partName = "";
-			if (specificName.indexOf("/") == -1)
-				partName = specificName;
-			else {
-				partName = specificName.substring(0, specificName.indexOf("/"));
-				specificName = specificName
-						.substring(specificName.indexOf("/") + 1);
-			}
-			if (e.getType() == TypeChar.INSTANCE)
-				p = "'" + e.toString() + "'";
-			else
-				p = e.toString();
-			arg += String.format("%s:%s%s ", partName, nsString, p);
-		}
-
-		if (methodCall.getParameters().size() == 0)
-			arg = specificName;
-
-		return String.format("[%s %s]", getTarget(methodCall.getTarget()), arg);
-	}
-
 	@Override
 	public String getCode(MethCall methodCall) {
 		String arg = new String();
 		String specificName;
 
-		if (methodCall.getGeneralName() != null) { // La méthode n'est pas une
-													// méthode appartenant aux
-													// classes du projet
-			specificName = MethodManager.getSpecificName(
-					methodCall.getGeneralName(), methodCall.getLibrary(),
-					Language.OBJC);
-			if (MethodManager.isAbsent(specificName)) { // La méthode n'a pas de
-														// correspondance
-				return methUnknow(methodCall.getGeneralName(),
-						methodCall.getLibrary());
-			} else if (MethodManager.isMethPerso(specificName)) { // La méthode
-																	// à une
-																	// correspondance
-																	// mais
-																	// n'est pas
-																	// une
-																	// méthode
-																	// standard
-																	// du
-																	// langage.
-				return methPerso(methodCall, specificName); // elle sera généré
-															// dans un fichier a
-															// part
-			} else {
-				return methKnow(methodCall, specificName); // La méthode à une
-															// correspondance
-															// direct dans le
-															// langage
-			}
-		} else { // La méthode appartient aux méthodes du projet
 			arg = getMethCallName(methodCall.getParameters(), true);
 
 			if (methodCall.getTarget() instanceof VarAccess)
@@ -489,7 +398,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			if (methodCall.getTarget() instanceof ParentCall)
 				return getCode((ParentCall) methodCall.getTarget());
 			return String.format("[%s%s]", methodCall.getTarget(), arg);
-		}
 
 	}
 
@@ -642,10 +550,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return "char";
 	}
 
-	@Override
-	public String getCode(TypeFile typeFile) {
-		return "NSFileManager *";
-	}
 
 	@Override
 	public String getCode(This pthis) {
@@ -672,9 +576,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 			return "Foundation/Foundation.h";
 		}
 		if (typeDependency.getType() instanceof TypeEntry) {
-			return "Foundation/Foundation.h";
-		}
-		if (typeDependency.getType() instanceof TypeFile) {
 			return "Foundation/Foundation.h";
 		}
 		if (typeDependency.getType() instanceof TypeString) {
@@ -856,18 +757,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(Throw throwexpression) {
 		return "@throw";
-	}
-
-	@Override
-	public String getCode(TypeScanner typeScanner) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCode(TypeInputStream typeInputStream) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	public String getCode(RecognizedDependency recognizedDependency) {
