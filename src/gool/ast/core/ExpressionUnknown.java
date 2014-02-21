@@ -25,12 +25,27 @@ import gool.generator.GoolGeneratorController;
  */
 public class ExpressionUnknown extends Expression {
 
+	/**
+	 * The unrecognized textual code. 
+	 */
 	String textual;
 
+	/**
+	 * Gets the unrecognized textual code in the unknown expression representation.
+	 * @return
+	 * 		The unrecognized textual code in the unknown expression representation. 
+	 */
 	public String getTextual() {
 		return textual;
 	}
 
+	/**
+	 * The constructor of an unknown expression representation.
+	 * @param type
+	 * 		: The type of the unknown expression.
+	 * @param textual
+	 * 		: The unrecognized textual code.
+	 */
 	public ExpressionUnknown(IType type, String textual) {
 		super(type);
 		this.textual = textual;

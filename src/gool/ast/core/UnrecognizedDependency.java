@@ -24,8 +24,15 @@ import gool.generator.GoolGeneratorController;
  */
 public class UnrecognizedDependency extends Dependency {
 
+	/**
+	 * The name of the unrecognized dependency.
+	 */
 	private String name;
 
+	/**
+	 * The constructor of an "unrecognized dependency" representation.
+	 * @param name
+	 */
 	public UnrecognizedDependency(String name) {
 		this.name = name;
 	}
@@ -35,6 +42,11 @@ public class UnrecognizedDependency extends Dependency {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the name of the unrecognized dependency.
+	 * @return
+	 * 		The name of the unrecognized dependency.
+	 */
 	public String getName() {
 		return name;
 	}

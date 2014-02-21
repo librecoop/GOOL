@@ -37,12 +37,27 @@ import java.util.List;
  * 
  *            instantiations may generate new types, hence this is an OOType.
  */
-
 public class ArrayNew extends Expression {
 
+	/**
+	 * The list dimensions of the new array.
+	 */
 	private final List<Expression> dimesExpressions = new ArrayList<Expression>();
+	
+	/**
+	 * The list of initializers of the new array.
+	 */
 	private final List<Expression> initialiList = new ArrayList<Expression>();
 
+	/**
+	 * The constructor of an array new representation.
+	 * @param type
+	 * 			: The type of the new array.
+	 * @param dimesExpressions
+	 * 			: The list dimensions of the new array.
+	 * @param initialiList
+	 * 			: The list of initializers of the new array.
+	 */
 	public ArrayNew(IType type, List<Expression> dimesExpressions,
 			List<Expression> initialiList) {
 		super(type);
@@ -50,14 +65,29 @@ public class ArrayNew extends Expression {
 		this.initialiList.addAll(initialiList);
 	}
 
+	/**
+	 * Gets the type of the new array.
+	 * @return
+	 * 		The type of the new array.
+	 */
 	public List<IType> getTypeArguments() {
 		return getType().getTypeArguments();
 	}
 
+	/**
+	 * Gets the dimensions list of the new array.
+	 * @return
+	 * 		The dimensions list of the new array.
+	 */
 	public List<Expression> getDimesExpressions() {
 		return dimesExpressions;
 	}
 
+	/**
+	 * Gets the list of initializers of the new array.
+	 * @return
+	 * 		The list of initializers of the new array.
+	 */
 	public List<Expression> getInitialiList() {
 		return initialiList;
 	}

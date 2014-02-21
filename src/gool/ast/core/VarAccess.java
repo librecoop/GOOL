@@ -44,6 +44,11 @@ public class VarAccess extends Expression {
 		this.var = var;
 	}
 
+	/**
+	 * Gets the declared variable.
+	 * @return
+	 * 		The declared variable.
+	 */
 	public Dec getDec() {
 		return var;
 	}

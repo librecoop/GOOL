@@ -27,8 +27,21 @@ import java.util.Collection;
  * Hence it is a Dec.
  */
 public final class Field extends Dec {
+	
+	/**
+	 * The default value of the field.
+	 */
 	private Expression defaultValue;
 
+	/**
+	 * The constructor of a field.
+	 * @param name
+	 * 		: The name of the field.
+	 * @param type
+	 * 		: The type of the field.
+	 * @param defaultValue
+	 * 		: The default value of the field.
+	 */
 	public Field(String name, IType type, Expression defaultValue) {
 		super(type, name);
 		this.defaultValue = defaultValue;
@@ -48,24 +61,61 @@ public final class Field extends Dec {
 		addModifier(modifier);
 	}
 
+	/**
+	 * The constructor of a field.
+	 * @param listModifiers
+	 * 		: The modifiers list associate to the field.
+	 *  @param name
+	 * 		: The name of the field.
+	 * @param type
+	 * 		: The type of the field.
+	 * @param initialValue
+	 * 		: The default value of the field.
+	 */
 	public Field(Collection<Modifier> listModifiers, String name, IType type,
 			Expression initialValue) {
 		this(name, type, initialValue);
 		addModifiers(listModifiers);
 	}
 
+	/**
+	 * The constructor of a field.
+	 * @param modifier
+	 * 		: The modifier associate to the field.
+	 *  @param name
+	 * 		: The name of the field.
+	 * @param type
+	 * 		: The type of the field.
+	 */
 	public Field(Modifier modifier, String name, IType type) {
 		this(modifier, name, type, null);
 	}
 
+	/**
+	 * The constructor of a field.
+	 * @param modifiers
+	 * 		: The modifiers list associate to the field.
+	 * @param var
+	 * 		: The variable declaration in the field.
+	 */
 	public Field(Collection<Modifier> modifiers, VarDeclaration var) {
 		this(modifiers, var.getName(), var.getType(), var.getInitialValue());
 	}
 
+	/**
+	 * Sets the default value in the field.
+	 * @param defaultValue
+	 * 		: The new default value in the field.
+	 */
 	public void setDefaultValue(Expression defaultValue) {
 		this.defaultValue = defaultValue;
 	}
 
+	/**
+	 * Gets the default value in the field.
+	 * @return
+	 * 		The default value in the field.
+	 */
 	public Expression getDefaultValue() {
 		return defaultValue;
 	}

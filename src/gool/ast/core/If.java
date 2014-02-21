@@ -39,8 +39,13 @@ public class If extends Statement {
 	private Statement elseStatement;
 
 	/**
+	 * The constructor of an "if" representation.
 	 * @param condition
-	 * @param statements
+	 * 		: The condition expression.
+	 * @param thenStatement
+	 * 		: The statement that is evaluated when the condition is true.
+	 * @param elseStatement
+	 * 		: The statement that is evaluated when the condition is false.
 	 */
 	public If(Expression condition, Statement thenStatement,
 			Statement elseStatement) {
@@ -49,14 +54,29 @@ public class If extends Statement {
 		this.elseStatement = elseStatement;
 	}
 
+	/**
+	 * Gets the condition expression.
+	 * @return
+	 * 		The condition expression.
+	 */
 	public Expression getCondition() {
 		return condition;
 	}
 
+	/**
+	 * Gets the statement that is evaluated when the condition is true.
+	 * @return
+	 * 		The statement that is evaluated when the condition is true.
+	 */
 	public Statement getThenStatement() {
 		return thenStatement;
 	}
 
+	/**
+	 * Gets the statement that is evaluated when the condition is false.
+	 * @return
+	 * 		The statement that is evaluated when the condition is false.
+	 */
 	public Statement getElseStatement() {
 		return elseStatement;
 	}

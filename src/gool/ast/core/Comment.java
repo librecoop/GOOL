@@ -54,6 +54,11 @@ public class Comment extends Expression {
 		this.value = code;
 	}
 
+	/**
+	 * Gets the code in the comment node.
+	 * @return
+	 * 		The code in the comment node.
+	 */
 	public String getValue() {
 		return value;
 	}

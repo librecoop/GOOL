@@ -43,6 +43,9 @@ public class Block extends Statement {
 		statements.add(statement);
 	}
 
+	/**
+	 * The empty constructor of new block.
+	 */
 	public Block() {
 	}
 
@@ -81,7 +84,13 @@ public class Block extends Statement {
 	public List<Statement> getStatements() {
 		return statements;
 	}
-
+	
+	/**
+	 * Appends a list of statements to the end of the statements' list.
+	 * 
+	 * @param statements
+	 *            statements to be appended.
+	 */
 	public void addStatements(List<Statement> statements) {
 		this.statements.addAll(statements);
 	}

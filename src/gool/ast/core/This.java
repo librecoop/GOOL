@@ -20,8 +20,16 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the simple invocation of "this" (in Java).
+ */
 public final class This extends Expression {
 
+	/**
+	 * The constructor of a "this" representation.
+	 * @param type
+	 * 		: The type of the "this".
+	 */
 	public This(IType type) {
 		super(type);
 	}

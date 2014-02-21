@@ -20,12 +20,28 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of an parent class.
+ * May be, it is used to capture a "super" invocation in Java. 
+ */
 public class ParentCall extends InitCall {
 
+	/**
+	 * The constructor of a parent call representation.
+	 * @param type
+	 * 		: The type of the target.
+	 * @param target
+	 * 		: The target expression in the invocation.
+	 */
 	private ParentCall(IType type, Expression target) {
 		super(type, target);
 	}
 
+	/**
+	 * The constructor of a parent call representation.
+	 * @param type
+	 * 		: The type of the target.
+	 */
 	public ParentCall(IType type) {
 		super(type, null);
 	}

@@ -28,9 +28,13 @@ import java.util.List;
 public class Finally extends Block {
 
 	/**
-	 * The list of statements.
+	 * If your choice is used the list of statements.
 	 */
 	private List<Statement> statements = new ArrayList<Statement>();
+	
+	/**
+	 * If your choice is used the block of statements.
+	 */
 	private Block b;
 
 	/**
@@ -43,11 +47,20 @@ public class Finally extends Block {
 		statements.add(statement);
 	}
 
+	/**
+	 * Creates a new block with the specified expression.R
+	 * 
+	 * @param expr
+	 *            the expression to be returned by the {@link Catch}.
+	 */
 	public Finally(Block block) {
 		this.b = block;
 
 	}
 
+	/**
+	 * The empty constructor.
+	 */
 	public Finally() {
 	}
 
@@ -87,11 +100,22 @@ public class Finally extends Block {
 	public List<Statement> getStatements() {
 		return statements;
 	}
-
+	
+	/**
+	 * Appends a statements list to the end of the statements' list.
+	 * 
+	 * @param statements
+	 *            statements list to be appended
+	 */
 	public void addStatements(List<Statement> statements) {
 		this.statements.addAll(statements);
 	}
 
+	/**
+	 * Gets the block statements if your choice is used the block of statements.
+	 * @return
+	 * 		The block statements.
+	 */
 	public Block getBlock() {
 
 		return b;

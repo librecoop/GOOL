@@ -20,10 +20,21 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class defines the type of a dependency.
+ */
 public class TypeDependency extends Dependency {
 
+	/**
+	 * The type of a dependency.
+	 */
 	private IType type;
 
+	/**
+	 * The constructor for a type of dependency.
+	 * @param type
+	 * 		: The type of a dependency.
+	 */
 	public TypeDependency(IType type) {
 		this.type = type;
 	}
@@ -33,6 +44,11 @@ public class TypeDependency extends Dependency {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the type of a dependency.
+	 * @return
+	 * 		The type of a dependency.
+	 */
 	public IType getType() {
 		return type;
 	}

@@ -29,6 +29,11 @@ public class Return extends Statement {
 	 */
 	private Expression expression;
 
+	/**
+	 * The constructor of a "return" representation. 
+	 * @param exp
+	 * 		: The expression to be returned.
+	 */
 	public Return(Expression exp) {
 		this.expression = exp;
 	}

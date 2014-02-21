@@ -27,6 +27,11 @@ public final class Print extends Statement {
 	 */
 	private Expression expr;
 
+	/**
+	 * The constructor of a print representation.
+	 * @param expr
+	 * 		: The expression to be printed.
+	 */
 	private Print(Expression expr) {
 		this.expr = expr;
 	}
@@ -45,6 +50,13 @@ public final class Print extends Statement {
 		return "System.out.println(" + expr + ")";
 	}
 
+	/**
+	 * Creator of Print.
+	 * @param expr
+	 * 		: The expression to be printed.
+	 * @return
+	 * 		The instance of the Print representation corresponding.
+	 */
 	public static Print create(Expression expr) {
 		return new Print(expr);
 	}

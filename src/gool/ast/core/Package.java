@@ -33,16 +33,37 @@ public class Package extends Dependency {
 	 * The list of classes that belong to the package.
 	 */
 	private List<ClassDef> classes = new ArrayList<ClassDef>();
+	
+	/**
+	 * The name of the package.
+	 */
 	private String name;
 
+	/**
+	 * The constructor of a package representation.
+	 * @param packageName
+	 * 		: The name of the package.
+	 */
 	public Package(String packageName) {
 		this.name = packageName;
 	}
 
+	/**
+	 * Gets the name of the package.
+	 * @return
+	 * 		The name of the package.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Adds a class definition in the package.
+	 * @param mclass
+	 * 		: The class definition to add.
+	 * @return
+	 * 		An error if there are problems.
+	 */
 	public final boolean addClass(ClassDef mclass) {
 		return classes.add(mclass);
 	}

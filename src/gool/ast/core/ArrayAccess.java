@@ -21,12 +21,27 @@ import gool.ast.type.TypeNone;
 import gool.generator.GoolGeneratorController;
 
 /**
- * 
+ * This class accounts for an array access in the intermediate language.
  */
 public class ArrayAccess extends Expression {
+	
+	/**
+	 * The expression of the array.
+	 */
 	private Expression expression;
+	
+	/**
+	 * The expression of the index of the array access.
+	 */
 	private Expression index;
 
+	/**
+	 * The constructor of an array access representation.
+	 * @param expr
+	 * 			: The expression of the array.
+	 * @param index
+	 * 			: The expression of the index of the array access.
+	 */
 	public ArrayAccess(Expression expr, Expression index) {
 		super(TypeNone.INSTANCE);
 		this.expression = expr;
@@ -38,10 +53,20 @@ public class ArrayAccess extends Expression {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the expression of the array.
+	 * @return
+	 * 		The expression of the array.
+	 */
 	public Expression getExpression() {
 		return expression;
 	}
-
+	
+	/**
+	 * Gets the expression of the index of the array access.
+	 * @return
+	 * 		The expression of the index of the array access.
+	 */
 	public Expression getIndex() {
 		return index;
 	}

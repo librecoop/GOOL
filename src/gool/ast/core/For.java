@@ -19,11 +19,37 @@ package gool.ast.core;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ *  This class captures the "for loop" of the intermediate language.
+ *  For example, this class captures
+ *  {@code
+ *  for( initializer ; condition ; updater ){
+ *  	statements
+ *  }
+ */
 public class For extends While {
 
+	/**
+	 * The initializer statement in the "for loop".
+	 */
 	private Statement initializer;
+	
+	/**
+	 * The updater statement in the "for loop".
+	 */
 	private Statement updater;
 
+	/**
+	 * The constructor of an "for loop" representation.
+	 * @param initializer
+	 * 		: The initializer statement in the "for loop".
+	 * @param condition
+	 * 		: The condition expression in the "for loop".
+	 * @param updater
+	 * 		: The updater statement in the "for loop".
+	 * @param statements
+	 * 		: The statements in the "for loop".
+	 */
 	public For(Statement initializer, Expression condition, Statement updater,
 			Statement statements) {
 		super(condition, statements);
@@ -31,10 +57,20 @@ public class For extends While {
 		this.updater = updater;
 	}
 
+	/**
+	 * Gets the initializer statement in the "for loop".
+	 * @return
+	 * 		The initializer statement in the "for loop".
+	 */
 	public Statement getInitializer() {
 		return initializer;
 	}
 
+	/**
+	 * Gets the updater statement in the "for loop".
+	 * @return
+	 * 		The updater statement in the "for loop".
+	 */
 	public Statement getUpdater() {
 		return updater;
 	}

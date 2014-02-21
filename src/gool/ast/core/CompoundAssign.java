@@ -20,12 +20,40 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class accounts for compound assignments in the intermediate language. Hence it is
+ * a Assign.
+ */
 public class CompoundAssign extends Assign {
 
+	/**
+	 * The operator used in the compound assignment.
+	 */
 	private Operator operator;
+	
+	/**
+	 * The symbol of the operator used in the compound assignment.
+	 */
 	private String textualoperator;
+	
+	/**
+	 * The type of the operator used in the compound assignment.
+	 */
 	private IType type;
 
+	/**
+	 * 
+	 * @param var
+	 * 			: The variable assigned.
+	 * @param value
+	 * 			: The value assigned to the variable.
+	 * @param operator
+	 * 			: The operator used in the compound assignment.
+	 * @param textualoperator
+	 * 			: The symbol of the operator used in the compound assignment.
+	 * @param type
+	 * 			: The type of the operator used in the compound assignment.
+	 */
 	public CompoundAssign(Node var, Expression value, Operator operator,
 			String textualoperator, IType type) {
 		super(var, value);
@@ -34,14 +62,29 @@ public class CompoundAssign extends Assign {
 		this.type = type;
 	}
 
+	/**
+	 * Gets the operator used in the compound assignment.
+	 * @return
+	 * 		The operator used in the compound assignment.
+	 */
 	public Operator getOperator() {
 		return operator;
 	}
 
+	/**
+	 * Gets the symbol of the operator used in the compound assignment.
+	 * @return
+	 * 		The symbol of the operator used in the compound assignment.
+	 */
 	public String getTextualoperator() {
 		return textualoperator;
 	}
 
+	/**
+	 * Gets the type of the operator used in the compound assignment.
+	 * @return
+	 * 		The type of the operator used in the compound assignment.
+	 */
 	public IType getType() {
 		return type;
 	}

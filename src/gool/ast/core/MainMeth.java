@@ -32,6 +32,10 @@ import gool.generator.GoolGeneratorController;
  *            at compiler design time.
  */
 public class MainMeth extends Meth {
+	
+	/**
+	 * The constructor of the an main method in a program.
+	 */
 	public MainMeth() {
 		super(TypeVoid.INSTANCE, Modifier.STATIC, "main");
 		addModifier(Modifier.PUBLIC);

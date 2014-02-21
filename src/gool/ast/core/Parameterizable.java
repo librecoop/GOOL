@@ -33,19 +33,41 @@ public abstract class Parameterizable extends Expression {
 	 */
 	private List<Expression> params = new ArrayList<Expression>();
 
+	/**
+	 * The constructor of a parameter node.
+	 * @param type
+	 * 		: The type of the GOOL node.
+	 */
 	protected Parameterizable(IType type) {
 		super(type);
 	}
 
+	/**
+	 * Appends a parameter to the end of the parameters' list.
+	 * @param param
+	 * 		: The parameter to be appended.
+	 * @return
+	 * 		The instance of the class.
+	 */
 	public Expression addParameter(Expression param) {
 		params.add(param);
 		return this;
 	}
 
+	/**
+	 * Appends a list of parameters to the end of the parameters' list.
+	 * @param parameters
+	 * 		: The list of parameters to be appended.
+	 */
 	public void addParameters(List<Expression> parameters) {
 		params.addAll(parameters);
 	}
 
+	/**
+	 * Gets the list of parameters.
+	 * @return
+	 * 		The list of parameters.
+	 */
 	public List<Expression> getParameters() {
 		return params;
 	}

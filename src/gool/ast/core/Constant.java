@@ -20,8 +20,6 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
-import gool.ast.type.TypeChar;
-import gool.ast.type.TypeString;
 import gool.generator.GoolGeneratorController;
 
 /**
@@ -58,10 +56,20 @@ public class Constant extends Expression {
 		this.value = code;
 	}
 
+	/**
+	 * The constructor of a bytes constant representation.
+	 * @param value
+	 * 		The value of the constant.
+	 */
 	public Constant(byte[] value) {
 		this(new TypeArray(TypeByte.INSTANCE), value);
 	}
 
+	/**
+	 * Gets the value of the constant.
+	 * @return
+	 * 		The value of the constant.
+	 */
 	public Object getValue() {
 		return value;
 	}

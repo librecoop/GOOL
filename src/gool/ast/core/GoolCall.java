@@ -20,14 +20,32 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This captures the invocation of a gool class method.
+ */
 public class GoolCall extends Parameterizable {
 
+	/**
+	 * The name of the method in the gool libraries.
+	 */
 	private String method;
 
+	/**
+	 * The constructor of a gool call representation.
+	 * @param type
+	 * 		: The type for parameterizable.
+	 */
 	protected GoolCall(IType type) {
 		super(type);
 	}
 
+	/**
+	 * The constructor of a gool call representation.
+	 * @param type
+	 * 		: The type for parameterizable.
+	 * @param method
+	 * 		: The name of the method in the gool libraries.
+	 */
 	public GoolCall(IType type, String method) {
 		super(type);
 		this.method = method;
@@ -38,6 +56,11 @@ public class GoolCall extends Parameterizable {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the name of the method used in the gool call.
+	 * @return
+	 * 		The name of the method defined in the gool libraries.
+	 */
 	public String getMethod() {
 		return method;
 	}

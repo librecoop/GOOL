@@ -21,36 +21,64 @@ import gool.generator.GoolGeneratorController;
 
 import java.util.List;
 
+/**
+ * This class captures the use of a block "try/catch/finally".
+ */
 public class Try extends Statement {
+	
 	/**
-	 * 
+	 * The list of catches used by the "try" block.
 	 */
 	private List<? extends Catch> catches;
 
 	/**
-	 * 
+	 * The block of statements used by the "try" block.
 	 */
 	private Block block;
 
 	/**
-	 * 
+	 * The "finally" block used by the "try" block.
 	 */
 	private Block finilyBlock;
 
+	/**
+	 * The constructor of a "try/catch/finally" representation.
+	 * @param catches
+	 * 		: The list of catches used by the "try" block.
+	 * @param block
+	 * 		: The block of statements used by the "try" block.
+	 * @param finilyBlock
+	 * 		: The "finally" block used by the "try" block.
+	 */
 	public Try(List<? extends Catch> catches, Block block, Block finilyBlock) {
 		this.catches = catches;
 		this.block = block;
 		this.finilyBlock = finilyBlock;
 	}
 
+	/**
+	 * Gets the list of catches used by the "try" block.
+	 * @return
+	 * 		The list of catches used by the "try" block.
+	 */
 	public List<? extends Catch> getCatches() {
 		return catches;
 	}
 
+	/**
+	 * Gets the block of statements used by the "try" block.
+	 * @return
+	 * 		The block of statements used by the "try" block.
+	 */
 	public Block getBlock() {
 		return block;
 	}
 
+	/**
+	 * Gets the "finally" block used by the "try" block.
+	 * @return
+	 * 		The "finally" block used by the "try" block.
+	 */
 	public Block getFinilyBlock() {
 		return finilyBlock;
 	}

@@ -24,8 +24,16 @@ import gool.generator.GoolGeneratorController;
  */
 public class RecognizedDependency extends Dependency {
 
+	/**
+	 * The name of the gool class, associate to the dependency.
+	 */
 	private String goolClassName;
 
+	/**
+	 * The constructor of a recognized dependency.
+	 * @param goolLibName
+	 * 		: The name of the gool library recognized.
+	 */
 	public RecognizedDependency(String goolLibName) {
 		this.goolClassName = goolLibName;
 	}
@@ -35,6 +43,11 @@ public class RecognizedDependency extends Dependency {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the name of the gool class, associate to the dependency.
+	 * @return
+	 * 		The name of the gool class, associate to the dependency.
+	 */
 	public String getName() {
 		return goolClassName;
 	}

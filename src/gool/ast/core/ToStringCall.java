@@ -20,8 +20,16 @@ package gool.ast.core;
 import gool.ast.type.TypeString;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the "toString()" invocation in Java.
+ */
 public class ToStringCall extends MethCall {
 
+	/**
+	 * The constructor of a "toString()" representation.
+	 * @param target
+	 * 		: The target used by the "toString()" invocation.
+	 */
 	public ToStringCall(Expression target) {
 		super(TypeString.INSTANCE, target);
 	}

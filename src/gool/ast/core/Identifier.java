@@ -34,8 +34,18 @@ import gool.generator.GoolGeneratorController;
  */
 public final class Identifier extends Expression {
 
+	/**
+	 * The name of the identifier.
+	 */
 	private String name;
 
+	/**
+	 * The constructor of an identifier.
+	 * @param type
+	 * 		: The type of the identifier.
+	 * @param name
+	 * 		: The name of the identifier.
+	 */
 	public Identifier(IType type, String name) {
 		super(type);
 		this.name = name;
@@ -46,6 +56,11 @@ public final class Identifier extends Expression {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the name of the identifier.
+	 * @return
+	 * 		The name of the identifier.
+	 */
 	public String getName() {
 		return name;
 	}

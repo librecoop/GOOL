@@ -20,15 +20,35 @@ package gool.ast.core;
 import gool.ast.type.TypeBool;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures an equals call in the intermediate language. 
+ * For exemple, this class captures
+ * {@code
+ * my_object.equals(my_target);
+ * }
+ */
 public class EqualsCall extends Parameterizable {
 
+	/**
+	 * The target expression in the equals call representation.
+	 */
 	private Expression target;
 
+	/**
+	 * The constructor of an equals call representation.
+	 * @param target
+	 * 		: The target expression in the equals call representation.
+	 */
 	public EqualsCall(Expression target) {
 		super(TypeBool.INSTANCE);
 		this.target = target;
 	}
 
+	/**
+	 * Gets the target expression in the equals call representation.
+	 * @return
+	 * 		The target expression in the equals call representation.
+	 */
 	public Expression getTarget() {
 		return target;
 	}

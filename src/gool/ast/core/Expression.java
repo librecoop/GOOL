@@ -38,14 +38,29 @@ public abstract class Expression extends Statement {
 	 */
 	private IType type;
 
+	/**
+	 * The constructor of an expression representation.
+	 * @param type
+	 * 		: The return type.
+	 */
 	protected Expression(IType type) {
 		this.type = type;
 	}
 
+	/**
+	 * Gets the return type in an expression representation.
+	 * @return
+	 * 		The return type in an expression representation.
+	 */
 	public IType getType() {
 		return type;
 	}
 
+	/**
+	 * Sets the return type in an expression representation.
+	 * @param type
+	 * 		: The new return type in an expression representation.
+	 */
 	public void setType(IType type) {
 		this.type = type;
 	}

@@ -19,7 +19,19 @@ package gool.ast.core;
 
 import gool.ast.type.IType;
 
+/**
+ * This class extends the method call representation. 
+ * It is used by the constructor in the intermediate language. 
+ */
 public abstract class InitCall extends MethCall {
+	
+	/**
+	 * The constructor of an init call representation.
+	 * @param type
+	 * 		: Type of the target expression.
+	 * @param target
+	 * 		: The target expression.
+	 */
 	protected InitCall(IType type, Expression target) {
 		super(type, target);
 	}

@@ -20,22 +20,53 @@ package gool.ast.core;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
+/**
+ * This class captures the "main class" of the intermediate language, 
+ * i.e the definition of a main in a class declaration.
+ */
 public class ClassMain extends ClassDef {
 
+	/**
+	 * The Main block of the program. 
+	 */
 	private Block mainBlock;
 
+	/**
+	 *  The constructor of a main class representation.
+	 * @param name
+	 * 			: The name of the class.
+	 * @param platform
+	 * 			: The destination platform.
+	 */
 	public ClassMain(String name, Platform platform) {
 		super(Modifier.PUBLIC, name, platform);
 	}
 
+	/**
+	 * Gets the main block of the program.
+	 * @return
+	 * 			The main block of the program.
+	 */
 	public Block getMainBlock() {
 		return mainBlock;
 	}
 
+	/**
+	 * Gets the code generated for the main class.
+	 * @param codePrinter
+	 * 		: The code printer.
+	 * @return 
+	 * 		The code generated for the main class.
+	 */
 	public String getCode(CodePrinter codePrinter) {
 		return codePrinter.processTemplate("mainClass.vm", this);
 	}
 
+	/**
+	 * Sets the main block of the main class.
+	 * @param mainBlock
+	 * 		The main block to insert.
+	 */
 	public void setMainBlock(Block mainBlock) {
 		this.mainBlock = mainBlock;
 	}

@@ -24,8 +24,16 @@ import gool.generator.GoolGeneratorController;
  */
 public class CustomDependency extends Dependency {
 
+	/**
+	 * The name of the custom dependency.
+	 */
 	private String name;
 
+	/**
+	 * The constructor of a custom dependency representation. 
+	 * @param name
+	 * 			: The name of the custom dependency.
+	 */
 	public CustomDependency(String name) {
 		this.name = name;
 	}
@@ -35,6 +43,11 @@ public class CustomDependency extends Dependency {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the name of the custom dependency.
+	 * @return
+	 * 		The name of the custom dependency.
+	 */
 	public String getName() {
 		return name;
 	}

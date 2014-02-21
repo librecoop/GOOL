@@ -50,7 +50,6 @@ public class ClassNew extends Parameterizable {
 	 * @param type
 	 *            the type of the instance.
 	 */
-
 	public ClassNew(IType type) {
 		super(type);
 	}
@@ -76,17 +75,58 @@ public class ClassNew extends Parameterizable {
 		addParameters(params);
 	}
 
-	@SuppressWarnings("unused")
+	/**
+	 * 
+	 * Creates an instance with a type and a list of parameters.
+	 * 
+	 * 
+	 * 
+	 * @param type
+	 * 
+	 *            : Type of the class.
+	 * 
+	 * @param params
+	 * 
+	 *            : Are the constructor's parameters
+	 */
 	public ClassNew(IType type, List<Expression> params) {
 		this(type);
 		addParameters(params);
 	}
-
+	
+	/**
+	 * 
+	 * Creates an instance with a type and a parameter.
+	 * 
+	 * 
+	 * 
+	 * @param type
+	 * 
+	 *            : Type of the class.
+	 * 
+	 * @param params
+	 * 
+	 *            : Are the constructor's parameter
+	 */
 	public ClassNew(IType type, Expression expression) {
 		this(type);
 		addParameter(expression);
 	}
-
+	
+	/**
+	 * 
+	 * Creates an instance with a type and optional parameters.
+	 * 
+	 * 
+	 * 
+	 * @param type
+	 * 
+	 *            : Type of the class.
+	 * 
+	 * @param params
+	 * 
+	 *            : Are the constructor's parameters
+	 */
 	public ClassNew(IType type, Expression... paramArray) {
 		this(type);
 		if (paramArray != null) {
@@ -94,10 +134,20 @@ public class ClassNew extends Parameterizable {
 		}
 	}
 
+	/**
+	 * Gets the class name.
+	 * @return
+	 * 		The class name used in the "new".
+	 */
 	public String getName() {
 		return getType().getName();
 	}
 
+	/**
+	 * Gets the parameters of the instance.
+	 * @return
+	 * 		The parameters list of the instance.
+	 */
 	public List<IType> getTypeArguments() {
 		return getType().getTypeArguments();
 	}

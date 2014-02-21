@@ -17,7 +17,9 @@
 
 package gool.ast.core;
 
-//TODO ajouter Objc
+/**
+ * Enumeration of the languages platform that supported by the gool system.
+ */
 public enum Language {
 	CSHARP, JAVA, CPP, PYTHON, ANDROID, OBJC;
 }

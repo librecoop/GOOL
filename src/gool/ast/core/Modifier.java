@@ -17,6 +17,9 @@
 
 package gool.ast.core;
 
+/**
+ * Enumeration of the modifiers that supported by the gool system.
+ */
 public enum Modifier {
 	PUBLIC, PRIVATE, PROTECTED, STATIC, ABSTRACT, FINAL, OVERRIDE, VIRTUAL, VOLATILE, TRANSIENT, NATIVE, STRICTFP, SYNCHRONIZED;
 

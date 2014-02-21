@@ -41,18 +41,36 @@ public class Constructor extends Meth {
 	 */
 	private List<InitCall> initCalls = new ArrayList<InitCall>();
 
+	/**
+	 * The constructor of a constructor representation.
+	 */
 	public Constructor() {
 		super(TypeNone.INSTANCE, Modifier.PUBLIC, "init");
 	}
 
+	/**
+	 * Add a statement in the constructor representation.
+	 * @param initCall
+	 * 		: The statement of the constructor representation.
+	 */
 	public void addInitCall(InitCall initCall) {
 		initCalls.add(initCall);
 	}
 
+	/**
+	 * Determines whether it is a constructor representation.
+	 * @return
+	 * 		true if it is a constructor representation.
+	 */
 	public boolean isConstructor() {
 		return true;
 	}
 
+	/**
+	 * Gets the statements list of a constructor representation.
+	 * @return
+	 * 		The statements list of a constructor representation.
+	 */
 	public List<InitCall> getInitCalls() {
 		return initCalls;
 	}

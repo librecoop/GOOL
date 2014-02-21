@@ -17,8 +17,18 @@
 
 package gool.ast.core;
 
+/**
+ * Defines an interface of a member.
+ * Hence is an OOTNode.
+ */
 public abstract class Member extends Node {
 
+	/**
+	 * Interface for a getter of name of the member.
+	 * Normally gets the name of the member.
+	 * @return
+	 * 		Normally gets the name of the member.
+	 */
 	abstract String getName();
 
 }

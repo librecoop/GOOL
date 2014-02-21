@@ -19,22 +19,52 @@ package gool.ast.core;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures variable content invocation
+ * with the name of the identifier used.
+ */
 public class MemberSelect extends VarAccess {
+	
+	/**
+	 * The target expression in the variable access.
+	 */
 	private Expression target;
 
+	/**
+	 * The constructor of an member select representation.
+	 * @param target
+	 * 			: The target expression in the variable access.
+	 * @param var
+	 * 			: The variable declaration in the variable access.
+	 */
 	public MemberSelect(Expression target, Dec var) {
 		super(var);
 		this.target = target;
 	}
 
+	/**
+	 * Gets the target expression in the variable access.
+	 * @return
+	 * 		The target expression in the variable access.
+	 */
 	public Expression getTarget() {
 		return target;
 	}
 
+	/**
+	 * Gets the name of the identifier (the variable).
+	 * @return
+	 * 		The name of the identifier in the member select.
+	 */
 	public String getIdentifier() {
 		return var.getName();
 	}
 
+	/**
+	 * Sets the name of the identifier (the variable).
+	 * @param newName
+	 * 		: The new name of the identifier in the member select.
+	 */
 	public void setIdentifier(String newName) {
 		var.setName(newName);
 	}

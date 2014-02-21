@@ -19,18 +19,40 @@ package gool.ast.core;
 
 import gool.generator.common.Platform;
 
+/**
+ * This class captures the definition of a static class. 
+ */
 public class StaticClass extends ClassDef {
 
+	/**
+	 * The constructor of a "static class" representation. 
+	 * @param modifier
+	 * 		: The modifier of the class (except STATIC).
+	 * @param name
+	 * 		: The name of the static class.
+	 * @param platform
+	 * 		: The destination platform used by the system.
+	 */
 	public StaticClass(Modifier modifier, String name, Platform platform) {
 		super(modifier, name, platform);
 		addModifier(Modifier.STATIC);
 	}
 
+	/**
+	 * Adds a method to the "static class" representation.
+	 * @param method
+	 * 		: The "method" representation to add.
+	 */
 	public void addMethod(Meth method) {
 		super.addMethod(method);
 		method.addModifier(Modifier.STATIC);
 	}
 
+	/**
+	 * Adds a field to the "static class" representation.
+	 * @param field
+	 * 		: The "field" representation to add.
+	 */
 	public void addField(Field field) {
 		super.addField(field);
 		field.addModifier(Modifier.STATIC);

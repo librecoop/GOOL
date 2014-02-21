@@ -32,21 +32,48 @@ public final class NewInstance extends Parameterizable {
 	 */
 	private VarDeclaration variable;
 
+	/**
+	 * The constructor of a new instance representation.
+	 * @param variable
+	 * 			: The variable declaration.
+	 */
 	public NewInstance(VarDeclaration variable) {
 		super(variable.getType());
 		this.variable = variable;
 	}
 
+	/**
+	 * The constructor of a new instance representation.
+	 * @param variable
+	 * 			: The variable declaration.
+	 * @param parameters
+	 * 			: The parameters list of the instance.
+	 */
 	private NewInstance(VarDeclaration variable, List<Expression> parameters) {
 		this(variable);
 		addParameters(parameters);
 	}
 
+	/**
+	 * The constructor of a new instance representation.
+	 * @param variable
+	 * 			: The variable declaration.
+	 * @param expression
+	 * 			: The expression of the instance.
+	 */
 	public NewInstance(VarDeclaration variable, Expression expression) {
 		this(variable);
 		addParameter(expression);
 	}
 
+	/**
+	 * Creator of new instance.
+	 * @param variable
+	 * 			: The variable declaration.
+	 * @param params
+	 * 			: The parameters used by the instance.
+	 * @return
+	 */
 	public static NewInstance create(VarDeclaration variable,
 			Expression... params) {
 		if (params != null) {
@@ -55,6 +82,11 @@ public final class NewInstance extends Parameterizable {
 		return new NewInstance(variable);
 	}
 
+	/**
+	 * Gets the variable declaration in new instance representation.
+	 * @return
+	 * 		The variable declaration.
+	 */
 	public VarDeclaration getVariable() {
 		return variable;
 	}

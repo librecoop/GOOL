@@ -25,20 +25,46 @@ import gool.generator.GoolGeneratorController;
  * Hence it inherits of Dec.
  */
 public class VarDeclaration extends Dec {
+	
+	/**
+	 * The initial value of the variable.
+	 */
 	private Expression initialValue;
 
+	/**
+	 * The constructor of a "variable declaration" representation. 
+	 * @param var
+	 * 		: The declaration of the variable.
+	 */
 	public VarDeclaration(Dec var) {
 		this(var.getType(), var.getName());
 	}
 
+	/**
+	 * The constructor of a "variable declaration" representation.
+	 * @param type
+	 * 		: The type of the variable.
+	 * @param name
+	 * 		: The name of the variable.
+	 */
 	public VarDeclaration(IType type, String name) {
 		super(type, name);
 	}
 
+	/**
+	 * Sets the initial value of the variable.
+	 * @param initialValue
+	 * 		: The new initial value of the variable.
+	 */
 	public void setInitialValue(Expression initialValue) {
 		this.initialValue = initialValue;
 	}
 
+	/**
+	 * Gets the initial value of the variable.
+	 * @return
+	 * 		The initial value of the variable.
+	 */
 	public Expression getInitialValue() {
 		return initialValue;
 	}

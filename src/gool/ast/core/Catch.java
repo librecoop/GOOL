@@ -19,7 +19,11 @@ package gool.ast.core;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class accounts for a catch block in the intermediate language.
+ */
 public class Catch extends Statement {
+	
 	/**
 	 * Catch parameter
 	 */
@@ -30,15 +34,32 @@ public class Catch extends Statement {
 	 */
 	private Block block;
 
+	/**
+	 * The constructor of a catch block representation.
+	 * @param parameter
+	 * 			: The declaration of the catch parameter.
+	 * @param block
+	 * 			: The catch instruction block.
+	 */
 	public Catch(VarDeclaration parameter, Block block) {
 		this.parameter = parameter;
 		this.block = block;
 	}
 
+	/**
+	 * Gets the catch parameter.
+	 * @return
+	 * 		The catch parameter
+	 */
 	public VarDeclaration getParameter() {
 		return parameter;
 	}
 
+	/**
+	 * Gets the catch instruction block.
+	 * @return
+	 * 		The catch instruction block.
+	 */
 	public Block getBlock() {
 		return block;
 	}

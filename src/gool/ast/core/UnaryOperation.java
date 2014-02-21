@@ -25,15 +25,34 @@ import gool.generator.GoolGeneratorController;
  * or integer expressions.
  */
 public class UnaryOperation extends Operation {
-
+	
+	/**
+	 * The operand of the operation.
+	 */
 	private Expression expression;
 
+	/**
+	 * Creates a new instance of UnaryOperator.
+	 * @param operator
+	 * 		: The operator to be used to compute the operation.
+	 * @param expr
+	 * 		: The operand of the operation
+	 * @param type
+	 * 		: The type of the operation.
+	 * @param symbol
+	 * 		: The textual symbol used by the operation.
+	 */
 	public UnaryOperation(Operator operator, Expression expr, IType type,
 			String symbol) {
 		super(operator, type, symbol);
 		this.expression = expr;
 	}
 
+	/**
+	 * Gets the operand of the operation.
+	 * @return
+	 * 		The operand of the operation.
+	 */
 	public Expression getExpression() {
 		return expression;
 	}

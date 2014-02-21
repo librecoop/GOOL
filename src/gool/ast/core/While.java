@@ -28,24 +28,38 @@ public class While extends Statement {
 	 * The condition expression.
 	 */
 	private Expression condition;
+	
 	/**
 	 * The statement that is evaluated when the condition is true.
 	 */
 	private Statement whileStatement;
 
 	/**
+	 * The constructor of a while statement.
 	 * @param condition
+	 * 		: The condition expression used in the "while".
 	 * @param statements
+	 * 		: The statement executed by the while.
 	 */
 	public While(Expression condition, Statement whileStatement) {
 		this.condition = condition;
 		this.whileStatement = whileStatement;
 	}
 
+	/**
+	 * Gets the condition expression.
+	 * @return
+	 * 		The condition expression.
+	 */
 	public Expression getCondition() {
 		return condition;
 	}
 
+	/**
+	 * Gets the statement that is evaluated when the condition is true.
+	 * @return
+	 * 		The statement that is evaluated when the condition is true.
+	 */
 	public Statement getWhileStatement() {
 		return whileStatement;
 	}

@@ -19,21 +19,50 @@ package gool.ast.core;
 
 import gool.ast.type.IType;
 
+/**
+ * This class defines an operation used by the intermediate language.
+ */
 public abstract class Operation extends Expression {
 
+	/**
+	 * The operator used in the operation.
+	 */
 	private Operator operator;
+	
+	/**
+	 * The textual operator.
+	 */
 	private String textualoperator;
 
+	/**
+	 * The constructor of an operation representation.
+	 * @param operator
+	 * 		: The operator used in the operation.
+	 * @param type
+	 * 		: The type of the operator used in the operation.
+	 * @param textualoperator
+	 * 		: The textual operator used.
+	 */
 	protected Operation(Operator operator, IType type, String textualoperator) {
 		super(type);
 		this.operator = operator;
 		this.textualoperator = textualoperator;
 	}
 
+	/**
+	 * Gets the operator used in the operation.
+	 * @return
+	 * 		The operator used in the operation.
+	 */
 	public Operator getOperator() {
 		return operator;
 	}
 
+	/**
+	 * Gets the textual operator used in the operation.
+	 * @return
+	 * 		The textual operator used in the operation.
+	 */
 	public String getTextualoperator() {
 		return textualoperator;
 	}

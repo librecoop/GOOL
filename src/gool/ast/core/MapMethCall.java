@@ -20,14 +20,32 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * The class captures the invocation of a method of treating map.
+ */
 public class MapMethCall extends Parameterizable {
 
+	/**
+	 * The expression used in the invocation.
+	 */
 	private Expression expression;
 
+	/**
+	 * The constructor of a method call for map.
+	 * @param type
+	 * 		: The type for parameterizable.
+	 */
 	protected MapMethCall(IType type) {
 		super(type);
 	}
 
+	/**
+	 * The constructor of a method call for map.
+	 * @param type
+	 * 		: The type of the target expression.
+	 * @param expression
+	 * 		: The expression used in the invocation.
+	 */
 	public MapMethCall(IType type, Expression expression) {
 		super(type);
 		this.expression = expression;
@@ -38,6 +56,11 @@ public class MapMethCall extends Parameterizable {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the expression used in the invocation.
+	 * @return
+	 * 		The expression used in the invocation.
+	 */
 	public Expression getExpression() {
 		return expression;
 	}

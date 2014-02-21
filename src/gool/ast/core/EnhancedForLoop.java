@@ -20,16 +20,48 @@ package gool.ast.core;
 import gool.ast.type.TypeNone;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures an enhanced for loop in the intermediate language.
+ * Hence it inherits of Expression.
+ * For example, this class captures
+ * {@code
+ * for( String s : array){
+ * 	...
+ * }
+ */
 public class EnhancedForLoop extends Expression {
 
+	/**
+	 * The variable declaration in the enhanced for loop.
+	 */
 	private VarDeclaration varDec;
+	
+	/**
+	 * The expression used in the enhanced for loop.
+	 */
 	private Expression expr;
+	
+	/**
+	 * The statement used in the enhanced for loop.
+	 */
 	private Statement statements;
 
+	/**
+	 * The simple constructor of an enhanced for loop representation.
+	 */
 	private EnhancedForLoop() {
 		super(TypeNone.INSTANCE);
 	}
 
+	/**
+	 * The constructor of an enhanced for loop representation.
+	 * @param varDec
+	 * 			: The variable declaration in the enhanced for loop.
+	 * @param expr
+	 * 			: The expression used in the enhanced for loop.
+	 * @param statements
+	 * 			: The statement used in the enhanced for loop.
+	 */
 	public EnhancedForLoop(VarDeclaration varDec, Expression expr,
 			Statement statements) {
 		this();
@@ -38,14 +70,29 @@ public class EnhancedForLoop extends Expression {
 		this.statements = statements;
 	}
 
+	/**
+	 * Gets the variable declaration in the enhanced for loop.
+	 * @return
+	 * 		The variable declaration in the enhanced for loop.
+	 */
 	public VarDeclaration getVarDec() {
 		return varDec;
 	}
 
+	/**
+	 * Gets the expression used in the enhanced for loop.
+	 * @return
+	 * 		The expression used in the enhanced for loop.
+	 */
 	public Expression getExpression() {
 		return expr;
 	}
 
+	/**
+	 * Gets the statement used in the enhanced for loop.
+	 * @return
+	 * 		The statement used in the enhanced for loop.
+	 */
 	public Statement getStatements() {
 		return statements;
 	}

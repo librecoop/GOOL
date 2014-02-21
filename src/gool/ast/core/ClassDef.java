@@ -72,26 +72,62 @@ public class ClassDef extends Dependency {
 	 */
 	private IType classType;
 
+	/**
+	 * The destination platform.
+	 */
 	private Platform platform;
 
+	/**
+	 * Flag to know if it is an interface.
+	 */
 	private boolean isInterface;
 
+	/**
+	 * Flag to know if it is the main class.
+	 */
 	private boolean isMainClass;
 	
+	/**
+	 * Flag to know if it is a gool library class.
+	 */
 	private boolean isGoolLibraryClass;
 
+	/**
+	 * The package used by the class.
+	 */
 	private Package ppackage;
 
+	/**
+	 * The constructor of a "class definition".
+	 * @param modifier
+	 * 		: The modifier used by the class.
+	 * @param name
+	 * 		: The name of the class.
+	 * @param platform
+	 * 		: The destination platform.
+	 */
 	public ClassDef(Modifier modifier, String name, Platform platform) {
 		this(name, platform);
 		addModifier(modifier);
 	}
 
+	/**
+	 * The constructor of a "class definition".
+	 * @param name
+	 * 		: The name of the class.
+	 */
 	public ClassDef(String name) {
 		this.name = name;
 		setType(new TypeClass(name));
 	}
 
+	/**
+	 * The constructor of a "class definition".
+	 * @param name
+	 * 		: The name of the class.
+	 * @param platform
+	 * 		: The destination platform.
+	 */
 	public ClassDef(String name, Platform platform) {
 		this(name);
 		this.platform = platform;
@@ -169,14 +205,29 @@ public class ClassDef extends Dependency {
 		}
 	}
 
+	/**
+	 * Sets the package used by the class.
+	 * @param ppackage
+	 * 		: The new package used by the class.
+	 */
 	public void setPpackage(Package ppackage) {
 		this.ppackage = ppackage;
 	}
 
+	/**
+	 * Gets the package used by the class.
+	 * @return
+	 * 		The package used by the class.
+	 */
 	public Package getPpackage() {
 		return ppackage;
 	}
 
+	/**
+	 * Gets the name of the package used by the class.
+	 * @return
+	 * 		The name of the package used by the class.
+	 */
 	public String getPackageName() {
 		return ppackage == null ? "" : ppackage.getName();
 	}
@@ -199,10 +250,20 @@ public class ClassDef extends Dependency {
 		return name;
 	}
 
+	/**
+	 * Sets the name of the class.
+	 * @param name
+	 * 		: The new name of the class.
+	 */
 	public final void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Gets the list of the constructors defined in the class.
+	 * @return
+	 * 		The list of the constructors defined in the class.
+	 */
 	public List<Constructor> getConstructors() {
 		List<Constructor> constructors = new ArrayList<Constructor>();
 		for (Meth m : methods) {
@@ -213,10 +274,20 @@ public class ClassDef extends Dependency {
 		return constructors;
 	}
 
+	/**
+	 * Determines if the class is an interface.
+	 * @return
+	 * 		True if the class is an interface, else false.
+	 */
 	public final boolean isInterface() {
 		return isInterface;
 	}
 
+	/**
+	 * Sets the flag to know if the class is an interface.
+	 * @param isInterface
+	 *   	True if the class is an interface, else false.
+	 */
 	public final void setIsInterface(boolean isInterface) {
 		this.isInterface = isInterface;
 	}
@@ -240,10 +311,20 @@ public class ClassDef extends Dependency {
 		this.platform = platform;
 	}
 
+	/**
+	 * Determines if the class is the main class.
+	 * @return
+	 * 		True if the class is the main class, else false.
+	 */
 	public final boolean isMainClass() {
 		return isMainClass;
 	}
 
+	/**
+	 * Sets the flag to know if the class is the main class.
+	 * @param isMainClass
+	 * 		True if the class is the main class, else false.
+	 */
 	public final void setMainClass(boolean isMainClass) {
 		this.isMainClass = isMainClass;
 	}
@@ -324,15 +405,32 @@ public class ClassDef extends Dependency {
 		else
 			return printer.processTemplate("class.vm", this);
 	}
-
+	
+	/**
+	 * Adds a field to the "class" representation.
+	 * @param fieldName
+	 * 		: The name of the "field" to add.
+	 * @param type
+	 * 		: The type of the "field" to add.
+	 */
 	public final void addField(String fieldName, IType type) {
 		fields.add(new Field(Modifier.PRIVATE, fieldName, type));
 	}
 
+	/**
+	 * Gets the type of the class definition.
+	 * @return
+	 * 		The class' type.
+	 */
 	public final IType getType() {
 		return classType;
 	}
 
+	/**
+	 * Adds a dependency to the list of dependencies in the class definition.
+	 * @param dependency
+	 * 		: The dependency to add.
+	 */
 	public final void addDependency(Dependency dependency) {
 		if ((dependency instanceof TypeDependency)
 				&& (((TypeDependency) dependency).getType() instanceof TypeClass)
@@ -351,6 +449,11 @@ public class ClassDef extends Dependency {
 		}
 	}
 
+	/**
+	 * Gets the list of dependencies in the class definition.
+	 * @return
+	 * 		The list of dependencies in the class definition.
+	 */
 	public final List<Dependency> getDependencies() {
 		return dependencies;
 	}
@@ -360,6 +463,13 @@ public class ClassDef extends Dependency {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets a method defined in the class.
+	 * @param methName
+	 * 		: The name of the method to get.
+	 * @return
+	 * 		The method definition if exists, else return null.
+	 */
 	public final Meth getMethod(String methName) {
 		for (Meth method : methods) {
 			if (method.getName().equals(methName)) {
@@ -370,10 +480,21 @@ public class ClassDef extends Dependency {
 		return null;
 	}
 
+	/**
+	 * Sets the class modifiers.
+	 * @param modifiers
+	 * 		: The new list of modifiers used by the class.
+	 */
 	public final void setModifiers(Collection<Modifier> modifiers) {
 		this.modifiers = modifiers;
 	}
 
+	/**
+	 * Adds a list of dependencies to the list of dependencies 
+	 * in the class definition.
+	 * @param dependencies
+	 * 		: The list of dependencies to be added.
+	 */
 	public final void addDependencies(List<Dependency> dependencies) {
 		for (Dependency dependency : dependencies) {
 			addDependency(dependency);
@@ -393,6 +514,11 @@ public class ClassDef extends Dependency {
 		return getType().getName().hashCode();
 	}
 
+	/**
+	 * Sets the type of the class.
+	 * @param type
+	 * 		: The new class' type.
+	 */
 	public final void setType(IType type) {
 		classType = type;
 		if (type instanceof TypeClass) {
@@ -400,21 +526,41 @@ public class ClassDef extends Dependency {
 		}
 	}
 
+	/**
+	 * Sets the flag to know if the class is an "enum" class.
+	 * @param isEnum
+	 * 		: True if the class is an "enum" class, else false.
+	 */
 	public void setIsEnum(boolean isEnum) {
 		if (classType instanceof TypeClass) {
 			((TypeClass) classType).setIsEnum(isEnum);
 		}
 	}
 
+	/**
+	 * Determines if the class is an "enum" class.
+	 * @return
+	 * 		True if the class is an "enum" class, else false.
+	 */
 	public boolean isEnum() {
 		return (classType instanceof TypeClass)
 				&& ((TypeClass) classType).isEnum();
 	}
 	
+	/**
+	 * Sets the flag to know if it is a gool library class.
+	 * @param isGoolLibraryClass
+	 * 		: True if the it is a gool library class, else false.
+	 */
 	public void setIsGoolLibraryClass(boolean isGoolLibraryClass) {
 		this.isGoolLibraryClass = isGoolLibraryClass;
 	}
 
+	/**
+	 * Determines if it is a gool library class.
+	 * @return
+	 * 		True if the it is a gool library class, else false.
+	 */
 	public boolean isGoolLibraryClass() {
 		return this.isGoolLibraryClass;
 	}

@@ -75,6 +75,11 @@ public class Assign extends Statement {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Sets the expression to assign.
+	 * @param expression
+	 * 			: The node expression to assign.
+	 */
 	public void setExpression(Expression expression) {
 		this.value = expression;
 	}
