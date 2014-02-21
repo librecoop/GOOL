@@ -47,6 +47,11 @@ import java.util.List;
 import java.util.Map;
 import logger.Log;
 
+/**
+ * This class is the main program. 
+ * It runs the gool system to produce output. 
+ * To configure this application check the file named "src/gool.properties". 
+ */
 public class GOOLCompiler {
 
 	/**
@@ -94,6 +99,15 @@ public class GOOLCompiler {
 		}
 	}
 
+	/**
+	 * Gets the files with a specific extension in a folder tree.
+	 * @param folder 
+	 * 			: The root name of the folder tree.
+	 * @param ext 
+	 * 			: The extension pattern.
+	 * @return 
+	 * 			The collection of files with the specific extension in the folder tree.
+	 */
 	public static Collection<File> getFilesInFolder(File folder, String ext) {
 		Collection<File> files = new ArrayList<File>();
 		for (File f : folder.listFiles()) {
@@ -106,6 +120,15 @@ public class GOOLCompiler {
 		return files;
 	}
 
+	/**
+	 * Gets the files with specific extensions in a folder tree.
+	 * @param folder
+	 * 			: The root name of the folder tree.
+	 * @param ext 
+	 * 			: The extensions patterns.
+	 * @return 
+	 * 			The collection of files with the specific extensions in the folder tree.
+	 */
 	private static Collection<File> getFilesInFolderNonExe(File folder,
 			ArrayList<String> ext) {
 
@@ -151,7 +174,24 @@ public class GOOLCompiler {
 				destPlatform, input);
 		return abstractGool2Target(classDefs);
 	}
-
+	
+	/**
+	 * Taking concrete Java into concrete Target is done in two steps: - we
+	 * parse the concrete Java into abstract GOOL; - we flatten the abstract
+	 * GOOL into concrete Target. Notice that the Target is specified at this
+	 * stage already: it will be carried kept in the abstract GOOL. This choice
+	 * is justified if we want to do multi-platform compilation, i.e. have some
+	 * pieces of the abstract GOOL to compile in some Target, and another piece
+	 * is some other Target.
+	 * 
+	 * @param destPlatform
+	 *          : The Target language.
+	 * @param inputFiles
+	 *          : The concrete Java, as files.
+	 * @return
+	 * 			A map of the compiled files for the different platforms.
+	 * @throws Exception
+	 */
 	public static Map<Platform, List<File>> concreteJavaToConcretePlatform(
 			Platform destPlatform, Collection<? extends File> inputFiles)
 			throws Exception {
@@ -175,6 +215,17 @@ public class GOOLCompiler {
 		return JavaParser.parseGool(destPlatform, input);
 	}
 
+	/**
+	 * Parsing the concrete Java into abstract GOOL is done by JavaParser.
+	 * 
+	 * @param destPlatform
+	 *          : The Target language.
+	 * @param input
+	 *          : The concrete Java, as a files.
+	 * @return 
+	 * 			Abstract GOOL classes.
+	 * @throws Exception
+	 */
 	private static Collection<ClassDef> concreteJavaToAbstractGool(
 			Platform destPlatform, Collection<? extends File> inputFiles)
 			throws Exception {

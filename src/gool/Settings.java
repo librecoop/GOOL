@@ -22,15 +22,38 @@ import java.io.InputStream;
 import java.util.Properties;
 import logger.Log;
 
+/**
+ * Used to configure the system GOOL with the file named "src/gool.properties".
+ *
+ * For more information look at this properties file 
+ * or the file example "src/gool.properties.example".
+ */
 public final class Settings {
-
+	
+	/**
+	 * The properties to configure the system GOOL.
+	 */
 	private static Properties properties;
+	
+	/**
+	 * TODO Do the documentation.
+	 */
 	private static String androidPackage;
+	
+	/**
+	 * TODO Do the documentation.
+	 */
 	private static String androidMainActivity;
+	
 	static {
 		load("gool.properties");
 	}
-
+	
+	/**
+	 * Load the properties file. This method is called internally within the class.
+	 * @param propertyFile 
+	 * 			: The path name of the properties file.
+	 */
 	public static void load(String propertyFile) {
 		try {
 			properties = new Properties();
@@ -45,7 +68,17 @@ public final class Settings {
 		}
 
 	}
-
+	
+	/**
+	 * Gets the value of an existing property in the "properties" file.
+	 * @param property 
+	 * 		: The name of the property.
+	 * @return 
+	 * 		The value of the desired property. 
+	 *      For example, the properties file contains a line with "property_x=My_VALUE"
+	 *      so if you want the property "property_x", this will return "My_VALUE" else
+	 *      generates an error
+	 */
 	public static String get(String property) {
 		if (properties == null) {
 			throw new IllegalStateException(
@@ -60,14 +93,23 @@ public final class Settings {
 		return value;
 	}
 
+	/**
+	 * TODO Do the documentation.
+	 */
 	public static void setAndroidPackage(String androidPackage) {
 		Settings.androidPackage = androidPackage;
 	}
 
+	/**
+	 * TODO Do the documentation.
+	 */
 	public static void setAndroidMainActivity(String androidMainActivity) {
 		Settings.androidMainActivity = androidMainActivity;
 	}
 
+	/**
+	 * TODO Do the documentation.
+	 */
 	public static String getAndroidRunCommand() {
 		return androidPackage + "/." + androidMainActivity.replace(".java", "");
 	}
