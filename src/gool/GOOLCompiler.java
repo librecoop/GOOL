@@ -37,6 +37,7 @@ import gool.generator.python.PythonPlatform;
 import gool.generator.xml.XmlPlatform;
 import gool.generator.objc.ObjcPlatform;
 import gool.parser.java.JavaParser;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import logger.Log;
 
 /**
@@ -80,20 +82,42 @@ public class GOOLCompiler {
 
 			Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
 					extToNCopy);
-			concreteJavaToConcretePlatform(
+			/*concreteJavaToConcretePlatform(
 					JavaPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(
 					CSharpPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(
 					CppPlatform.getInstance(filesNonChange), files);
 			concreteJavaToConcretePlatform(
-					PythonPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(
-					XmlPlatform.getInstance(filesNonChange), files);
+					PythonPlatform.getInstance(filesNonChange), files);*/
+			//concreteJavaToConcretePlatform(
+			//		XmlPlatform.getInstance(filesNonChange), files);
 			// TODO: same for android & Objc
+			/*
 			concreteJavaToConcretePlatform(AndroidPlatform.getInstance(), files);
-			concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);
-
+			concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);*/
+			
+			GOOLCompiler gc=new GOOLCompiler();
+			
+			// JAVA input -> JAVA output
+			gc.runGOOLCompiler(new JavaParser(), JavaPlatform.getInstance(filesNonChange), files);
+			//JAVA input -> CSharp output
+			gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
+			//JAVA input -> CPP output
+			gc.runGOOLCompiler(new JavaParser(), CppPlatform.getInstance(filesNonChange), files);
+			//JAVA input -> PYTHON output
+			gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
+			//JAVA input -> XML output
+			gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
+			
+			// TODO: same for android & Objc
+			//JAVA input -> ANDROID output
+			//gc.runGOOLCompiler(new JavaParser(), AndroidPlatform.getInstance(), files);
+			//JAVA input -> OBJC output
+			//gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
+			
+			
+			
 		} catch (Exception e) {
 			Log.e(e);
 		}
@@ -151,7 +175,87 @@ public class GOOLCompiler {
 		}
 		return files;
 	}
+	
+	/**
+	 * Taking concrete Language into concrete Target is done in two steps: - we
+	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
+	 * GOOL into concrete Target. Notice that the Target is specified at this
+	 * stage already: it will be carried kept in the abstract GOOL. This choice
+	 * is justified if we want to do multi-platform compilation, i.e. have some
+	 * pieces of the abstract GOOL to compile in some Target, and another piece
+	 * is some other Target.
+	 * 
+	 * @param parserIn
+	 * 			  : the Parser of the source language (It extends ParseGOOL)
+	 * @param outPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Language, as a string
+	 * @return a map of the compiled files for the different platforms
+	 * @throws Exception
+	 */
+	public Map<Platform, List<File>> runGOOLCompiler(ParseGOOL parserIn, Platform outPlatform, String input) throws Exception {
+		Collection<ClassDef> classDefs = concretePlatformeToAbstractGool(parserIn,outPlatform, input);
+		return abstractGool2Target(classDefs);
+}
 
+	/**
+	 * Taking concrete Language into concrete Target is done in two steps: - we
+	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
+	 * GOOL into concrete Target. Notice that the Target is specified at this
+	 * stage already: it will be carried kept in the abstract GOOL. This choice
+	 * is justified if we want to do multi-platform compilation, i.e. have some
+	 * pieces of the abstract GOOL to compile in some Target, and another piece
+	 * is some other Target.
+	 * 
+	 * @param parserIn
+	 * 			  : the Parser of the source language (It extends ParseGOOL)
+	 * @param outPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Language, as files
+	 * @return a map of the compiled files for the different platforms
+	 * @throws Exception
+	 */
+	public Map<Platform, List<File>> runGOOLCompiler(ParseGOOL parserIn, Platform outPlatform, Collection<? extends File> inputFiles) throws Exception {
+		Collection<ClassDef> classDefs = concretePlatformeToAbstractGool(parserIn,outPlatform, inputFiles);
+		return abstractGool2Target(classDefs);
+	}
+
+	/**
+	 * Parsing the concrete Language into abstract GOOL is done by a Parser.
+	 * 
+	 * @param parserIn
+	 * 			  : the Parser of the source language (It extends ParseGOOL)
+	 * @param outPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Java, as a string
+	 * @return abstract GOOL classes
+	 * @throws Exception
+	 */
+	private static Collection<ClassDef> concretePlatformeToAbstractGool(
+			ParseGOOL parserIn, Platform outPlatform, String input) throws Exception {
+		return parserIn.parseGool(outPlatform, input);
+	}
+	
+	/**
+	 * Parsing the concrete Language into abstract GOOL is done by a Parser.
+	 * 
+	 * @param parserIn
+	 * 			  : the Parser of the source language (It extends ParseGOOL)
+	 * @param outPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Java, as files
+	 * @return abstract GOOL classes
+	 * @throws Exception
+	 */
+	private static Collection<ClassDef> concretePlatformeToAbstractGool(
+			ParseGOOL parserIn, Platform outPlatform, Collection<? extends File> inputFiles) throws Exception {
+		return parserIn.parseGool(outPlatform,inputFiles);
+	}
+	
 	/**
 	 * Taking concrete Java into concrete Target is done in two steps: - we
 	 * parse the concrete Java into abstract GOOL; - we flatten the abstract
@@ -168,12 +272,12 @@ public class GOOLCompiler {
 	 * @return a map of the compiled files for the different platforms
 	 * @throws Exception
 	 */
-	public static Map<Platform, List<File>> concreteJavaToConcretePlatform(
+	/*public static Map<Platform, List<File>> concreteJavaToConcretePlatform(
 			Platform destPlatform, String input) throws Exception {
 		Collection<ClassDef> classDefs = concreteJavaToAbstractGool(
 				destPlatform, input);
 		return abstractGool2Target(classDefs);
-	}
+	}*/
 	
 	/**
 	 * Taking concrete Java into concrete Target is done in two steps: - we
@@ -192,13 +296,13 @@ public class GOOLCompiler {
 	 * 			A map of the compiled files for the different platforms.
 	 * @throws Exception
 	 */
-	public static Map<Platform, List<File>> concreteJavaToConcretePlatform(
+	/*public static Map<Platform, List<File>> concreteJavaToConcretePlatform(
 			Platform destPlatform, Collection<? extends File> inputFiles)
 			throws Exception {
 		Collection<ClassDef> classDefs = concreteJavaToAbstractGool(
 				destPlatform, inputFiles);
 		return abstractGool2Target(classDefs);
-	}
+	}*/
 
 	/**
 	 * Parsing the concrete Java into abstract GOOL is done by JavaParser.
@@ -210,10 +314,10 @@ public class GOOLCompiler {
 	 * @return abstract GOOL classes
 	 * @throws Exception
 	 */
-	private static Collection<ClassDef> concreteJavaToAbstractGool(
+	/*private static Collection<ClassDef> concreteJavaToAbstractGool(
 			Platform destPlatform, String input) throws Exception {
 		return JavaParser.parseGool(destPlatform, input);
-	}
+	}*/
 
 	/**
 	 * Parsing the concrete Java into abstract GOOL is done by JavaParser.
@@ -226,12 +330,12 @@ public class GOOLCompiler {
 	 * 			Abstract GOOL classes.
 	 * @throws Exception
 	 */
-	private static Collection<ClassDef> concreteJavaToAbstractGool(
+	/*private static Collection<ClassDef> concreteJavaToAbstractGool(
 			Platform destPlatform, Collection<? extends File> inputFiles)
 			throws Exception {
 		return JavaParser.parseGool(destPlatform,
 				ExecutorHelper.getJavaFileObjects(inputFiles));
-	}
+	}*/
 
 	/**
 	 * Flattening the abstract GOOL into concrete Target is done by

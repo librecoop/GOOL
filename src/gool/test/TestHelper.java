@@ -21,6 +21,7 @@ import gool.GOOLCompiler;
 import gool.ast.core.ClassDef;
 import gool.executor.ExecutorHelper;
 import gool.generator.common.Platform;
+import gool.parser.java.JavaParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,15 +45,14 @@ public final class TestHelper {
 	public static String generateCompileRun(Platform platform, String input,
 			String mainClassName) throws Exception, FileNotFoundException {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(
-				platform, input);
+		Map<Platform, List<File>> files = gc.runGOOLCompiler(new JavaParser(), platform, input);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
 
 	public static List<File> generateCompile(Platform platform,
 			Collection<File> inputFiles, ClassDef classDef) throws Exception {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(
+		Map<Platform, List<File>> files = gc.runGOOLCompiler(new JavaParser(),
 				platform, inputFiles);
 		return ExecutorHelper.compile(files);
 	}
@@ -60,7 +60,7 @@ public final class TestHelper {
 	public static String generateCompileRun(Platform platform,
 			Collection<File> inputFiles, File file) throws Exception {
 		GOOLCompiler gc = new GOOLCompiler();
-		Map<Platform, List<File>> files = gc.concreteJavaToConcretePlatform(
+		Map<Platform, List<File>> files = gc.runGOOLCompiler(new JavaParser(),
 				platform, inputFiles);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
