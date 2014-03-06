@@ -22,8 +22,16 @@ import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method to know if an map is empty.
+ */
 public class MapIsEmptyCall extends MapMethCall {
 
+	/**
+	 * The constructor of a "map is empty call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public MapIsEmptyCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

@@ -22,8 +22,16 @@ import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method to know if a key is contained in an map.
+ */
 public class MapContainsKeyCall extends MapMethCall {
 
+	/**
+	 * The constructor of a "map contains key call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public MapContainsKeyCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

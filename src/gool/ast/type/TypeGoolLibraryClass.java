@@ -20,16 +20,29 @@ package gool.ast.type;
 import gool.generator.GoolGeneratorController;
 
 /**
- * 
+ * This is the basic type for gool library class in the intermediate language.
  */
 public final class TypeGoolLibraryClass extends ReferenceType {
 
+	/**
+	 * The name of the gool library class.
+	 */
 	private String goolclassname;
 
+	/**
+	 * Gets the name of the gool library class.
+	 * @return
+	 * 		The name of the gool library class.
+	 */
 	public String getGoolclassname() {
 		return goolclassname;
 	}
 
+	/**
+	 * The constructor of a "type gool library class" representation.
+	 * @param goolclassname
+	 * 		: The name of the gool library class.
+	 */
 	public TypeGoolLibraryClass(String goolclassname) {
 		this.goolclassname = goolclassname;
 	}

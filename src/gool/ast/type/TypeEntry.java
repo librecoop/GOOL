@@ -21,24 +21,39 @@ import gool.ast.core.ClassDef;
 import gool.generator.GoolGeneratorController;
 
 /**
- * This is the basic type for classes defined in the intermediate language.
+ * This is the basic type for map entry in the intermediate language.
  */
 public class TypeEntry extends ReferenceType {
 
 	/**
-	 * The class where the list was defined.
+	 * The class where the map was defined.
 	 */
 	private ClassDef classDef;
 
+	/**
+	 * The empty constructor of a "type entry" representation.
+	 */
 	public TypeEntry() {
 	}
 
+	/**
+	 * The constructor of a "type entry" representation.
+	 * @param keyType
+	 * 		: The type of the key used by the map.
+	 * @param elementType
+	 * 		: The type of the element used by the map.
+	 */
 	public TypeEntry(IType keyType, IType elementType) {
 		this();
 		addArgument(keyType);
 		addArgument(elementType);
 	}
 
+	/**
+	 * Gets the type of the element used by the map.
+	 * @return
+	 * 		The type of the element used by the map.
+	 */
 	public IType getElementType() {
 		if (getTypeArguments().size() > 1) {
 			return getTypeArguments().get(1);
@@ -46,6 +61,11 @@ public class TypeEntry extends ReferenceType {
 		return null;
 	}
 
+	/**
+	 * Gets the type of the key used by the map.
+	 * @return
+	 * 		The type of the key used by the map.
+	 */
 	public IType getKeyType() {
 		return getTypeArguments().get(0);
 	}
@@ -55,10 +75,20 @@ public class TypeEntry extends ReferenceType {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the class' definition where the map was defined.
+	 * @return
+	 * 		The class' definition where the map was defined.
+	 */
 	public ClassDef getClassDef() {
 		return classDef;
 	}
 
+	/**
+	 * Sets the class' definition where the map was defined.
+	 * @param classDef
+	 * 		: The new class' definition where the map was defined.
+	 */
 	public void setClassDef(ClassDef classDef) {
 		this.classDef = classDef;
 	}

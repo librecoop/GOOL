@@ -29,6 +29,9 @@ public final class TypeObject extends ReferenceType {
 	 */
 	public static final TypeObject INSTANCE = new TypeObject();
 
+	/**
+	 * The empty constructor used to initialize the instance.
+	 */
 	private TypeObject() {
 	}
 

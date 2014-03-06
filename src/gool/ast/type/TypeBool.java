@@ -24,8 +24,14 @@ import gool.generator.GoolGeneratorController;
  */
 public final class TypeBool extends PrimitiveType {
 
+	/**
+	 * The instance of the type bool.
+	 */
 	public static final TypeBool INSTANCE = new TypeBool();
 
+	/**
+	 * The empty constructor used to initialize the instance.
+	 */
 	private TypeBool() {
 	}
 

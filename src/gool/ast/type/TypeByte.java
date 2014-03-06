@@ -24,8 +24,14 @@ import gool.generator.GoolGeneratorController;
  */
 public final class TypeByte extends PrimitiveType {
 
+	/**
+	 * The instance of the type byte.
+	 */
 	public static final TypeByte INSTANCE = new TypeByte();
 
+	/**
+	 * The empty constructor used to initialize the instance.
+	 */
 	private TypeByte() {
 	}
 

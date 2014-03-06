@@ -20,6 +20,10 @@ package gool.ast.system;
 import gool.ast.core.Dependency;
 import gool.generator.GoolGeneratorController;
 
+
+/**
+ * This class represents a dependency for a system out command.
+ */
 public class SystemOutDependency extends Dependency {
 
 	@Override

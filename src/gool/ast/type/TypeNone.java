@@ -22,8 +22,15 @@ package gool.ast.type;
  * represent the return type of a constructor.
  */
 public final class TypeNone extends PrimitiveType {
+	
+	/**
+	 * The instance of the type none.
+	 */
 	public static final TypeNone INSTANCE = new TypeNone();
 
+	/**
+	 * The empty constructor used to initialize the instance.
+	 */
 	private TypeNone() {
 	}
 

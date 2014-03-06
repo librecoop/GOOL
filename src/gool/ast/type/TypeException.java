@@ -21,6 +21,9 @@ import gool.generator.GoolGeneratorController;
 
 import java.util.HashMap;
 
+/**
+ * This is the basic type for exception in the intermediate language.
+ */
 public class TypeException extends IType {
 
 	/**
@@ -44,6 +47,9 @@ public class TypeException extends IType {
 	 */
 	private String name;
 
+	/**
+	 * The module name of the exception.
+	 */
 	private String module;
 
 	/**
@@ -56,23 +62,49 @@ public class TypeException extends IType {
 	 */
 	static private HashMap<String, TypeException> exceptions = new HashMap<String, TypeException>();
 
+	/**
+	 * The constructor of a "type exception" representation. 
+	 * @param name
+	 * 		: The name of the exception in the source language.
+	 * @param module
+	 * 		: The module name of the exception.
+	 * @param kind
+	 * 		: The kind of exception, 'CUSTOM' for non language specified exceptions.
+	 */
 	public TypeException(String name, String module, Kind kind) {
 		this.name = name;
 		this.module = module;
 		this.kind = kind;
 	}
 
+	/**
+	 * Adds a "type exception" to the exceptions knows by GOOL.
+	 * @param exception
+	 * 		: The "type exception" to add.
+	 */
 	static public void add(TypeException exception) {
 		exceptions.put(exception.getName(), exception);
 		exceptions.put(exception.getModule() + "." + exception.getName(),
 				exception);
 	}
 
+	/**
+	 * Adds "types exceptions" to the exceptions knows by GOOL.
+	 * @param args
+	 * 		: The "types exceptions" to add.
+	 */
 	static public void add(TypeException... args) {
 		for (TypeException exception : args)
 			add(exception);
 	}
 
+	/**
+	 * Gets the "type exception" defined in the exceptions knows by GOOL.
+	 * @param name
+	 * 		: The name of the exception in the source language.
+	 * @return
+	 * 		The "type exception" associated to the name of the exception in the source language.
+	 */
 	static public TypeException get(String name) {
 		return exceptions.get(name);
 	}
@@ -82,6 +114,11 @@ public class TypeException extends IType {
 		return name;
 	}
 
+	/**
+	 * Gets the kind of the "type exception".
+	 * @return
+	 * 		The kind of the "type exception".
+	 */
 	public Kind getKind() {
 		return kind;
 	}
@@ -91,10 +128,22 @@ public class TypeException extends IType {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Determines if a "type exception" is known by GOOL.
+	 * @param typeName
+	 * 		: The name of the exception in the source language.
+	 * @return
+	 * 		True if GOOL knows the exception, else false.
+	 */
 	public static boolean contains(String typeName) {
 		return exceptions.containsKey(typeName);
 	}
 
+	/**
+	 * Gets the module name of the exception.
+	 * @return
+	 * 		The module name of the exception.
+	 */
 	public String getModule() {
 		return module;
 	}

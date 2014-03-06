@@ -39,18 +39,37 @@ public class TypeClass extends ReferenceType {
 	 * The class definition.
 	 */
 	private ClassDef classDef;
-
+	/**
+	 * A flag to know if the class is a enumeration.
+	 */
 	private boolean isEnum;
 
+	/**
+	 * The constructor of a "type class" representation.
+	 * @param name
+	 * 		: The textual name of the class used as a type.
+	 */
 	public TypeClass(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * The constructor of a "type class" representation.
+	 * @param packageName
+	 * 		: The textual name of the package used by the class.
+	 * @param name
+	 * 		: The textual name of the class used as a type.
+	 */
 	public TypeClass(String packageName, String name) {
 		this(name);
 		this.packageName = packageName;
 	}
 
+	/**
+	 * Sets the name of the class.
+	 * @param name
+	 * 		: The new name of the class.
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -70,22 +89,47 @@ public class TypeClass extends ReferenceType {
 		return name;
 	}
 
+	/**
+	 * Determines if the class is an enumeration.
+	 * @return
+	 * 		True if the class is an enumeration, else false.
+	 */
 	public boolean isEnum() {
 		return isEnum;
 	}
 
+	/**
+	 * Sets the flag to know if the class is a enumeration.
+	 * @param isEnum
+	 * 		: True if the class is an enumeration, else false.
+	 */
 	public void setIsEnum(boolean isEnum) {
 		this.isEnum = isEnum;
 	}
 
+	/**
+	 * Gets the name of the package used by the class.
+	 * @return
+	 * 		The textual name of the package used by the class.
+	 */
 	public String getPackageName() {
 		return packageName;
 	}
 
+	/**
+	 * Gets the class' definition.
+	 * @return
+	 * 		The class' definition.
+	 */
 	public ClassDef getClassDef() {
 		return classDef;
 	}
 
+	/**
+	 * Sets the class' definition.
+	 * @param def
+	 * 		: The new class' definition.
+	 */
 	public void setClassDef(ClassDef def) {
 		this.classDef = def;
 	}

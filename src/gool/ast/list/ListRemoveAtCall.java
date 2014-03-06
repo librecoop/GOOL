@@ -22,8 +22,16 @@ import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the removal element to list.
+ */
 public class ListRemoveAtCall extends ListMethCall {
 
+	/**
+	 * The constructor of a "list remove at call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public ListRemoveAtCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

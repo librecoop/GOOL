@@ -24,12 +24,25 @@ import gool.generator.GoolGeneratorController;
  */
 public final class TypeMethod extends IType {
 
+	/**
+	 * The textual type of the method.
+	 */
 	private String textualtype;
 
+	/**
+	 * Gets the textual type of the method.
+	 * @return
+	 * 		The textual type of the method.
+	 */
 	public String getTextualtype() {
 		return textualtype;
 	}
 
+	/**
+	 * The constructor of a "type method" representation.
+	 * @param textualtype
+	 * 		: The textual type of the method.
+	 */
 	public TypeMethod(String textualtype) {
 		this.textualtype = textualtype;
 	}

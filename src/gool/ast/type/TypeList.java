@@ -21,7 +21,7 @@ import gool.ast.core.ClassDef;
 import gool.generator.GoolGeneratorController;
 
 /**
- * This is the basic type for classes defined in the intermediate language.
+ * This is the basic type for list in the intermediate language.
  */
 
 public class TypeList extends ReferenceType {
@@ -31,15 +31,28 @@ public class TypeList extends ReferenceType {
 	 */
 	private ClassDef classDef;
 
+	/**
+	 * The empty constructor of a "type list" representation.
+	 */
 	public TypeList() {
 
 	}
 
+	/**
+	 * The constructor of a "type list" representation.
+	 * @param elementType
+	 * 		: The type of the elements used by the list.
+	 */
 	public TypeList(IType elementType) {
 		this();
 		addArgument(elementType);
 	}
 
+	/**
+	 * Gets the type of the elements used by the list.
+	 * @return
+	 * 		The type of the elements used by the list.
+	 */
 	public IType getElementType() {
 		if (getTypeArguments().size() > 0) {
 			return getTypeArguments().get(0);
@@ -52,10 +65,20 @@ public class TypeList extends ReferenceType {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Gets the class' definition where the list was defined.
+	 * @return
+	 * 		The class' definition where the list was defined.
+	 */
 	public ClassDef getClassDef() {
 		return classDef;
 	}
-
+	
+	/**
+	 * Sets the class' definition where the list was defined.
+	 * @param classDef
+	 * 		: The new class' definition where the list was defined.
+	 */
 	public void setClassDef(ClassDef classDef) {
 		this.classDef = classDef;
 	}

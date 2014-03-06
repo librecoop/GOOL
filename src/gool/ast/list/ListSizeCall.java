@@ -22,8 +22,16 @@ import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method to know the size of a list.
+ */
 public class ListSizeCall extends ListMethCall {
 
+	/**
+	 * The constructor of a "list size call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public ListSizeCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

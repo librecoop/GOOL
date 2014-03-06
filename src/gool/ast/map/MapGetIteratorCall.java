@@ -22,8 +22,16 @@ import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the getting iterator of an map.
+ */
 public class MapGetIteratorCall extends MapMethCall {
 
+	/**
+	 * The constructor of a "map get iterator call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public MapGetIteratorCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

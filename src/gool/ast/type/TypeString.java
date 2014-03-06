@@ -24,6 +24,9 @@ import gool.generator.GoolGeneratorController;
  */
 public class TypeString extends PrimitiveType {
 
+	/**
+	 * A static instance to avoid the creation of new objects.
+	 */
 	public static final TypeString INSTANCE = new TypeString();
 
 	@Override

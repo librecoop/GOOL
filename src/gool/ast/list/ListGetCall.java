@@ -22,8 +22,16 @@ import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the getting to list.
+ */
 public class ListGetCall extends ListMethCall {
 
+	/**
+	 * The constructor of a "list get call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public ListGetCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

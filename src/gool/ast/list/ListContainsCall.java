@@ -22,8 +22,16 @@ import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the presence to list.
+ */
 public class ListContainsCall extends ListMethCall {
 
+	/**
+	 * The constructor of "a list contains call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public ListContainsCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

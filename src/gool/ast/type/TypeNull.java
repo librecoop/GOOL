@@ -19,8 +19,14 @@ package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This is the basic type Null of the intermediate language.
+ */
 public class TypeNull extends PrimitiveType {
 
+	/**
+	 * The instance of the type null.
+	 */
 	public static final IType INSTANCE = new TypeNull();
 
 	@Override

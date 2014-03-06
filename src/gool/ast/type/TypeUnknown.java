@@ -20,16 +20,29 @@ package gool.ast.type;
 import gool.generator.GoolGeneratorController;
 
 /**
- * This is the basic type Bool of the intermediate language.
+ * This is the basic type Unknown of the intermediate language.
  */
 public final class TypeUnknown extends PrimitiveType {
 
+	/**
+	 * The textual name of the type.
+	 */
 	private String textualtype;
 
+	/**
+	 * Gets the textual name of the type.
+	 * @return
+	 * 		The textual name of the type.
+	 */
 	public String getTextualtype() {
 		return textualtype;
 	}
 
+	/**
+	 * The constructor of an "type unknown" representation.
+	 * @param textualtype
+	 * 		: The textual name of the type.
+	 */
 	public TypeUnknown(String textualtype) {
 		this.textualtype = textualtype;
 	}

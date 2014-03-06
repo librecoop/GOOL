@@ -23,13 +23,26 @@ import gool.generator.GoolGeneratorController;
  * This is the basic type Method of the intermediate language.
  */
 public final class TypeVar extends IType {
-
+	
+	/**
+	 * The textual name of the type.
+	 */
 	private String textualtype;
 
+	/**
+	 * Gets the textual name of the type.
+	 * @return
+	 * 		The textual name of the type.
+	 */
 	public String getTextualtype() {
 		return textualtype;
 	}
 
+	/**
+	 * The constructor of an "type variable" representation.
+	 * @param textualtype
+	 * 		: The textual name of the type.
+	 */
 	public TypeVar(String textualtype) {
 		this.textualtype = textualtype;
 	}

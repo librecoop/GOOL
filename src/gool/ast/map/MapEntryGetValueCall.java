@@ -22,8 +22,16 @@ import gool.ast.core.MapEntryMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the getting of value an map.
+ */
 public class MapEntryGetValueCall extends MapEntryMethCall {
 
+	/**
+	 * The constructor of a "map get value call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public MapEntryGetValueCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

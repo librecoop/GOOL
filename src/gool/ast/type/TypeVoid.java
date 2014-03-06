@@ -24,8 +24,14 @@ import gool.generator.GoolGeneratorController;
  */
 public final class TypeVoid extends PrimitiveType {
 
+	/**
+	 * A static instance to avoid the creation of new objects.
+	 */
 	public static final TypeVoid INSTANCE = new TypeVoid();
 
+	/**
+	 * The empty constructor used to initialize the instance.
+	 */
 	private TypeVoid() {
 	}
 

@@ -24,8 +24,14 @@ import gool.generator.GoolGeneratorController;
  */
 public final class TypeInt extends PrimitiveType {
 
+	/**
+	 * The instance of the type int.
+	 */
 	public static final TypeInt INSTANCE = new TypeInt();
 
+	/**
+	 * The empty constructor used to initialize the instance.
+	 */
 	private TypeInt() {
 	}
 

@@ -22,8 +22,16 @@ import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method to know if the list is empty.
+ */
 public class ListIsEmptyCall extends ListMethCall {
 
+	/**
+	 * The constructor of a "list is empthy call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public ListIsEmptyCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

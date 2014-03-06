@@ -20,16 +20,29 @@ package gool.ast.type;
 import gool.generator.GoolGeneratorController;
 
 /**
- * This is the basic type Method of the intermediate language.
+ * This is the basic type Package of the intermediate language.
  */
 public final class TypePackage extends IType {
 
+	/**
+	 * The textual type of the package.
+	 */
 	private String textualtype;
 
+	/**
+	 * Gets the textual type of the package.
+	 * @return
+	 * 		The textual type of the package.
+	 */
 	public String getTextualtype() {
 		return textualtype;
 	}
 
+	/**
+	 * The constructor of a "type package" representation.
+	 * @param textualtype
+	 * 		: The textual type of the package.
+	 */
 	public TypePackage(String textualtype) {
 		this.textualtype = textualtype;
 	}

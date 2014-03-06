@@ -22,8 +22,16 @@ import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the adding in an map.
+ */
 public class MapPutCall extends MapMethCall {
 
+	/**
+	 * The constructor of a "map put call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public MapPutCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

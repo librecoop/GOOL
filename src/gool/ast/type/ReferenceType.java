@@ -17,6 +17,9 @@
 
 package gool.ast.type;
 
+/**
+ * This class is for reference types such as Array, etc.
+ */
 public abstract class ReferenceType extends IType {
 
 	@Override

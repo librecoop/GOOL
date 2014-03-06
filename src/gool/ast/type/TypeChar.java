@@ -19,19 +19,23 @@ package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This is the basic type Char of the intermediate language.
+ */
 public class TypeChar extends PrimitiveType {
 
+	/**
+	 * The instance of the type char.
+	 */
 	public static final TypeChar INSTANCE = new TypeChar();
 
 	@Override
 	public String callGetCode() {
-		// TODO Auto-generated method stub
 		return getName();
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return GoolGeneratorController.generator().getCode(this);
 	}
 

@@ -19,6 +19,9 @@ package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class is for array types.
+ */
 public class TypeArray extends ReferenceType {
 
 	/**
@@ -26,6 +29,11 @@ public class TypeArray extends ReferenceType {
 	 */
 	private IType elementType;
 
+	/**
+	 * The construtor of an "array type" representation.
+	 * @param elementType
+	 * 			: The element type used by the array.
+	 */
 	public TypeArray(IType elementType) {
 		setElementType(elementType);
 	}
@@ -35,10 +43,20 @@ public class TypeArray extends ReferenceType {
 		return GoolGeneratorController.generator().getCode(this);
 	}
 
+	/**
+	 * Sets the type of the elements used by the array.
+	 * @param elementType
+	 * 			: The new type of the elements used by the array.
+	 */
 	public final void setElementType(IType elementType) {
 		this.elementType = elementType;
 	}
 
+	/**
+	 * Gets the type of the elements used by the array.
+	 * @return
+	 * 		The type of the elements used by the array.
+	 */
 	public final IType getElementType() {
 		return elementType;
 	}

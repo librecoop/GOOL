@@ -22,8 +22,16 @@ import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the adding to list.
+ */
 public class ListAddCall extends ListMethCall {
 
+	/**
+	 * The constructor of a "list add call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public ListAddCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

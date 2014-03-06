@@ -22,8 +22,16 @@ import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a method of treating the removal in an map.
+ */
 public class MapRemoveCall extends MapMethCall {
 
+	/**
+	 * The constructor of a "map remove call" representation.
+	 * @param target
+	 * 		: The target expression used in the call.
+	 */
 	public MapRemoveCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}

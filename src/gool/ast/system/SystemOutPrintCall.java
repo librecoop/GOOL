@@ -21,8 +21,14 @@ import gool.ast.core.GoolCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a system method for out print.
+ */
 public class SystemOutPrintCall extends GoolCall {
 
+	/**
+	 * The constructor of a "system out print call" representation.
+	 */
 	public SystemOutPrintCall() {
 		super(TypeVoid.INSTANCE);
 	}

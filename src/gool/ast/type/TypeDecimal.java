@@ -19,10 +19,19 @@ package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This is the basic type Decimal of the intermediate language.
+ */
 public final class TypeDecimal extends PrimitiveType {
 
+	/**
+	 * The instance of the type decimal.
+	 */
 	public static final TypeDecimal INSTANCE = new TypeDecimal();
-
+	
+	/**
+	 * The empty constructor used to initialize the instance.
+	 */
 	private TypeDecimal() {
 	}
 

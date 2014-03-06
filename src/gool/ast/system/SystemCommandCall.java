@@ -21,8 +21,14 @@ import gool.ast.core.GoolCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
+/**
+ * This class captures the invocation of a system method.
+ */
 public class SystemCommandCall extends GoolCall {
 
+	/**
+	 * The constructor of a "system call" representation.
+	 */
 	public SystemCommandCall() {
 		super(TypeVoid.INSTANCE);
 	}
