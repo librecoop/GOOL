@@ -52,6 +52,7 @@ import gool.ast.core.Statement;
 import gool.ast.core.This;
 import gool.ast.core.ThisCall;
 import gool.ast.core.TypeDependency;
+import gool.ast.core.UnImplemented;
 import gool.ast.core.UnaryOperation;
 import gool.ast.core.UnrecognizedDependency;
 import gool.ast.core.VarAccess;
@@ -649,6 +650,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(UnrecognizedDependency unrecognizedDependency) {
 		return "/* "+ unrecognizedDependency.getName()
 				+ " unrecognized by GOOL, passed on. */";
+	}	
+	
+	public String getCode(UnImplemented unImplemented) {
+		return "/* "+ unImplemented.getCommentUnImplemented()
+				+ " unimplemented by GOOL, passed on : "
+				+ unImplemented.getCodeUnImplemented()
+				+ " */";
 	}
 
 }

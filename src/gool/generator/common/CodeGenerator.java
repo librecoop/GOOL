@@ -61,6 +61,7 @@ import gool.ast.core.Throw;
 import gool.ast.core.ToStringCall;
 import gool.ast.core.Try;
 import gool.ast.core.TypeDependency;
+import gool.ast.core.UnImplemented;
 import gool.ast.core.UnaryOperation;
 import gool.ast.core.UnrecognizedDependency;
 import gool.ast.core.VarAccess;
@@ -441,5 +442,7 @@ public interface CodeGenerator {
 	String getCode(RecognizedDependency recognizedDependency);
 
 	String getCode(UnrecognizedDependency unrecognizedDependency);
+
+	String getCode(UnImplemented unImplemented);
 
 }
