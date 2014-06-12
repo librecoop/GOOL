@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -34,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -82,8 +80,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 import gool.ast.core.ArrayAccess;
 import gool.ast.core.Assign;
 import gool.ast.core.BinaryOperation;
@@ -100,14 +96,12 @@ import gool.ast.core.ExpressionUnknown;
 import gool.ast.core.Field;
 import gool.ast.core.FieldAccess;
 import gool.ast.core.For;
-import gool.ast.core.GoolCall;
 import gool.ast.core.Identifier;
 import gool.ast.core.If;
 import gool.ast.core.Meth;
 import gool.ast.core.MethCall;
 import gool.ast.core.Modifier;
 import gool.ast.core.Operator;
-import gool.ast.core.RecognizedDependency;
 import gool.ast.core.Return;
 import gool.ast.core.Statement;
 import gool.ast.core.This;
@@ -123,7 +117,6 @@ import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeClass;
-import gool.ast.type.TypeGoolLibraryClass;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeNone;
 import gool.ast.type.TypeString;
@@ -177,7 +170,6 @@ import gool.recognizer.cpp.ast.statement.ASTCppStatement;
 import gool.recognizer.cpp.ast.statement.ASTCppSwitchStatement;
 import gool.recognizer.cpp.ast.statement.ASTCppTryBlockStatement;
 import gool.recognizer.cpp.ast.statement.ASTCppWhileStatement;
-import gool.recognizer.cpp.visitor.DebugASTCpp;
 import gool.recognizer.cpp.visitor.IVisitorASTCpp;
 
 

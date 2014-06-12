@@ -49,10 +49,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 
 import gool.ast.core.ArrayNew;
-import gool.ast.core.BinaryOperation;
 import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
-import gool.ast.core.Constant;
 import gool.ast.core.Constructor;
 import gool.ast.core.Dec;
 import gool.ast.core.Expression;
@@ -967,6 +965,7 @@ public class HelperCppRecognizer {
 		}
 		return toReturn ;
 	}
+	
 	public IType convertTypePrimitiveGool(org.eclipse.cdt.core.dom.ast.IType typeAst, 
 			String typeName, boolean typeUnknown){
 
