@@ -174,7 +174,10 @@ import gool.recognizer.cpp.visitor.IVisitorASTCpp;
 
 
 
-
+/**
+ * This class is the recognizer for the language C++. It transforms
+ * a C++ AST into a GOOL AST.
+ */
 public class CppRecognizer implements IVisitorASTCpp {
 	
 	//////////////////////////////////////////////////////////////////////////////////

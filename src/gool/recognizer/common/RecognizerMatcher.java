@@ -17,11 +17,15 @@
 
 package gool.recognizer.common;
 
+import gool.Settings;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,6 +34,7 @@ public class RecognizerMatcher {
 
 	//private static Platform InputLang;
 	private static String InputLang;
+	private static String DirOutPut;
 	private static HashMap<String, ArrayList<String>> ClassMatchTable;
 	private static HashMap<String, ArrayList<String>> MethodMatchTable;
 
@@ -38,6 +43,10 @@ public class RecognizerMatcher {
 		InputLang = inputLang;
 		ClassMatchTable = new HashMap<String, ArrayList<String>>();
 		MethodMatchTable = new HashMap<String, ArrayList<String>>();
+		
+		DirOutPut = Settings.get(InputLang+"_in_dir_tmp");
+		File tmpFolder = new File(DirOutPut);
+		tmpFolder.mkdir();
 
 		// Enabling the recognition of default libraries of the input language
 		ArrayList<String> defaultGoolClasses = getGoolClassesFromImport("default");
@@ -45,6 +54,27 @@ public class RecognizerMatcher {
 			enableRecognition(defaultGoolClass);
 	}
 
+	public static ArrayList<String> matchImportAdd(String inputLangImport) {
+		ArrayList<String> imports = getImportChange(inputLangImport);
+		ArrayList<String> toReturn = new ArrayList<String>();
+		if(imports.isEmpty())
+			return imports ;
+		System.out.print("[RecognizerMatcher] Enabling the recognition of the import : "
+				+ inputLangImport );
+		File tmpFolder = new File(DirOutPut);
+		if(!tmpFolder.exists()){
+			tmpFolder.mkdir();
+		}
+		for (String importName : imports){
+			System.out.println(" and change to "+ importName);
+			File tmpFile = new File(DirOutPut+"/"+importName);
+			System.out.println(
+					copyFile(new File(importName),tmpFile ));
+			toReturn.add(DirOutPut+"/"+importName);
+		}
+		return toReturn;
+	}
+	
 	public static boolean matchImport(String inputLangImport) {
 		ArrayList<String> goolClasses = getGoolClassesFromImport(inputLangImport);
 		for (String goolClass : goolClasses)
@@ -121,7 +151,38 @@ public class RecognizerMatcher {
 			System.out.println(e.toString());
 		}
 	}
-
+	
+	static private ArrayList<String> getImportChange(
+			String inputLangImport) {
+		ArrayList<String> imports = new ArrayList<String>();
+		
+		try {
+			InputStream ips = new FileInputStream(
+					getPathOfInputImportMatchFile());
+			InputStreamReader ipsr = new InputStreamReader(ips);
+			BufferedReader br = new BufferedReader(ipsr);
+			String line;
+			while ((line = br.readLine()) != null) {
+				line = removeSpaces(line);
+				if (isInputMatchLine(line)) {
+					String currentImport = getLeftPartOfInputMatchLine(line);
+					ArrayList<String> currentInputImports = parseCommaSeparatedValues(getRightPartOfInputMatchLine(line));
+					if(isImportAddName(currentImport)){
+						String importName = getImportAddName(currentImport);
+						if(importName.compareTo(inputLangImport) == 0){
+							// Recognized import changed :
+							imports.addAll(currentInputImports);
+						}
+					}
+				}
+			}
+			br.close();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+		return imports;
+	}
+	
 	static private ArrayList<String> getGoolClassesFromImport(
 			String inputLangImport) {
 		ArrayList<String> goolClasses = new ArrayList<String>();
@@ -207,7 +268,15 @@ public class RecognizerMatcher {
 	static private String getRightPartOfInputMatchLine(String InputMatchLine) {
 		return InputMatchLine.substring(InputMatchLine.indexOf("<-") + 2);
 	}
-
+	
+	static private boolean isImportAddName(String importName) {
+		return importName.startsWith("+");
+	}
+	
+	static private String getImportAddName(String importName) {
+		return importName.substring(1);
+	}
+	
 	static private ArrayList<String> parseCommaSeparatedValues(String csv) {
 		ArrayList<String> parsedValues = new ArrayList<String>();
 		csv+=";";
@@ -270,5 +339,37 @@ public class RecognizerMatcher {
 				System.out.print(inputLangMethodSignature + " ");
 			System.out.println();
 		}
+	}
+
+	public static boolean copyFile(File source, File dest){
+		try{
+			// Declaration et ouverture des flux
+			java.io.FileInputStream sourceFile = new java.io.FileInputStream(source);
+	 
+			try{
+				java.io.FileOutputStream destinationFile = null;
+	 
+				try{
+					destinationFile = new FileOutputStream(dest);
+	 
+					// Lecture par segment de 0.5Mo 
+					byte buffer[] = new byte[512 * 1024];
+					int nbLecture;
+	 
+					while ((nbLecture = sourceFile.read(buffer)) != -1){
+						destinationFile.write(buffer, 0, nbLecture);
+					}
+				} finally {
+					destinationFile.close();
+				}
+			} finally {
+				sourceFile.close();
+			}
+		} catch (IOException e){
+			e.printStackTrace();
+			return false; // Erreur
+		}
+	 
+		return true; // Résultat OK  
 	}
 }
