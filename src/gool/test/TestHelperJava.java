@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public final class TestHelper {
+public final class TestHelperJava {
 
 	public static String surroundWithClassMain(String input, String className) {
 		return surroundWithClass("public static void main(String[] args){"

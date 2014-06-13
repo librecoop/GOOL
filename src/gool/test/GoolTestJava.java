@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class GoolTest {
+public class GoolTestJava {
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
@@ -100,7 +100,7 @@ public class GoolTest {
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
-			String cleanOutput = cleanOutput(TestHelper.generateCompileRun(
+			String cleanOutput = cleanOutput(TestHelperJava.generateCompileRun(
 					platform, input, MAIN_CLASS_NAME));
 			return cleanOutput;
 		}
@@ -125,7 +125,7 @@ public class GoolTest {
 	@Before
 	@Test
 	public void helloWorld() throws Exception {
-		String input = TestHelper.surroundWithClassMain(
+		String input = TestHelperJava.surroundWithClassMain(
 				"System.out.println(\"Hello World\");", MAIN_CLASS_NAME);
 		String expected = "Hello World";
 		compareResultsDifferentPlatforms(input, expected);
@@ -134,7 +134,7 @@ public class GoolTest {
 	@Test
 	public void goolLibraryTest1() throws Exception {
 		String input = "import java.io.File;"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"/* création puis suppression d'un fichier qui n'existait pas */"
 										+ "try{"
@@ -184,7 +184,7 @@ public class GoolTest {
 				+ "import java.io.FileWriter;"
 				+
 
-				TestHelper
+				TestHelperJava
 						.surroundWithClassMain(
 								"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"
 										+ "try{"
@@ -227,7 +227,7 @@ public class GoolTest {
 				+ "import java.io.FileWriter;"
 				+
 
-				TestHelper.surroundWithClassMain(
+				TestHelperJava.surroundWithClassMain(
 						"/* Creation d'un fichier, écriture, lecture, puis suppression du fichier. */"
 								+ "try{"
 								+ "File f = new File(\"../testGool.txt\");"
@@ -262,7 +262,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleTryCatch() throws Exception {
-		String input = TestHelper.surroundWithClassMain("try {\n "
+		String input = TestHelperJava.surroundWithClassMain("try {\n "
 				+ "System.out.println(\"hello\");"
 				+
 				// "String s=null;" +
@@ -283,7 +283,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleChar() throws Exception {
-		String input = TestHelper.surroundWithClassMain(
+		String input = TestHelperJava.surroundWithClassMain(
 				"char testChar = 'A'; System.out.println(testChar);",
 				MAIN_CLASS_NAME);
 		String expected = "A";
@@ -292,7 +292,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleAddition() throws Exception {
-		String input = TestHelper.surroundWithClassMain(
+		String input = TestHelperJava.surroundWithClassMain(
 				"System.out.println(2 + 2);", MAIN_CLASS_NAME);
 		String expected = "4";
 		compareResultsDifferentPlatforms(input, expected);
@@ -300,7 +300,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleIf() throws Exception {
-		String input = TestHelper
+		String input = TestHelperJava
 				.surroundWithClassMain(
 						"boolean b = true; if (b) { System.out.println(2 + 2);} else { System.out.println(2 + 5); }",
 						MAIN_CLASS_NAME);
@@ -310,7 +310,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleFor() throws Exception {
-		String input = TestHelper
+		String input = TestHelperJava
 				.surroundWithClassMain(
 						"int total = 0; for(int i = 0; i < 4; i++){ total ++;} System.out.println(total);",
 						MAIN_CLASS_NAME);
@@ -321,7 +321,7 @@ public class GoolTest {
 	@Test
 	public void listAddGet() throws Exception {
 		String input = "import java.util.ArrayList;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"ArrayList<Integer> l = new ArrayList<Integer>(); l.add(4); System.out.println(l.get(0));",
 								MAIN_CLASS_NAME);
@@ -337,7 +337,7 @@ public class GoolTest {
 		String input = "import java.util.HashMap;\n"
 				+
 
-				TestHelper
+				TestHelperJava
 						.surroundWithClassMain(
 								"String four = \"four\"; HashMap<String, Integer > m = new HashMap<String, Integer>(); m.put(four,4); System.out.println(m.get(four));",
 								MAIN_CLASS_NAME);
@@ -347,7 +347,7 @@ public class GoolTest {
 
 	@Test
 	public void simpleNew() throws Exception {
-		String input = TestHelper
+		String input = TestHelperJava
 				.surroundWithClass(
 						"public void printr(){System.out.println(2 + 2);} public static void main(String[] args){ Test t = new Test(); t.printr();}",
 						MAIN_CLASS_NAME, "");
@@ -357,10 +357,10 @@ public class GoolTest {
 
 	@Test
 	public void simpleTwoClasses() throws Exception {
-		String input = TestHelper.surroundWithClassMain(
+		String input = TestHelperJava.surroundWithClassMain(
 				"Printer p = new Printer(); p.printr();", MAIN_CLASS_NAME);
 		input += "\n"
-				+ TestHelper.surroundWithClass(
+				+ TestHelperJava.surroundWithClass(
 						"public void printr()  {System.out.println(2 + 2);}",
 						"Printer", "");
 		String expected = "4";
@@ -376,7 +376,7 @@ public class GoolTest {
 	@Test
 	public void simpleForEach() throws Exception {
 		String input = "import java.util.ArrayList;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"Integer total = 0;"
 										+ " ArrayList<Integer> l = new ArrayList<Integer>();"
@@ -398,7 +398,7 @@ public class GoolTest {
 	@Test
 	public void listWithDifferentTypeElement() throws Exception {
 		String input = "import java.util.ArrayList;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
 								MAIN_CLASS_NAME);
@@ -409,7 +409,7 @@ public class GoolTest {
 	public void mapWithoutTypes() throws Exception {
 		try {
 			String input = "import java.util.HashMap;\n"
-					+ TestHelper
+					+ TestHelperJava
 							.surroundWithClassMain(
 									"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
 									MAIN_CLASS_NAME);
@@ -427,7 +427,7 @@ public class GoolTest {
 	@Test
 	public void removeElementsFromUntypedList() throws Exception {
 		String input = "import java.util.ArrayList;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
 								MAIN_CLASS_NAME);
@@ -437,7 +437,7 @@ public class GoolTest {
 	@Test
 	public void removeElementsFromIntegerList() throws Exception {
 		String input = "import java.util.ArrayList;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"ArrayList<Integer> l = new ArrayList<Integer>();l.add(1);l.add(4);l.remove(1);System.out.println(l.size());",
 								MAIN_CLASS_NAME);
@@ -447,7 +447,7 @@ public class GoolTest {
 	@Test
 	public void removeElementsFromMap() throws Exception {
 		String input = "import java.util.HashMap;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();m.put(1, 2);m.put(2, 3);m.remove(2);System.out.println(m.size());",
 								MAIN_CLASS_NAME);
@@ -457,7 +457,7 @@ public class GoolTest {
 	@Test
 	public void isEmptyList() throws Exception {
 		String input = "import java.util.ArrayList;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");System.out.println(l.isEmpty());",
 								MAIN_CLASS_NAME);
@@ -482,7 +482,7 @@ public class GoolTest {
 	@Test
 	public void listContainsElement() throws Exception {
 		String input = "import java.util.ArrayList;\n"
-				+ TestHelper
+				+ TestHelperJava
 						.surroundWithClassMain(
 								"ArrayList l = new ArrayList();l.add(\"hola\");l.remove(\"hola\");l.add(\"hola\");System.out.println(l.contains(\"hola\"));",
 								MAIN_CLASS_NAME);
@@ -500,7 +500,7 @@ public class GoolTest {
 
 	@Test
 	public void unknownOperator() throws Exception {
-		String input = TestHelper.surroundWithClassMain(
+		String input = TestHelperJava.surroundWithClassMain(
 				"int total = 1 ^ 0; System.out.println(total);",
 				MAIN_CLASS_NAME);
 		String expected = "";
@@ -509,7 +509,7 @@ public class GoolTest {
 
 	@Test
 	public void exceptionThrowTest() throws Exception {
-		String input = TestHelper
+		String input = TestHelperJava
 				.surroundWithClassMain(
 						"try {\n Test t=new Test(); t.printr();\n}\n"
 								+ "catch(Exception e) {\n System.out.println(\"e\");\n}\n}"
