@@ -36,6 +36,7 @@ import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 import gool.generator.xml.XmlPlatform;
 import gool.generator.objc.ObjcPlatform;
+import gool.parser.cpp.CppParser;
 import gool.parser.java.JavaParser;
 
 import java.io.BufferedReader;
@@ -62,7 +63,10 @@ public class GOOLCompiler {
 	 * argument the target platform.
 	 */
 	public static void main(String[] args) {
-
+		
+		/*
+		//------------------------------------//
+		//------------ JAVA INPUT ------------//
 		try {
 			File folder = new File(Settings.get("java_in_dir"));
 			Collection<File> files = getFilesInFolder(folder, "java");
@@ -82,42 +86,71 @@ public class GOOLCompiler {
 
 			Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
 					extToNCopy);
-			/*concreteJavaToConcretePlatform(
-					JavaPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(
-					CSharpPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(
-					CppPlatform.getInstance(filesNonChange), files);
-			concreteJavaToConcretePlatform(
-					PythonPlatform.getInstance(filesNonChange), files);*/
-			//concreteJavaToConcretePlatform(
-			//		XmlPlatform.getInstance(filesNonChange), files);
-			// TODO: same for android & Objc
-			/*
-			concreteJavaToConcretePlatform(AndroidPlatform.getInstance(), files);
-			concreteJavaToConcretePlatform(ObjcPlatform.getInstance(), files);*/
-			
+
 			GOOLCompiler gc=new GOOLCompiler();
-			
+
 			// JAVA input -> JAVA output
 			gc.runGOOLCompiler(new JavaParser(), JavaPlatform.getInstance(filesNonChange), files);
-			//JAVA input -> CSharp output
+			// JAVA input -> CSharp output
 			gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
-			//JAVA input -> CPP output
+			// JAVA input -> CPP output
 			gc.runGOOLCompiler(new JavaParser(), CppPlatform.getInstance(filesNonChange), files);
-			//JAVA input -> PYTHON output
+			// JAVA input -> PYTHON output
 			gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
-			//JAVA input -> XML output
+			// JAVA input -> XML output
 			gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
-			
+
 			// TODO: same for android & Objc
-			//JAVA input -> ANDROID output
+			// JAVA input -> ANDROID output
 			//gc.runGOOLCompiler(new JavaParser(), AndroidPlatform.getInstance(), files);
-			//JAVA input -> OBJC output
+			// JAVA input -> OBJC output
 			//gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
-			
-			
-			
+
+		} catch (Exception e) {
+			Log.e(e);
+		}
+		 */
+		//------------------------------------//
+		//------------  CPP INPUT ------------//
+		try {
+			File folder = new File(Settings.get("cpp_in_dir"));
+			Collection<File> files = getFilesInFolder(folder, "cpp");
+			ArrayList<String> extToNCopy = new ArrayList<String>();
+
+			try {
+				File t = new File(Settings.get("cpp_in_dir") + File.separator
+						+ ".goolIgnore");
+				FileReader f = new FileReader(t);
+				BufferedReader g = new BufferedReader(f);
+				String ligne;
+				while ((ligne = g.readLine()) != null)
+					extToNCopy.add(ligne);
+			} catch (Exception e) {
+				Log.e(e);
+			}
+
+			Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
+					extToNCopy);
+
+			GOOLCompiler gc=new GOOLCompiler();
+
+			// CPP input -> JAVA output
+			gc.runGOOLCompiler(new CppParser(), JavaPlatform.getInstance(filesNonChange), files);
+			// CPP input -> CSharp output
+			//gc.runGOOLCompiler(new CppParser(), CSharpPlatform.getInstance(filesNonChange), files);
+			// CPP input -> CPP output
+			//gc.runGOOLCompiler(new CppParser(), CppPlatform.getInstance(filesNonChange), files);
+			// CPP input -> PYTHON output
+			//gc.runGOOLCompiler(new CppParser(), PythonPlatform.getInstance(filesNonChange), files);
+			// CPP input -> XML output
+			//gc.runGOOLCompiler(new CppParser(), XmlPlatform.getInstance(filesNonChange), files);
+
+			// TODO: same for android & Objc
+			// CPP input -> ANDROID output
+			//gc.runGOOLCompiler(new CppParser(), AndroidPlatform.getInstance(), files);
+			// CPP input -> OBJC output
+			//gc.runGOOLCompiler(new CppParser(), ObjcPlatform.getInstance(), files);
+
 		} catch (Exception e) {
 			Log.e(e);
 		}
