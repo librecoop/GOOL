@@ -1,0 +1,145 @@
+
+/*
+ * ParserImportInputTable.jjt
+ */
+
+/*----------------------------------------------------------------------------*/
+/* The option used to the generation of a parser */
+
+options {
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* The declaration of the input import table parser */
+
+PARSER_BEGIN(ParserImportInputTable)
+package gool.recognizer.common.parseImport;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+public class ParserImportInputTable {
+  public static void main(String[] args) throws ParseException {
+  String chaine ="";
+   try{
+			InputStream ips=new FileInputStream("src/gool/testMatcher/test"); 
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String ligne;
+			while ((ligne=br.readLine())!=null){
+				//System.out.println(ligne);
+				chaine+=ligne+"\n";
+			}
+			br.close(); 
+		}		
+		catch (Exception e){
+			System.out.println(e.toString());
+		}
+		
+		ParserImportInputTable parser = new ParserImportInputTable(new java.io.StringReader(chaine));
+    List<ImportWrapperIn> table = parser.parseTable();
+    for(ImportWrapperIn wrap : table){
+    	wrap.print(); 
+    }
+  }
+}
+
+PARSER_END(ParserImportInputTable)
+
+
+/*----------------------------------------------------------------------------*/
+/* The tokens used to parse */
+
+// Token skipped
+SKIP : 
+{     " " 
+    | "\t" 
+    | "\r" 
+    | "\n"
+    | "#" : IN_LINE_COMMENT
+}
+
+<IN_LINE_COMMENT> SKIP:
+{
+   "\n" : DEFAULT
+}
+
+<IN_LINE_COMMENT> MORE:
+{
+  < ~[] >
+}
+
+// Token about type
+TOKEN :
+{ 
+ < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* ( "." ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* )* >
+| < STRING : ("L")? "\""
+   ( ( ~["\"","\\","\n","\r"])
+   | ("\\" (
+             ["n","t","v","b","r","f","a","\\","?","'","\"","\n"]
+            |
+             "0" (["0"-"7"])*
+            |
+             ["1"-"9"] (["0"-"9"])*
+            |
+             ("0x" | "0X") (["0"-"9","a"-"f","A"-"F"])+
+           )
+     )
+   )*
+   "\"" >
+}
+
+/*----------------------------------------------------------------------------*/
+/* The grammar used to parse */
+
+// The root of the grammar
+List<ImportWrapperIn> parseTable()  :
+{List<ImportWrapperIn> wraps = new ArrayList<ImportWrapperIn>(); ImportWrapperIn wrap; }
+{
+    (wrap=decl_import_mapping() {wraps.add(wrap);})*  <EOF> {return wraps;}
+}
+
+// Used for all nodes declaration
+ImportWrapperIn decl_import_mapping() :
+{ImportWrapperIn wrap = new ImportWrapperIn();}
+{
+    gool_import(wrap) "<-" input_imports(wrap) 
+     { return wrap;}
+}
+
+void gool_import(ImportWrapperIn wrap) :
+{Token t; String s = "";}
+{
+    ("+" pathsWrapper_gool(wrap))? t=<ID> {
+    wrap.setGoolImport(t.image);}	
+}
+
+void pathsWrapper_gool(ImportWrapperIn wrap) :
+{}
+{
+	"[" list_paths_import_gool(wrap) "]"
+}
+
+void list_paths_import_gool(ImportWrapperIn wrap) :
+{}
+{
+	pathWrapper_gool(wrap) ( LOOKAHEAD(2) "," pathWrapper_gool(wrap) )*
+}
+
+void pathWrapper_gool(ImportWrapperIn wrap) :
+{Token t;}
+{
+	 t=<STRING>  {  wrap.addGoolIndirect(t.image.substring(1,t.image.length()-1)); }
+}
+
+void input_imports(ImportWrapperIn wrap) :
+{Token t;}
+{
+	input_import(wrap) ( LOOKAHEAD(2) "," input_import(wrap) )*
+}
+
+void input_import(ImportWrapperIn wrap) :
+{Token t;}
+{
+    t=<ID> {wrap.addInputImport(t.image);}	
+}
