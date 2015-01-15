@@ -64,7 +64,7 @@ public class GOOLCompiler {
 	 */
 	public static void main(String[] args) {
 		
-		/*
+		
 		//------------------------------------//
 		//------------ JAVA INPUT ------------//
 		try {
@@ -109,7 +109,7 @@ public class GOOLCompiler {
 		} catch (Exception e) {
 			Log.e(e);
 		}
-		 */
+		/*
 		//------------------------------------//
 		//------------  CPP INPUT ------------//
 		try {
@@ -153,7 +153,7 @@ public class GOOLCompiler {
 
 		} catch (Exception e) {
 			Log.e(e);
-		}
+		}*/
 	}
 
 	/**
