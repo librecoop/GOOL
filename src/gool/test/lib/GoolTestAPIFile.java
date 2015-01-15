@@ -78,8 +78,8 @@ public class GoolTestAPIFile {
 					&& result.indexOf("] ") != -1)
 				result = result.substring(result.indexOf("] ") + 2);
 
-			//Assert.assertEquals(String.format("The platform %s", platform),
-			//		expected, result);
+//			Assert.assertEquals(String.format("The platform %s", platform),
+//					expected, result);
 			TestHelperJava.assertTestAPIFile(String.format("The platform %s", platform),
 							expected, result, test);
 			

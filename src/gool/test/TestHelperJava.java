@@ -29,6 +29,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
+
 public final class TestHelperJava {
 
 	public static String surroundWithClassMain(String input, String className) {
@@ -64,5 +66,28 @@ public final class TestHelperJava {
 				platform, inputFiles);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
+	
+	//TODO : Rewrite the following methods (Denis)
+	
+	public static void assertTestAPIFile(String format, String expected, String result, int test){
+		Assert.assertEquals(format, expected, result);
+	}
+	
+	public static void assertTestAPINet(String format, String expected, String result, int test){
+		Assert.assertEquals(format, expected, result);
+	}
+	
+	public static String surroundWithClassMainFile(String input, String className) {
+		return surroundWithClassMain(input, className);
+	}
+	
+	public static String surroundWithClassMainNet(String input, String className) {
+		return surroundWithClassMain(input, className);
+	}
+	
+	public static String surroundWithClassMainThread(String input, String className) {
+		return surroundWithClassMain(input, className);
+	}
+
 
 }

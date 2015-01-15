@@ -1,0 +1,63 @@
+apply plugin: 'application'
+apply plugin: 'java'
+//apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+repositories{
+	flatDir {
+		dirs 'lib'
+	}
+}
+
+dependencies {
+	compile name: 'com.ibm.icu_50.1.1.v201304230130'
+	compile name: 'commons-lang-2.5'
+	compile name: 'hamcrest-all-1.3'
+	compile name: 'ini4j-0.5.2-SNAPSHOT'
+	compile name: 'junit-4.11'
+	compile name: 'log4j-1.2.15'
+	compile name: 'org.eclipse.cdt.core_5.5.0.201309180223'
+	compile name: 'org.eclipse.core.contenttype_3.4.200.v20130326-1255'
+	compile name: 'org.eclipse.core.jobs_3.5.300.v20130429-1813'
+	compile name: 'org.eclipse.core.resources_3.8.101.v20130717-0806'
+	compile name: 'org.eclipse.core.runtime_3.9.0.v20130326-1255'
+	compile name: 'org.eclipse.equinox.common_3.6.200.v20130402-1505'
+	compile name: 'org.eclipse.equinox.preferences_3.5.100.v20130422-1538'
+	compile name: 'org.eclipse.equinox.registry_3.5.301.v20130717-1549'
+	compile name: 'org.eclipse.osgi_3.9.1.v20130814-1242'
+	compile name: 'velocity-1.6.4-dep'
+	compile files("${System.properties['java.home']}/../lib/tools.jar")
+}
+
+sourceSets{
+	main {
+        java {
+            srcDir 'src/gool'
+        }
+		java{
+			srcDir 'src/logger'
+		}
+        resources {
+            srcDir 'src'
+        }
+    }
+}
+
+/*jar{
+	manifest{
+		attributes 'Main-Class': 'gool.GOOLCompiler',
+						'Implementation-Title': 'GOOL',
+						'Implementation-Version': version
+	}
+}*/
+mainClassName = 'gool.GOOLCompiler'
+
+/*uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}*/
