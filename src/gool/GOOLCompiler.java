@@ -63,97 +63,113 @@ public class GOOLCompiler {
 	 * argument the target platform.
 	 */
 	public static void main(String[] args) {
-		
-		
+
+	/*	if(args.length > 1){
+			if(args[1].equalsIgnoreCase("java")){
+				Settings.set("input_langage", "java");
+			}
+			else if(args[1].equalsIgnoreCase("c++")){
+				Settings.set("input_langage", "c++");
+			}
+			else{
+				System.out.println("#### Usage : gradle run <input_langage_name (java or c++)>");
+				return;
+			}
+		}*/
+
 		//------------------------------------//
 		//------------ JAVA INPUT ------------//
-		try {
-			File folder = new File(Settings.get("java_in_dir"));
-			Collection<File> files = getFilesInFolder(folder, "java");
-			ArrayList<String> extToNCopy = new ArrayList<String>();
-
+		if(Settings.get("input_langage").equalsIgnoreCase("java")){
 			try {
-				File t = new File(Settings.get("java_in_dir") + File.separator
-						+ ".goolIgnore");
-				FileReader f = new FileReader(t);
-				BufferedReader g = new BufferedReader(f);
-				String ligne;
-				while ((ligne = g.readLine()) != null)
-					extToNCopy.add(ligne);
+				File folder = new File(Settings.get("java_in_dir"));
+				Collection<File> files = getFilesInFolder(folder, "java");
+				ArrayList<String> extToNCopy = new ArrayList<String>();
+
+				try {
+					File t = new File(Settings.get("java_in_dir") + File.separator
+							+ ".goolIgnore");
+					FileReader f = new FileReader(t);
+					BufferedReader g = new BufferedReader(f);
+					String ligne;
+					while ((ligne = g.readLine()) != null)
+						extToNCopy.add(ligne);
+				} catch (Exception e) {
+					Log.e(e);
+				}
+
+				Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
+						extToNCopy);
+
+				GOOLCompiler gc=new GOOLCompiler();
+
+				// JAVA input -> JAVA output
+				gc.runGOOLCompiler(new JavaParser(), JavaPlatform.getInstance(filesNonChange), files);
+				// JAVA input -> CSharp output
+				gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
+				// JAVA input -> CPP output
+				gc.runGOOLCompiler(new JavaParser(), CppPlatform.getInstance(filesNonChange), files);
+				// JAVA input -> PYTHON output
+				gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
+				// JAVA input -> XML output
+				gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
+
+				// TODO: same for android & Objc
+				// JAVA input -> ANDROID output
+				//gc.runGOOLCompiler(new JavaParser(), AndroidPlatform.getInstance(), files);
+				// JAVA input -> OBJC output
+				//gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
+
 			} catch (Exception e) {
 				Log.e(e);
 			}
-
-			Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
-					extToNCopy);
-
-			GOOLCompiler gc=new GOOLCompiler();
-
-			// JAVA input -> JAVA output
-			gc.runGOOLCompiler(new JavaParser(), JavaPlatform.getInstance(filesNonChange), files);
-			// JAVA input -> CSharp output
-			gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
-			// JAVA input -> CPP output
-			gc.runGOOLCompiler(new JavaParser(), CppPlatform.getInstance(filesNonChange), files);
-			// JAVA input -> PYTHON output
-			gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
-			// JAVA input -> XML output
-			gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
-
-			// TODO: same for android & Objc
-			// JAVA input -> ANDROID output
-			//gc.runGOOLCompiler(new JavaParser(), AndroidPlatform.getInstance(), files);
-			// JAVA input -> OBJC output
-			//gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
-
-		} catch (Exception e) {
-			Log.e(e);
 		}
-		/*
+
 		//------------------------------------//
 		//------------  CPP INPUT ------------//
-		try {
-			File folder = new File(Settings.get("cpp_in_dir"));
-			Collection<File> files = getFilesInFolder(folder, "cpp");
-			ArrayList<String> extToNCopy = new ArrayList<String>();
-
+		if(Settings.get("input_langage").equalsIgnoreCase("c++")){
 			try {
-				File t = new File(Settings.get("cpp_in_dir") + File.separator
-						+ ".goolIgnore");
-				FileReader f = new FileReader(t);
-				BufferedReader g = new BufferedReader(f);
-				String ligne;
-				while ((ligne = g.readLine()) != null)
-					extToNCopy.add(ligne);
+				File folder = new File(Settings.get("cpp_in_dir"));
+				Collection<File> files = getFilesInFolder(folder, "cpp");
+				ArrayList<String> extToNCopy = new ArrayList<String>();
+
+				try {
+					File t = new File(Settings.get("cpp_in_dir") + File.separator
+							+ ".goolIgnore");
+					FileReader f = new FileReader(t);
+					BufferedReader g = new BufferedReader(f);
+					String ligne;
+					while ((ligne = g.readLine()) != null)
+						extToNCopy.add(ligne);
+				} catch (Exception e) {
+					Log.e(e);
+				}
+
+				Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
+						extToNCopy);
+
+				GOOLCompiler gc=new GOOLCompiler();
+
+				// CPP input -> JAVA output
+				gc.runGOOLCompiler(new CppParser(), JavaPlatform.getInstance(filesNonChange), files);
+				// CPP input -> CSharp output
+				//gc.runGOOLCompiler(new CppParser(), CSharpPlatform.getInstance(filesNonChange), files);
+				// CPP input -> CPP output
+				//gc.runGOOLCompiler(new CppParser(), CppPlatform.getInstance(filesNonChange), files);
+				// CPP input -> PYTHON output
+				//gc.runGOOLCompiler(new CppParser(), PythonPlatform.getInstance(filesNonChange), files);
+				// CPP input -> XML output
+				//gc.runGOOLCompiler(new CppParser(), XmlPlatform.getInstance(filesNonChange), files);
+
+				// TODO: same for android & Objc
+				// CPP input -> ANDROID output
+				//gc.runGOOLCompiler(new CppParser(), AndroidPlatform.getInstance(), files);
+				// CPP input -> OBJC output
+				//gc.runGOOLCompiler(new CppParser(), ObjcPlatform.getInstance(), files);
+
 			} catch (Exception e) {
 				Log.e(e);
 			}
-
-			Collection<File> filesNonChange = getFilesInFolderNonExe(folder,
-					extToNCopy);
-
-			GOOLCompiler gc=new GOOLCompiler();
-
-			// CPP input -> JAVA output
-			gc.runGOOLCompiler(new CppParser(), JavaPlatform.getInstance(filesNonChange), files);
-			// CPP input -> CSharp output
-			//gc.runGOOLCompiler(new CppParser(), CSharpPlatform.getInstance(filesNonChange), files);
-			// CPP input -> CPP output
-			//gc.runGOOLCompiler(new CppParser(), CppPlatform.getInstance(filesNonChange), files);
-			// CPP input -> PYTHON output
-			//gc.runGOOLCompiler(new CppParser(), PythonPlatform.getInstance(filesNonChange), files);
-			// CPP input -> XML output
-			//gc.runGOOLCompiler(new CppParser(), XmlPlatform.getInstance(filesNonChange), files);
-
-			// TODO: same for android & Objc
-			// CPP input -> ANDROID output
-			//gc.runGOOLCompiler(new CppParser(), AndroidPlatform.getInstance(), files);
-			// CPP input -> OBJC output
-			//gc.runGOOLCompiler(new CppParser(), ObjcPlatform.getInstance(), files);
-
-		} catch (Exception e) {
-			Log.e(e);
-		}*/
+		}
 	}
 
 	/**
@@ -208,7 +224,7 @@ public class GOOLCompiler {
 		}
 		return files;
 	}
-	
+
 	/**
 	 * Taking concrete Language into concrete Target is done in two steps: - we
 	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
@@ -230,7 +246,7 @@ public class GOOLCompiler {
 	public Map<Platform, List<File>> runGOOLCompiler(ParseGOOL parserIn, Platform outPlatform, String input) throws Exception {
 		Collection<ClassDef> classDefs = concretePlatformeToAbstractGool(parserIn,outPlatform, input);
 		return abstractGool2Target(classDefs);
-}
+	}
 
 	/**
 	 * Taking concrete Language into concrete Target is done in two steps: - we
@@ -271,7 +287,7 @@ public class GOOLCompiler {
 			ParseGOOL parserIn, Platform outPlatform, String input) throws Exception {
 		return parserIn.parseGool(outPlatform, input);
 	}
-	
+
 	/**
 	 * Parsing the concrete Language into abstract GOOL is done by a Parser.
 	 * 
@@ -288,7 +304,7 @@ public class GOOLCompiler {
 			ParseGOOL parserIn, Platform outPlatform, Collection<? extends File> inputFiles) throws Exception {
 		return parserIn.parseGool(outPlatform,inputFiles);
 	}
-	
+
 	/**
 	 * Taking concrete Java into concrete Target is done in two steps: - we
 	 * parse the concrete Java into abstract GOOL; - we flatten the abstract
@@ -311,7 +327,7 @@ public class GOOLCompiler {
 				destPlatform, input);
 		return abstractGool2Target(classDefs);
 	}*/
-	
+
 	/**
 	 * Taking concrete Java into concrete Target is done in two steps: - we
 	 * parse the concrete Java into abstract GOOL; - we flatten the abstract

@@ -94,6 +94,19 @@ public final class Settings {
 	}
 
 	/**
+	 * Set the value of a property. If this property does not exist, it is added.
+	 * @param property
+	 * 		: The name of the property
+	 * @param value
+	 * 		: The value of the property
+	 * @return
+	 * 		The previous value of the property.
+	 */
+	public static String set(String property, String value){
+		return (String)properties.setProperty(property, value);
+	}
+	
+	/**
 	 * TODO Do the documentation.
 	 */
 	public static void setAndroidPackage(String androidPackage) {

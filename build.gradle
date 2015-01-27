@@ -1,6 +1,9 @@
 apply plugin: 'application'
 apply plugin: 'java'
-//apply plugin: 'eclipse'
+apply plugin: 'eclipse'
+
+applicationName = "gool"
+mainClassName = 'gool.GOOLCompiler'
 
 sourceCompatibility = 1.7
 version = '1.0'
@@ -39,25 +42,36 @@ sourceSets{
 		java{
 			srcDir 'src/logger'
 		}
+		java{
+			exclude 'src/gool/test/**'
+		}
         resources {
             srcDir 'src'
-        }
+		}
     }
+	
 }
 
-/*jar{
-	manifest{
-		attributes 'Main-Class': 'gool.GOOLCompiler',
-						'Implementation-Title': 'GOOL',
-						'Implementation-Version': version
-	}
-}*/
-mainClassName = 'gool.GOOLCompiler'
+jar{
+ manifest{
+	 attributes 'Main-Class': 'gool.GOOLCompiler',
+				'Implementation-Title': 'gool',
+				'Implementation-Version': version
+ }
+}
 
-/*uploadArchives {
+task sourceJar(type: Jar){
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+/*
+ * uploadArchives {
     repositories {
        flatDir {
            dirs 'repos'
        }
     }
-}*/
+}
+*/
+task wrapper (type: Wrapper)

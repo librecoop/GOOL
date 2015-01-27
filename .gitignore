@@ -9,4 +9,6 @@ bin/
 build/
 .gradle/
 .settings/
-velocity.log
+repos/
+velocity.log*
+gradle-app.setting
