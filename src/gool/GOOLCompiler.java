@@ -43,6 +43,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -64,19 +66,29 @@ public class GOOLCompiler {
 	 */
 	public static void main(String[] args) {
 
-	/*	if(args.length > 1){
-			if(args[1].equalsIgnoreCase("java")){
-				Settings.set("input_langage", "java");
-			}
-			else if(args[1].equalsIgnoreCase("c++")){
-				Settings.set("input_langage", "c++");
-			}
-			else{
-				System.out.println("#### Usage : gradle run <input_langage_name (java or c++)>");
-				return;
-			}
-		}*/
-
+//		String propertiesFileName = "";
+//		Boolean correctPropertiesFile = false;
+//		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+//		while(!correctPropertiesFile){
+//			System.out.print("Properties file [empty for default]: ");
+//			try{
+//				propertiesFileName = buffer.readLine();
+//			}
+//			catch(IOException e){
+//				Log.e(e);
+//				System.exit(0);
+//			}
+//			File propertiesFile = new File(propertiesFileName);
+//			if (propertiesFileName.isEmpty() ||  propertiesFile.exists()){
+//				correctPropertiesFile = true;
+//			}
+//			else{
+//				System.out.println("Invalid Properties file specified.");
+//			}
+//		}
+//
+//		System.out.println("Properties file : " + propertiesFileName);
+//		Settings.load(propertiesFileName);
 		//------------------------------------//
 		//------------ JAVA INPUT ------------//
 		if(Settings.get("input_langage").equalsIgnoreCase("java")){
@@ -88,11 +100,13 @@ public class GOOLCompiler {
 				try {
 					File t = new File(Settings.get("java_in_dir") + File.separator
 							+ ".goolIgnore");
-					FileReader f = new FileReader(t);
-					BufferedReader g = new BufferedReader(f);
-					String ligne;
-					while ((ligne = g.readLine()) != null)
-						extToNCopy.add(ligne);
+					if (t.canRead()){
+						FileReader f = new FileReader(t);
+						BufferedReader g = new BufferedReader(f);
+						String ligne;
+						while ((ligne = g.readLine()) != null)
+							extToNCopy.add(ligne);
+					}
 				} catch (Exception e) {
 					Log.e(e);
 				}
@@ -110,14 +124,15 @@ public class GOOLCompiler {
 				gc.runGOOLCompiler(new JavaParser(), CppPlatform.getInstance(filesNonChange), files);
 				// JAVA input -> PYTHON output
 				gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
-				// JAVA input -> XML output
-				gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
 
+				// JAVA input -> XML output
+				//gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
 				// TODO: same for android & Objc
 				// JAVA input -> ANDROID output
 				//gc.runGOOLCompiler(new JavaParser(), AndroidPlatform.getInstance(), files);
+
 				// JAVA input -> OBJC output
-				//gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
+				gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
 
 			} catch (Exception e) {
 				Log.e(e);
@@ -126,7 +141,7 @@ public class GOOLCompiler {
 
 		//------------------------------------//
 		//------------  CPP INPUT ------------//
-		if(Settings.get("input_langage").equalsIgnoreCase("c++")){
+		if(Settings.get("input_langage").equalsIgnoreCase("cpp")){
 			try {
 				File folder = new File(Settings.get("cpp_in_dir"));
 				Collection<File> files = getFilesInFolder(folder, "cpp");
@@ -135,11 +150,13 @@ public class GOOLCompiler {
 				try {
 					File t = new File(Settings.get("cpp_in_dir") + File.separator
 							+ ".goolIgnore");
-					FileReader f = new FileReader(t);
-					BufferedReader g = new BufferedReader(f);
-					String ligne;
-					while ((ligne = g.readLine()) != null)
-						extToNCopy.add(ligne);
+					if (t.canRead()){
+						FileReader f = new FileReader(t);
+						BufferedReader g = new BufferedReader(f);
+						String ligne;
+						while ((ligne = g.readLine()) != null)
+							extToNCopy.add(ligne);
+					}
 				} catch (Exception e) {
 					Log.e(e);
 				}
@@ -152,9 +169,9 @@ public class GOOLCompiler {
 				// CPP input -> JAVA output
 				gc.runGOOLCompiler(new CppParser(), JavaPlatform.getInstance(filesNonChange), files);
 				// CPP input -> CSharp output
-				//gc.runGOOLCompiler(new CppParser(), CSharpPlatform.getInstance(filesNonChange), files);
+				gc.runGOOLCompiler(new CppParser(), CSharpPlatform.getInstance(filesNonChange), files);
 				// CPP input -> CPP output
-				//gc.runGOOLCompiler(new CppParser(), CppPlatform.getInstance(filesNonChange), files);
+				gc.runGOOLCompiler(new CppParser(), CppPlatform.getInstance(filesNonChange), files);
 				// CPP input -> PYTHON output
 				//gc.runGOOLCompiler(new CppParser(), PythonPlatform.getInstance(filesNonChange), files);
 				// CPP input -> XML output
@@ -164,7 +181,7 @@ public class GOOLCompiler {
 				// CPP input -> ANDROID output
 				//gc.runGOOLCompiler(new CppParser(), AndroidPlatform.getInstance(), files);
 				// CPP input -> OBJC output
-				//gc.runGOOLCompiler(new CppParser(), ObjcPlatform.getInstance(), files);
+				gc.runGOOLCompiler(new CppParser(), ObjcPlatform.getInstance(), files);
 
 			} catch (Exception e) {
 				Log.e(e);

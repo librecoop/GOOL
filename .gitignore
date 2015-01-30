@@ -12,3 +12,4 @@ build/
 repos/
 velocity.log*
 gradle-app.setting
+tests/GOOLOUTPUT*

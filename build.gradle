@@ -4,13 +4,44 @@ apply plugin: 'eclipse'
 
 applicationName = "gool"
 mainClassName = 'gool.GOOLCompiler'
-
 sourceCompatibility = 1.7
 version = '1.0'
+description = 'GOOL is free object-oriented code translation software'
+
+allprojects {
+	tasks.withType(JavaCompile) {
+		options.debug = true
+		options.compilerArgs = ['-Xlint:all']
+	}
+}
+
+run {
+	standardInput = System.in
+}
+
+sourceSets{
+	main {
+		java {
+			srcDir 'src/gool'
+			srcDir 'src/logger'
+			exclude 'test/**'
+		}
+		resources {
+			srcDir 'src'
+			exclude 'gool/test'
+		}
+	}
+//	test {
+//		java {
+//			srcDir 'src/gool/test'
+//		}
+//	}
+}
 
 repositories{
 	flatDir {
 		dirs 'lib'
+		dirs "${System.properties['java.home']}/../lib"
 	}
 }
 
@@ -31,47 +62,51 @@ dependencies {
 	compile name: 'org.eclipse.equinox.registry_3.5.301.v20130717-1549'
 	compile name: 'org.eclipse.osgi_3.9.1.v20130814-1242'
 	compile name: 'velocity-1.6.4-dep'
-	compile files("${System.properties['java.home']}/../lib/tools.jar")
+	compile name: 'tools'
 }
 
-sourceSets{
-	main {
-        java {
-            srcDir 'src/gool'
-        }
-		java{
-			srcDir 'src/logger'
-		}
-		java{
-			exclude 'src/gool/test/**'
-		}
-        resources {
-            srcDir 'src'
-		}
-    }
-	
+
+
+//Application distribution tasks
+
+task copySrc(type:Copy) {
+	from('src') {
+		include '**/*'
+		exclude '**/*.java'
+	}
+	into "$buildDir/src"
 }
+
+task copyTests(type:Copy) {
+	from('tests') {
+		include 'GOOLINPUTJAVA/**'
+		include 'GOOLINPUTCPP/**'
+	}
+	into "$buildDir/tests"
+}
+
+applicationDistribution.from(copySrc) {
+	into "src"
+}
+
+applicationDistribution.from(copyTests) {
+	into "tests"
+}
+
+//jar construction tasks
 
 jar{
- manifest{
-	 attributes 'Main-Class': 'gool.GOOLCompiler',
-				'Implementation-Title': 'gool',
-				'Implementation-Version': version
- }
+	manifest{
+		attributes 'Main-Class': 'gool.GOOLCompiler',
+		'Implementation-Title': 'gool',
+		'Implementation-Version': version
+	}
 }
 
-task sourceJar(type: Jar){
+/*task sourceJar(type: Jar){
 	classifier = 'sources'
 	from sourceSets.main.allSource
-}
+}*/
 
-/*
- * uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
-}
-*/
+//Gradle wrapper
 task wrapper (type: Wrapper)
