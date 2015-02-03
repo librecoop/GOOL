@@ -60,35 +60,27 @@ import logger.Log;
 public class GOOLCompiler {
 
 	/**
-	 * The main - gets the folder to open from Settings - opens the files -
+	 * The main - parse input arguments and launch the translation
+	 */
+	public static void main(String[] args) {
+		Boolean isGuiActive = false;
+		for(int i = 0; i < args.length; i++){
+			if(args[i].equalsIgnoreCase("-gui"))
+				isGuiActive = true;
+		}
+		if (isGuiActive)
+			Settings.launchGuiSetter();
+		else
+			launchTranslation();
+	}
+
+	/**
+	 * Launch the translation : gets the folder to open from Settings - opens the files -
 	 * creates an instance of this class - triggers it upon the files, with
 	 * argument the target platform.
 	 */
-	public static void main(String[] args) {
 
-//		String propertiesFileName = "";
-//		Boolean correctPropertiesFile = false;
-//		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-//		while(!correctPropertiesFile){
-//			System.out.print("Properties file [empty for default]: ");
-//			try{
-//				propertiesFileName = buffer.readLine();
-//			}
-//			catch(IOException e){
-//				Log.e(e);
-//				System.exit(0);
-//			}
-//			File propertiesFile = new File(propertiesFileName);
-//			if (propertiesFileName.isEmpty() ||  propertiesFile.exists()){
-//				correctPropertiesFile = true;
-//			}
-//			else{
-//				System.out.println("Invalid Properties file specified.");
-//			}
-//		}
-//
-//		System.out.println("Properties file : " + propertiesFileName);
-//		Settings.load(propertiesFileName);
+	public static void launchTranslation(){
 		//------------------------------------//
 		//------------ JAVA INPUT ------------//
 		if(Settings.get("input_langage").equalsIgnoreCase("java")){

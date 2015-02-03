@@ -29,26 +29,26 @@ import logger.Log;
  * or the file example "src/gool.properties.example".
  */
 public final class Settings {
-	
+
 	/**
 	 * The properties to configure the system GOOL.
 	 */
 	private static Properties properties;
-	
+
 	/**
 	 * TODO Do the documentation.
 	 */
 	private static String androidPackage;
-	
+
 	/**
 	 * TODO Do the documentation.
 	 */
 	private static String androidMainActivity;
-	
+
 	static {
 		load("gool.properties");
 	}
-	
+
 	/**
 	 * Load the properties file. This method is called internally within the class.
 	 * @param propertyFile 
@@ -65,10 +65,10 @@ public final class Settings {
 		} catch (IOException e) {
 			Log.e(String.format("Failed to load the property file %s",
 					propertyFile) + e.toString());
-		}
+		} 
 
 	}
-	
+
 	/**
 	 * Gets the value of an existing property in the "properties" file.
 	 * @param property 
@@ -105,7 +105,7 @@ public final class Settings {
 	public static String set(String property, String value){
 		return (String)properties.setProperty(property, value);
 	}
-	
+
 	/**
 	 * TODO Do the documentation.
 	 */
@@ -125,5 +125,14 @@ public final class Settings {
 	 */
 	public static String getAndroidRunCommand() {
 		return androidPackage + "/." + androidMainActivity.replace(".java", "");
+	}
+
+	/**
+	 * Launch a graphical setter
+	 */
+	
+	public static void launchGuiSetter(){
+		SettingsPanel guiSetter = new SettingsPanel(properties);
+		guiSetter.launch();
 	}
 }

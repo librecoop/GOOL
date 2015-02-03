@@ -23,3 +23,6 @@ The project Wiki: https://github.com/librecoop/GOOL/wiki
 Pablo Arrighi: http://membres-lig.imag.fr/arrighi/
 
 Kévin Mazet: kevin.mazet@gmail.com
+
+### Status
+https://travis-ci.org/darrivau/GOOL.svg?branch=denis

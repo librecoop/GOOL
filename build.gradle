@@ -16,7 +16,10 @@ allprojects {
 }
 
 run {
-	standardInput = System.in
+	standardInput = System.in 
+	if(project.hasProperty("appProp")){
+        args appProp
+    }
 }
 
 sourceSets{
@@ -95,7 +98,7 @@ applicationDistribution.from(copyTests) {
 
 //jar construction tasks
 
-jar{
+/*jar{
 	manifest{
 		attributes 'Main-Class': 'gool.GOOLCompiler',
 		'Implementation-Title': 'gool',
@@ -103,7 +106,7 @@ jar{
 	}
 }
 
-/*task sourceJar(type: Jar){
+task sourceJar(type: Jar){
 	classifier = 'sources'
 	from sourceSets.main.allSource
 }*/
