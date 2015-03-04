@@ -108,23 +108,25 @@ public class GoolTestTypesCpp {
 	}
 
 	@Test
-	public void goolLibraryFileTest1() throws Exception {
+	public void goolLibraryJavaListToCppVectorTest1() throws Exception {
+		// ListContainsCall not implemented in C++ at the moment 
 		String input = "import java.util.List;"
+				+ "import java.util.ArrayList;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* création puis suppression d'un fichier qui n'existait pas */"
+								"/* creation of a list */"
 										+ "try{"
-										+ "List<int> list = new List<int>();"
+										+ "List<String> list = new ArrayList<String>();"
 										+
 
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\");}"
-										+ "list.add(0);"
+										+ "list.add(\"toto\");"
 										+
 
-										"if(list.contains(0)){ System.out.println(\"true\"); }"
+										"if(list.contains(\"toto\")){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "list.remove(0);"
+										+ "list.remove(\"toto\");"
 										+
 
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
@@ -133,14 +135,10 @@ public class GoolTestTypesCpp {
 								MAIN_CLASS_NAME);
 		String expected = "true" + "true" + "true";
 
-		// Matching of the GoolFile library class and of its method
-		// work only for the Java target language at the moment,
-		// so we exclude the other platforms for this test.
-		excludePlatformForThisTest((Platform) AndroidPlatform.getInstance());
-		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
-
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
+	
+	
 
 	private void compareResultsDifferentPlatforms(String input,
 			String expected, int test) throws Exception {
