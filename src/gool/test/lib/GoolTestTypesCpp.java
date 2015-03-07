@@ -213,7 +213,7 @@ public class GoolTestTypesCpp {
 	/*
 	 * Creates a list to be translated into a vector (CPP only)
 	 * Tested methods:
-	 * 		add(E e), size(), clear(), isEmpty()
+	 * 		add(E e), equals(Object o), indexOf(Object o)
 	 */
 	@Test
 	public void goolLibraryJavaListToCppVectorTest4() throws Exception {
@@ -221,7 +221,7 @@ public class GoolTestTypesCpp {
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a list -- equals indexOf */"
+								"/* creation of a list -- equals + indexOf */"
 										+ "try{"
 										+ "List<String> list = new ArrayList<String>();"
 										+ "List<String> list2 = new ArrayList<String>();"
@@ -251,6 +251,40 @@ public class GoolTestTypesCpp {
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 
+	/*
+	 * Creates a list to be translated into a vector (CPP only)
+	 * Tested methods:
+	 * 		add(E e), set (int index, E element), remove (int index), isEmpty()
+	 */
+	@Test
+	public void goolLibraryJavaListToCppVectorTest5() throws Exception {
+		String input = "import java.util.List;"
+				+ "import java.util.ArrayList;"
+				+ TestHelperJava
+						.surroundWithClassMainFile(
+								"/* creation of a list -- remove + set  */"
+										+ "try{"
+										+ "List<String> list = new ArrayList<String>();"
+										+ 
+
+										"list.add(\"toto\");"
+										+ "list.set(0, \"tata\");"
+										+
+
+										"if(\"tata\" == list.get(0)){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+ "list.remove(0);"
+										+
+										
+										"if(list.isEmpty()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+ "}catch(Exception e){" + "}",
+								MAIN_CLASS_NAME);
+		String expected = "true" + "false" + "true";
+
+		compareResultsDifferentPlatforms(input, expected, 1);
+	}
+	
 	private void compareResultsDifferentPlatforms(String input,
 			String expected, int test) throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
