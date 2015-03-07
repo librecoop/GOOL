@@ -154,7 +154,7 @@ public class GoolTestTypesCpp {
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a list -- multiple add + get*/"
+								"/* creation of a list -- multiple add + get */"
 										+ "try{"
 										+ "List<String> list = new ArrayList<String>();"
 										+
@@ -169,7 +169,84 @@ public class GoolTestTypesCpp {
 										+ "else{ System.out.println(\"false\"); }"
 										+ "}catch(Exception e){" + "}",
 								MAIN_CLASS_NAME);
+		String expected = "true" + "true";
+
+		compareResultsDifferentPlatforms(input, expected, 1);
+	}
+	
+	/*
+	 * Creates a list to be translated into a vector (CPP only)
+	 * Tested methods:
+	 * 		add(E e), size(), clear(), isEmpty()
+	 */
+	@Test
+	public void goolLibraryJavaListToCppVectorTest3() throws Exception {
+		String input = "import java.util.List;"
+				+ "import java.util.ArrayList;"
+				+ TestHelperJava
+						.surroundWithClassMainFile(
+								"/* creation of a list -- size + clear */"
+										+ "try{"
+										+ "List<String> list = new ArrayList<String>();"
+										+
+
+										"if(list.isEmpty()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\");}"
+										+ "list.add(\"toto\");"
+										+ "list.add(\"tata\");"
+										+
+
+										"if(2 == list.size()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+ "list.clear();"
+										+
+										
+										"if(list.isEmpty()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+ "}catch(Exception e){" + "}",
+								MAIN_CLASS_NAME);
 		String expected = "true" + "true" + "true";
+
+		compareResultsDifferentPlatforms(input, expected, 1);
+	}
+	
+	/*
+	 * Creates a list to be translated into a vector (CPP only)
+	 * Tested methods:
+	 * 		add(E e), size(), clear(), isEmpty()
+	 */
+	@Test
+	public void goolLibraryJavaListToCppVectorTest4() throws Exception {
+		String input = "import java.util.List;"
+				+ "import java.util.ArrayList;"
+				+ TestHelperJava
+						.surroundWithClassMainFile(
+								"/* creation of a list -- equals indexOf */"
+										+ "try{"
+										+ "List<String> list = new ArrayList<String>();"
+										+ "List<String> list2 = new ArrayList<String>();"
+										+ 
+
+										"list.add(\"toto\");"
+										+ "list.add(\"tata\");"
+										+ "list2.add(\"toto\");"
+										+ "list2.add(\"tata\");"
+										+
+
+										"if(list.equals(list2)){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+ "list2.add(\"titi\");"
+										+
+										
+										"if(list.equals(list2)){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+
+										
+										"if(2 == list2.indexOf(\"titi\")){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+ "}catch(Exception e){" + "}",
+								MAIN_CLASS_NAME);
+		String expected = "true" + "false" + "true";
 
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
