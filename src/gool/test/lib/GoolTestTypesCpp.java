@@ -31,10 +31,10 @@ public class GoolTestTypesCpp {
 
 	// (Platform) JavaPlatform.getInstance(),
 	// (Platform) CSharpPlatform.getInstance(),
-	(Platform) CppPlatform.getInstance()// ,
-	// (Platform) PythonPlatform.getInstance() ,
-	// (Platform) AndroidPlatform.getInstance() ,
-	// (Platform) ObjcPlatform.getInstance()
+			(Platform) CppPlatform.getInstance()// ,
+			// (Platform) PythonPlatform.getInstance() ,
+			// (Platform) AndroidPlatform.getInstance() ,
+			// (Platform) ObjcPlatform.getInstance()
 
 			);
 
@@ -107,14 +107,19 @@ public class GoolTestTypesCpp {
 	public static void init() {
 	}
 
+	/*
+	 * Creates a list to be translated into a vector (CPP only)
+	 * Tested methods:
+	 * 		add(E e), remove(object o), contains(object o), isEmpty()
+	 */
 	@Test
 	public void goolLibraryJavaListToCppVectorTest1() throws Exception {
-		// ListContainsCall not implemented in C++ at the moment 
+		// ListContainsCall not implemented in C++ at the moment
 		String input = "import java.util.List;"
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a list */"
+								"/* creation of a list -- add+remove */"
 										+ "try{"
 										+ "List<String> list = new ArrayList<String>();"
 										+
@@ -137,8 +142,37 @@ public class GoolTestTypesCpp {
 
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
-	
-	
+
+	/*
+	 * Creates a list to be translated into a vector (CPP only)
+	 * Tested methods:
+	 * 		add(E e), add(int Index, E e), get(int Index)
+	 */
+	@Test
+	public void goolLibraryJavaListToCppVectorTest2() throws Exception {
+		String input = "import java.util.List;"
+				+ "import java.util.ArrayList;"
+				+ TestHelperJava
+						.surroundWithClassMainFile(
+								"/* creation of a list -- multiple add + get*/"
+										+ "try{"
+										+ "List<String> list = new ArrayList<String>();"
+										+
+
+										"if(list.isEmpty()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\");}"
+										+ "list.add(\"toto\");"
+										+ "list.add(0, \"tata\");"
+										+
+
+										"if(\"tata\" == list.get(0)){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\"); }"
+										+ "}catch(Exception e){" + "}",
+								MAIN_CLASS_NAME);
+		String expected = "true" + "true" + "true";
+
+		compareResultsDifferentPlatforms(input, expected, 1);
+	}
 
 	private void compareResultsDifferentPlatforms(String input,
 			String expected, int test) throws Exception {
