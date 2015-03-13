@@ -493,7 +493,9 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	public String getCode(ListContainsCall lcc) {
 
 		return String
-				.format("/* ListContainsCall not implemented in C++ at the moment */");
+				.format(" %s -> end () == std::find(%s -> begin (), %s -> end (), %s)",
+						lcc.getExpression(), lcc.getExpression(), lcc.getExpression(),
+						GeneratorHelper.joinParams(lcc.getParameters()));
 	}
 
 	@Override
