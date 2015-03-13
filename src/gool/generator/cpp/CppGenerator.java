@@ -644,7 +644,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	public String getCode(TypeException typeException) {
 		switch (typeException.getKind()) {
 		case GLOBAL:
-			return "exception";
+			return "std::exception";
 		default:
 			return typeException.getName();
 		}
