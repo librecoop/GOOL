@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class triFusion{
+public class TriFusionTest{
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
