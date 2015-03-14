@@ -493,9 +493,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	public String getCode(ListContainsCall lcc) {
 
 		return String
-				.format(" %s -> end () == std::find(%s -> begin (), %s -> end (), %s)",
-						lcc.getExpression(), lcc.getExpression(), lcc.getExpression(),
-						GeneratorHelper.joinParams(lcc.getParameters()));
+				.format("/* ListContainsCall not implemented in C++ at the moment */");
 	}
 
 	@Override
@@ -524,16 +522,16 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		/*
-		 * for(std::vector<int>::size_type i = 0; i != v->size(); i++) { if (
-		 * v->at(i) == 1 ) { v->erase(v->begin()+i); break; } }
-		 */
 		String expr = lrc.getExpression().toString();
 		return String
-				.format("for(std::vector<int>::size_type i = 0; i != %s->size(); i++) {"
-						+ "if ( boost::any_cast<%s>(%s->at(i)) == %s ) {%s->erase(%s->begin()+i);break;}}",
-						expr, lrc.getParameters().get(0).getType(), expr, lrc
-								.getParameters().get(0), expr, expr);
+				.format("for (%s::iterator it = %s -> begin(); it != %s -> end(); ++it)\n\t"
+						+ "if (**it == *%s)\n\t{\n\t\t"
+						+ "list->erase(it);\n\t\tbreak;\n\t}\n",
+						removePointer(lrc.getExpression().getType()),
+						lrc.getExpression(), lrc.getExpression(),
+						GeneratorHelper.joinParams(lrc.getParameters()));
+						
+						
 	}
 
 	@Override
