@@ -69,6 +69,7 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
+import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
@@ -560,7 +561,10 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 				meth.getType(), meth.getClassDef().getName(), meth.getName(),
 				StringUtils.join(meth.getParams(), ", "));
 	}
-
+	@Override
+	public String getCode(TypeArray typeArray) {
+		return String.format("%s*", typeArray.getElementType());
+	}
 	@Override
 	public String getCode(ClassNew classNew) {
 		return String.format("(new %s(%s))", removePointer(classNew.getType()),
