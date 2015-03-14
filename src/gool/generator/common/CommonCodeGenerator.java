@@ -77,6 +77,7 @@ import gool.recognizer.common.RecognizerMatcher;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -163,9 +164,15 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(ArrayNew arrayNew) {
-		return String.format("new %s[%s]", arrayNew.getType(),
+		if (arrayNew.getInitialiList().isEmpty())
+			return String.format("new %s[%s]", arrayNew.getType(),
 				StringUtils.join(arrayNew.getDimesExpressions(), ", "));
+		
+		return String.format("{%s}",StringUtils.join(arrayNew.getInitialiList(), ", "));
+			
+		
 	}
+	
 
 	/**
 	 * Produces code for an assign statement.

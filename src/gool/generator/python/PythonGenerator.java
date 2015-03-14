@@ -201,10 +201,17 @@ public class PythonGenerator extends CommonCodeGenerator implements
 	public String getCode(ArrayNew arrayNew) {
 		// a newly declared array is a list of nulls
 		// or a list of list ... of nulls for multidimensional arrays
-		String ret = "None";
-		for (Expression e : arrayNew.getDimesExpressions())
-			ret = String.format("[%s]*%s", ret, e);
-		return "(" + ret + ")";
+		if (arrayNew.getInitialiList().isEmpty()){
+			String ret = "None";
+			for (Expression e : arrayNew.getDimesExpressions())
+				ret = String.format("[%s]*%s", ret, e);
+			return "(" + ret + ")";}
+		
+		
+		return String.format("[%s]",StringUtils.join(arrayNew.getInitialiList(), ", "));
+				
+		
+		
 	}
 
 	@Override
@@ -257,7 +264,7 @@ public class PythonGenerator extends CommonCodeGenerator implements
 		return String.format("(%s %s %s)", binaryOp.getLeft(), textualOp,
 				binaryOp.getRight());
 	}
-
+	
 	@Override
 	public String getCode(Constant constant) {
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
