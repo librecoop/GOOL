@@ -541,8 +541,14 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ListAddCall lac) {
-		return String.format("%s->%s(%s)", lac.getExpression(), "push_back",
-				GeneratorHelper.joinParams(lac.getParameters()));
+		if (lac.getParameters().size() == 2)
+			return String.format("%s->%s(%s -> begin() + %s, %s)", lac.getExpression(), "insert",
+					lac.getExpression(), lac.getParameters().get(0),
+					GeneratorHelper.joinParams(lac.getParameters().
+										subList(1, lac.getParameters().size())));
+		else
+			return String.format("%s->%s(%s)", lac.getExpression(), "push_back",
+					GeneratorHelper.joinParams(lac.getParameters()));
 	}
 
 	/**
