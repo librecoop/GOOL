@@ -343,7 +343,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		return String.format("%s -> size() == 0",
+		return String.format("%s -> empty()",
 				mapIsEmptyCall.getExpression());
 	}
 
