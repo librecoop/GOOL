@@ -351,9 +351,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				pif.getThenStatement());
 		if (pif.getElseStatement() != null) {
 			if (pif.getElseStatement() instanceof If)
-				out += formatIndented(" else %s", pif.getElseStatement());
+				out += formatIndented("else %s", pif.getElseStatement());
 			else
-				out += formatIndented(" else {%1}", pif.getElseStatement());
+				out += formatIndented("else {%1}", pif.getElseStatement());
 		}
 		return out;
 	}
