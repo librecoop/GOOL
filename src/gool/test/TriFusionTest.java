@@ -51,7 +51,7 @@ public class TriFusionTest{
 			//(Platform) JavaPlatform.getInstance()
 			//(Platform) CSharpPlatform.getInstance()
 			(Platform) CppPlatform.getInstance()
-		///(Platform) PythonPlatform.getInstance()// ,
+		//(Platform) PythonPlatform.getInstance()// ,
 //			 (Platform) AndroidPlatform.getInstance() ,
 //			 (Platform) ObjcPlatform.getInstance()
 
@@ -126,42 +126,38 @@ public class TriFusionTest{
 	@Test
 	public void helloWorld() throws Exception {
 		String input = "public class TriFusion {"
-    +"public static int[] fusion(int  tab1[], int  tab2[]){"
-        +"int tailleg=tab1.length;"
-        +"int tailled=tab2.length;"
-        +"int [] res=new int[tailleg+tailled];"  
-        +"int ig=0;"
-        +"int id=0;"
-        +"int i;"  
-        +"for(i=0;ig<tailleg && id<tailled;i++)"
-            +"if(tab1[ig] <= tab2[id]){"
-                +"res[i]=tab1[ig++];}"
-            +"else"
-                +"{res[i]=tab2[id++];}" 
-        +"while(ig<tailleg)"
-            +"{res[i++]=tab1[ig++];}"   
-        +"while(id<tailled)"
-            +"{res[i++]=tab2[id++];}"   
-        +"return res;}" 
-    +"public static int[] copie(int  tab[], int debut, int fin){"
-        +"int[] res=new int[fin-debut+1];" 
-        +"for(int i=debut;i<=fin;i++) {res[i-debut]=tab[i];}"
-        +"return res;}"
-    +"public static int[] TriFusion2(int tab[]){"
-        +"int taille = tab.length;"
-        +"if(taille<=1) {return tab;}"
-        +"else{"
-            +"int mileu = taille/2;"
-            +"int[] gauche = copie(tab,0,mileu-1);"
-            +"int[] droite = copie(tab,mileu,taille-1);"
-            +"return fusion(TriFusion2(gauche),TriFusion2(droite));"
-            +"}}"
-            +"public static void main(String[] args) {"  
-        +"int[] a={18,16,15,11,1,5,13,9};"
-       //+"a[0]=18;a[1]=16;a[2]=15;a[3]=11;a[4]=1;a[5]=5;a[6]=13;a[7]=9;"
-        +"int [] b =TriFusion2(a);"
-        +"for(int i=0;i<8;i++){"
-            +"System.out.println(b[i]);}}}";
+					+"public static int[] fusion(int  tab1[], int  tab2[]){"
+       					+"int tailleg=tab1.length;"
+        				+"int tailled=tab2.length;"
+        				+"int [] res=new int[tailleg+tailled];"  
+        				+"int ig=0;"
+        				+"int id=0;"
+        				+"int i;"  
+        				+"for(i=0;ig<tailleg && id<tailled;i++)"
+           					+"if(tab1[ig] <= tab2[id]){res[i]=tab1[ig++];}"
+            				+"else {res[i]=tab2[id++];}" 
+        				+"while(ig<tailleg) {res[i++]=tab1[ig++];}"   
+        				+"while(id<tailled){res[i++]=tab2[id++];}"   
+        				+"return res;}" 
+    				+"public static int[] copie(int  tab[], int debut, int fin){"
+        				+"int[] res=new int[fin-debut+1];" 
+        				+"for(int i=debut;i<=fin;i++) {res[i-debut]=tab[i];}"
+        				+"return res;}"
+    				+"public static int[] TriFusion2(int tab[]){"
+        				+"int taille = tab.length;"
+        				+"if(taille<=1) {return tab;}"
+        				+"else{"
+            				+"int mileu = taille/2;"
+            				+"int[] gauche = copie(tab,0,mileu-1);"
+            				+"int[] droite = copie(tab,mileu,taille-1);"
+            				+"return fusion(TriFusion2(gauche),TriFusion2(droite));"
+            				+"}}"
+            		+"public static void main(String[] args) {"  
+        				+"int[] a={18,16,15,11,1,5,13,9};"
+        				+"int [] b =TriFusion2(a);"
+        				+"for(int i=0;i<8;i++){System.out.println(b[i]);}" 
+        				+"}" 
+        			+"}";
 		
 		String expected = "1"+"5"+"9"+"11"+"13"+"15"+"16"+"18";
 		compareResultsDifferentPlatforms(input, expected);
