@@ -17,6 +17,7 @@
 
 package gool.test;
 
+import gool.GOOLCompiler;
 import gool.Settings;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
@@ -25,6 +26,7 @@ import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 import gool.generator.objc.ObjcPlatform;
+import gool.parser.java.JavaParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,9 +51,9 @@ public class HeritageTest {
 	private List<Platform> platforms = Arrays.asList(
 
 			//(Platform) JavaPlatform.getInstance(),
-			(Platform) CSharpPlatform.getInstance(),
-		   (Platform) CppPlatform.getInstance(),
-			(Platform) PythonPlatform.getInstance()// ,
+			//(Platform) CSharpPlatform.getInstance()
+		   (Platform) CppPlatform.getInstance()
+			//(Platform) PythonPlatform.getInstance()// ,
 //			 (Platform) AndroidPlatform.getInstance() ,
 //			 (Platform) ObjcPlatform.getInstance()
 
@@ -125,33 +127,29 @@ public class HeritageTest {
 	@Before
 	@Test
 	public void HeritageTest() throws Exception {
-		String input = "public class A {  "+
-		     "protected int i; " + 
-		     "protected int j;" + 
-		     "public A(){"+
-		     "i=10; j=30;}"+
-		     " public  void uneMethode() {" + 
-		        "System.out.println(i) ;}"+
-			    "public  static  void main(String args[]){"+
-		    	"A a =  new A();"  + 
-		    	"B b =  new B();" +   
-		    	"a.uneMethode() ;"+
-	            "b.uneAutreMethode();" +
-	            "}"+
-		      "}"+
-		 " class B extends A {"  + 
-		     "protected int i;"+ 
-		     "public B(){"+
-		     "i=20;}"+
-		     "public  void uneAutreMethode() {"+  
-		        "System.out.println(i) ;"+
-		        "System.out.println(j);"+  
-		    "}" +
-		    "}"
-		   ;
+		String input = "public class A{"
+				+"protected int i;"  
+				+"protected int j;" 
+				+"public A(){i=10; j=30;}"
+				+"public  void uneMethode() {System.out.println(i) ;}}";
 		
-			String expected="10"+"20"+"30";
-			compareResultsDifferentPlatforms(input, expected);
+		input += "\n"
+				+"class B extends A {"   
+			    +"protected int i;" 
+			    +"public B(){"
+			    +"i=20;}"
+			    +"public  void uneAutreMethode() {"  
+			     	+"System.out.println(i) ;"
+			        +"System.out.println(j);}"
+			        +"public  static  void main(String args[]){"
+					    	+"A a =  new A();"   
+					    	+"B b =  new B();"    
+					    	+"a.uneMethode() ;"
+				            +"b.uneAutreMethode();}}";
+		
+		String expected="10"+"20"+"30";
+		
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 
@@ -169,7 +167,9 @@ public class HeritageTest {
 		for (Platform platform : platforms) {
 			executor.compare(platform);
 		}
+		
 	}
+	
 }
 
 
