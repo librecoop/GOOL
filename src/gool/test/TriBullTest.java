@@ -1,6 +1,5 @@
 package gool.test;
 
-import gool.GOOLCompiler;
 import gool.Settings;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
@@ -9,7 +8,6 @@ import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
 import gool.generator.objc.ObjcPlatform;
-import gool.parser.java.JavaParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +19,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class HeritageTest {
+public class TriBullTest {
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
@@ -33,10 +31,10 @@ public class HeritageTest {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance(),
-			//(Platform) CSharpPlatform.getInstance()
-		   //(Platform) CppPlatform.getInstance()
-			(Platform) PythonPlatform.getInstance()// ,
+			//(Platform) JavaPlatform.getInstance()//,
+			(Platform) CSharpPlatform.getInstance(),
+			(Platform) PythonPlatform.getInstance(),
+			(Platform) CppPlatform.getInstance()//,
 //			 (Platform) AndroidPlatform.getInstance() ,
 //			 (Platform) ObjcPlatform.getInstance()
 
@@ -109,32 +107,30 @@ public class HeritageTest {
 
 	@Before
 	@Test
-	public void HeritageTest() throws Exception {
-		String input = "public class A{"
-				+"protected int i;"  
-				+"protected int j;" 
-				+"public A(){i=10; j=30;}"
-				+"public  void uneMethode() {System.out.println(i) ;}}";
+	public void TriBullTest() throws Exception { 
+		String input = "public class  ApplicationTriBull{"
+				+"public void  TriBulle(int table[]) {"
+					+"int  n=3;"
+					+"for ( int i=n; i>=1; i-- ){"
+						+"for ( int j=1; j<=i; j++ ){" 
+							+"if (table[j-1] > table[j]){"
+								+"int  temp =table[j-1];"
+					       		+"table[j-1] =table[j];"
+					       		+"table[j]=temp;}}}}"
+				+"public void  Impression(int table[]) {" 
+					+"int  n=3;"
+				    +"for (int  i=0; i<=n;  i++ ) {System.out.println(table[i]);}}"
+				+"public static void  main ( String [] args ){"
+					+" int table []=new int [4];"
+					+"table[0]=9;table[1]=23;table[2]=2;table[3]=34;"
+				    +"ApplicationTriBull app=new ApplicationTriBull();"
+					+"app.TriBulle(table);"
+				    +"app.Impression(table);}}";
+			
 		
-		input += "\n"
-				+"class B extends A {"   
-			    +"protected int i;" 
-			    +"public B(){"
-			    +"i=20;}"
-			    +"public  void uneAutreMethode() {"  
-			     	+"System.out.println(i) ;"
-			        +"System.out.println(j);}"
-			        +"public  static  void main(String args[]){"
-					    	+"A a =  new A();"   
-					    	+"B b =  new B();"    
-					    	+"a.uneMethode() ;"
-				            +"b.uneAutreMethode();}}";
-		
-		String expected="10"+"20"+"30";
-		
+		String expected = "2"+"9"+"23"+"34";
 		compareResultsDifferentPlatforms(input, expected);
 	}
-
 
 	
 
@@ -150,9 +146,6 @@ public class HeritageTest {
 		for (Platform platform : platforms) {
 			executor.compare(platform);
 		}
-		
 	}
-	
 }
-
 

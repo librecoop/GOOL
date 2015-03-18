@@ -1,20 +1,3 @@
-/*
- * Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1.
- * Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2.    
- *
- * This file is part of GOOL.
- *
- * GOOL is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, version 3.
- *
- * GOOL is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License version 3 for more details.
- *
- * You should have received a copy of the GNU General Public License along with GOOL,
- * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package gool.test;
 
 import gool.Settings;
@@ -126,7 +109,7 @@ public class TriFusionTest{
 	@Test
 	public void helloWorld() throws Exception {
 		String input = "public class TriFusion {"
-					+"public static int[] fusion(int  tab1[], int  tab2[]){"
+					+"public int[] fusion(int  tab1[], int  tab2[]){"
        					+"int tailleg=tab1.length;"
         				+"int tailled=tab2.length;"
         				+"int [] res=new int[tailleg+tailled];"  
@@ -139,11 +122,11 @@ public class TriFusionTest{
         				+"while(ig<tailleg) {res[i++]=tab1[ig++];}"   
         				+"while(id<tailled){res[i++]=tab2[id++];}"   
         				+"return res;}" 
-    				+"public static int[] copie(int  tab[], int debut, int fin){"
-        				+"int[] res=new int[fin-debut+1];" 
-        				+"for(int i=debut;i<=fin;i++) {res[i-debut]=tab[i];}"
+    				+"public int[] copie(int  tab[], int debut, int end){"
+        				+"int[] res=new int[end-debut+1];" 
+        				+"for(int i=debut;i<=end;i++) {res[i-debut]=tab[i];}"
         				+"return res;}"
-    				+"public static int[] TriFusion2(int tab[]){"
+    				+"public int[] TriFusion2(int tab[]){"
         				+"int taille = tab.length;"
         				+"if(taille<=1) {return tab;}"
         				+"else{"
@@ -154,7 +137,8 @@ public class TriFusionTest{
             				+"}}"
             		+"public static void main(String[] args) {"  
         				+"int[] a={18,16,15,11,1,5,13,9};"
-        				+"int [] b =TriFusion2(a);"
+        				+"TriFusion app=new TriFusion();"
+        				+"int [] b =app.TriFusion2(a);"
         				+"for(int i=0;i<8;i++){System.out.println(b[i]);}" 
         				+"}" 
         			+"}";
