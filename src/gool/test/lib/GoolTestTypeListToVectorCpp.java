@@ -1,13 +1,9 @@
 package gool.test.lib;
 
-import static org.junit.Assert.*;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
-import gool.generator.csharp.CSharpPlatform;
-import gool.generator.java.JavaPlatform;
 import gool.generator.objc.ObjcPlatform;
-import gool.generator.python.PythonPlatform;
 import gool.test.TestHelperJava;
 
 import java.util.ArrayList;
@@ -18,7 +14,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class GoolTestTypesCpp {
+public class GoolTestTypeListToVectorCpp {
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
 	 * symbolized by Platforms. You may comment/uncomment these platforms to
@@ -106,20 +102,20 @@ public class GoolTestTypesCpp {
 	@BeforeClass
 	public static void init() {
 	}
-
+	
 	/*
 	 * Creates a list to be translated into a vector (CPP only)
 	 * Tested methods:
-	 * 		add(E e), remove(object o), contains(object o), isEmpty()
+	 * 		add(E e), contains(object o), isEmpty()
+	 * contains is not implemented yet
 	 */
 	@Test
-	public void goolLibraryJavaListToCppVectorTest1() throws Exception {
-		// ListContainsCall not implemented in C++ at the moment
+	public void goolLibraryJavaListToCppVectorTestAddContains() throws Exception {
 		String input = "import java.util.List;"
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a list -- add+remove */"
+								"/* creation of a list -- add + contains */"
 										+ "try{"
 										+ "List<String> list = new ArrayList<String>();"
 										+
@@ -130,15 +126,10 @@ public class GoolTestTypesCpp {
 										+
 
 										"if(list.contains(\"toto\")){ System.out.println(\"true\"); }"
-										+ "else{ System.out.println(\"false\"); }"
-										+ "list.remove(\"toto\");"
-										+
-
-										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\");}"
 										+ "}catch(Exception e){" + "}",
 								MAIN_CLASS_NAME);
-		String expected = "true" + "true" + "true";
+		String expected = "true" + "true";
 
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
@@ -146,15 +137,46 @@ public class GoolTestTypesCpp {
 	/*
 	 * Creates a list to be translated into a vector (CPP only)
 	 * Tested methods:
-	 * 		add(E e), add(int Index, E e), get(int Index)
+	 * 		add(E e), remove(object o), isEmpty()
 	 */
 	@Test
-	public void goolLibraryJavaListToCppVectorTest2() throws Exception {
+	public void goolLibraryJavaListToCppVectorTestRemove() throws Exception {
 		String input = "import java.util.List;"
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a list -- multiple add + get */"
+								"/* creation of a list -- add + remove */"
+										+ "try{"
+										+ "List<String> list = new ArrayList<String>();"
+										+
+
+										"if(list.isEmpty()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\");}"
+										+ "list.add(\"toto\");"
+										+ "list.remove(\"toto\");"
+										+
+
+										"if(list.isEmpty()){ System.out.println(\"true\"); }"
+										+ "else{ System.out.println(\"false\");}"
+										+ "}catch(Exception e){" + "}",
+								MAIN_CLASS_NAME);
+		String expected = "true" + "true";
+
+		compareResultsDifferentPlatforms(input, expected, 1);
+	}
+	
+	/*
+	 * Creates a list to be translated into a vector (CPP only)
+	 * Tested methods:
+	 * 		add(E e), add(int Index, E e), get(int Index)
+	 */
+	@Test
+	public void goolLibraryJavaListToCppVectorTestAddGet() throws Exception {
+		String input = "import java.util.List;"
+				+ "import java.util.ArrayList;"
+				+ TestHelperJava
+						.surroundWithClassMainFile(
+								"/* creation of a list -- add + insert + get */"
 										+ "try{"
 										+ "List<String> list = new ArrayList<String>();"
 										+
@@ -180,7 +202,7 @@ public class GoolTestTypesCpp {
 	 * 		add(E e), size(), clear(), isEmpty()
 	 */
 	@Test
-	public void goolLibraryJavaListToCppVectorTest3() throws Exception {
+	public void goolLibraryJavaListToCppVectorTestSizeClear() throws Exception {
 		String input = "import java.util.List;"
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
@@ -213,10 +235,10 @@ public class GoolTestTypesCpp {
 	/*
 	 * Creates a list to be translated into a vector (CPP only)
 	 * Tested methods:
-	 * 		add(E e), equals(Object o), indexOf(Object o)
+	 * 		add(E e), equals(Object o)
 	 */
 	@Test
-	public void goolLibraryJavaListToCppVectorTest4() throws Exception {
+	public void goolLibraryJavaListToCppVectorTestEquals() throws Exception {
 		String input = "import java.util.List;"
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
@@ -225,7 +247,7 @@ public class GoolTestTypesCpp {
 										+ "try{"
 										+ "List<String> list = new ArrayList<String>();"
 										+ "List<String> list2 = new ArrayList<String>();"
-										+ 
+										+
 
 										"list.add(\"toto\");"
 										+ "list.add(\"tata\");"
@@ -240,13 +262,40 @@ public class GoolTestTypesCpp {
 										
 										"if(list.equals(list2)){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
+										+ "}catch(Exception e){" + "}",
+								MAIN_CLASS_NAME);
+		String expected = "true" + "false";
+
+		compareResultsDifferentPlatforms(input, expected, 1);
+	}
+	
+	/*
+	 * Creates a list to be translated into a vector (CPP only)
+	 * Tested methods:
+	 * 		add(E e), indexOf(Object o)
+	 */
+	@Test
+	public void goolLibraryJavaListToCppVectorTestIndexOf() throws Exception {
+		String input = "import java.util.List;"
+				+ "import java.util.ArrayList;"
+				+ TestHelperJava
+						.surroundWithClassMainFile(
+								"/* creation of a list -- equals + indexOf */"
+										+ "try{"
+										+ "List<String> list = new ArrayList<String>();"
+										+ "List<String> list2 = new ArrayList<String>();"
+										+ 
+
+										"list.add(\"toto\");"
+										+ "list.add(\"tata\");"
+										+ "list1.add(\"titi\");"
 										+
-										
-										"if(2 == list2.indexOf(\"titi\")){ System.out.println(\"true\"); }"
+																				
+										"if(2 == list.indexOf(\"tata\")){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
 										+ "}catch(Exception e){" + "}",
 								MAIN_CLASS_NAME);
-		String expected = "true" + "false" + "true";
+		String expected = "true";
 
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
@@ -257,7 +306,7 @@ public class GoolTestTypesCpp {
 	 * 		add(E e), set (int index, E element), remove (int index), isEmpty()
 	 */
 	@Test
-	public void goolLibraryJavaListToCppVectorTest5() throws Exception {
+	public void goolLibraryJavaListToCppVectorTestSetRemove() throws Exception {
 		String input = "import java.util.List;"
 				+ "import java.util.ArrayList;"
 				+ TestHelperJava
@@ -280,10 +329,11 @@ public class GoolTestTypesCpp {
 										+ "else{ System.out.println(\"false\"); }"
 										+ "}catch(Exception e){" + "}",
 								MAIN_CLASS_NAME);
-		String expected = "true" + "false" + "true";
+		String expected = "true" + "true";
 
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
+	
 	
 	private void compareResultsDifferentPlatforms(String input,
 			String expected, int test) throws Exception {
