@@ -12,13 +12,7 @@
 ## 
 ## You should have received a copy of the GNU General Public License along with GOOL,
 ## in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
-
-
-
-
-
-
-
+##
 ## Velocity templates for writing out diverse things C++
 #macro ( includes $dependencies )
 #foreach( $dep in $dependencies )

@@ -12,12 +12,7 @@
 ## 
 ## You should have received a copy of the GNU General Public License along with GOOL,
 ## in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
-
-
-
-
-
-
+##
 ## Velocity template for writing out classes .h in C++
 #parse($macros)
 #ifndef __${class.Name.toUpperCase()}_H

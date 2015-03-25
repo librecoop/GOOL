@@ -107,16 +107,12 @@ public class GoolTestTypeStringJavaToAny {
 	public static void init() {
 	}
 
-	/*
-	 * Creates a list to be translated into a vector (CPP only)
-	 * Tested methods:
-	 * 		add(E e), remove(object o), contains(object o), isEmpty()
-	 */
+
 	@Test
 	public void goolTypeStringJavaToCppTest01() throws Exception { 
 		String input = TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a String object */"
+								"/* Test creation of a String object */"
 										+ "String s = new String();"
 										+ "if (s != null){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }",
@@ -130,7 +126,7 @@ public class GoolTestTypeStringJavaToAny {
 	public void goolTypeStringJavaToCppTest02() throws Exception { 
 		String input = TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a String object */"
+								"/* Test length method translation */"
 										+ "String s = new String();"
 										+ "if (s.length() == 0){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }",
@@ -143,7 +139,7 @@ public class GoolTestTypeStringJavaToAny {
 	public void goolTypeStringJavaToCppTest03() throws Exception { 
 		String input = TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a String object */"
+								"/* Test isEmpty method translation */"
 										+ "String s = new String();"
 										+ "if (s.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }",
@@ -157,7 +153,7 @@ public class GoolTestTypeStringJavaToAny {
 	public void goolTypeStringJavaToCppTest04() throws Exception { 
 		String input = TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a String object */"
+								"/* Test creation of an initializing String object with character sequence */"
 										+ "String s = new String(\"test\");"
 										+ "if (s != null){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }",

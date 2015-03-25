@@ -10,6 +10,9 @@ import gool.generator.objc.ObjcPlatform;
 import gool.generator.python.PythonPlatform;
 import gool.test.TestHelperJava;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -115,7 +118,7 @@ public class GoolTestTypeMapJavaToAny {
 				+ "import java.util.HashMap;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a map */"
+								"/* Test creation of a map object */"
 										+ "Map<Integer,Integer> m = new HashMap<Integer,Integer>();"
 										
 										+ "if(m != null){ System.out.println(\"true\"); }"
@@ -132,7 +135,7 @@ public class GoolTestTypeMapJavaToAny {
 				+ "import java.util.HashMap;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a map */"
+								"/* Test isEmpty method translation */"
 										+ "Map<Integer,Integer> m = new HashMap<Integer,Integer>();"
 										
 										+ "if(m.isEmpty()){ System.out.println(\"true\"); }"
@@ -149,7 +152,7 @@ public class GoolTestTypeMapJavaToAny {
 				+ "import java.util.HashMap;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a map */"
+								"/* Test size method translation */"
 										+ "Map<Integer,Integer> m = new HashMap<Integer,Integer>();"
 										
 										+ "if(m.size() == 0){ System.out.println(\"true\"); }"
@@ -166,7 +169,7 @@ public class GoolTestTypeMapJavaToAny {
 				+ "import java.util.HashMap;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a map */"
+								"/* Test put method translation */"
 										+ "Map<Integer,Integer> m = new HashMap<Integer,Integer>();"
 										+ "m.put(1,2);"
 										+ "if(m.size() == 1){ System.out.println(\"true\"); }"
@@ -183,7 +186,7 @@ public class GoolTestTypeMapJavaToAny {
 				+ "import java.util.HashMap;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a map */"
+								"/* Test containsKey method translation */"
 										+ "Map<Integer,Integer> m = new HashMap<Integer,Integer>();"
 										+ "m.put(1,2);"
 										+ "if(m.containsKey(1)){ System.out.println(\"true\"); }"
@@ -200,7 +203,7 @@ public class GoolTestTypeMapJavaToAny {
 				+ "import java.util.HashMap;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a map */"
+								"/* Test remove method translation */"
 										+ "Map<Integer,Integer> m = new HashMap<Integer,Integer>();"
 										+ "m.put(1,2);"
 										+ "m.remove(1);"
@@ -218,7 +221,7 @@ public class GoolTestTypeMapJavaToAny {
 				+ "import java.util.HashMap;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
-								"/* creation of a map */"
+								"/* Test get method translation */"
 										+ "Map<Integer,Integer> m = new HashMap<Integer,Integer>();"
 										+ "m.put(1,2);"
 										+ "if(m.get(1) == 2){ System.out.println(\"true\"); }"
