@@ -124,7 +124,6 @@ public class GoolTestEchangeValues {
 	}
 
 	
-	@Before
 	@Test
 	public void echangeValues() throws Exception {
 		String input = "public class testEchangeValues {"

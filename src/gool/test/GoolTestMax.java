@@ -124,7 +124,6 @@ public class GoolTestMax {
 	}
 
 	
-	@Before
 	@Test
 	public void max() throws Exception {
 		String input = "public class testMax {"

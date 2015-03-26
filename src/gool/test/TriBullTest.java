@@ -105,7 +105,6 @@ public class TriBullTest {
 	public static void init() {
 	}
 
-	@Before
 	@Test
 	public void TriBullTest() throws Exception { 
 		String input = "public class  ApplicationTriBull{"

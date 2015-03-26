@@ -15,9 +15,15 @@ import logger.Log;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GoolTestTranslationFromJavaToPython {
+	
+	@BeforeClass
+	public static void init() {
+	}
+	
 	@Test
 	public void SimpleForTranslationTest(){
 		try {

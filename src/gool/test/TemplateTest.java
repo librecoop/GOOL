@@ -106,7 +106,6 @@ public class TemplateTest {
 	public static void init() {
 	}
 
-	@Before
 	@Test
 	public void templateTest() throws Exception {
 		String input = "public class Box<T> {"

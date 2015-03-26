@@ -107,7 +107,6 @@ public class HeritageTest {
 	public static void init() {
 	}
 
-	@Before
 	@Test
 	public void HeritageTest() throws Exception {
 		String input = "public class A{"

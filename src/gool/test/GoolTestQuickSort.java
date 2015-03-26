@@ -124,7 +124,6 @@ public class GoolTestQuickSort {
 	}
 
 	
-	@Before
 	@Test
 	public void isPrimary() throws Exception {
 		String input = "public class testQuickSort {"

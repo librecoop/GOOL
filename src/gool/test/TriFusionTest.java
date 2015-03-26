@@ -105,7 +105,6 @@ public class TriFusionTest{
 	public static void init() {
 	}
 
-	@Before
 	@Test
 	public void helloWorld() throws Exception {
 		String input = "public class TriFusion {"

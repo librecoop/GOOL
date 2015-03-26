@@ -124,7 +124,6 @@ public class GoolTestRandom {
 	}
 
 	
-	@Before
 	@Test
 	public void racine() throws Exception {
 		String input = "public class testRandom {"

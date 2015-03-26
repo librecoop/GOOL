@@ -124,7 +124,6 @@ public class GoolTestPPCM {
 	}
 
 	
-	@Before
 	@Test
 	public void ppcm() throws Exception {
 		String input = "public class testPPCM {"

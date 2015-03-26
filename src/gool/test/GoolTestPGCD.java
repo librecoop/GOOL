@@ -124,7 +124,6 @@ public class GoolTestPGCD {
 	}
 
 	
-	@Before
 	@Test
 	public void pgcd() throws Exception {
 		String input = "public class testPGCD {"

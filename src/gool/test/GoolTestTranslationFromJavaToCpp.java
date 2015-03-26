@@ -21,7 +21,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GoolTestTranslationFromJavaToCpp {
-
+	@BeforeClass
+	public static void init() {
+	}
 	@Test
 	public void SimpleForTranslationTest(){
 		try {

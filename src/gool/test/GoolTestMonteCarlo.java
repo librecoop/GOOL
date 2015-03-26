@@ -124,7 +124,6 @@ public class GoolTestMonteCarlo {
 	}
 
 	
-	@Before
 	@Test
 	public void monteCarlo() throws Exception {
 		String input = "public class testMonteCarlo {"

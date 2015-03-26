@@ -124,7 +124,6 @@ public class GoolTestIsPrimary {
 	}
 
 	
-	@Before
 	@Test
 	public void isPrimary() throws Exception {
 		String input = "public class testIsPrimary {"

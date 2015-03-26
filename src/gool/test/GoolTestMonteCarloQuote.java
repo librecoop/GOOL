@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class GoolTestMonteCarlo {
+public class GoolTestMonteCarloQuote {
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
