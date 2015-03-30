@@ -34,11 +34,16 @@ sourceSets{
 			exclude 'gool/test'
 		}
 	}
-//	test {
-//		java {
-//			srcDir 'src/gool/test'
-//		}
-//	}
+	test {
+		java {
+			srcDir 'src/gool/test'
+			exclude 'GoolTestCpp.java'
+			exclude 'GoolTestJava.java'
+			exclude 'lib/GoolTestAPINet.java'
+			exclude 'lib/GoolTestAPIThread.java'
+			
+		}
+	}
 }
 
 repositories{

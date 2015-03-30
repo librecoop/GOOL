@@ -69,6 +69,7 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
+import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeClass;
@@ -343,7 +344,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		return String.format("%s -> size() == 0",
+		return String.format("%s -> empty()",
 				mapIsEmptyCall.getExpression());
 	}
 
@@ -522,16 +523,16 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		/*
-		 * for(std::vector<int>::size_type i = 0; i != v->size(); i++) { if (
-		 * v->at(i) == 1 ) { v->erase(v->begin()+i); break; } }
-		 */
 		String expr = lrc.getExpression().toString();
 		return String
-				.format("for(std::vector<int>::size_type i = 0; i != %s->size(); i++) {"
-						+ "if ( boost::any_cast<%s>(%s->at(i)) == %s ) {%s->erase(%s->begin()+i);break;}}",
-						expr, lrc.getParameters().get(0).getType(), expr, lrc
-								.getParameters().get(0), expr, expr);
+				.format("for (%s::iterator it = %s -> begin(); it != %s -> end(); ++it)\n\t"
+						+ "if (**it == *%s)\n\t{\n\t\t"
+						+ "list->erase(it);\n\t\tbreak;\n\t}\n",
+						removePointer(lrc.getExpression().getType()),
+						lrc.getExpression(), lrc.getExpression(),
+						GeneratorHelper.joinParams(lrc.getParameters()));
+						
+						
 	}
 
 	@Override
@@ -541,8 +542,14 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ListAddCall lac) {
-		return String.format("%s->%s(%s)", lac.getExpression(), "push_back",
-				GeneratorHelper.joinParams(lac.getParameters()));
+		if (lac.getParameters().size() == 2)
+			return String.format("%s->%s(%s -> begin() + %s, %s)", lac.getExpression(), "insert",
+					lac.getExpression(), lac.getParameters().get(0),
+					GeneratorHelper.joinParams(lac.getParameters().
+										subList(1, lac.getParameters().size())));
+		else
+			return String.format("%s->%s(%s)", lac.getExpression(), "push_back",
+					GeneratorHelper.joinParams(lac.getParameters()));
 	}
 
 	/**
@@ -560,7 +567,10 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 				meth.getType(), meth.getClassDef().getName(), meth.getName(),
 				StringUtils.join(meth.getParams(), ", "));
 	}
-
+	@Override
+	public String getCode(TypeArray typeArray) {
+		return String.format("%s*", typeArray.getElementType());
+	}
 	@Override
 	public String getCode(ClassNew classNew) {
 		return String.format("(new %s(%s))", removePointer(classNew.getType()),
@@ -644,7 +654,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	public String getCode(TypeException typeException) {
 		switch (typeException.getKind()) {
 		case GLOBAL:
-			return "exception";
+			return "std::exception";
 		default:
 			return typeException.getName();
 		}

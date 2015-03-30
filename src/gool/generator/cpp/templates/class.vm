@@ -12,13 +12,7 @@
 ## 
 ## You should have received a copy of the GNU General Public License along with GOOL,
 ## in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
-
-
-
-
-
-
-
+##
 ## Velocity template for writing out classes in C++
 #parse($macros)
 
@@ -32,14 +26,21 @@
 $Helper.printRecognizedDependencies($class)
 
 #foreach( $field in $class.Fields )
-#if($field.DefaultValue)$field.Type$class.Name::$field.Name = $field.DefaultValue;
+#if($field.DefaultValue)
+$field.Type$class.Name::$field.Name = $field.DefaultValue;
 #end
 #end
 
 #foreach( $method in $class.Methods )
-	#if($method.isGoolMethodImplementation())$method#else
-	${method.Header}#if($class.isInterface() || $method.isAbstract() );#else {
-$method.Block
-}#end
+#if($method.isGoolMethodImplementation())
+$method
+#else
+$method.Header#if($class.isInterface() || $method.isAbstract() );
+#else
+{
+	$method.Block
+}
+
+#end
 #end
 #end
