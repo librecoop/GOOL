@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include<iostream>
 
 #include <boost/any.hpp>
@@ -20,15 +6,19 @@
 
 #include "SimpleSub.h"
 
-#include "iostream"
 #include "string"
+#include "iostream"
 
 
 
-		  SimpleSub::SimpleSub() {
+  SimpleSub::SimpleSub(){
+	
+}
 
-}		int main() {
-int n = (6 - 2);
+int main(){
+	int n = (6 - 2);
 std::cout << (n) << std::endl;
 
 }
+
+

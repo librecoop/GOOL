@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include<iostream>
 
 #include <boost/any.hpp>
@@ -20,15 +6,19 @@
 
 #include "SimpleMult.h"
 
-#include "iostream"
 #include "string"
+#include "iostream"
 
 
 
-		  SimpleMult::SimpleMult() {
+  SimpleMult::SimpleMult(){
+	
+}
 
-}		int main() {
-int n = (2 * 2);
+int main(){
+	int n = (2 * 2);
 std::cout << (n) << std::endl;
 
 }
+
+

@@ -48,7 +48,7 @@ public class GoolTestRandom {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance(),
+			(Platform) JavaPlatform.getInstance(),
 			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
@@ -73,15 +73,27 @@ public class GoolTestRandom {
 		}
 
 		public void compare(Platform platform) throws Exception {
-			if (excludedPlatforms.contains(platform)) {
-				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-				for (Platform p : excludedPlatforms)
-					if (testedPlatforms.contains(p))
-						errorMsg += p + " ";
-				Assert.fail(errorMsg
-						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			if (excludedPlatforms.contains(platform)) {
+//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
+//				for (Platform p : excludedPlatforms)
+//					if (testedPlatforms.contains(p))
+//						errorMsg += p + " ";
+//				Assert.fail(errorMsg
+//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			}
+			if (excludedPlatforms.contains(platform)){
+				System.err.println("The following target platform(s) have been "
+						+ "excluded for this test:" + platform.getName());
+				return;
 			}
-
+			String expect = this.expected;
+			if (platform instanceof CppPlatform){// C++ does not have booleans
+				expect = expect.replaceAll("true", "1");
+			}
+			if ((platform instanceof CSharpPlatform)
+				|| (platform instanceof PythonPlatform)){// C++ does not have booleans
+				expect = expect.replaceAll("true", "True");
+			}
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
 			// properties file
@@ -96,7 +108,7 @@ public class GoolTestRandom {
 				result = result.substring(result.indexOf("] ") + 2);
 
 			Assert.assertEquals(String.format("The platform %s", platform),
-					expected, result);
+					expect, result);
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -110,7 +122,7 @@ public class GoolTestRandom {
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static final String MAIN_CLASS_NAME = "testRandom";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -132,7 +144,10 @@ public class GoolTestRandom {
 				+ "System.out.println(test.generationNombreAleatoire() != test.generationNombreAleatoire());}"
 				+ "public double generationNombreAleatoire(){"
 				+ "return Math.random();}}";
-		String expected = "True";
+		String expected = "true";
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 

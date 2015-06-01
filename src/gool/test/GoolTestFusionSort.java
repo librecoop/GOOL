@@ -1,19 +1,3 @@
-/*
- * Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1.
- * Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2.    
- *
- * This file is part of GOOL.
- *
- * GOOL is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, version 3.
- *
- * GOOL is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License version 3 for more details.
- *
- * You should have received a copy of the GNU General Public License along with GOOL,
- * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 package gool.test;
 
@@ -36,7 +20,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class GoolTestMonteCarloQuote {
+public class GoolTestFusionSort{
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
@@ -48,7 +32,7 @@ public class GoolTestMonteCarloQuote {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance(),
+			(Platform) JavaPlatform.getInstance(),
 			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
@@ -73,15 +57,19 @@ public class GoolTestMonteCarloQuote {
 		}
 
 		public void compare(Platform platform) throws Exception {
-			if (excludedPlatforms.contains(platform)) {
-				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-				for (Platform p : excludedPlatforms)
-					if (testedPlatforms.contains(p))
-						errorMsg += p + " ";
-				Assert.fail(errorMsg
-						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			if (excludedPlatforms.contains(platform)) {
+//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
+//				for (Platform p : excludedPlatforms)
+//					if (testedPlatforms.contains(p))
+//						errorMsg += p + " ";
+//				Assert.fail(errorMsg
+//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			}
+			if (excludedPlatforms.contains(platform)){
+				System.err.println("The following target platform(s) have been "
+						+ "excluded for this test:" + platform.getName());
+				return;
 			}
-
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
 			// properties file
@@ -110,7 +98,7 @@ public class GoolTestMonteCarloQuote {
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static final String MAIN_CLASS_NAME = "testFusionSort";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -118,37 +106,58 @@ public class GoolTestMonteCarloQuote {
 		testNotImplementedOnPlatforms.add(platform);
 	}
 
-	
 	@BeforeClass
 	public static void init() {
 	}
 
-	
-	@Before
 	@Test
-	public void monteCarloQuote() throws Exception {
-		String input = "public class testMonteCarlo {"
-				+ "public static void main(String[] args) {"
-				+ "testMonteCarlo test = new testMonteCarlo();"
-				+ "test.MonteCarlo();}"
-				+ "public int MonteCarlo(){"
-				+ "double x = 0.0;"
-				+ "double y = 0.0;"
-				+ "int tiragesDansLeDisque = 0;"
-				+ "for (double i = 1; i<100000; i++){"
-				+ "x = Math.random();"
-				+ "y = Math.random();"
-				+ "if (x*x + y*y <= 1){tiragesDansLeDisque++;}}"
-				+ "double estimation = 4.0 * tiragesDansLeDisque / 100000;"
-				+ "System.out.println(\"Estimation de Pi : \"+estimation);"
-				+ "System.out.println(\"Valeur Exacte de Pi : \"+ Math.PI);"
-				+ "System.out.println(\"Taux d'erreur : \"+ Math.abs(estimation - Math.PI)/Math.PI);"
-				+ "return (Math.abs(estimation - Math.PI)/Math.PI);}}";
-		String expected = "";
+	public void helloWorld() throws Exception {
+		String input = "public class TriFusion {"
+					+"public int[] fusion(int  tab1[], int  tab2[]){"
+       					+"int tailleg=tab1.length;"
+        				+"int tailled=tab2.length;"
+        				+"int [] res=new int[tailleg+tailled];"  
+        				+"int ig=0;"
+        				+"int id=0;"
+        				+"int i;"  
+        				+"for(i=0;ig<tailleg && id<tailled;i++)"
+           					+"if(tab1[ig] <= tab2[id]){res[i]=tab1[ig++];}"
+            				+"else {res[i]=tab2[id++];}" 
+        				+"while(ig<tailleg) {res[i++]=tab1[ig++];}"   
+        				+"while(id<tailled){res[i++]=tab2[id++];}"   
+        				+"return res;}" 
+    				+"public int[] copie(int  tab[], int debut, int end){"
+        				+"int[] res=new int[end-debut+1];" 
+        				+"for(int i=debut;i<=end;i++) {res[i-debut]=tab[i];}"
+        				+"return res;}"
+    				+"public int[] TriFusion2(int tab[]){"
+        				+"int taille = tab.length;"
+        				+"if(taille<=1){return tab;}"
+        				+"else{"
+            				+"int mileu = taille/2;"
+            				+"int[] gauche = copie(tab,0,mileu-1);"
+            				+"int[] droite = copie(tab,mileu,taille-1);"
+            				+"return(fusion(TriFusion2(gauche),TriFusion2(droite)));"
+            				+"}"
+            			+ "}"
+            		+"public static void main(String[] args) {"  
+        				+"int[] a={18,16,15,11,1,5,13,9};"
+        				+"TriFusion app=new TriFusion();"
+        				+"int [] b =app.TriFusion2(a);"
+        				+"for(int i=0;i<8;i++){System.out.println(b[i]);}" 
+        				+"}" 
+        			+"}";
+		
+		String expected = "1"+"5"+"9"+"11"+"13"+"15"+"16"+"18";
+		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	
+
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
@@ -163,3 +172,6 @@ public class GoolTestMonteCarloQuote {
 		}
 	}
 }
+
+
+

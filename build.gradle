@@ -12,6 +12,7 @@ allprojects {
 	tasks.withType(JavaCompile) {
 		options.debug = true
 		options.compilerArgs = ['-Xlint:all']
+		options.warnings = false
 	}
 }
 
@@ -25,24 +26,25 @@ run {
 sourceSets{
 	main {
 		java {
-			srcDir 'src/gool'
-			srcDir 'src/logger'
+			srcDir 'src'
 			exclude 'test/**'
 		}
 		resources {
 			srcDir 'src'
-			exclude 'gool/test'
+			exclude 'gool/test/'
 		}
+		//output.classesDir = file("$buildDir/classes")
 	}
 	test {
 		java {
 			srcDir 'src/gool/test'
 			exclude 'GoolTestCpp.java'
-			exclude 'GoolTestJava.java'
+			//exclude 'GoolTestJava.java'
 			exclude 'lib/GoolTestAPINet.java'
 			exclude 'lib/GoolTestAPIThread.java'
 			
 		}
+		//output.classesDir = file("$buildDir/test-classes")
 	}
 }
 
@@ -71,9 +73,34 @@ dependencies {
 	compile name: 'org.eclipse.osgi_3.9.1.v20130814-1242'
 	compile name: 'velocity-1.6.4-dep'
 	compile name: 'tools'
+	compile name: 'diffutils-1.2.1'
 }
 
+test{
+	testLogging {
+		// Show that tests are run in the command-line output
+		events 'started', 'passed'
+		showStandardStreams = true
+		}
+	// listen to events in the test execution lifecycle
+	beforeTest {descriptor ->
+		logger.lifecycle("Running test: " + descriptor)
+  }
+	// listen to standard out and standard error of the test JVM(s)
+//	onOutput { descriptor, event ->
+//		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+//  }
 
+}
+
+task unitTest(type:Test, dependsOn: assemble) {
+	description = "run unit tests"
+	testClassesDir = project.sourceSets.test.output.classesDir
+	classpath = project.sourceSets.test.runtimeClasspath
+	testLogging{
+		events 'started', 'passed'
+	}
+}
 
 //Application distribution tasks
 

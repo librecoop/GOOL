@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include<iostream>
 
 #include <boost/any.hpp>
@@ -20,15 +6,17 @@
 
 #include "SimpleWhile.h"
 
-#include "iostream"
 #include "string"
+#include "iostream"
 
 
 
-		  SimpleWhile::SimpleWhile() {
+  SimpleWhile::SimpleWhile(){
+	
+}
 
-}		int main() {
-int i = 0;
+int main(){
+	int i = 0;
 int total = 0;
 while ((i < 4)) {
 	(total)++;
@@ -37,3 +25,5 @@ while ((i < 4)) {
 std::cout << (total) << std::endl;
 
 }
+
+

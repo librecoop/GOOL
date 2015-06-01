@@ -1,3 +1,20 @@
+/*
+ * Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1.
+ * Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2.    
+ *
+ * This file is part of GOOL.
+ *
+ * GOOL is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, version 3.
+ *
+ * GOOL is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License version 3 for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with GOOL,
+ * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package gool.test;
 
 import gool.Settings;
@@ -19,7 +36,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TriFusionTest{
+public class GoolTestBullSort {
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
@@ -31,10 +48,10 @@ public class TriFusionTest{
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance()
-			//(Platform) CSharpPlatform.getInstance()
-			(Platform) CppPlatform.getInstance()
-		//(Platform) PythonPlatform.getInstance()// ,
+			(Platform) JavaPlatform.getInstance(),
+			(Platform) CSharpPlatform.getInstance(),
+			(Platform) PythonPlatform.getInstance(),
+			(Platform) CppPlatform.getInstance()//,
 //			 (Platform) AndroidPlatform.getInstance() ,
 //			 (Platform) ObjcPlatform.getInstance()
 
@@ -93,7 +110,7 @@ public class TriFusionTest{
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static final String MAIN_CLASS_NAME = "testBullSort";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -106,43 +123,28 @@ public class TriFusionTest{
 	}
 
 	@Test
-	public void helloWorld() throws Exception {
-		String input = "public class TriFusion {"
-					+"public int[] fusion(int  tab1[], int  tab2[]){"
-       					+"int tailleg=tab1.length;"
-        				+"int tailled=tab2.length;"
-        				+"int [] res=new int[tailleg+tailled];"  
-        				+"int ig=0;"
-        				+"int id=0;"
-        				+"int i;"  
-        				+"for(i=0;ig<tailleg && id<tailled;i++)"
-           					+"if(tab1[ig] <= tab2[id]){res[i]=tab1[ig++];}"
-            				+"else {res[i]=tab2[id++];}" 
-        				+"while(ig<tailleg) {res[i++]=tab1[ig++];}"   
-        				+"while(id<tailled){res[i++]=tab2[id++];}"   
-        				+"return res;}" 
-    				+"public int[] copie(int  tab[], int debut, int end){"
-        				+"int[] res=new int[end-debut+1];" 
-        				+"for(int i=debut;i<=end;i++) {res[i-debut]=tab[i];}"
-        				+"return res;}"
-    				+"public int[] TriFusion2(int tab[]){"
-        				+"int taille = tab.length;"
-        				+"if(taille<=1) {return tab;}"
-        				+"else{"
-            				+"int mileu = taille/2;"
-            				+"int[] gauche = copie(tab,0,mileu-1);"
-            				+"int[] droite = copie(tab,mileu,taille-1);"
-            				+"return fusion(TriFusion2(gauche),TriFusion2(droite));"
-            				+"}}"
-            		+"public static void main(String[] args) {"  
-        				+"int[] a={18,16,15,11,1,5,13,9};"
-        				+"TriFusion app=new TriFusion();"
-        				+"int [] b =app.TriFusion2(a);"
-        				+"for(int i=0;i<8;i++){System.out.println(b[i]);}" 
-        				+"}" 
-        			+"}";
+	public void TriBullTest() throws Exception {
+		String input = "public class  ApplicationTriBull{"
+				+"public void  TriBulle(int table[]) {"
+					+"int  n=3;"
+					+"for ( int i=n; i>=1; i-- ){"
+						+"for ( int j=1; j<=i; j++ ){" 
+							+"if (table[j-1] > table[j]){"
+								+"int  temp =table[j-1];"
+					       		+"table[j-1] =table[j];"
+					       		+"table[j]=temp;}}}}"
+				+"public void  Impression(int table[]) {" 
+					+"int  n=3;"
+				    +"for (int  i=0; i<=n;  i++ ) {System.out.println(table[i]);}}"
+				+"public static void  main ( String [] args ){"
+					+" int table []=new int [4];"
+					+"table[0]=9;table[1]=23;table[2]=2;table[3]=34;"
+				    +"ApplicationTriBull app=new ApplicationTriBull();"
+					+"app.TriBulle(table);"
+				    +"app.Impression(table);}}";
+			
 		
-		String expected = "1"+"5"+"9"+"11"+"13"+"15"+"16"+"18";
+		String expected = "2"+"9"+"23"+"34";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -162,6 +164,4 @@ public class TriFusionTest{
 		}
 	}
 }
-
-
 

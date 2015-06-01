@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class triBullTest {
+public class GoolTestOperators {
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
@@ -48,10 +48,10 @@ public class triBullTest {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance()//,
+			(Platform) JavaPlatform.getInstance(),
 			(Platform) CSharpPlatform.getInstance(),
-			(Platform) PythonPlatform.getInstance(),
-			(Platform) CppPlatform.getInstance()//,
+			(Platform) CppPlatform.getInstance(),
+			(Platform) PythonPlatform.getInstance()// ,
 //			 (Platform) AndroidPlatform.getInstance() ,
 //			 (Platform) ObjcPlatform.getInstance()
 
@@ -81,7 +81,14 @@ public class triBullTest {
 				Assert.fail(errorMsg
 						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
 			}
-
+			String expect = this.expected;
+			if (platform instanceof CppPlatform){// C++ does not have booleans
+				expect = expect.replaceAll("true", "1");
+			}
+			if ((platform instanceof CSharpPlatform)
+				|| (platform instanceof PythonPlatform)){// C++ does not have booleans
+				expect = expect.replaceAll("true", "True");
+			}
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
 			// properties file
@@ -96,7 +103,7 @@ public class triBullTest {
 				result = result.substring(result.indexOf("] ") + 2);
 
 			Assert.assertEquals(String.format("The platform %s", platform),
-					expected, result);
+					expect, result);
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -118,38 +125,23 @@ public class triBullTest {
 		testNotImplementedOnPlatforms.add(platform);
 	}
 
+	
 	@BeforeClass
 	public static void init() {
 	}
 
+	
 	@Test
-	public void TriBullTest() throws Exception {
-		String input = "public class  ApplicationTriBull{"
-				+"public void  TriBulle(int table[]) {"
-					+"int  n=3;"
-					+"for ( int i=n; i>=1; i-- ){"
-						+"for ( int j=1; j<=i; j++ ){" 
-							+"if (table[j-1] > table[j]){"
-								+"int  temp =table[j-1];"
-					       		+"table[j-1] =table[j];"
-					       		+"table[j]=temp;}}}}"
-				+"public void  Impression(int table[]) {" 
-					+"int  n=3;"
-				    +"for (int  i=0; i<=n;  i++ ) {System.out.println(table[i]);}}"
-				+"public static void  main ( String [] args ){"
-					+" int table []=new int [4];"
-					+"table[0]=9;table[1]=23;table[2]=2;table[3]=34;"
-				    +"ApplicationTriBull app=new ApplicationTriBull();"
-					+"app.TriBulle(table);"
-				    +"app.Impression(table);}}";
-			
-		
-		String expected = "2"+"9"+"23"+"34";
+	public void monteCarlo() throws Exception {
+		String input = TestHelperJava
+				.surroundWithClassMain("int a = 4;"
+								+ " System.out.println(a == 4);",
+								MAIN_CLASS_NAME);				
+		String expected = "true";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	
-
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
@@ -164,4 +156,3 @@ public class triBullTest {
 		}
 	}
 }
-

@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include<iostream>
 
 #include <boost/any.hpp>
@@ -20,15 +6,19 @@
 
 #include "SimpleMod.h"
 
-#include "iostream"
 #include "string"
+#include "iostream"
 
 
 
-		  SimpleMod::SimpleMod() {
+  SimpleMod::SimpleMod(){
+	
+}
 
-}		int main() {
-int n = (4 %/* Unrecognized by GOOL, passed on */ 5);
+int main(){
+	int n = (4 %/* Unrecognized by GOOL, passed on */ 5);
 std::cout << (n) << std::endl;
 
 }
+
+

@@ -15,7 +15,7 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gool.test;
+
 
 import gool.Settings;
 import gool.generator.android.AndroidPlatform;
@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class GoolTestMonteCarlo {
+public class GoolTestMonteCarloQuote {
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
@@ -48,7 +48,7 @@ public class GoolTestMonteCarlo {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			(Platform) JavaPlatform.getInstance(),
+			//(Platform) JavaPlatform.getInstance(),
 			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
@@ -73,23 +73,13 @@ public class GoolTestMonteCarlo {
 		}
 
 		public void compare(Platform platform) throws Exception {
-//			if (excludedPlatforms.contains(platform)) {
-//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-//				for (Platform p : excludedPlatforms)
-//					if (testedPlatforms.contains(p))
-//						errorMsg += p + " ";
-//				Assert.fail(errorMsg
-//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
-//			}
-			if (excludedPlatforms.contains(platform)){
-				System.err.println("The following target platform(s) have been "
-						+ "excluded for this test:" + platform.getName());
-				return;
-			}
-			String expect = this.expected;
-			if (platform instanceof CppPlatform){// C++ does not have booleans
-				expect = expect.replaceAll("True", "1");
-				expect = expect.replaceAll("False", "0");
+			if (excludedPlatforms.contains(platform)) {
+				String errorMsg = "The following target platform(s) have been excluded for this test: ";
+				for (Platform p : excludedPlatforms)
+					if (testedPlatforms.contains(p))
+						errorMsg += p + " ";
+				Assert.fail(errorMsg
+						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
 			}
 
 			// This inserts a package which is mandatory for android
@@ -106,7 +96,7 @@ public class GoolTestMonteCarlo {
 				result = result.substring(result.indexOf("] ") + 2);
 
 			Assert.assertEquals(String.format("The platform %s", platform),
-					expect, result);
+					expected, result);
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -134,27 +124,27 @@ public class GoolTestMonteCarlo {
 	}
 
 	
+	@Before
 	@Test
-	public void monteCarlo() throws Exception {
-		String input = TestHelperJava.surroundWithClass("public double MonteCarlo(){double x = 0.0;"
+	public void monteCarloQuote() throws Exception {
+		String input = "public class testMonteCarlo {"
+				+ "public static void main(String[] args) {"
+				+ "testMonteCarlo test = new testMonteCarlo();"
+				+ "test.MonteCarlo();}"
+				+ "public int MonteCarlo(){"
+				+ "double x = 0.0;"
 				+ "double y = 0.0;"
 				+ "int tiragesDansLeDisque = 0;"
-				+ "for (int i = 1; i<100000; i++){"
+				+ "for (double i = 1; i<100000; i++){"
 				+ "x = Math.random();"
 				+ "y = Math.random();"
 				+ "if (x*x + y*y <= 1){tiragesDansLeDisque++;}}"
 				+ "double estimation = 4.0 * tiragesDansLeDisque / 100000;"
-				+ "return estimation;}"
-				+ "public static void main(String[] args){"
-				+ "Test t = new Test();"
-				+ "double diff = Math.ceil(Math.abs(t.MonteCarlo() - Math.PI));"
-				+ "System.out.println( diff == 1.0);}",
-				MAIN_CLASS_NAME, "");
-				
-		String expected = "true";
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+				+ "System.out.println(\"Estimation de Pi : \"+estimation);"
+				+ "System.out.println(\"Valeur Exacte de Pi : \"+ Math.PI);"
+				+ "System.out.println(\"Taux d'erreur : \"+ Math.abs(estimation - Math.PI)/Math.PI);"
+				+ "return (Math.abs(estimation - Math.PI)/Math.PI);}}";
+		String expected = "";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 

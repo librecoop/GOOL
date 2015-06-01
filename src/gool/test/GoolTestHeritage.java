@@ -1,6 +1,6 @@
+
 package gool.test;
 
-import gool.GOOLCompiler;
 import gool.Settings;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class HeritageTest {
+public class GoolTestHeritage {
 
 	/*
 	 * At this day, the GOOL system supports 6 output languages that are
@@ -33,12 +33,12 @@ public class HeritageTest {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance(),
-			//(Platform) CSharpPlatform.getInstance()
-		   //(Platform) CppPlatform.getInstance()
+			(Platform) JavaPlatform.getInstance(),
+			(Platform) CSharpPlatform.getInstance(),
+			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
-//			 (Platform) AndroidPlatform.getInstance() ,
-//			 (Platform) ObjcPlatform.getInstance()
+			//			 (Platform) AndroidPlatform.getInstance() ,
+			//			 (Platform) ObjcPlatform.getInstance()
 
 			);
 
@@ -58,15 +58,19 @@ public class HeritageTest {
 		}
 
 		public void compare(Platform platform) throws Exception {
-			if (excludedPlatforms.contains(platform)) {
-				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-				for (Platform p : excludedPlatforms)
-					if (testedPlatforms.contains(p))
-						errorMsg += p + " ";
-				Assert.fail(errorMsg
-						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+			//			if (excludedPlatforms.contains(platform)) {
+			//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
+			//				for (Platform p : excludedPlatforms)
+			//					if (testedPlatforms.contains(p))
+			//						errorMsg += p + " ";
+			//				Assert.fail(errorMsg
+			//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+			//			}
+			if (excludedPlatforms.contains(platform)){
+				System.err.println("The following target platform(s) have been "
+						+ "excluded for this test:" + platform.getName());
+				return;
 			}
-
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
 			// properties file
@@ -95,7 +99,7 @@ public class HeritageTest {
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static final String MAIN_CLASS_NAME = "testHeritage";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -108,35 +112,27 @@ public class HeritageTest {
 	}
 
 	@Test
-	public void HeritageTest() throws Exception {
-		String input = "public class A{"
-				+"protected int i;"  
-				+"protected int j;" 
-				+"public A(){i=10; j=30;}"
-				+"public  void uneMethode() {System.out.println(i) ;}}";
+	public void heritageTest() throws Exception{
+		String input = TestHelperJava.surroundWithExtendedClass(
+				"public void name() {System.out.println(\"Daughter\");}"
+				+ "public static void main(String[] args){"
+				+ MAIN_CLASS_NAME + " daughter = new " + MAIN_CLASS_NAME + "();"
+				+ "daughter.name();"
+				+ MAIN_CLASS_NAME + "Mother mother = new " + MAIN_CLASS_NAME + "Mother();"
+				+ "mother.name();"
+				+ "}"
+				, MAIN_CLASS_NAME, MAIN_CLASS_NAME + "Mother", "");
+		input += "\n" + TestHelperJava.surroundWithClass(
+				"public void name()  {System.out.println(\"Mother\");}"
+				,MAIN_CLASS_NAME + "Mother", "");
 		
-		input += "\n"
-				+"class B extends A {"   
-			    +"protected int i;" 
-			    +"public B(){"
-			    +"i=20;}"
-			    +"public  void uneAutreMethode() {"  
-			     	+"System.out.println(i) ;"
-			        +"System.out.println(j);}"
-			        +"public  static  void main(String args[]){"
-					    	+"A a =  new A();"   
-					    	+"B b =  new B();"    
-					    	+"a.uneMethode() ;"
-				            +"b.uneAutreMethode();}}";
-		
-		String expected="10"+"20"+"30";
-		
+		String expected="Daughter" + "Mother";
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
-
-
 	
-
+	
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
@@ -149,9 +145,9 @@ public class HeritageTest {
 		for (Platform platform : platforms) {
 			executor.compare(platform);
 		}
-		
+
 	}
-	
+
 }
 
 

@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include<iostream>
 
 #include <boost/any.hpp>
@@ -20,18 +6,22 @@
 
 #include "SimpleFor.h"
 
-#include "iostream"
 #include "string"
+#include "iostream"
 
 
 
-		  SimpleFor::SimpleFor() {
+  SimpleFor::SimpleFor(){
+	
+}
 
-}		int main() {
-int total = 0;
+int main(){
+	int total = 0;
 for (int i = 0 ; (i < 4) ; (i)++) {
 	(total)++;
 };
 std::cout << (total) << std::endl;
 
 }
+
+

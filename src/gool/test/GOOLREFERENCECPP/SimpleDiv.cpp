@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include<iostream>
 
 #include <boost/any.hpp>
@@ -20,15 +6,19 @@
 
 #include "SimpleDiv.h"
 
-#include "iostream"
 #include "string"
+#include "iostream"
 
 
 
-		  SimpleDiv::SimpleDiv() {
+  SimpleDiv::SimpleDiv(){
+	
+}
 
-}		int main() {
-int n = (8 / 2);
+int main(){
+	int n = (8 / 2);
 std::cout << (n) << std::endl;
 
 }
+
+

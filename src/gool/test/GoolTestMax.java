@@ -48,7 +48,7 @@ public class GoolTestMax {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance(),
+			(Platform) JavaPlatform.getInstance(),
 			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
@@ -73,15 +73,19 @@ public class GoolTestMax {
 		}
 
 		public void compare(Platform platform) throws Exception {
-			if (excludedPlatforms.contains(platform)) {
-				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-				for (Platform p : excludedPlatforms)
-					if (testedPlatforms.contains(p))
-						errorMsg += p + " ";
-				Assert.fail(errorMsg
-						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			if (excludedPlatforms.contains(platform)) {
+//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
+//				for (Platform p : excludedPlatforms)
+//					if (testedPlatforms.contains(p))
+//						errorMsg += p + " ";
+//				Assert.fail(errorMsg
+//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			}
+			if (excludedPlatforms.contains(platform)){
+				System.err.println("The following target platform(s) have been "
+						+ "excluded for this test:" + platform.getName());
+				return;
 			}
-
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
 			// properties file
@@ -110,7 +114,7 @@ public class GoolTestMax {
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static final String MAIN_CLASS_NAME = "testMax";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -126,14 +130,23 @@ public class GoolTestMax {
 	
 	@Test
 	public void max() throws Exception {
-		String input = "public class testMax {"
-				+ "public static void main(String[] args) {"
-				+ "testMax test = new testMax();"
-				+ "System.out.println(test.max(4,6));}"
-				+ "public int max(int a, int b){"
-				+ "if (a < b){return b;}"
-				+ "else {return a;}}}";
+		String input = TestHelperJava.surroundWithClass(
+						"public int max(int a, int b){"
+						+ "if (a < b){return b;}"
+						+ "else{ return a;}}"
+						+ "public static void main(String[] args){"
+						+ MAIN_CLASS_NAME + " test = new " + MAIN_CLASS_NAME + "();"
+						+ "System.out.println(test.max(4,6));}"
+						,MAIN_CLASS_NAME,"");
+//		String input = "public class testMax {"
+//				+ "public static void main(String[] args) {"
+//				+ "testMax test = new testMax();"
+//				+ "System.out.println(test.max(4,6));}"
+//				+ "public int max(int a, int b){"
+//				+ "if (a < b){return b;}"
+//				+ "else {return a;}}}";
 		String expected = "6";
+		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 

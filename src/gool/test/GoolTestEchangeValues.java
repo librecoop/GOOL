@@ -48,7 +48,7 @@ public class GoolTestEchangeValues {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance(),
+			(Platform) JavaPlatform.getInstance(),
 			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
@@ -110,7 +110,7 @@ public class GoolTestEchangeValues {
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static final String MAIN_CLASS_NAME = "testEchangeValues";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 

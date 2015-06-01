@@ -43,6 +43,19 @@ public final class TestHelperJava {
 		return accessModifier + " class " + className + " { public "
 				+ className + "(){} " + input + " } ";
 	}
+	
+	public static String surroundWithExtendedClassMain(String input, 
+			String className, String extendedClassName) {
+		return surroundWithExtendedClass("public static void main(String[] args){"
+				+ input + " } ", className, extendedClassName, "");
+	}
+
+	public static String surroundWithExtendedClass(String input, String className,
+			String extendedClassName, String accessModifier) {
+		return accessModifier + " class " + className + " extends " 
+				+ extendedClassName + " { public "
+				+ className + "(){super();} " + input + " } ";
+	}
 
 	public static String generateCompileRun(Platform platform, String input,
 			String mainClassName) throws Exception, FileNotFoundException {
@@ -66,25 +79,25 @@ public final class TestHelperJava {
 				platform, inputFiles);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
-	
+
 	//TODO : Rewrite the following methods (Denis)
-	
+
 	public static void assertTestAPIFile(String format, String expected, String result, int test){
 		Assert.assertEquals(format, expected, result);
 	}
-	
+
 	public static void assertTestAPINet(String format, String expected, String result, int test){
 		Assert.assertEquals(format, expected, result);
 	}
-	
+
 	public static String surroundWithClassMainFile(String input, String className) {
 		return surroundWithClassMain(input, className);
 	}
-	
+
 	public static String surroundWithClassMainNet(String input, String className) {
 		return surroundWithClassMain(input, className);
 	}
-	
+
 	public static String surroundWithClassMainThread(String input, String className) {
 		return surroundWithClassMain(input, className);
 	}

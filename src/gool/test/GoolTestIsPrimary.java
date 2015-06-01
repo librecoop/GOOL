@@ -48,12 +48,12 @@ public class GoolTestIsPrimary {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			//(Platform) JavaPlatform.getInstance(),
+			(Platform) JavaPlatform.getInstance(),
 			(Platform) CSharpPlatform.getInstance(),
 			(Platform) CppPlatform.getInstance(),
 			(Platform) PythonPlatform.getInstance()// ,
-//			 (Platform) AndroidPlatform.getInstance() ,
-//			 (Platform) ObjcPlatform.getInstance()
+			//			 (Platform) AndroidPlatform.getInstance() ,
+			//			 (Platform) ObjcPlatform.getInstance()
 
 			);
 
@@ -73,15 +73,26 @@ public class GoolTestIsPrimary {
 		}
 
 		public void compare(Platform platform) throws Exception {
-			if (excludedPlatforms.contains(platform)) {
-				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-				for (Platform p : excludedPlatforms)
-					if (testedPlatforms.contains(p))
-						errorMsg += p + " ";
-				Assert.fail(errorMsg
-						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			if (excludedPlatforms.contains(platform)) {
+//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
+//				for (Platform p : excludedPlatforms)
+//					if (testedPlatforms.contains(p))
+//						errorMsg += p + " ";
+//				Assert.fail(errorMsg
+//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+//			}
+			if (excludedPlatforms.contains(platform)){
+				System.err.println("The following target platform(s) have been "
+						+ "excluded for this test:" + platform.getName());
+				return;
 			}
 
+			String expect = this.expected;
+			if (platform instanceof CppPlatform){// C++ does not have booleans
+				expect = expect.replaceAll("True", "1");
+				expect = expect.replaceAll("False", "0");
+			}
+		
 			// This inserts a package which is mandatory for android
 			// TODO Not the ideal place to put it also com.test should be in the
 			// properties file
@@ -96,7 +107,7 @@ public class GoolTestIsPrimary {
 				result = result.substring(result.indexOf("] ") + 2);
 
 			Assert.assertEquals(String.format("The platform %s", platform),
-					expected, result);
+					expect, result);
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -110,7 +121,7 @@ public class GoolTestIsPrimary {
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static final String MAIN_CLASS_NAME = "TestIsPrimary";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -118,29 +129,50 @@ public class GoolTestIsPrimary {
 		testNotImplementedOnPlatforms.add(platform);
 	}
 
-	
+
 	@BeforeClass
 	public static void init() {
 	}
 
-	
 	@Test
-	public void isPrimary() throws Exception {
-		String input = "public class testIsPrimary {"
-				+ "public static void main(String[] args) {"
-				+ "testIsPrimary test = new testIsPrimary();"
-				+ "System.out.println(test.isPrimary(7));"
-				+ "System.out.println(test.isPrimary(4));}"
-				+ "public boolean isPrimary(double nombre){"
-				+ "for (double i=2; i<nombre; i++){"
-				+ "if (nombre%i == 0){return false;}"
-				+ "}"
-				+ "return true;}}";
+	public void isPrimaryIntTest() throws Exception {
+		String input = TestHelperJava.surroundWithClass(
+				"public boolean isPrimary(int nombre){"
+						+ "for (int i=2; i<nombre; i++){"
+						+ "if (nombre%i == 0){return false;}"
+						+ "}"
+						+ "return true;}"
+						+ "public static void main(String[] args){"
+						+ MAIN_CLASS_NAME + " test = new " + MAIN_CLASS_NAME + "();"
+						+ "System.out.println(test.isPrimary(7));"
+						+ "System.out.println(test.isPrimary(4));}"
+						,MAIN_CLASS_NAME,"");
+
 		String expected = "True"+"False";
+		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
-	
+	@Test
+	public void isPrimaryDoubleTest() throws Exception {
+		String input = TestHelperJava.surroundWithClass(
+				"public boolean isPrimary(double nombre){"
+						+ "for (double i=2.0; i<nombre; i++){"
+						+ "if ((nombre%i) == 0.0){return false;}"
+						+ "}"
+						+ "return true;}"
+						+ "public static void main(String[] args){"
+						+ MAIN_CLASS_NAME + " test = new " + MAIN_CLASS_NAME + "();"
+						+ "System.out.println(test.isPrimary(7.0));"
+						+ "System.out.println(test.isPrimary(4.0));}"
+						,MAIN_CLASS_NAME,"");
+
+		String expected = "True"+"False";
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
+		compareResultsDifferentPlatforms(input, expected);
+	}
+
 	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
