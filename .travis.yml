@@ -1,1 +1,6 @@
 language: java
+script: ./gradlew unittest
+
+branches:
+    only:
+        - denis
