@@ -1,5 +1,5 @@
 language: java
-script: ./gradlew -Dtest.single=GoolTestTranslationFromJava test
+script: ./gradlew -Dtest.single=GoolTestTranslationFromJava test --info
 
 branches:
     only:
