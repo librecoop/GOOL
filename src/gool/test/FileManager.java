@@ -22,6 +22,7 @@ public class FileManager {
 		File f = new File(fileName);
 		if (!f.exists()) {
 			try{
+				f.getParentFile().mkdirs();
 				f.createNewFile();
 			}catch(IOException e){
 				throw new IOException(e.getMessage() + " with file " + fileName);				
@@ -35,7 +36,6 @@ public class FileManager {
 		}finally{
 			out.close();
 		}
-		throw new IOException("Mon exception with file " + fileName);
 	}
 
 	private static List<String> fileToLines(String filename) throws IOException{
