@@ -27,8 +27,7 @@ public class FileManager {
 		try {
 			out.write(s);
 		}catch(IOException e){
-			System.err.println("File : " + fileName);
-			throw e;
+			throw new IOException(e.getMessage() + " with file " + fileName);
 		}finally{
 			out.close();
 		}
@@ -48,8 +47,7 @@ public class FileManager {
 				}
 			}
 		} catch (IOException e) {
-			System.err.println("File : " + filename);
-			throw e;
+			throw new IOException(e.getMessage() + " with file " + filename);
 		}finally{
 			in.close();
 		}
@@ -63,9 +61,7 @@ public class FileManager {
 			gold = fileToLines(goldfile);
 			test  = fileToLines(testfile);
 		}catch(IOException e){
-			System.err.println("Gold file : " + goldfile);
-			System.err.println("Test file : " + testfile);
-			throw e;
+			throw new IOException(e.getMessage() + " with goldfile " + goldfile + " and test file " + testfile);
 		}
 		// Compute diff. Get the Patch object. Patch is the container for computed deltas.
 		Patch patch = DiffUtils.diff(gold, test);
