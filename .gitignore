@@ -12,4 +12,8 @@ build/
 repos/
 velocity.log*
 gradle-app.setting
-tests/GOOLOUTPUT*
+tests/GOOLOUTPUTCPP/
+tests/GOOLOUTPUTCS/
+tests/GOOLOUTPUTJAVA/
+tests/GOOLOUTPUTOBJC/
+tests/GOOLOUTPUTPYTHON/
