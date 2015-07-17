@@ -1,5 +1,5 @@
 language: java
-script: ./gradlew unittest
+script: ./gradlew unittest -info -debug
 
 branches:
     only:
