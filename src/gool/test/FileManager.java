@@ -27,6 +27,7 @@ public class FileManager {
 		try {
 			out.write(s);
 		}catch(IOException e){
+			System.err.println("File : " + fileName);
 			throw e;
 		}finally{
 			out.close();
@@ -47,6 +48,7 @@ public class FileManager {
 				}
 			}
 		} catch (IOException e) {
+			System.err.println("File : " + filename);
 			throw e;
 		}finally{
 			in.close();
@@ -61,6 +63,8 @@ public class FileManager {
 			gold = fileToLines(goldfile);
 			test  = fileToLines(testfile);
 		}catch(IOException e){
+			System.err.println("Gold file : " + goldfile);
+			System.err.println("Test file : " + testfile);
 			throw e;
 		}
 		// Compute diff. Get the Patch object. Patch is the container for computed deltas.
