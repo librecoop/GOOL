@@ -19,18 +19,18 @@ import difflib.*;
 public class FileManager {
 
 	public static void write(String fileName, String s) throws IOException{
-//		File f = new File(fileName);
-//		if (!f.exists()) {
-//			f.createNewFile();
-//		}
-//		BufferedWriter out = new BufferedWriter(new FileWriter(f));
-//		try {
-//			out.write(s);
-//		}catch(IOException e){
-//			throw new IOException(e.getMessage() + " with file " + fileName);
-//		}finally{
-//			out.close();
-//		}
+		File f = new File(fileName);
+		if (!f.exists()) {
+			f.createNewFile();
+		}
+		BufferedWriter out = new BufferedWriter(new FileWriter(f));
+		try {
+			out.write(s);
+		}catch(IOException e){
+			throw new IOException(e.getMessage() + " with file " + fileName);
+		}finally{
+			out.close();
+		}
 		throw new IOException("Mon exception with file " + fileName);
 	}
 
