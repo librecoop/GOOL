@@ -21,7 +21,11 @@ public class FileManager {
 	public static void write(String fileName, String s) throws IOException{
 		File f = new File(fileName);
 		if (!f.exists()) {
-			f.createNewFile();
+			try{
+				f.createNewFile();
+			}catch(IOException e){
+				throw new IOException(e.getMessage() + " with file " + fileName);				
+			}
 		}
 		BufferedWriter out = new BufferedWriter(new FileWriter(f));
 		try {
