@@ -139,7 +139,7 @@ public class GoolTestBullSort {
 				+"public static void  main ( String [] args ){"
 					+" int table []=new int [4];"
 					+"table[0]=9;table[1]=23;table[2]=2;table[3]=34;"
-				    +"ApplicationTriBull app=new ApplicationTriBull();"
+				    +"testBullSort app=new testBullSort();"
 					+"app.TriBulle(table);"
 				    +"app.Impression(table);}}";
 			
