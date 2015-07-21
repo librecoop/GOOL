@@ -124,7 +124,7 @@ public class GoolTestBullSort {
 
 	@Test
 	public void TriBullTest() throws Exception {
-		String input = "public class  ApplicationTriBull{"
+		String input = "public class  testBullSort{"
 				+"public void  TriBulle(int table[]) {"
 					+"int  n=3;"
 					+"for ( int i=n; i>=1; i-- ){"
