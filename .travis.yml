@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get install -y mono-gmcs
   - sudo apt-get install -y libboost-all-dev
 
-script: ./gradlew unittest
+script: ./gradlew test
 
 branches:
     only:
