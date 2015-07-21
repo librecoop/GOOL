@@ -1,4 +1,8 @@
 language: java
+
+before_install:
+  - sudo apt-get install monodevelop mono-utils
+
 script: ./gradlew unittest -info -debug
 
 branches:
