@@ -15,7 +15,7 @@ allprojects {
 		options.warnings = false
 	}
 }
-
+//gradle run '-PappProp=-gui' for gui interface
 run {
 	standardInput = System.in 
 	if(project.hasProperty("appProp")){
