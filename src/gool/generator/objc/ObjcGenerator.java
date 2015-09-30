@@ -90,6 +90,7 @@ import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.GeneratorMatcher;
+import logger.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +126,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 								.format("%s.entrySet()",
 										enhancedForLoop.getExpression())
 								: enhancedForLoop.getExpression(),
-						enhancedForLoop.getStatements());
+								enhancedForLoop.getStatements());
 	}
 
 	// List Methods
@@ -184,7 +185,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
 		String s = "( " + String.format("[%s count]", liec.getExpression())
-				+ "== 0)";
+		+ "== 0)";
 		return s;
 	}
 
@@ -385,19 +386,46 @@ public class ObjcGenerator extends CommonCodeGenerator {
 						generalName.replaceAll("\\s", ""), library);
 	}
 
+	/**
+	 * Produces code for a method invocation.
+	 * 
+	 * @param methodCall
+	 *            the method to be invoked.
+	 * @return the formatted method invocation.
+	 */
 	@Override
 	public String getCode(MethCall methodCall) {
 		String arg = new String();
-		String specificName;
-
+		String out = "";
+		if (methodCall.getTarget() != null) {
+			out = methodCall.getTarget().toString();
+			String goolMethod = methodCall.getGoolLibraryMethod();
+			if(goolMethod!=null){
+				//here, get matched output method name with the GeneratorMatcher
+				out = GeneratorMatcher.matchGoolMethod(goolMethod);
+				//then check for a c function
+				String outtype = GeneratorMatcher.matchGoolClass(goolMethod.substring(0,goolMethod.lastIndexOf(".")));
+				Log.d(String.format("<ObjcGenerator - getCode(MethCall> out = %s | goolMethod = %s | outtype = %s", out, goolMethod, outtype));
+				if(outtype.equalsIgnoreCase("c")){
+					out += "(";
+					if (methodCall.getParameters() != null) {
+						out += StringUtils.join(methodCall.getParameters(), ", ");
+					}
+					out += ")";
+					return out;
+				}
+			}
+			
 			arg = getMethCallName(methodCall.getParameters(), true);
 
 			if (methodCall.getTarget() instanceof VarAccess)
-				return String.format("[%s%s]", methodCall.getTarget(), arg);
+				return String.format("[%s%s]", out, arg);
 
 			if (methodCall.getTarget() instanceof ParentCall)
 				return getCode((ParentCall) methodCall.getTarget());
-			return String.format("[%s%s]", methodCall.getTarget(), arg);
+			return String.format("[%s%s]",out, arg);
+		}
+		return out;
 
 	}
 
@@ -422,9 +450,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String param = new String();
 
 		param = getMethDefName(cons.getParams());
-
-		return String.format("- (%s *)initWith%s",
-				cons.getClassDef().getName(), param);
+		if(param == "")
+			return String.format("- (%s *)init", cons.getClassDef().getName());
+		return String.format("- (%s *)initWith%s", cons.getClassDef().getName(), param);
 	}
 
 	@Override
@@ -437,27 +465,27 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 		if (systemOutPrintCall.getParameters().get(0).getType() instanceof TypeClass)
 			out = "[" + systemOutPrintCall.getParameters().get(0)
-					+ " toString]";
+			+ " toString]";
 
 		format = (systemOutPrintCall.getParameters().get(0) instanceof ArrayAccess)
 				&& ((ArrayAccess) systemOutPrintCall.getParameters().get(0))
-						.getExpression().getType() instanceof TypeArray ? GeneratorHelperObjc
-				.format(((TypeArray) ((ArrayAccess) systemOutPrintCall
-						.getParameters().get(0)).getExpression().getType())
-						.getElementType()) : GeneratorHelperObjc
-				.format(systemOutPrintCall.getParameters().get(0));
+				.getExpression().getType() instanceof TypeArray ? GeneratorHelperObjc
+						.format(((TypeArray) ((ArrayAccess) systemOutPrintCall
+								.getParameters().get(0)).getExpression().getType())
+								.getElementType()) : GeneratorHelperObjc
+						.format(systemOutPrintCall.getParameters().get(0));
 
-		// I added the two following lines to fix a bug dealing with
-		// non-string parameters in NSLog calls.
-		if (!format.equals("%@"))
-			nsString = "";
+						// I added the two following lines to fix a bug dealing with
+						// non-string parameters in NSLog calls.
+						if (!format.equals("%@"))
+							nsString = "";
 
-		return String.format(
-				"NSLog(@\"%s\",%s%s)",
-				format,
-				nsString,
-				out == null ? GeneratorHelper.joinParams(systemOutPrintCall
-						.getParameters()) : out);
+						return String.format(
+								"NSLog(@\"%s\",%s%s)",
+								format,
+								nsString,
+								out == null ? GeneratorHelper.joinParams(systemOutPrintCall
+										.getParameters()) : out);
 	}
 
 	@Override
@@ -633,8 +661,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		if (varDec.getInitialValue() != null) {
 			if (varDec.getInitialValue().getType() instanceof TypeNull)
 				initialValue = " = nil"; // TODO pas normal, nil est mit dans le
-											// type de la valeur initital et pas
-											// dans la valeur initiale
+			// type de la valeur initital et pas
+			// dans la valeur initiale
 			else if (varDec.getInitialValue().getType() instanceof TypeString
 					&& !(varDec.getInitialValue() instanceof MethCall))
 				initialValue = " = @" + varDec.getInitialValue();
@@ -648,7 +676,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		if (varDec.getType() instanceof TypeArray)
 			return String.format("%s %s[%s]", type, varDec.getName(),
 					((ArrayNew) varDec.getInitialValue()).getDimesExpressions()
-							.get(0));
+					.get(0));
 
 		return String.format("%s %s%s", type, varDec.getName(), initialValue);
 
@@ -674,20 +702,26 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 			String fleft = (binaryOp.getLeft() instanceof ArrayAccess)
 					&& ((ArrayAccess) binaryOp.getLeft()).getExpression()
-							.getType() instanceof TypeArray ? GeneratorHelperObjc
-					.format(((TypeArray) ((ArrayAccess) binaryOp.getLeft())
-							.getExpression().getType()).getElementType())
-					: GeneratorHelperObjc.format(binaryOp.getLeft());
-			String fright = (binaryOp.getRight() instanceof ArrayAccess)
-					&& ((ArrayAccess) binaryOp.getRight()).getExpression()
-							.getType() instanceof TypeArray ? GeneratorHelperObjc
-					.format(((TypeArray) ((ArrayAccess) binaryOp.getRight())
-							.getExpression().getType()).getElementType())
-					: GeneratorHelperObjc.format(binaryOp.getRight());
+					.getType() instanceof TypeArray ? GeneratorHelperObjc
+							.format(((TypeArray) ((ArrayAccess) binaryOp.getLeft())
+									.getExpression().getType()).getElementType())
+							: GeneratorHelperObjc.format(binaryOp.getLeft());
+							String fright = (binaryOp.getRight() instanceof ArrayAccess)
+									&& ((ArrayAccess) binaryOp.getRight()).getExpression()
+									.getType() instanceof TypeArray ? GeneratorHelperObjc
+											.format(((TypeArray) ((ArrayAccess) binaryOp.getRight())
+													.getExpression().getType()).getElementType())
+											: GeneratorHelperObjc.format(binaryOp.getRight());
 
-			return String.format(
-					"[NSString stringWithFormat:@\"%s%s\",%s%s,%s%s]", fleft,
-					fright, nsStringLeft, left, nsStringRight, right);
+											return String.format(
+													"[NSString stringWithFormat:@\"%s%s\",%s%s,%s%s]", fleft,
+													fright, nsStringLeft, left, nsStringRight, right);
+		}
+		if (binaryOp.getOperator() == Operator.REMAINDER
+				&& ((binaryOp.getLeft().getType() instanceof TypeDecimal) || 
+						(binaryOp.getRight().getType() instanceof TypeDecimal))) 
+		{
+			return String.format("fmod(%s,%s)\n/* Add -lm as compilation option */", left,	right);
 		}
 
 		return super.getCode(binaryOp);
@@ -758,9 +792,11 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	public String getCode(Throw throwexpression) {
 		return "@throw";
 	}
-	
+
 	public String getCode(RecognizedDependency recognizedDependency) {
 		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());
+		if(imports == null)
+			return "";
 		if(imports.isEmpty())
 			return "/* import "+recognizedDependency.getName()+" not generated by GOOL, passed on. */";
 		String result = "";
@@ -772,5 +808,5 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 		return result;
 	}
-	
+
 }

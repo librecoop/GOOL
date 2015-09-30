@@ -4,6 +4,9 @@ package gool;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 //import java.io.IOException;
 //import java.io.InputStream;
 import java.util.HashMap;
@@ -125,13 +128,33 @@ public class SettingsPanel extends JFrame {
 	 * Method called by pressing the 'ok' button
 	 */
 	private void saveAndClose() {
-
+		
 		for (Entry<String, JTextField> entry : textFields.entrySet()) {
 			properties.setProperty(entry.getKey(), entry.getValue().getText());
 		}
 		properties.list(System.out);
+		
+		OutputStream output = null;
+		try {
+
+			output = new FileOutputStream("gool.properties");	
+			// save properties file to project root folder
+			properties.store(output, null);
+
+		} catch (IOException io) {
+			io.printStackTrace();
+		} finally {
+			if (output != null) {
+				try {
+					output.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+	
 		close();
-		continueGoolCompiler();
 	}
 
 	/**

@@ -450,8 +450,10 @@ public class AndroidGenerator extends CommonCodeGenerator {
 	
 	public String getCode(RecognizedDependency recognizedDependency) {
 		String result = "";
-		for (String Import : GeneratorMatcher.matchImports(recognizedDependency
-				.getName())) {
+		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());
+		if(imports == null)
+			return result;
+		for (String Import : imports) {
 			if (Import.startsWith("+"))
 				Import = Import.substring(1);
 			result += "import " + Import + ";\n";

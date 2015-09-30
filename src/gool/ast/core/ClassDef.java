@@ -23,6 +23,7 @@ import gool.generator.GoolGeneratorController;
 import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
+import logger.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;

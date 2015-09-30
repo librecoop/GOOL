@@ -73,6 +73,7 @@ import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
 import gool.recognizer.common.RecognizerMatcher;
+import logger.Log;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -422,7 +423,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			if(methodName!=null)
 				target=target.substring(0, target.lastIndexOf(".")+1)+methodName;
 		}
-		
+		Log.d("<CommonCodeGenerator - getCode(MethCall)> target " + target);
 		return String.format("%s (%s)", target,
 				StringUtils.join(methodCall.getParameters(), ", "));
 	}

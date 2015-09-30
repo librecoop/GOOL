@@ -4,7 +4,7 @@
 bin/
 gool.jar
 *~
-src/properties
+gool.properties
 bin/
 build/
 .gradle/
@@ -17,3 +17,6 @@ tests/GOOLOUTPUTCS/
 tests/GOOLOUTPUTJAVA/
 tests/GOOLOUTPUTOBJC/
 tests/GOOLOUTPUTPYTHON/
+*.class
+*.bkp
+
