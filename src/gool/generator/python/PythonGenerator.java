@@ -257,6 +257,14 @@ CodeGeneratorNoVelocity {
 				textualOp = binaryOp.getTextualoperator();
 			}
 			break;
+		case EQUAL:
+			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
+				return String.format("(%s is %s)", binaryOp.getLeft(), 
+						binaryOp.getRight());
+		case NOT_EQUAL:
+			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
+				return String.format("(%s is not %s)", binaryOp.getLeft(), 
+						binaryOp.getRight());
 		default:
 			textualOp = binaryOp.getTextualoperator();
 		}
@@ -271,7 +279,9 @@ CodeGeneratorNoVelocity {
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
 			return String.valueOf(constant.getValue().toString()
 					.equalsIgnoreCase("true") ? "True" : "False");
-		} else {
+		} else if(constant.getType().equals(TypeNull.INSTANCE)){
+			return "None";
+		}else {
 			String ret = super.getCode(constant);
 			// unicode strings have to be prefixed with a 'u'
 			if (constant.getType() == TypeString.INSTANCE
