@@ -369,6 +369,13 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
 		LogMethodName();
+		if (mapPutCall.getParameters().isEmpty())
+			return String.format("%s -> insert()", 
+					mapPutCall.getExpression());
+//		if (mapPutCall.getParameters().size() == 1)
+//			return String.format("%s -> insert( %s )", 
+//					mapPutCall.getExpression(), 
+//					mapPutCall.getParameters().get(0));		
 		return String.format("%s -> insert( std::make_pair( %s, %s ) )",
 				mapPutCall.getExpression(), mapPutCall.getParameters().get(0),
 				mapPutCall.getParameters().get(1));

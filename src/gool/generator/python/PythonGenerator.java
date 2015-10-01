@@ -401,20 +401,22 @@ CodeGeneratorNoVelocity {
 		default:
 			comment("Unrecognized by GOOL, passed on: add");
 			return String.format("%s.add(%s)", lac.getExpression(),
-					StringUtils.join(lac.getParameters(), ", "));
+					GeneratorHelper.joinParams(lac.getParameters()));
 		}
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s in %s", lcc.getParameters().get(0),
+		return String.format("%s in %s", GeneratorHelper.joinParams(lcc.getParameters()),
 				lcc.getExpression());
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s[%s]", lgc.getExpression(), lgc.getParameters()
-				.get(0));
+		if (lgc.getParameters().isEmpty())
+			return String.format("%s[]", lgc.getExpression());
+		return String.format("%s[%s]", lgc.getExpression(), 
+				lgc.getParameters().get(0));
 	}
 
 	@Override
@@ -458,6 +460,8 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
+		if (mapContainsKeyCall.getParameters().isEmpty())
+			return String.format("in %s", mapContainsKeyCall.getExpression());
 		return String.format("%s in %s", mapContainsKeyCall.getParameters()
 				.get(0), mapContainsKeyCall.getExpression());
 	}
@@ -481,8 +485,8 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String.format("%s[%s]", mapGetCall.getExpression(), mapGetCall
-				.getParameters().get(0));
+		return String.format("%s[%s]", mapGetCall.getExpression(),
+				GeneratorHelper.joinParams(mapGetCall.getParameters()));
 	}
 
 	@Override
@@ -505,6 +509,11 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
+		if (mapPutCall.getParameters().isEmpty())
+			return String.format("%s[] =", mapPutCall.getExpression());
+		//		if (mapPutCall.getParameters().size() == 1)
+		//			return String.format("%s[%s] =", mapPutCall.getExpression(), 
+		//					mapPutCall.getParameters().get(0));
 		return String.format("%s[%s] = %s", mapPutCall.getExpression(),
 				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
 				.get(1));

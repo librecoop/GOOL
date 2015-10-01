@@ -132,6 +132,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	// List Methods
 	@Override
 	public String getCode(ListAddCall lac) {
+		if (lac.getParameters().isEmpty()){
+			return String.format("[%s]", lac.getExpression());
+		}
 		String nsObject = GeneratorHelperObjc.staticString(lac.getParameters()
 				.get(0));
 		if (lac.getParameters().size() == 1) {
@@ -164,6 +167,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
+		if (lcc.getParameters().isEmpty())
+			return String.format("[%s containsObject:]", lcc.getExpression());
 		String param0 = GeneratorHelperObjc.initWithObject(lcc.getParameters()
 				.get(0));
 
@@ -173,8 +178,8 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("[%s objectAtIndex:%s]", lgc.getExpression(), lgc
-				.getParameters().get(0));
+		return String.format("[%s objectAtIndex:%s]", lgc.getExpression(), 
+				GeneratorHelper.joinParams(lgc.getParameters()));
 	}
 
 	@Override
@@ -191,15 +196,19 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
+		if (lrc.getParameters().isEmpty())
+			return String.format("[%s removeObjectAtIndex:]", lrc.getExpression());
 		return String.format("[%s removeObjectAtIndex:%s]",
 				lrc.getExpression(), lrc.getParameters().get(0));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
+		if (lrc.getParameters().isEmpty())
+			return String.format("[%s removeObject:]", lrc.getExpression());
+
 		String param0 = GeneratorHelperObjc.initWithObject(lrc.getParameters()
 				.get(0));
-
 		return String.format("[%s removeObject:%s]", lrc.getExpression(),
 				param0);
 	}
@@ -237,6 +246,10 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
+		if (mapGetCall.getParameters().isEmpty())
+			return String.format("[%s]",
+					mapGetCall.getExpression());
+
 		String param0 = GeneratorHelperObjc.initWithObject(mapGetCall
 				.getParameters().get(0));
 
@@ -259,8 +272,17 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
+		if (mapPutCall.getParameters().isEmpty())
+			return String.format("[%s]", mapPutCall.getExpression());
+
 		String param0 = GeneratorHelperObjc.initWithObject(mapPutCall
 				.getParameters().get(0));
+
+//		if (mapPutCall.getParameters().size() == 1)
+//			return String.format("[%s setObject:%s]", 
+//					mapPutCall.getExpression(), param0);
+
+
 		String param1 = GeneratorHelperObjc.initWithObject(mapPutCall
 				.getParameters().get(1));
 
@@ -415,7 +437,7 @@ public class ObjcGenerator extends CommonCodeGenerator {
 					return out;
 				}
 			}
-			
+
 			arg = getMethCallName(methodCall.getParameters(), true);
 
 			if (methodCall.getTarget() instanceof VarAccess)

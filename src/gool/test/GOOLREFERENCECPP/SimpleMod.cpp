@@ -16,7 +16,7 @@
 }
 
 int main(){
-	int n = (4 %/* Unrecognized by GOOL, passed on */ 5);
+	int n = (4 % 5);
 std::cout << (n) << std::endl;
 
 }

@@ -5,6 +5,12 @@ import goolHelper.IO
 import goolHelper.Util
 
 
+class SimpleDiv(object):
+
+    def __init__(self):
+        super(SimpleDiv, self).__init__()
+
+
 if __name__ == '__main__':
     from SimpleDiv import *
 # main program
@@ -12,9 +18,4 @@ if __name__ == '__main__':
     print n
 # end of main
     exit()
-
-class SimpleDiv(object):
-
-    def __init__(self):
-        super(SimpleDiv, self).__init__()
 

@@ -90,8 +90,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * It generates specific C# code for certain GOOL nodes.
  */
-public class CSharpGenerator extends CommonCodeGenerator implements
-		CodeGeneratorNoVelocity{
+public class CSharpGenerator extends CommonCodeGenerator /*implements
+		CodeGeneratorNoVelocity*/{
 	@Override
 	public String getCode(TypeBool typeBool) {
 		return "bool";
@@ -387,6 +387,11 @@ public class CSharpGenerator extends CommonCodeGenerator implements
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
+		if (mapPutCall.getParameters().isEmpty())
+			return String.format("%s[] =", mapPutCall.getExpression());
+//		if (mapPutCall.getParameters().size() == 1)
+//			return String.format("%s[%s] =", mapPutCall.getExpression(), 
+//					mapPutCall.getParameters().get(0));
 		return String.format("%s[%s] = %s", mapPutCall.getExpression(),
 				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
 						.get(1));
@@ -494,7 +499,7 @@ public class CSharpGenerator extends CommonCodeGenerator implements
 		return null;
 	}
 
-	@Override
+	//@Override
 	public String printClass(ClassDef classDef) {
 		StringBuilder sb = new StringBuilder(String.format(
 				"// Platform: %s\n\n", classDef.getPlatform()));

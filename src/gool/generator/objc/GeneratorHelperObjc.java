@@ -32,6 +32,7 @@ import gool.ast.type.TypeDecimal;
 import gool.ast.type.TypeException;
 import gool.ast.type.TypeInt;
 import gool.ast.type.TypeString;
+import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
 
 public final class GeneratorHelperObjc extends GeneratorHelper {
@@ -69,7 +70,9 @@ public final class GeneratorHelperObjc extends GeneratorHelper {
 			return "%d";
 		} else if (t instanceof TypeClass) {
 			return "%@";
-		} else {
+		} else if (t.equals(TypeVoid.INSTANCE)) {
+			return "%d";}
+		else {
 			return "/* Unrecognized by gool : " + t + " */";
 		}
 	}
