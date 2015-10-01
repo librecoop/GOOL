@@ -18,7 +18,7 @@ public class PrinterFile extends Printer {
 
 		for (String output : outputs) {
 			try {
-				fstreams.add(new FileWriter(output, true));
+				fstreams.add(new FileWriter(output, false));
 			} catch (IOException e) {
 			}
 		}

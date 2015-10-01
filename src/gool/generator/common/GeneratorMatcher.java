@@ -8,6 +8,7 @@ import gool.ast.core.Modifier;
 import gool.ast.core.VarDeclaration;
 import gool.ast.type.IType;
 import gool.ast.type.TypeUnknown;
+import logger.Log;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -24,8 +25,16 @@ public class GeneratorMatcher {
 	static public void init(Platform outputLang) {
 		OutputLang = outputLang;
 	}
-
+	
+	/**
+	 * Return the target class name associated to a given gool class name. It
+	 * is done by reading the appropriate ClassMatching.properties file 
+	 * @param goolClass
+	 *            the gool class name
+	 * @return the corresponding target class name. null if not found. 
+	 */
 	public static String matchGoolClass(String goolClass) {
+		Log.d("<GeneratorMatcher - matchGoolClass> " + goolClass);
 		try {
 			InputStream ips = new FileInputStream(
 					getPathOfOutputClassMatchFile(goolClass));
@@ -37,18 +46,29 @@ public class GeneratorMatcher {
 				if (isOutputMatchLine(line)) {
 					String currentGoolClass = getLeftPartOfOutputMatchLine(line);
 					String currentOutputClass = getRightPartOfOutputMatchLine(line);
-					if (currentGoolClass.equals(goolClass))
+					if (currentGoolClass.equals(goolClass)){
+						Log.d("<GeneratorMatcher - matchGoolClass> found " + currentOutputClass);
 						return currentOutputClass;
+					}
 				}
 			}
 			br.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
+		Log.d("<GeneratorMatcher - matchGoolClass> nothing's found.");
 		return null;
 	}
 	
+	/**
+	 * Return the target method name associated to a given gool method name. It
+	 * is done by reading the appropriate MethodMatching.properties file 
+	 * @param goolClass
+	 *            the gool method name
+	 * @return the corresponding target method name. null if not found. 
+	 */
 	public static String matchGoolMethod(String goolMethod) {
+		Log.d("<GeneratorMatcher - matchGoolMethod> " + goolMethod);
 		try {
 			InputStream ips = new FileInputStream(
 					getPathOfOutputMethodMatchFile(goolMethod.substring(0, goolMethod.lastIndexOf("."))));
@@ -60,19 +80,31 @@ public class GeneratorMatcher {
 				if (isOutputMatchLine(line)) {
 					String currentGoolMethod = getLeftPartOfOutputMatchLine(line);
 					String currentOutputMethod = getRightPartOfOutputMatchLine(line);
-					if (currentGoolMethod.equals(goolMethod))
+					if (currentGoolMethod.equals(goolMethod)){
+						Log.d("<GeneratorMatcher - matchGoolMethod> found " + currentOutputMethod);
 						return currentOutputMethod;
+					}
 				}
 			}
 			br.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
+		Log.d("<GeneratorMatcher - matchGoolMethod> nothing's found.");
 		return null;
 	}
-
+	
+	/**
+	 * Return the file name that contains the target implementation of a given 
+	 * gool class
+	 * @param goolClass
+	 *            the gool method name
+	 * @return the corresponding target file name. null if not found. 
+	 */
 	public static String matchGoolClassImplementation(String goolClass,
 			String implementationFileName) {
+		Log.d("<GeneratorMatcher - matchGoolClassImplementation> " + goolClass
+				+ " - " + implementationFileName);
 		
 		String classImplementation = null;
 		try {
@@ -87,13 +119,25 @@ public class GeneratorMatcher {
 				classImplementation += (line + "\n");
 			}
 			br.close();
-		} catch (Exception e) {
-			System.out.println(e.toString());
+		} catch (Exception e) {//No file defined, must be a standard library
+			Log.w(e.toString() + " - Must be a standard library file");
 		}
+		if (classImplementation != null)
+			Log.d("<GeneratorMatcher - matchGoolClassImplementation> found " + classImplementation);
+		else
+			Log.d("<GeneratorMatcher - matchGoolClassImplementation> nothing's found.");
+					
 		return classImplementation;
 	}
 	
+	/**
+	 * Return the target import library name associated with a given gool class.
+	 * @param goolClass
+	 *            the gool method name
+	 * @return the corresponding target import library name. 
+	 */
 	public static ArrayList<String> matchImports(String goolClass){
+		Log.d("<GeneratorMatcher - matchImports> " + goolClass);
 		try {
 			InputStream ips = new FileInputStream(
 					getPathOfOutputImportMatchFile(goolClass));
@@ -104,15 +148,19 @@ public class GeneratorMatcher {
 				line = removeSpaces(line);
 				if (isOutputMatchLine(line)) {
 					String currentGoolClass = getLeftPartOfOutputMatchLine(line);
-					ArrayList<String> currentImports = parseCommaSeparatedValues(getRightPartOfOutputMatchLine(line));
-					if (currentGoolClass.equals(goolClass))
+					ArrayList<String> currentImports = parseCommaSeparatedValues(
+							getRightPartOfOutputMatchLine(line));
+					if (currentGoolClass.equals(goolClass)){
+						Log.d("<GeneratorMatcher - matchImports> found " + currentImports);
 						return currentImports;
+					}
 				}
 			}
 			br.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
+		Log.d("<GeneratorMatcher - matchImports> nothing's found.");
 		return null;
 	}
 
@@ -134,7 +182,8 @@ public class GeneratorMatcher {
 				+ "MethodMatching.properties";
 	}
 	
-	static private String getPathOfOutputClassImplementationFile(String goolClass, String implementationFileName) {
+	static private String getPathOfOutputClassImplementationFile(String goolClass, 
+			String implementationFileName) {
 		return getPathOfOutputMatchDir(goolClass.substring(0,
 				goolClass.lastIndexOf(".")))
 				+ implementationFileName;

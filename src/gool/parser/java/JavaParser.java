@@ -21,7 +21,9 @@ import gool.ParseGOOL;
 import gool.Settings;
 import gool.ast.core.ClassDef;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.GeneratorMatcher;
 import gool.generator.common.Platform;
+import gool.recognizer.common.RecognizerMatcher;
 import gool.recognizer.java.JavaRecognizer;
 
 import java.io.File;
@@ -126,7 +128,10 @@ public class JavaParser extends ParseGOOL {
 		visitor.setDefaultPlatform(defaultPlatform);
 		GoolGeneratorController.setCodeGenerator(defaultPlatform
 				.getCodePrinter().getCodeGenerator());
-
+		
+		// Adding by Denis A.
+		GeneratorMatcher.init(defaultPlatform);
+		
 		// The visitor might need Sun's analyzed Java abstract type tree.
 		visitor.setTrees(typetrees);
 
@@ -135,9 +140,14 @@ public class JavaParser extends ParseGOOL {
 		 */
 		for (CompilationUnitTree ast : asts) {
 			visitor.setCurrentCompilationUnit(ast);
+			Log.d("\n\n****************** Start Scan *******************\n\n");
 			visitor.scan();
+			Log.d("\n\n****************** End Scan *******************\n\n");
 		}
 
+		// Debug mode
+		RecognizerMatcher.printMatchTables();
+		
 		/**
 		 * Register each abstract GOOL class, so that they can see each other
 		 * and therefore represent valid types

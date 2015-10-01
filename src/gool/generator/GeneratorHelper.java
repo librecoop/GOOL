@@ -72,20 +72,23 @@ public class GeneratorHelper {
 		for (Dependency dep : classDef.getDependencies()) {
 			if (!(dep instanceof RecognizedDependency) && !dep.toString().equals(classDef.toString())) {
 				String s=dep.toString();
+				Log.d("<GeneratorHelper - printDependencies> print " + s);
 				result.add(s);
 			}
 		}
 
 		return result;
 	}
-	
+
 	public static String printRecognizedDependencies(ClassDef classDef) {
 		String result = "";
 		//List<String> dependencies = new ArrayList<String>();
 		// go through each dependency, produce its toString, add it to the set.
-		for (Dependency dep : classDef.getDependencies()) {
+		List<Dependency> dependencies = classDef.getDependencies();
+			for (Dependency dep : dependencies) {
 			if (dep instanceof RecognizedDependency) {
 				result+=dep.toString()+"\n";
+				Log.d("<GeneratorHelper - printRecognizedDependencies> print " + result);
 			}
 		}
 		return result;
@@ -98,10 +101,11 @@ public class GeneratorHelper {
 	 */
 	public static Map<Platform, List<File>> printClassDefs(
 			Collection<ClassDef> classDefs) throws FileNotFoundException {
+		Log.d("\n\n****************** Start Print *******************\n\n");
 		Map<Platform, List<File>> compilationUnits = new HashMap<Platform, List<File>>();
 
 		for (ClassDef classDef : classDefs) {
-
+			Log.d("<GeneratorHelper - printClassDefs> Prepare the print of classDef " + classDef.getName());
 			// The target platform is held by the GOOL class, retrieve it.
 			Platform platform = (Platform) classDef.getPlatform();
 			// Get a codePrinter corresponding to that platform.
@@ -120,12 +124,12 @@ public class GeneratorHelper {
 			// Just compile each abstract GOOL class and add it to the map.
 
 			// try {
-			
 			GeneratorMatcher.init(platform);
+			Log.d("<GeneratorHelper - printClassDefs> Print of classDef " + classDef.getName());
 			compilationUnits.get(platform).addAll(
 					currentPrinter.print(classDef));
-			
-			
+
+
 			// } catch (ResourceNotFoundException e) {
 			// Log.e(String.format(
 			// "Impossible to produce file '%s': platforms should" +
@@ -149,6 +153,8 @@ public class GeneratorHelper {
 					.createAndroidProject(compilationUnits.get(platform));
 			compilationUnits.put(platform, newFileList);
 		}
+
+		Log.d("\n\n****************** End Print *******************\n\n");
 		return compilationUnits;
 	}
 

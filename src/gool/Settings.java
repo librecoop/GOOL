@@ -17,6 +17,8 @@
 
 package gool;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -47,6 +49,7 @@ public final class Settings {
 
 	static {
 		load("gool.properties");
+		//load("/home/arrivault/Codes/GOOL_ALL/GOOL/src/gool.properties");
 	}
 
 	/**
@@ -55,17 +58,24 @@ public final class Settings {
 	 * 			: The path name of the properties file.
 	 */
 	public static void load(String propertyFile) {
-		try {
-			properties = new Properties();
-			InputStream stream = ClassLoader
-					.getSystemResourceAsStream(propertyFile);
-			if (stream != null) {
-				properties.load(stream);
+		properties = new Properties();
+		try{
+			//Try to load the properties file from project root folder
+			FileInputStream input = new FileInputStream(propertyFile);
+			properties.load(input);			
+		} catch ( Exception ef){
+			//If failed, load the default properties file from classpath.
+			try {				
+				InputStream stream = ClassLoader
+						.getSystemResourceAsStream(propertyFile);
+				if (stream != null) {
+					properties.load(stream);
+				}
+			} catch (IOException e) {
+				Log.e(String.format("Failed to load the property file %s",
+						propertyFile) + e.toString());
 			}
-		} catch (IOException e) {
-			Log.e(String.format("Failed to load the property file %s",
-					propertyFile) + e.toString());
-		} 
+		}
 
 	}
 
@@ -130,7 +140,7 @@ public final class Settings {
 	/**
 	 * Launch a graphical setter
 	 */
-	
+
 	public static void launchGuiSetter(){
 		SettingsPanel guiSetter = new SettingsPanel(properties);
 		guiSetter.launch();

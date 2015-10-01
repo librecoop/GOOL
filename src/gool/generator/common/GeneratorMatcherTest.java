@@ -1,10 +1,14 @@
 package gool.generator.common;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import gool.ast.core.ClassDef;
 import gool.ast.core.Modifier;
 import gool.ast.core.Package;
+import gool.generator.GoolGeneratorController;
+import gool.generator.java.JavaPlatform;
 
 public class GeneratorMatcherTest {
 
@@ -28,34 +32,36 @@ public class GeneratorMatcherTest {
 		ArrayList<String> imports = GeneratorMatcher.matchImports(GoolClassAST.getPackageName()+"."+GoolClassAST.getName());
 		
 		System.exit(0);*/
-		String goolClass = "gool.io.GoolFile";
-		System.out.println(GeneratorMatcher.matchGoolClass("gool.io.GoolFile"));
-		System.out.println(GeneratorMatcher.matchGoolClass("gool.io.GoolFileReader"));
-		System.out.println(GeneratorMatcher.matchGoolClass("gool.io.GoolFileWriter"));
-		System.out.println(GeneratorMatcher.matchGoolClass("gool.io.GoolBufferedReader"));
-		System.out.println(GeneratorMatcher.matchGoolClass("gool.io.GoolBufferedWriter"));
+		String goolClass = "io.GoolFile";
+		GoolGeneratorController.setCodeGenerator(JavaPlatform.getInstance().getCodePrinter().getCodeGenerator());
+		GeneratorMatcher.init(JavaPlatform.getInstance());
+		System.out.println(GeneratorMatcher.matchGoolClass("io.GoolFile"));
+		System.out.println(GeneratorMatcher.matchGoolClass("io.GoolFileReader"));
+		System.out.println(GeneratorMatcher.matchGoolClass("io.GoolFileWriter"));
+		System.out.println(GeneratorMatcher.matchGoolClass("io.GoolBufferedReader"));
+		System.out.println(GeneratorMatcher.matchGoolClass("io.GoolBufferedWriter"));
 		
 		System.out.println();
 		
-		for(String res : GeneratorMatcher.matchImports("gool.io.GoolFile"))
+		for(String res : GeneratorMatcher.matchImports("io.GoolFile"))
 			System.out.print(res+" , ");
 		System.out.println();
-		for(String res : GeneratorMatcher.matchImports("gool.io.GoolFileReader"))
+		for(String res : GeneratorMatcher.matchImports("io.GoolFileReader"))
 			System.out.print(res+" , ");
 		System.out.println();
-		for(String res : GeneratorMatcher.matchImports("gool.io.GoolFileWriter"))
+		for(String res : GeneratorMatcher.matchImports("io.GoolFileWriter"))
 			System.out.print(res+" , ");
 		System.out.println();
-		for(String res : GeneratorMatcher.matchImports("gool.io.GoolBufferedReader"))
+		for(String res : GeneratorMatcher.matchImports("io.GoolBufferedReader"))
 			System.out.print(res+" , ");
 		System.out.println();
-		for(String res : GeneratorMatcher.matchImports("gool.io.GoolBufferedWriter"))
+		for(String res : GeneratorMatcher.matchImports("io.GoolBufferedWriter"))
 			System.out.print(res+" , ");
 		System.out.println();
 		
 		System.out.println();
 		
-		System.out.println(GeneratorMatcher.matchGoolClassImplementation("gool.io.GoolFileReader", "GoolBufferedReaderImpl.java"));
+		System.out.println(GeneratorMatcher.matchGoolClassImplementation("io.GoolFileReader", "GoolBufferedReaderImpl.java"));
 
 	}
 

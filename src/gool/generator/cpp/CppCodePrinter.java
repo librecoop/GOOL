@@ -55,7 +55,7 @@ public class CppCodePrinter extends CodePrinter {
 		List<String> goolHelperIn = new ArrayList<String>();
 		goolHelperIn.add("finally.h");
 		if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
-			Log.e(String.format("Impossible to create the directory '%s'",
+			Log.e(String.format("<CppCodePrinter> Impossible to create the directory '%s'",
 					outputDir));
 		} else {
 			// Print finally
@@ -71,7 +71,7 @@ public class CppCodePrinter extends CodePrinter {
 					goolHelperOut.close();
 					helper.close();
 				} catch (IOException e) {
-					Log.e(String.format("Impossible to create the file '%s'",
+					Log.e(String.format("<CppCodePrinter> Impossible to create the file '%s'",
 							in));
 				}
 			}
@@ -143,32 +143,46 @@ public class CppCodePrinter extends CodePrinter {
 
 		List<File> result = new ArrayList<File>();
 		for (String goolClassImplem : goolClassImplems) {
-			String goolClassImplemName = goolClassImplem
-					.substring(goolClassImplem.lastIndexOf(".") + 1);
-			String goolClassImplemPackage = goolClassImplem.substring(0,
-					goolClassImplem.lastIndexOf("."));
+			int dotIndex = goolClassImplem.lastIndexOf(".");
+			String goolClassImplemName = goolClassImplem;
+			String goolClassImplemPackage = "";
+			if (dotIndex != -1){
+				goolClassImplemName = goolClassImplem.substring(dotIndex + 1);				
+				goolClassImplemPackage = goolClassImplem.substring(0, dotIndex);
+			}
+			Log.d("<CppCodePrinter - printGoolLibraryClass> " + goolClassImplemName);
+			Log.d("<CppCodePrinter - printGoolLibraryClass> " + goolClassImplemPackage);
+
 			String implemFileName = goolClassImplemName+".cpp";
 			String headerFileName = goolClassImplemName+".h";
 			String codeImplem = GeneratorMatcher.matchGoolClassImplementation(
 					goolClass, implemFileName);
 			String codeHeader = GeneratorMatcher.matchGoolClassImplementation(
 					goolClass, headerFileName);
-			File dir = new File(getOutputDir().getAbsolutePath(),
-					StringUtils.replace(goolClassImplemPackage, ".",
-							File.separator));
-			dir.mkdirs();
-			File implemFile = new File(dir, implemFileName);
-			File headerFile = new File(dir, headerFileName);
-			
-			//print implementation file
-			PrintWriter writer = new PrintWriter(implemFile);
-			writer.println(codeImplem);
-			writer.close();
-			
-			//print header file
-			writer = new PrintWriter(headerFile);
-			writer.println(codeHeader);
-			writer.close();
+
+			File dir;
+			if (dotIndex != -1){
+				dir = new File(getOutputDir().getAbsolutePath(),
+						StringUtils.replace(goolClassImplemPackage, ".",
+								File.separator));
+				dir.mkdirs();
+			}else{
+				dir = new File(getOutputDir().getAbsolutePath());
+			}
+
+			if (codeImplem != null){
+				File implemFile = new File(dir, implemFileName);
+				PrintWriter writer = new PrintWriter(implemFile);
+				writer.println(codeImplem);
+				writer.close();
+			}
+			if (codeHeader != null){			
+				File headerFile = new File(dir, headerFileName);
+				//print header file
+				PrintWriter writer = new PrintWriter(headerFile);
+				writer.println(codeHeader);
+				writer.close();
+			}
 		}
 		printedClasses.add(pclass);
 		return result;

@@ -5,6 +5,12 @@ import goolHelper.IO
 import goolHelper.Util
 
 
+class SimpleMult(object):
+
+    def __init__(self):
+        super(SimpleMult, self).__init__()
+
+
 if __name__ == '__main__':
     from SimpleMult import *
 # main program
@@ -12,9 +18,4 @@ if __name__ == '__main__':
     print n
 # end of main
     exit()
-
-class SimpleMult(object):
-
-    def __init__(self):
-        super(SimpleMult, self).__init__()
 

@@ -82,6 +82,7 @@ public abstract class CodePrinter {
 
 	private Collection<File> myFileToCopy;
 
+
 	/**
 	 * Creates a new {@link CodePrinter} with a specific {@link CodeGenerator}.
 	 * 
@@ -101,10 +102,9 @@ public abstract class CodePrinter {
 
 		for (File fi : myFileToCopy) {
 			File fd;
-
 			String path = "";
 			try {
-				int i = fi.getCanonicalPath().lastIndexOf("src") + 4;
+				int i = fi.getCanonicalPath().lastIndexOf("tests") + 5;
 				path = fi.getCanonicalPath().toString().substring(i);
 			} catch (IOException e) {
 				Log.e(e.toString());
@@ -116,6 +116,9 @@ public abstract class CodePrinter {
 
 			}
 			fd = new File(outputDir + File.separator + path);
+			Log.i("<CodePrinter> copy " + fi.toString());
+			Log.i("<CodePrinter> to " + fd.toString());
+
 			try {
 				CopierFichier(fi, fd);
 			} catch (FileNotFoundException e1) {
@@ -202,7 +205,7 @@ public abstract class CodePrinter {
 			// Load the template into velocity
 			String templateFile = getTemplateDir() + templateFilename;
 			Template template = engine.getTemplate(templateFile);
-			Log.i(String.format("Loaded velocity template: %s", templateFile));
+			Log.i(String.format("<CodePrinter - processTemplate> Loaded velocity template: %s", templateFile));
 
 			// Provide velocity with what it needs to fill in the template
 			// i.e. the ClassDef
@@ -218,12 +221,13 @@ public abstract class CodePrinter {
 			// Here:
 			// http://velocity.apache.org/engine/releases/velocity-1.5/user-guide.html
 			StringWriter writer = new StringWriter();
+			Log.d(String.format("<CodePrinter - processTemplate> Start merge"));
 			template.merge(context, writer);
+			Log.d(String.format("<CodePrinter - processTemplate> End merge"));
 			return writer.toString();
 		} catch (ResourceNotFoundException e) {
 			throw e;
 		} catch (Exception e) {
-
 			throw new VelocityException(e.getLocalizedMessage(), e);
 		}
 	}
@@ -247,14 +251,15 @@ public abstract class CodePrinter {
 		if(pclass.isGoolLibraryClass()){
 			return printGoolLibraryClass(pclass);
 		}
-		
+
 		/*
 		 * Delegate the code generation to the ClassDef object, which may decide
 		 * that the currentPrinter need be changed since platforms are decided
 		 * on a per class basis
 		 */
+		Log.d("\n##### ClassDef getCode() #####\n");
 		String code = pclass.getCode();
-
+		Log.d("\n##### End ClassDef getCode() #####\n");
 		// file separator is just a slash in Unix
 		// so the second argument to File() is just the directory
 		// that corresponds to the package name
@@ -269,7 +274,7 @@ public abstract class CodePrinter {
 		dir.mkdirs();
 		// Create the file for the class, fill it in, close it
 		File classFile = new File(dir, getFileName(pclass.getName()));
-		Log.i(String.format("Writing to file %s", classFile));
+		Log.i(String.format("<CodePrinter - print> Writing to file %s", classFile));
 		PrintWriter writer = new PrintWriter(classFile);
 		writer.println(code);
 		writer.close();
@@ -285,38 +290,50 @@ public abstract class CodePrinter {
 		for (Dependency dependency : pclass.getDependencies()) {
 			if (!printedClasses.contains(dependency)
 					&& dependency instanceof ClassDef) {
+				Log.d("<CodePrinter - print> Include dependency " + dependency.toString());
 				result.addAll(print((ClassDef) dependency));
 			}
 		}
 		return result;
 	}
-	
+
 	public List<File> printGoolLibraryClass(ClassDef pclass) throws FileNotFoundException {
-			String goolClass = pclass.getPackageName()+"."+pclass.getName();
-			
-			ArrayList<String> goolClassImplems = new ArrayList<String>();
-			for(String Import : GeneratorMatcher.matchImports(goolClass))
-				if(Import.startsWith("+"))
-					goolClassImplems.add(Import.substring(1));
-			
-			List<File> result = new ArrayList<File>();
-			for(String goolClassImplem : goolClassImplems){
-				String goolClassImplemName = goolClassImplem.substring(goolClassImplem.lastIndexOf(".")+1);
-				String goolClassImplemPackage = goolClassImplem.substring(0, goolClassImplem.lastIndexOf("."));
+		String goolClass = pclass.getPackageName()+"."+pclass.getName();
+		ArrayList<String> goolClassImplems = new ArrayList<String>();
+		ArrayList<String> targetImportLibraries = GeneratorMatcher.matchImports(goolClass);
+		if (targetImportLibraries != null){
+			for(String Import : targetImportLibraries)
+				if(Import.startsWith("+")){
+					String importName = Import.substring(1);
+					goolClassImplems.add(importName);
+				}			
+			for(String goolClassImplem : goolClassImplems){			
+				int dotIndex = goolClassImplem.lastIndexOf(".");
+				String goolClassImplemName = goolClassImplem;
+				String goolClassImplemPackage = "";
+				if (dotIndex != -1){
+					goolClassImplemName = goolClassImplem.substring(dotIndex + 1);				
+					goolClassImplemPackage = goolClassImplem.substring(0, dotIndex);
+				}
 				String implemFileName = pclass.getPlatform().getCodePrinter().getFileName(goolClassImplemName);
 				String code = GeneratorMatcher.matchGoolClassImplementation(goolClass, implemFileName);
-				File dir = new File(getOutputDir().getAbsolutePath(),
-						StringUtils.replace(goolClassImplemPackage, ".",
-								File.separator));
-				dir.mkdirs();
-				File implemFile = new File(dir, implemFileName);
-				PrintWriter writer = new PrintWriter(implemFile);
-				writer.println(code);
-				writer.close();
+				Log.d("<CodePrinter - printGoolLibraryClass> " + implemFileName + " - code = " + code);
+
+				if (code != null){
+					File dir = new File(getOutputDir().getAbsolutePath(),
+							StringUtils.replace(goolClassImplemPackage, ".",
+									File.separator));
+					dir.mkdirs();
+					File implemFile = new File(dir, implemFileName);
+					PrintWriter writer = new PrintWriter(implemFile);
+					writer.println(code);
+					writer.close();
+				}
 			}
-			printedClasses.add(pclass);
-			return result;
-		
+		}
+		printedClasses.add(pclass);
+		return new ArrayList<File>();
+
 	}
 
 	/**
@@ -367,7 +384,7 @@ public abstract class CodePrinter {
 		}
 
 		GoolGeneratorController
-				.setCodeGenerator(codePrinter.getCodeGenerator());
+		.setCodeGenerator(codePrinter.getCodeGenerator());
 		return codePrinter;
 	}
 

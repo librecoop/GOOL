@@ -19,19 +19,22 @@ package gool.generator.python;
 
 import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
+import logger.Log;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import logger.Log;
-
+/**
+ * Provides the basic functionality to generate Python code from a list of GOOL
+ * classes.
+ */
 public class PythonCodePrinter extends CodePrinter {
 
 	private void createGoolHelperModule(File outputDir) {

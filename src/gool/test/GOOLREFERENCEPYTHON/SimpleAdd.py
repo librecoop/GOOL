@@ -5,6 +5,12 @@ import goolHelper.IO
 import goolHelper.Util
 
 
+class SimpleAdd(object):
+
+    def __init__(self):
+        super(SimpleAdd, self).__init__()
+
+
 if __name__ == '__main__':
     from SimpleAdd import *
 # main program
@@ -12,9 +18,4 @@ if __name__ == '__main__':
     print n
 # end of main
     exit()
-
-class SimpleAdd(object):
-
-    def __init__(self):
-        super(SimpleAdd, self).__init__()
 

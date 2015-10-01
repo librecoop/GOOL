@@ -17,6 +17,8 @@
 
 package gool.generator.common.exception;
 
+import logger.Log;
+
 public class VelocityException extends RuntimeException {
 
 	/**
@@ -26,5 +28,14 @@ public class VelocityException extends RuntimeException {
 
 	public VelocityException(String message, Throwable cause) {
 		super(message, cause);
+	}
+	
+	public String getCauseStack(){
+		String mess = super.getCause().toString();
+		mess += "\n";
+		for(StackTraceElement se : super.getCause().getStackTrace()){
+			mess += se.toString() + "\n";
+		}
+		return mess;
 	}
 }

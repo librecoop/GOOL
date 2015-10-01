@@ -18,6 +18,7 @@
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
+import logger.Log;
 
 /**
  * This is the basic type for gool library class in the intermediate language.
@@ -54,6 +55,7 @@ public final class TypeGoolLibraryClass extends ReferenceType {
 
 	@Override
 	public String callGetCode() {
+		Log.d("<TypeGoolLibraryClass - callGetCode> Output generator is required for " + goolclassname);
 		return GoolGeneratorController.generator().getCode(this);
 	}
 

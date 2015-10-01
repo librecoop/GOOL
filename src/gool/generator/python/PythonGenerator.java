@@ -44,6 +44,7 @@ import gool.ast.core.MapEntryMethCall;
 import gool.ast.core.MapMethCall;
 import gool.ast.core.MemberSelect;
 import gool.ast.core.Meth;
+import gool.ast.core.MethCall;
 import gool.ast.core.Modifier;
 import gool.ast.core.NewInstance;
 import gool.ast.core.Operator;
@@ -115,7 +116,7 @@ import logger.Log;
 import org.apache.commons.lang.StringUtils;
 
 public class PythonGenerator extends CommonCodeGenerator implements
-		CodeGeneratorNoVelocity {
+CodeGeneratorNoVelocity {
 
 	public PythonGenerator() {
 		super();
@@ -206,12 +207,12 @@ public class PythonGenerator extends CommonCodeGenerator implements
 			for (Expression e : arrayNew.getDimesExpressions())
 				ret = String.format("[%s]*%s", ret, e);
 			return "(" + ret + ")";}
-		
-		
+
+
 		return String.format("[%s]",StringUtils.join(arrayNew.getInitialiList(), ", "));
-				
-		
-		
+
+
+
 	}
 
 	@Override
@@ -256,6 +257,14 @@ public class PythonGenerator extends CommonCodeGenerator implements
 				textualOp = binaryOp.getTextualoperator();
 			}
 			break;
+		case EQUAL:
+			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
+				return String.format("(%s is %s)", binaryOp.getLeft(), 
+						binaryOp.getRight());
+		case NOT_EQUAL:
+			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
+				return String.format("(%s is not %s)", binaryOp.getLeft(), 
+						binaryOp.getRight());
 		default:
 			textualOp = binaryOp.getTextualoperator();
 		}
@@ -264,13 +273,15 @@ public class PythonGenerator extends CommonCodeGenerator implements
 		return String.format("(%s %s %s)", binaryOp.getLeft(), textualOp,
 				binaryOp.getRight());
 	}
-	
+
 	@Override
 	public String getCode(Constant constant) {
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
 			return String.valueOf(constant.getValue().toString()
 					.equalsIgnoreCase("true") ? "True" : "False");
-		} else {
+		} else if(constant.getType().equals(TypeNull.INSTANCE)){
+			return "None";
+		}else {
 			String ret = super.getCode(constant);
 			// unicode strings have to be prefixed with a 'u'
 			if (constant.getType() == TypeString.INSTANCE
@@ -364,7 +375,7 @@ public class PythonGenerator extends CommonCodeGenerator implements
 				printWithComment(forr.getInitializer()),
 				forr.getCondition(),
 				forr.getWhileStatement().toString()
-						+ printWithComment(forr.getUpdater()));
+				+ printWithComment(forr.getUpdater()));
 	}
 
 	@Override
@@ -400,20 +411,22 @@ public class PythonGenerator extends CommonCodeGenerator implements
 		default:
 			comment("Unrecognized by GOOL, passed on: add");
 			return String.format("%s.add(%s)", lac.getExpression(),
-					StringUtils.join(lac.getParameters(), ", "));
+					GeneratorHelper.joinParams(lac.getParameters()));
 		}
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s in %s", lcc.getParameters().get(0),
+		return String.format("%s in %s", GeneratorHelper.joinParams(lcc.getParameters()),
 				lcc.getExpression());
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		return String.format("%s[%s]", lgc.getExpression(), lgc.getParameters()
-				.get(0));
+		if (lgc.getParameters().isEmpty())
+			return String.format("%s[]", lgc.getExpression());
+		return String.format("%s[%s]", lgc.getExpression(), 
+				lgc.getParameters().get(0));
 	}
 
 	@Override
@@ -457,6 +470,8 @@ public class PythonGenerator extends CommonCodeGenerator implements
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
+		if (mapContainsKeyCall.getParameters().isEmpty())
+			return String.format("in %s", mapContainsKeyCall.getExpression());
 		return String.format("%s in %s", mapContainsKeyCall.getParameters()
 				.get(0), mapContainsKeyCall.getExpression());
 	}
@@ -480,8 +495,8 @@ public class PythonGenerator extends CommonCodeGenerator implements
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String.format("%s[%s]", mapGetCall.getExpression(), mapGetCall
-				.getParameters().get(0));
+		return String.format("%s[%s]", mapGetCall.getExpression(),
+				GeneratorHelper.joinParams(mapGetCall.getParameters()));
 	}
 
 	@Override
@@ -504,9 +519,14 @@ public class PythonGenerator extends CommonCodeGenerator implements
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
+		if (mapPutCall.getParameters().isEmpty())
+			return String.format("%s[] =", mapPutCall.getExpression());
+		//		if (mapPutCall.getParameters().size() == 1)
+		//			return String.format("%s[%s] =", mapPutCall.getExpression(), 
+		//					mapPutCall.getParameters().get(0));
 		return String.format("%s[%s] = %s", mapPutCall.getExpression(),
 				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
-						.get(1));
+				.get(1));
 	}
 
 	@Override
@@ -570,9 +590,41 @@ public class PythonGenerator extends CommonCodeGenerator implements
 			prefix = "pass";
 		return formatIndented("%sdef %s(self%s):%1", meth.getModifiers()
 				.contains(Modifier.STATIC) ? "@classmethod\n" : "",
-				methodsNames.get(meth),
-				methodsNames.get(meth).equals(meth.getName()) ? ", *args"
-						: printMethParamsNames(meth), prefix + meth.getBlock());
+						methodsNames.get(meth),
+						methodsNames.get(meth).equals(meth.getName()) ? ", *args"
+								: printMethParamsNames(meth), prefix + meth.getBlock());
+	}
+
+	/**
+	 * Produces code for a method invocation.
+	 * 
+	 * @param methodCall
+	 *            the method to be invoked.
+	 * @return the formatted method invocation.
+	 */
+	@Override
+	public String getCode(MethCall methodCall) {
+		String out = "";
+		if (methodCall.getTarget() != null) {
+			out = methodCall.getTarget().toString();
+			String goolMethod = methodCall.getGoolLibraryMethod();
+			if(goolMethod!=null){
+				Log.d(String.format("<PythonGenerator - getCode(MethCall> out = %s | goolMethod = %s ", out, goolMethod));
+				//here, get matched output method name with the GeneratorMatcher
+				out = GeneratorMatcher.matchGoolMethod(goolMethod);
+			}
+		}
+
+		// if (methodCall.getType() != null) {
+		// out += "< " + methodCall.getType() + " >";
+		// }
+		out += "(";
+		if (methodCall.getParameters() != null) {
+			out += StringUtils.join(methodCall.getParameters(), ", ");
+		}
+		out += ")";
+		//Log.i("<CppGenerator> " + out);
+		return out;
 	}
 
 	/**
@@ -673,7 +725,7 @@ public class PythonGenerator extends CommonCodeGenerator implements
 				newInstance.getVariable(),
 				// why would there be any trailing '\'?
 				newInstance.getVariable().getType().toString()
-						.replaceFirst("\\*$", ""),
+				.replaceFirst("\\*$", ""),
 				StringUtils.join(newInstance.getParameters(), ", "));
 	}
 
@@ -690,6 +742,7 @@ public class PythonGenerator extends CommonCodeGenerator implements
 
 	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {
+		Log.d("<PythonGenerator - getCode(SystemOutDependency)> return noprint");
 		return "noprint";
 	}
 
@@ -953,17 +1006,19 @@ public class PythonGenerator extends CommonCodeGenerator implements
 				}
 			}
 		}
+		code = code.append(GeneratorHelper.printRecognizedDependencies(classDef));
 
 		/*
 		 * As it is not a method, we have do do everything manually. The
 		 * condition makes sure we do not execute the main when importing the
 		 * file TODO: deal with command line arguments
 		 */
+		StringBuilder codeMain = new StringBuilder();
 		for (Meth meth : classDef.getMethods()) {
 			if (meth.isMainMethod()) {
 				localIndentifiers.clear();
 				currentMeth = meth;
-				code = code
+				codeMain = codeMain
 						.append(formatIndented(
 								"\nif __name__ == '__main__':\n%-1from %s import *\n# main program%1# end of main\n%-1exit()\n",
 								classDef.getName(), meth.getBlock()));
@@ -976,7 +1031,7 @@ public class PythonGenerator extends CommonCodeGenerator implements
 		// Not needed in Python 3, but kept for compatibility.
 		code = code.append(String.format("\nclass %s(%s):\n", classDef
 				.getName(), (classDef.getParentClass() != null) ? classDef
-				.getParentClass().getName() : "object"));
+						.getParentClass().getName() : "object"));
 
 		String dynamicAttributs = "";
 		for (Field f : classDef.getFields()) {
@@ -1004,19 +1059,19 @@ public class PythonGenerator extends CommonCodeGenerator implements
 		for (Meth method : classDef.getMethods()) { // On parcourt les méthodes
 			// the main method will be printed outside of the class later
 			if (getName(method) == null) { // Si la méthode n'a pas encore été
-											// renommée
+				// renommée
 				meths.clear();
 
 				for (Meth m : classDef.getMethods()) { // On récupère les
-														// méthodes de mêmes
-														// noms
+					// méthodes de mêmes
+					// noms
 					if (m.getName().equals(method.getName())) {
 						meths.add(m);
 					}
 				}
 
 				if (meths.size() > 1) { // Si il y a plusieurs méthodes de même
-										// nom
+					// nom
 					code = code
 							.append(formatIndented("\n%-1# wrapper generated by GOOL\n"));
 					String block = "";
@@ -1043,7 +1098,7 @@ public class PythonGenerator extends CommonCodeGenerator implements
 						block += formatIndented(
 								"%sif goolHelper.test_args(args%s):\n%-1self.%s(*args)\n",
 								first ? "" : "el",
-								printMethParamsTypes(m2, ", "), newName);
+										printMethParamsTypes(m2, ", "), newName);
 						first = false;
 					}
 					if (!method.getModifiers().contains(Modifier.PRIVATE)
@@ -1113,6 +1168,8 @@ public class PythonGenerator extends CommonCodeGenerator implements
 			}
 		}
 
+		code.append("\n");
+		code.append(codeMain);
 		return code.toString();
 	}
 
@@ -1170,11 +1227,29 @@ public class PythonGenerator extends CommonCodeGenerator implements
 			return typeException.getName();
 		}
 	}
-	
+
+	//	public String getCode(RecognizedDependency recognizedDependency) {
+	//		//TODO: not implemented
+	//		String result = "RecognizedDependency not generated by GOOL, passd on.";
+	//		
+	//
+	//		return result;
+	//	}
+
 	public String getCode(RecognizedDependency recognizedDependency) {
-		//TODO: not implemented
-		String result = "RecognizedDependency not generated by GOOL, passd on.";
-		
+		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());
+		if(imports == null)
+			return "";
+		if(imports.isEmpty())
+			return "/* import "+recognizedDependency.getName()+" not generated by GOOL, passed on. */";
+		Log.d("<PythonGenerator - getCode(RecognizedDependency)> Print RecognizedDependencies :");
+		String result = "";
+		for (String Import : imports) {
+			if (Import.startsWith("+"))
+				Import = Import.substring(1);
+			Log.d("---> " + Import);
+			result += "import " + Import + "\n";
+		}
 
 		return result;
 	}

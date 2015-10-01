@@ -5,6 +5,12 @@ import goolHelper.IO
 import goolHelper.Util
 
 
+class SimpleFor(object):
+
+    def __init__(self):
+        super(SimpleFor, self).__init__()
+
+
 if __name__ == '__main__':
     from SimpleFor import *
 # main program
@@ -16,9 +22,4 @@ if __name__ == '__main__':
     print total
 # end of main
     exit()
-
-class SimpleFor(object):
-
-    def __init__(self):
-        super(SimpleFor, self).__init__()
 

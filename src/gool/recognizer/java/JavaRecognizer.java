@@ -209,6 +209,8 @@ import com.sun.tools.javac.tree.TreeInfo;
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
+	private static int compt = 0;
+
 	/**
 	 * The Sun's abstract Java AST that we will now convert to abstract GOOL.
 	 */
@@ -281,6 +283,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		operatorMap.put(Kind.MULTIPLY_ASSIGNMENT, Operator.MULT);
 		operatorMap.put(Kind.OR_ASSIGNMENT, Operator.OR);
 		operatorMap.put(Kind.PLUS_ASSIGNMENT, Operator.PLUS);
+		operatorMap.put(Kind.REMAINDER, Operator.REMAINDER);
 	}
 
 	static {
@@ -288,55 +291,55 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// TODO: only exception from java.lang are registered for now
 		TypeException.add(new TypeException("Exception", "java.lang",
 				TypeException.Kind.GLOBAL), new TypeException(
-				"RuntimeException", "java.lang", TypeException.Kind.GLOBAL),
+						"RuntimeException", "java.lang", TypeException.Kind.GLOBAL),
 				new TypeException("ArithmeticException", "java.lang",
 						TypeException.Kind.ARITHMETIC), new TypeException(
-						"ArrayStoreException", "java.lang",
-						TypeException.Kind.COLLECTION), new TypeException(
-						"ClassCastException", "java.lang",
-						TypeException.Kind.CAST), new TypeException(
-						"EnumConstantNotPresentException", "java.lang",
-						TypeException.Kind.ENUM), new TypeException(
-						"IllegalArgumentException", "java.lang",
-						TypeException.Kind.ARGUMENT), new TypeException(
-						"IllegalThreadStateException", "java.lang",
-						TypeException.Kind.ARGUMENT), new TypeException(
-						"NumberFormatException", "java.lang",
-						TypeException.Kind.ARGUMENT), new TypeException(
-						"IllegalMonitorStateException", "java.lang",
-						TypeException.Kind.THREAD), new TypeException(
-						"IllegalStateException", "java.lang",
-						TypeException.Kind.STATE), new TypeException(
-						"IndexOutOfBoundsException", "java.lang",
-						TypeException.Kind.ARRAY), new TypeException(
-						"ArrayIndexOutOfBoundsException", "java.lang",
-						TypeException.Kind.ARRAY), new TypeException(
-						"StringIndexOutOfBoundsException", "java.lang",
-						TypeException.Kind.ARRAY), new TypeException(
-						"NegativeArraySizeException", "java.lang",
-						TypeException.Kind.ARRAYSIZE), new TypeException(
-						"NullPointerException", "java.lang",
-						TypeException.Kind.NULLREFERENCE), new TypeException(
-						"SecurityException", "java.lang",
-						TypeException.Kind.SECURITY), new TypeException(
-						"TypeNotPresentException", "java.lang",
-						TypeException.Kind.TYPE), new TypeException(
-						"UnsupportedOperationException", "java.lang",
-						TypeException.Kind.UNSUPORTED), new TypeException(
-						"ClassNotFoundException", "java.lang",
-						TypeException.Kind.CLASSNOTFOUND), new TypeException(
-						"CloneNotSupportedException", "java.lang",
-						TypeException.Kind.DEFAULT), new TypeException(
-						"IllegalAccessException", "java.lang",
-						TypeException.Kind.ACCESS), new TypeException(
-						"InstantiationException", "java.lang",
-						TypeException.Kind.NEWINSTANCE), new TypeException(
-						"InterruptedException", "java.lang",
-						TypeException.Kind.INTERUPT), new TypeException(
-						"NoSuchFieldException", "java.lang",
-						TypeException.Kind.NOSUCHFIELD), new TypeException(
-						"NoSuchMethodException", "java.lang",
-						TypeException.Kind.NOSUCHMETH));
+								"ArrayStoreException", "java.lang",
+								TypeException.Kind.COLLECTION), new TypeException(
+										"ClassCastException", "java.lang",
+										TypeException.Kind.CAST), new TypeException(
+												"EnumConstantNotPresentException", "java.lang",
+												TypeException.Kind.ENUM), new TypeException(
+														"IllegalArgumentException", "java.lang",
+														TypeException.Kind.ARGUMENT), new TypeException(
+																"IllegalThreadStateException", "java.lang",
+																TypeException.Kind.ARGUMENT), new TypeException(
+																		"NumberFormatException", "java.lang",
+																		TypeException.Kind.ARGUMENT), new TypeException(
+																				"IllegalMonitorStateException", "java.lang",
+																				TypeException.Kind.THREAD), new TypeException(
+																						"IllegalStateException", "java.lang",
+																						TypeException.Kind.STATE), new TypeException(
+																								"IndexOutOfBoundsException", "java.lang",
+																								TypeException.Kind.ARRAY), new TypeException(
+																										"ArrayIndexOutOfBoundsException", "java.lang",
+																										TypeException.Kind.ARRAY), new TypeException(
+																												"StringIndexOutOfBoundsException", "java.lang",
+																												TypeException.Kind.ARRAY), new TypeException(
+																														"NegativeArraySizeException", "java.lang",
+																														TypeException.Kind.ARRAYSIZE), new TypeException(
+																																"NullPointerException", "java.lang",
+																																TypeException.Kind.NULLREFERENCE), new TypeException(
+																																		"SecurityException", "java.lang",
+																																		TypeException.Kind.SECURITY), new TypeException(
+																																				"TypeNotPresentException", "java.lang",
+																																				TypeException.Kind.TYPE), new TypeException(
+																																						"UnsupportedOperationException", "java.lang",
+																																						TypeException.Kind.UNSUPORTED), new TypeException(
+																																								"ClassNotFoundException", "java.lang",
+																																								TypeException.Kind.CLASSNOTFOUND), new TypeException(
+																																										"CloneNotSupportedException", "java.lang",
+																																										TypeException.Kind.DEFAULT), new TypeException(
+																																												"IllegalAccessException", "java.lang",
+																																												TypeException.Kind.ACCESS), new TypeException(
+																																														"InstantiationException", "java.lang",
+																																														TypeException.Kind.NEWINSTANCE), new TypeException(
+																																																"InterruptedException", "java.lang",
+																																																TypeException.Kind.INTERUPT), new TypeException(
+																																																		"NoSuchFieldException", "java.lang",
+																																																		TypeException.Kind.NOSUCHFIELD), new TypeException(
+																																																				"NoSuchMethodException", "java.lang",
+																																																				TypeException.Kind.NOSUCHMETH));
 
 	}
 
@@ -387,25 +390,31 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	private void addDependencyToContext(Context context, Dependency newDep) {
 		if (newDep != null && context != null && context.getClassDef() != null) {
-
+			
+			String newDepString;
+			if (newDep instanceof RecognizedDependency)
+				newDepString = ((RecognizedDependency) newDep).getName();
+			else
+				newDepString = newDep.toString();
+			Log.d("<JavaRecognizer - addDependencyToContext> Trying to add " + newDepString);
 			// if the new dependency has already been added to the context,
 			// there is nothing to do
 			for (Dependency d : context.getClassDef().getDependencies()) {
-				String dString, newDepString;
+				String dString;
 				if (d instanceof RecognizedDependency)
 					dString = ((RecognizedDependency) d).getName();
 				else
 					dString = d.toString();
-				if (newDep instanceof RecognizedDependency)
-					newDepString = ((RecognizedDependency) newDep).getName();
-				else
-					newDepString = newDep.toString();
-
-				if (dString.equals(newDepString))
+				
+				if (dString.equals(newDepString)){
+					Log.d("<JavaRecognizer - addDependencyToContext> Dependency "
+							+ dString + " has already been added.");
 					return;
+				}
 			}
 
 			// else, if it's indeed a new dependency, we add it to the context
+			Log.d("<JavaRecognizer - addDependencyToContext> dependency added = " + newDepString);
 			context.getClassDef().addDependency(newDep);
 		}
 	}
@@ -444,7 +453,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n == null) {
 			return TypeNone.INSTANCE;
 		}
-		Log.i(getTypeMirror(n) == null ? "null" : getTypeMirror(n).toString());
 		return goolType(getTypeMirror(n), context);
 	}
 
@@ -487,6 +495,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// The overloaded goolType method will map Java abstract "kinds" to
 			// GOOL primitive types
 			// The textualtype is for passing on unrecognized primitive types
+			Log.d("<JavaRecognizer - goolType> Type is primtive : " +
+					typeMirror.toString());
 			return goolType(typeMirror.getKind(), typeMirror.toString());
 
 		}
@@ -503,23 +513,19 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// We add it as a RecognizedDependency to the current context,
 			// this dependency will get generated into imports in the target
 			// language
+			Log.d(String.format("<JavaRecognizer - goolType> %s is a GOOL Library Class of type %s",
+					goolClass.toString(),typeMirror.toString()));
 			addDependencyToContext(context, new RecognizedDependency(goolClass));
 			return new TypeGoolLibraryClass(goolClass);
 		}
-
 		// Dealing with non-primitive types.
 		// First, retrieve the full name of the Java type.
 		Type type = (Type) typeMirror;
 		Symbol classSymbol = (Symbol) type.asElement();
-		Log.d("XXX just before claiming a typeName from classsymbol XXX");
-		Log.d("XXX type, classSymbol, kind XXX");
-		Log.d(type.toString());
-		Log.d(classSymbol == null ? "null" : classSymbol.toString());
-		Log.d(typeMirror.getKind().toString());
-		Log.d("XXX");
 		String typeName;
 		IType goolType;
-
+		Log.d("<JavaRecognizer - goolType> Type is a not primtive one : " +
+				typeMirror.toString());
 		switch (typeMirror.getKind()) {
 		case PACKAGE: // -- Dealing with Packages
 			// Create a GOOL type of a type that matches the full name of the
@@ -791,30 +797,39 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitAssert(AssertTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitBreak(BreakTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitCase(CaseTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitCatch(CatchTree n, Context context) {
+		LogMethodName();
 		VarDeclaration parameter = (VarDeclaration) n.getParameter().accept(
 				this, context);
 		Block block = (Block) n.getBlock().accept(this, context);
+		UnLogMethodName();
 		return new Catch(parameter, block);
 	}
 
 	@Override
 	public Object visitCompoundAssignment(CompoundAssignmentTree n,
 			Context context) {
+		LogMethodName();
 		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
@@ -823,6 +838,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		String textualoperator = n.toString()
 				.replace(n.getVariable().toString(), "")
 				.replaceFirst("=.*", "").trim();
+		UnLogMethodName();
 		return new CompoundAssign(variable, expression, operator,
 				textualoperator, type);
 	}
@@ -830,59 +846,80 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitConditionalExpression(ConditionalExpressionTree n,
 			Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitContinue(ContinueTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitDoWhileLoop(DoWhileLoopTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitEmptyStatement(EmptyStatementTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitInstanceOf(InstanceOfTree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitLabeledStatement(LabeledStatementTree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitOther(Tree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 
 	}
 
 	@Override
 	public Object visitSwitch(SwitchTree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitSynchronized(SynchronizedTree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitThrow(ThrowTree node, Context p) {
+		LogMethodName();
 		Expression expression = (Expression) node.getExpression().accept(this,
 				p);
+		UnLogMethodName();
 		return new Throw(expression);
 	}
 
 	@Override
 	public Object visitTry(TryTree node, Context p) {
+		LogMethodName();
 		List<? extends CatchTree> javaCatches = node.getCatches();
 		List<Catch> catches = new ArrayList<Catch>();
 		for (CatchTree javaCatche : javaCatches) {
@@ -893,16 +930,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Block finilyBlock = new Block();
 		if (node.getFinallyBlock() != null)
 			finilyBlock = (Block) node.getFinallyBlock().accept(this, p);
+		UnLogMethodName();
 		return new Try(catches, block, finilyBlock);
 	}
 
 	@Override
 	public Object visitTypeParameter(TypeParameterTree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitWildcard(WildcardTree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
@@ -914,17 +956,23 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitArrayType(ArrayTypeTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return goolType(n, context);
 	}
 
 	@Override
 	public Object visitParameterizedType(ParameterizedTypeTree node,
 			Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return goolType(node, context);
 	}
 
 	@Override
 	public Object visitPrimitiveType(PrimitiveTypeTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return goolType(n.getPrimitiveTypeKind(), n.toString());
 	}
 
@@ -941,20 +989,25 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitArrayAccess(ArrayAccessTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new ArrayAccess((Expression) n.getExpression().accept(this,
 				context), (Expression) n.getIndex().accept(this, context));
 	}
 
 	@Override
 	public Object visitAssignment(AssignmentTree n, Context context) {
+		LogMethodName();
 		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
+		UnLogMethodName();
 		return new Assign(variable, expression);
 	}
 
 	@Override
 	public Object visitBlock(BlockTree n, Context context) {
+		LogMethodName();
 		Block block = new Block();
 		for (StatementTree stmt : n.getStatements()) {
 			Statement statement = (Statement) stmt.accept(this, new Context(
@@ -963,45 +1016,55 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				block.addStatement(statement);
 			}
 		}
+		UnLogMethodName();
 		return block;
 	}
 
 	@Override
 	public Object visitWhileLoop(WhileLoopTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new While((Expression) n.getCondition().accept(this, context),
 				(Statement) n.getStatement().accept(this, context));
 	}
 
 	@Override
 	public Object visitForLoop(ForLoopTree node, Context p) {
+		LogMethodName();
 		List<? extends StatementTree> initializers = node.getInitializer();
 		if (initializers.size() > 1) {
+			UnLogMethodName();
 			return new ExpressionUnknown(goolType(node, p), node.toString());
 		}
 		List<? extends StatementTree> updaters = node.getUpdate();
 		if (updaters.size() > 1) {
+			UnLogMethodName();
 			return new ExpressionUnknown(goolType(node, p), node.toString());
 		}
 		Statement initializer = (Statement) initializers.get(0).accept(this, p);
 		Expression condition = (Expression) node.getCondition().accept(this, p);
 		Statement updater = (Statement) updaters.get(0).accept(this, p);
+		UnLogMethodName();
 		return new For(initializer, condition, updater, (Statement) node
 				.getStatement().accept(this, p));
 	}
 
 	@Override
 	public Object visitEnhancedForLoop(EnhancedForLoopTree n, Context context) {
+		LogMethodName();
 		VarDeclaration varDec = (VarDeclaration) n.getVariable().accept(this,
 				context);
 		Expression expr = (Expression) n.getExpression().accept(this, context);
 
 		Statement statements = (Statement) n.getStatement().accept(this,
 				context);
+		UnLogMethodName();
 		return new EnhancedForLoop(varDec, expr, statements);
 	}
 
 	@Override
 	public Object visitIf(IfTree n, Context context) {
+		LogMethodName();
 		Expression condition = (Expression) n.getCondition().accept(this,
 				context);
 		Statement thenStmt = (Statement) n.getThenStatement().accept(this,
@@ -1011,31 +1074,40 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			elseStmt = (Statement) n.getElseStatement().accept(this, context);
 		}
 
+		UnLogMethodName();
 		return new If(condition, thenStmt, elseStmt);
 	}
 
 	@Override
 	public Object visitNewClass(NewClassTree n, Context context) {
+		LogMethodName();
 		IType type = goolType(n.getIdentifier(), context);
 		ClassNew c = new ClassNew(type);
 
 		addParameters(n.getArguments(), c, context);
 
+		UnLogMethodName();
 		return c;
 	}
 
 	@Override
 	public Object visitParenthesized(ParenthesizedTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return n.getExpression().accept(this, context);
 	}
 
 	@Override
 	public Object visitReturn(ReturnTree node, Context p) {
+		LogMethodName();
+		UnLogMethodName();
 		return new Return((Expression) node.getExpression().accept(this, p));
 	}
 
 	@Override
 	public Object visitTypeCast(TypeCastTree node, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return new CastExpression(goolType(node.getType(), context),
 				(Expression) node.getExpression().accept(this, context));
 	}
@@ -1047,17 +1119,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitUnary(UnaryTree n, Context context) {
+		LogMethodName();
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
 		Operator operator = getOperator(n.getKind());
 		IType type = goolType(n, context);
 		String textualoperator = n.toString()
 				.replace(n.getExpression().toString(), "").trim();
+		UnLogMethodName();
 		return new UnaryOperation(operator, expression, type, textualoperator);
 	}
 
 	@Override
 	public Object visitBinary(BinaryTree n, Context context) {
+		LogMethodName();
 
 		Expression leftExp = (Expression) n.getLeftOperand().accept(this,
 				context);
@@ -1065,9 +1140,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				context);
 		Operator operator = getOperator(n.getKind());
 		IType type = goolType(n, context);
+
 		String textualoperator = n.toString()
 				.replace(n.getLeftOperand().toString(), "")
 				.replace(n.getRightOperand().toString(), "").trim();
+		UnLogMethodName();
 		return new BinaryOperation(operator, leftExp, rightExp, type,
 				textualoperator);
 	}
@@ -1079,6 +1156,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	// This is when Sun's java parser failed.
 	@Override
 	public Object visitErroneous(ErroneousTree n, Context context) {
+		LogMethodName();
 		throw new IllegalArgumentException(error(
 				"The sun java parser failed at %s.", n.toString()));
 	}
@@ -1087,6 +1165,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitExpressionStatement(ExpressionStatementTree n,
 			Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		return n.getExpression().accept(this, context);
 	}
 
@@ -1104,7 +1184,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitLiteral(LiteralTree n, Context context) {
+		LogMethodName();
 		String value = n.getValue() != null ? n.getValue().toString() : "null";
+		UnLogMethodName();
 		return new Constant(goolType(n, context), value);
 	}
 
@@ -1113,6 +1195,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitVariable(VariableTree n, Context context) {
+		LogMethodName();
 		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
 			throw new IllegalArgumentException(error(
 					"The variable named '%s' uses reserved keyword.",
@@ -1141,14 +1224,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
 			context.addDeclaration(f, f.getName(), getTypeMirror(n));
+			UnLogMethodName();
 			return f;
 		}
 		context.addDeclaration(variable, variable.getName(), getTypeMirror(n));
+		UnLogMethodName();
 		return variable;
 	}
 
 	@Override
 	public Object visitIdentifier(IdentifierTree n, Context context) {
+		LogMethodName();
+		Log.d("<JavaRecognizer - visitIdentifier> Entering .....");
 		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
 			throw new IllegalArgumentException(error(
 					"The variable named '%s' uses reserved keyword.",
@@ -1159,29 +1246,38 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		// TODO identifiers. Create a specific node to access to class literal
 		// (i.e. when calling static members).
+		String nName = n.getName().toString();
+		String typeName = type.getName();
+		Log.d("<JavaRecognizer - visitIdentifier> Input name of the identifier = " + nName
+				+ " | associated type name = " + typeName);
 
-		if (type.getName().equals(n.getName().toString())) {
-			return new Constant(type, n.getName().toString());
+		if (typeName.equals(nName)) {
+			Log.d("<JavaRecognizer - visitIdentifier> return constant .....");
+			UnLogMethodName();
+			return new Constant(type, nName);
 		}
 
 		// This method returns a VarAccess, accessing a previously declared
 		// variable, i.e. a VarDeclaration.
 		Dec dec;
 		if (context != null) {
-			dec = context.getDeclaration(n.getName().toString(),
-					getTypeMirror(n));
+			dec = context.getDeclaration(nName, getTypeMirror(n));
 			if (dec == null) {
-				Log.w(String
-						.format("No declaration found for '%s' of type '%s' in curent context",
-								n.getName(), getTypeMirror(n)));
-				dec = new VarDeclaration(goolType(n, context), n.getName()
-						.toString());
+				Log.w(String.format("<JavaRecognizer - visitIdentifier> No declaration found for '%s' of type '%s' in curent context",
+						nName, getTypeMirror(n)));
+				//				dec = new VarDeclaration(goolType(n, context), n.getName()
+				//						.toString());
+				Log.d(String.format("<JavaRecognizer - visitIdentifier> Instanciate a new declaration for %s of type %s",
+						typeName, nName));
+				dec = new VarDeclaration(type, nName);
 			}
 		} else {
-			dec = new VarDeclaration(goolType(n, context), n.getName()
-					.toString());
+			//dec = new VarDeclaration(goolType(n, context), n.getName().toString());
+			Log.d(String.format("<JavaRecognizer - visitIdentifier> Instanciate a new declaration for %s of type %s",
+					typeName, nName));
+			dec = new VarDeclaration(type, nName);
 		}
-
+		UnLogMethodName();
 		return new VarAccess(dec);
 	}
 
@@ -1197,6 +1293,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitNewArray(NewArrayTree node, Context p) {
+		LogMethodName();
 		List<Expression> initialiList = new ArrayList<Expression>();
 		if (node.getInitializers() != null) {
 			for (ExpressionTree expression : node.getInitializers()) {
@@ -1210,6 +1307,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				dimesExpressions.add((Expression) expression.accept(this, p));
 			}
 		}
+		UnLogMethodName();
 		return new ArrayNew(goolType(node.getType(), p), dimesExpressions,
 				initialiList);
 	}
@@ -1220,88 +1318,107 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
+		LogMethodName();
+		Log.d("<JavaRecognizer - visitMemberSelect> Entering MemberSelect with node : " + 
+				n.toString());
 		Expression target = (Expression) n.getExpression()
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
-		Log.d("XX Entering MemberSelect with target-identifier XX");
-		Log.d(identifier.toString());
-		Log.d("XX");
+
 		/*
 		 * TODO Currently we are assuming that the following methods are always
 		 * the same as the methods "toString" and "equals" belonging to the
 		 * Object class.
 		 */
 		if (identifier.equalsIgnoreCase("equals")) {
+			UnLogMethodName();
 			return new EqualsCall(target);
 		}
 		if (identifier.equals("toString")) {
+			UnLogMethodName();
 			return new ToStringCall(target);
 		}
 
 		IType type = target.getType();
-		Log.d("X Target type X");
-		Log.d(type.toString());
-		Log.d("X");
+		Log.d("<JavaRecognizer - visitMemberSelect> Output target type : " + type.toString());
 
 		if (type != null) {
 
 			if (type instanceof TypeList) {
 				if (identifier.equals("add")) {
+					UnLogMethodName();
 					return new ListAddCall(target);
 				}
 				if (identifier.equals("remove")) {
+					UnLogMethodName();
 					return new ListRemoveCall(target);
 				}
 				if (identifier.equals("removeAt")) {
+					UnLogMethodName();
 					return new ListRemoveAtCall(target);
 				}
 				if (identifier.equals("get")) {
+					UnLogMethodName();
 					return new ListGetCall(target);
 				}
 				if (identifier.equals("size")) {
+					UnLogMethodName();
 					return new ListSizeCall(target);
 				}
 				if (identifier.equals("isEmpty")) {
+					UnLogMethodName();
 					return new ListIsEmptyCall(target);
 				}
 				if (identifier.equals("getIterator")) {
+					UnLogMethodName();
 					return new ListGetIteratorCall(target);
 				}
 				if (identifier.equals("contains")) {
+					UnLogMethodName();
 					return new ListContainsCall(target);
 				}
 			}
 			if (type instanceof TypeMap) {
 				if (identifier.equals("put")) {
+					UnLogMethodName();
 					return new MapPutCall(target);
 				}
 				if (identifier.equals("remove")) {
+					UnLogMethodName();
 					return new MapRemoveCall(target);
 				}
 				if (identifier.equals("get")) {
+					UnLogMethodName();
 					return new MapGetCall(target);
 				}
 				if (identifier.equals("size")) {
+					UnLogMethodName();
 					return new MapSizeCall(target);
 				}
 				if (identifier.equals("isEmpty")) {
+					UnLogMethodName();
 					return new MapIsEmptyCall(target);
 				}
 				if (identifier.equals("getIterator")) {
+					UnLogMethodName();
 					return new MapGetIteratorCall(target);
 				}
 				if (identifier.equals("containsKey")) {
+					UnLogMethodName();
 					return new MapContainsKeyCall(target);
 				}
 				if (identifier.equals("entrySet")) {
+					UnLogMethodName();
 					return target;
 				}
 			}
 			if (type instanceof TypeEntry) {
 				if (identifier.equals("getKey")) {
+					UnLogMethodName();
 					return new MapEntryGetKeyCall(target);
 				}
 				if (identifier.equals("getValue")) {
+					UnLogMethodName();
 					return new MapEntryGetValueCall(target);
 				}
 			}
@@ -1311,27 +1428,18 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// were not recognized
 		// i.e. it is not a library that requires a particular treatment
 		// it gets the standard treatment.
-		Log.d("X Standard method call for X");
-		Log.d(n.toString());
-		Log.d("X");
-		if (context != null) {
-			Dec dec = context.getClassContext().getDeclaration(
-					n.getIdentifier().toString(), getTypeMirror(n));
-			if (dec == null) {
-				Log.w(String
-						.format("No declaration found for '%s' of type '%s' in curent context",
-								n.getIdentifier(), getTypeMirror(n)));
-				dec = new VarDeclaration(goolType(n, context), n
-						.getIdentifier().toString());
-			}
+		Log.d("<JavaRecognizer - visitMemberSelect> Type not recognized : " + n.toString());
+		Dec dec = null;
+		if (context != null){
+			dec = context.getClassContext().getDeclaration(identifier, getTypeMirror(n));
+			Log.w(String.format("<JavaRecognizer - visitMemberSelect> No declaration found for '%s' of type '%s' in curent context",
+					identifier, getTypeMirror(n)));
 		}
-
-		Log.w(String.format(
-				"No declaration found for '%s' of type '%s' in curent context",
-				n.getIdentifier(), getTypeMirror(n)));
-		Dec dec = new VarDeclaration(goolType(n, context), n.getIdentifier()
-				.toString());
+		if (dec == null)
+			dec = new VarDeclaration(goolType(n, context), identifier);
 		MemberSelect f = new MemberSelect(target, dec);
+		Log.d("<JavaRecognizer - visitMemberSelect> Return MemberSelect : " + f.toString());
+		UnLogMethodName();
 		return f;
 	}
 
@@ -1341,11 +1449,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitClass(ClassTree n, Context context) {
+		LogMethodName();
 
 		// Get the name of the class
 		JCClassDecl c = (JCClassDecl) n;
 		ClassDef classDef = new ClassDef(n.getSimpleName().toString());
-		Log.i(String.format("Parsing class %s", n.getSimpleName()));
+		Log.d(String.format("<JavaRecognizer - visitClass> Parsing class %s", n.getSimpleName()));
 
 		// The new class will provide the context for the things parsed inside
 		// of it.
@@ -1379,6 +1488,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// The forceplatform annotation is unused for now
 		// The idea is to be able to specify the target platform
 		// As an annotation of the concrete input language
+		// TODO: test this option
 		for (AnnotationTree annotationTree : n.getModifiers().getAnnotations()) {
 			if (annotationTree.getAnnotationType().toString()
 					.equals("ForcePlatform")) {
@@ -1412,9 +1522,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 
 		// Register the class as one of the outputs
+		Log.d(String.format("<JavaRecognizer - visitClass> Adding class %s to goolClasses", classDef.toString()));
 		goolClasses.put(classDef.getType(), classDef);
 		/*
-		 * If the class has the CustomCode annotation, we enerate a class
+		 * If the class has the CustomCode annotation, we generate a class
 		 * without processing the code inside but just commenting it Indeed,
 		 * notice that createMethod(MethodTree n, Context context, boolean
 		 * createOnlySignature, boolean commentOriginalCode)
@@ -1429,16 +1540,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 							false));
 				}
 			}
+			UnLogMethodName();
 			return classDef;
 		}
 
 		// Setup Inheritance information
 		if (n.getExtendsClause() != null) {
 			IType parentType = goolType(n.getExtendsClause(), context);
+			Log.d(String.format("<JavaRecognizer - visitClass> Set parent type to %s",parentType.toString()));
 			classDef.setParentClass(parentType);
 		}
 		for (Tree iface : n.getImplementsClause()) {
-			classDef.addInterface(goolType(iface, context));
+			IType interfaceType = goolType(iface, context);
+			Log.d(String.format("<JavaRecognizer - visitClass> Add interface type ",interfaceType.toString()));
+			classDef.addInterface(interfaceType);
 		}
 
 		// add dummy declarations to the context to solve the problem
@@ -1448,12 +1563,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		for (Tree tree : n.getMembers()) {
 			Dec dec = null;
 			Collection<Modifier> mods = null;
+			Log.d(String.format("<JavaRecognizer - visitClass> members %s ",tree.toString()));
 			if (tree instanceof MethodTree) {
+				Log.d(String.format("<JavaRecognizer - visitClass> Scan as MethodTree"));
 				dec = new Meth(goolType(tree, context), ((MethodTree) tree)
 						.getName().toString());
 				mods = (Collection<Modifier>) ((MethodTree) tree)
 						.getModifiers().accept(this, context);
 			} else if (tree instanceof VariableTree) {
+				Log.d(String.format("<JavaRecognizer - visitClass> Scan as VariableTrees"));
 				dec = new Field(((VariableTree) tree).getName().toString(),
 						goolType(tree, context), null);
 				mods = (Collection<Modifier>) ((VariableTree) tree)
@@ -1461,6 +1579,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			if (dec != null) {
 				dec.addModifiers(mods);
+				Log.d(String.format("<JavaRecognizer - visitClass> Add declaration %s to context with io types %s",
+						dec.getName(), getTypeMirror(tree).toString()));
 				context.addDeclaration(dec, dec.getName(), getTypeMirror(tree));
 			}
 		}
@@ -1479,11 +1599,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				classDef.addField(new Field(new ArrayList<Modifier>(), // Arrays.asList(Modifier.PRIVATE),
 						(VarDeclaration) member));
 			} else if (member != null) {
-				Log.e(String.format("Unrecognized member for class %s: %s ",
+				Log.e(String.format("<JavaRecognizer - visitClass> Unrecognized member for class %s: %s ",
 						classDef.getName(), member));
 			}
 		}
 
+		UnLogMethodName();
 		return classDef;
 	}
 
@@ -1494,6 +1615,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitCompilationUnit(CompilationUnitTree n, Context context) {
+		LogMethodName();
 		//System.out.println("[JavaRecognizer] BEGIN of visitCompilationUnit");
 		// The destination package is either null or that specified by the
 		// visited package
@@ -1511,9 +1633,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		for (ImportTree imp : n.getImports()) {
 			String dependencyString = imp.getQualifiedIdentifier().toString();
+			Log.d("\n\n<JavaRecognizer - visitCompilationUnit> " + dependencyString + "\n\n");
 			// if (!dependencyString.contains("gool.imports.java")
 			// && !dependencyString.contains("gool.imports.java.annotations")) {
 			if (!RecognizerMatcher.matchImport(dependencyString)) {
+				Log.d(String.format("\n\n<JavaRecognizer - visitCompilationUnit> Adding %s " +
+						"as unrecognizedDependency in dependencies\n\n", dependencyString));
 				dependencies.add(new UnrecognizedDependency(dependencyString));
 			}
 		}
@@ -1524,6 +1649,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// In order not to create two different GOOL packages
 		// when the JAVA packages names were in fact the same
 		// we remember the package name in the packagesCache.
+		Log.d("\n\n<JavaRecognizer - visitCompilationUnit> Start visiting members ......\n\n");
 		for (Tree unit : n.getTypeDecls()) {
 			ClassDef classDef = (ClassDef) unit.accept(this, context);
 			if (ppackage != null) {
@@ -1537,7 +1663,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 			classDef.addDependencies(dependencies);
 		}
-
+		Log.d("\n\n<JavaRecognizer - visitCompilationUnit> Adding dependencies ......\n\n");
 		for (ClassDef classDef : getGoolClasses()) {
 			GoolLibraryClassAstBuilder.init(defaultPlatform);
 			int x = 0;
@@ -1545,28 +1671,28 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				x++;
 				if (dep instanceof RecognizedDependency) {
 					GoolLibraryClassAstBuilder
-							.buildGoolClass(((RecognizedDependency) dep)
-									.getName());
+					.buildGoolClass(((RecognizedDependency) dep)
+							.getName());
 				}
 			}
 		}
 		for (ClassDef goolClassAst : GoolLibraryClassAstBuilder.getBuiltAsts()) {
 			goolClasses.put(goolClassAst.getType(), goolClassAst);
-			/*System.out
-					.println("[JavaRecognizer] A GOOL library AST has been successfully built and added to the current AST collection: "
-							+ goolClassAst.getPackageName()
-							+ "."
-							+ goolClassAst.getName());
-			*/
+			Log.d("\n\n<JavaRecognizer - visitCompilationUnit> The following GOOL library AST has been successfully built and added to the current AST collection: "
+					+ goolClassAst.getPackageName()
+					+ "."
+					+ goolClassAst.getName() + "\n\n");
 		}
-		//System.out.println("[JavaRecognizer] END of visitCompilationUnit.");
-
+		Log.d("\n\n<JavaRecognizer - visitCompilationUnit> END of visitCompilationUnit.\n\n");
+		UnLogMethodName();
 		return null;
 	}
 
 	// This was handled already with the getImports of visitCompilationUnit
 	@Override
 	public Object visitImport(ImportTree n, Context context) {
+		LogMethodName();
+		UnLogMethodName();
 		throw new IllegalStateException(
 				"return TypeDependency(TypeClass(n.getQualifiedIdentifier().accept(this, context).toString()))");
 	}
@@ -1577,6 +1703,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitMethod(MethodTree n, Context context) {
+		LogMethodName();
 		boolean customCode = findAnnotation(n.getModifiers().getAnnotations(),
 				"CustomCode");
 		boolean isInherited = findAnnotation(n.getModifiers().getAnnotations(),
@@ -1584,7 +1711,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		Meth method = createMethod(n, new Context(context), customCode, true);
 		method.setInherited(isInherited);
-
+		Log.d(String.format("<JavaRecognizer - visitMethod> %s", method.getName()));
+		UnLogMethodName();
 		return method;
 	}
 
@@ -1681,7 +1809,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					if (statement instanceof InitCall
 							&& method instanceof Constructor) {
 						((Constructor) method)
-								.addInitCall((InitCall) statement);
+						.addInitCall((InitCall) statement);
 					} else if (statement != null) {
 						method.addStatement(statement);
 					}
@@ -1703,6 +1831,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
+		LogMethodName();
 		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());
 
 		// Here, we build a method signature that may get matched with a
@@ -1710,12 +1839,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		String signature = (method.owner + "." + method.name + method.type)
 				.replace(")", "):");
 		//System.out.println("Method " + signature);
-
+		Log.d("<JavaRecognizer - visitMethodInvocation> Method "  + n.getMethodSelect().toString());
 		Expression target;
 		String goolMethod = null;
 
 		if (n.getMethodSelect().toString().equals("System.out.println")) {
-			context.getClassDef().addDependency(new SystemOutDependency());
+			addDependencyToContext(context, new SystemOutDependency());
+			//context.getClassDef().addDependency(new SystemOutDependency());
 			target = new SystemOutPrintCall();
 		} else if (n.getMethodSelect().toString().equals("super")) {
 			target = new ParentCall(goolType(
@@ -1724,15 +1854,16 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			target = new ThisCall(goolType(
 					((MethodSymbol) method).getReturnType(), context));
 		} else {
-			Log.d("YYYY from method to member select YYYY");
-			Log.d(n.getMethodSelect().toString());
-			Log.d("YYYYYYYYYYYYY");
 			// The target is the xxxx part of some method invocation xxxx().
 			// Here is when we possibly visitMemberSelect().
+			Log.d("<JavaRecognizer - visitMethodInvocation> The target is the xxxx part of some method invocation....");
 			target = (Expression) n.getMethodSelect().accept(this, context);
-
+			Log.d("<JavaRecognizer - visitMethodInvocation> Target is " + target.toString());
 			goolMethod = RecognizerMatcher.matchMethod(signature);
-
+			if (goolMethod != null)
+				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is " + goolMethod.toString());
+			else
+				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is null.");
 			/*
 			 * if (goolMethod != null && target instanceof MemberSelect) {
 			 * ((MemberSelect) target).setIdentifier(goolMethod
@@ -1757,10 +1888,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					((MethodSymbol) method).getReturnType(), context), target);
 		}
 		addParameters(n.getArguments(), (Parameterizable) target, context);
-		
+
 		if ((target instanceof MethCall) && (goolMethod != null))
 			((MethCall) target).setGoolLibraryMethod(goolMethod);
 
+		UnLogMethodName();
 		return target;
 	}
 
@@ -1769,6 +1901,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitModifiers(ModifiersTree n, Context context) {
+		LogMethodName();
 		Collection<Modifier> result = new HashSet<Modifier>();
 
 		Set<javax.lang.model.element.Modifier> flags = n.getFlags();
@@ -1810,7 +1943,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				break;
 			}
 		}
-
+		for (Modifier modif : result)
+			Log.d("<JavaRecognizer - visitModifier> Find the modifier " + modif.toString());
+		UnLogMethodName();
 		return result;
 	}
 
@@ -1818,6 +1953,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Context.setTypes(types);
 	}
 
+	private void LogMethodName() {
+		compt++;
+		String mess = ">----";
+		mess += String.format("%" + compt + "s", "").replace(' ', '-');
+		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].getMethodName());
+	}
+
+	private void UnLogMethodName() {
+		if (compt > 1)
+			compt--;
+		String mess = "<----";
+		mess += String.format("%" + compt + "s", "").replace(' ', '-');
+		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].getMethodName()
+				+ " - Bye !");
+	}
 }
 
 /**
@@ -1874,12 +2024,19 @@ class Context {
 
 	public Context(Context parent) {
 		this(null, parent);
+		Log.d("======> Context creation ");
 	}
 
 	public Context(ClassDef classDef, Context parent) {
 		map = new HashMap<String, HashMap<TypeMirror, Dec>>();
 		this.parent = parent;
 		this.classDef = classDef;
+		Log.d("======> Context creation with classdef = ");
+		if (classDef != null){
+			Log.d("======> " + classDef.getName());
+		}else{
+			Log.d("======> NULL ");
+		}
 	}
 
 	/**
@@ -1913,6 +2070,7 @@ class Context {
 	 * @return The declaration, or null if no declaration was found.
 	 */
 	public Dec getDeclaration(String name, TypeMirror type) {
+		//displayMap();
 		Dec ret = getDeclarationHere(name, type);
 		if (ret != null)
 			return ret;
@@ -1990,5 +2148,15 @@ class Context {
 		} else {
 			return types.isAssignable(declaration, instance);
 		}
+	}
+
+	/**
+	 * log map for debug use
+	 */
+	private void displayMap(){
+		Log.d("############### Context - map ###############");
+		for(String el : map.keySet()){
+			Log.d(el);
+		}			
 	}
 }

@@ -87,6 +87,7 @@ import gool.generator.GeneratorHelper;
 import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.GeneratorMatcher;
+import logger.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,9 +96,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hamcrest.core.IsInstanceOf;
 
 public class CppGenerator extends CommonCodeGenerator /*implements
 		CodeGeneratorNoVelocity*/ {
+
+	private static int compt = 0;
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
@@ -109,6 +113,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(Modifier modifier) {
+		LogMethodName();
 		if (modifier == Modifier.FINAL) {
 			return "const";
 		}
@@ -117,6 +122,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(Field field) {
+		LogMethodName();
 		Modifier m = field.getAccessModifier();
 		List<Modifier> modifiers = new ArrayList<Modifier>(field.getModifiers());
 		modifiers.remove(m);
@@ -140,6 +146,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(MethCall methodCall) {
+		LogMethodName();
 		String out = "";
 		if (methodCall.getTarget() != null) {
 			out = methodCall.getTarget().toString();
@@ -147,11 +154,16 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			if(goolMethod!=null){
 				//here, get matched output method name with the GeneratorMatcher
 				String methodName=GeneratorMatcher.matchGoolMethod(goolMethod);
-				if(methodName!=null)
-					out=out.substring(0, out.lastIndexOf("->")+2)+methodName;
+				if(methodName!=null){
+					Log.d("<CppGenerator - getCode(MethCall> method name = " + methodName);
+					if (!methodName.startsWith("std::"))
+						out=out.substring(0, out.lastIndexOf("->")+2)+methodName;
+					else
+						out = methodName;
+				}
 			}
 		}
-		
+
 		// if (methodCall.getType() != null) {
 		// out += "< " + methodCall.getType() + " >";
 		// }
@@ -160,37 +172,44 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			out += StringUtils.join(methodCall.getParameters(), ", ");
 		}
 		out += ")";
+		//Log.i("<CppGenerator> " + out);
 		return out;
 	}
 
 	@Override
 	public String getCode(TypeBool typeBool) {
+		LogMethodName();
 		return "int";
 	}
 
 	@Override
 	public String getCode(TypeClass typeClass) {
+		LogMethodName();
 		String pointer = typeClass.isEnum() ? "" : "*";
 		return super.getCode(typeClass).replaceAll("\\.", "::") + pointer;
 	}
 
 	@Override
 	public String getCode(TypeInt typeInt) {
+		LogMethodName();
 		return "int";
 	}
 
 	@Override
 	public String getCode(TypeString typeString) {
+		LogMethodName();
 		return "std::string*";
 	}
 
 	@Override
 	public String getCode(TypeObject typeObject) {
+		LogMethodName();
 		return "boost::any";
 	}
 
 	@Override
 	public String getCode(CastExpression cast) {
+		LogMethodName();
 		if (cast.getType().equals(cast.getExpression().getType())) {
 			return String.format("%s", cast.getExpression());
 		} else if (cast.getExpression().getType() == TypeObject.INSTANCE) {
@@ -204,6 +223,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(Constant constant) {
+		LogMethodName();
 		if (constant.getType().equals(TypeString.INSTANCE)) {
 			return String.format("( new std::string ( %s ) )",
 					super.getCode(constant));
@@ -219,6 +239,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(TypeList typeList) {
+		LogMethodName();
 		if (typeList.getElementType() == null) {
 			/*
 			 * TODO: Avoid elements of different types within the same list.
@@ -234,6 +255,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
+		LogMethodName();
 
 		IType targetType = memberSelect.getTarget().getType();
 		String memberAccess = memberSelect.getTarget().toString();
@@ -255,24 +277,28 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		} else {
 			memberAccess += " -> ";
 		}
-
+		Log.d("<CppGenerator - getCode(MemberSelect)> return " + String
+				.format("%s%s", memberAccess, memberSelect.getIdentifier()));
 		return String
 				.format("%s%s", memberAccess, memberSelect.getIdentifier());
 	}
 
 	@Override
 	public String getCode(TypeDecimal typeReal) {
+		LogMethodName();
 		return "double";
 	}
 
 	@Override
 	public String getCode(TypeChar typeChar) {
+		LogMethodName();
 		// TODO Auto-generated method stub
 		return "char";
 	}
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
+		LogMethodName();
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
 			return String.format("std::cout << (%s)->data() << std::endl",
@@ -287,16 +313,19 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ParentCall parentCall) {
+		LogMethodName();
 		return null;
 
 	}
 
 	public String getCode(SystemOutDependency systemOutDependency) {
+		LogMethodName();
 		return "iostream";
 	}
 
 	@Override
 	public String getCode(TypeDependency typeDependency) {
+		LogMethodName();
 		if (typeDependency.getType() instanceof TypeList) {
 			// Use the vector type because it allows random access over
 			// lists.
@@ -326,17 +355,27 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(MapSizeCall mapSizeCall) {
+		LogMethodName();
 		return String.format("%s -> size()", mapSizeCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
+		LogMethodName();
 		return String.format("%s -> erase(%s)", mapRemoveCall.getExpression(),
 				GeneratorHelper.joinParams(mapRemoveCall.getParameters()));
 	}
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
+		LogMethodName();
+		if (mapPutCall.getParameters().isEmpty())
+			return String.format("%s -> insert()", 
+					mapPutCall.getExpression());
+//		if (mapPutCall.getParameters().size() == 1)
+//			return String.format("%s -> insert( %s )", 
+//					mapPutCall.getExpression(), 
+//					mapPutCall.getParameters().get(0));		
 		return String.format("%s -> insert( std::make_pair( %s, %s ) )",
 				mapPutCall.getExpression(), mapPutCall.getParameters().get(0),
 				mapPutCall.getParameters().get(1));
@@ -344,12 +383,14 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
+		LogMethodName();
 		return String.format("%s -> empty()",
 				mapIsEmptyCall.getExpression());
 	}
 
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
+		LogMethodName();
 		String left = binaryOp.getLeft().toString();
 		String right = binaryOp.getRight().toString();
 
@@ -371,18 +412,27 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			return String.format("new std::string(%s -> append(* (%s)))", left,
 					right);
 		}
+		
+		if (binaryOp.getOperator() == Operator.REMAINDER
+				&& ((binaryOp.getLeft().getType() instanceof TypeDecimal) || 
+					(binaryOp.getRight().getType() instanceof TypeDecimal))) 
+		{
+			return String.format("std::fmod(%s,%s)", left,	right);
+		}
 
 		return super.getCode(binaryOp);
 	}
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
+		LogMethodName();
 		// TODO Auto-generated method stub
 		return mapGetIteratorCall.getClass().toString();
 	}
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
+		LogMethodName();
 		return String.format("%s -> find( %s ) -> second",
 				mapGetCall.getExpression(),
 				GeneratorHelper.joinParams(mapGetCall.getParameters()));
@@ -390,6 +440,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
+		LogMethodName();
 		String expr = mapContainsKeyCall.getExpression().toString();
 		return String.format("(%s) -> find(%s) != (%s) -> end()", expr,
 				GeneratorHelper.joinParams(mapContainsKeyCall.getParameters()),
@@ -398,6 +449,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(TypeMap typeMap) {
+		LogMethodName();
 		/*
 		 * Maps with with keys of type Object are not allowed in C++ because
 		 * there is not a base type.
@@ -412,11 +464,12 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 					+ TypeObject.INSTANCE + ">*";
 		}
 		return "std::map<" + StringUtils.join(typeMap.getTypeArguments(), ", ")
-				+ ">*";
+		+ ">*";
 	}
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
+		LogMethodName();
 		VarDeclaration varDec = enhancedForLoop.getVarDec();
 		String varName = varDec.getName();
 		Expression expression = enhancedForLoop.getExpression();
@@ -434,7 +487,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 						(expression.getType() instanceof TypeMap) ? (String
 								.format("* %s = (%s*)&", varName,
 										varDec.getType())) : (String.format(
-								"%s = ", varName)), varName, enhancedForLoop
+												"%s = ", varName)), varName, enhancedForLoop
 								.getStatements());
 
 	}
@@ -442,6 +495,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 
 	public String getCode(CustomDependency customDependency) {
+		LogMethodName();
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			throw new IllegalArgumentException(
 					String.format(
@@ -457,29 +511,34 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
+		LogMethodName();
 		return String.format("std::pair<%s, %s>", typeEntry.getKeyType(),
 				typeEntry.getElementType());
 	}
 
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
+		LogMethodName();
 		return String.format("%s->first", mapEntryGetKeyCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapEntryGetValueCall mapEntryGetValueCall) {
+		LogMethodName();
 		return String
 				.format("%s->second", mapEntryGetValueCall.getExpression());
 	}
 
 	@Override
 	public String getCode(ThisCall thisCall) {
+		LogMethodName();
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
+		LogMethodName();
 
 		return String.format("%s -> equals(%s)", equalsCall.getTarget(),
 				StringUtils.join(equalsCall.getParameters(), ", "));
@@ -487,11 +546,13 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ToStringCall tsc) {
+		LogMethodName();
 		return String.format("%s -> toString()", tsc.getTarget());
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
+		LogMethodName();
 
 		return String
 				.format("/* ListContainsCall not implemented in C++ at the moment */");
@@ -499,23 +560,27 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ListGetCall lgc) {
+		LogMethodName();
 		return String.format("%s->%s(%s)", lgc.getExpression(), "at",
 				GeneratorHelper.joinParams(lgc.getParameters()));
 	}
 
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
+		LogMethodName();
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
+		LogMethodName();
 		return String.format("%s -> empty()", liec.getExpression());
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
+		LogMethodName();
 		return String.format("%s -> erase(%s -> begin()+%s)",
 				lrc.getExpression(), lrc.getExpression(),
 				GeneratorHelper.joinParams(lrc.getParameters()));
@@ -523,6 +588,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
+		LogMethodName();
 		String expr = lrc.getExpression().toString();
 		return String
 				.format("for (%s::iterator it = %s -> begin(); it != %s -> end(); ++it)\n\t"
@@ -531,22 +597,24 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 						removePointer(lrc.getExpression().getType()),
 						lrc.getExpression(), lrc.getExpression(),
 						GeneratorHelper.joinParams(lrc.getParameters()));
-						
-						
+
+
 	}
 
 	@Override
 	public String getCode(ListSizeCall lsc) {
+		LogMethodName();
 		return String.format("%s -> size()", lsc.getExpression());
 	}
 
 	@Override
 	public String getCode(ListAddCall lac) {
+		LogMethodName();
 		if (lac.getParameters().size() == 2)
 			return String.format("%s->%s(%s -> begin() + %s, %s)", lac.getExpression(), "insert",
 					lac.getExpression(), lac.getParameters().get(0),
 					GeneratorHelper.joinParams(lac.getParameters().
-										subList(1, lac.getParameters().size())));
+							subList(1, lac.getParameters().size())));
 		else
 			return String.format("%s->%s(%s)", lac.getExpression(), "push_back",
 					GeneratorHelper.joinParams(lac.getParameters()));
@@ -558,6 +626,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	 */
 	@Override
 	public String getCode(Meth meth) {
+		LogMethodName();
 		List<Modifier> modifiers = new ArrayList<Modifier>(meth.getModifiers());
 		// Remove (public, private, protected, final) invalid modifiers.
 		modifiers.remove(meth.getAccessModifier());
@@ -569,27 +638,32 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	}
 	@Override
 	public String getCode(TypeArray typeArray) {
+		LogMethodName();
 		return String.format("%s*", typeArray.getElementType());
 	}
 	@Override
 	public String getCode(ClassNew classNew) {
+		LogMethodName();
 		return String.format("(new %s(%s))", removePointer(classNew.getType()),
 				StringUtils.join(classNew.getParameters(), ", "));
 	}
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
+		LogMethodName();
 		return "int main()";
 	}
 
 	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
+		LogMethodName();
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	//@Override
 	public String printClass(ClassDef classDef) {
+		LogMethodName();
 		StringBuilder sb = new StringBuilder(String.format(
 				"// Platform: %s\n\n", classDef.getPlatform()));
 		// print the package containing the class
@@ -625,11 +699,13 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(Throw throwStatement) {
+		LogMethodName();
 		return String.format("throw %s", throwStatement.getExpression());
 	}
 
 	@Override
 	public String getCode(Catch catchStatement) {
+		LogMethodName();
 		return formatIndented("catch (%s * %s)\n{%1}\n", catchStatement
 				.getParameter().getType(), catchStatement.getParameter()
 				.getName(), catchStatement.getBlock());
@@ -637,6 +713,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(Try tryStatement) {
+		LogMethodName();
 		String ret = "";
 		if (tryStatement.getFinilyBlock().getStatements().isEmpty()) {
 			ret = formatIndented("try\n{%1}", tryStatement.getBlock());
@@ -652,6 +729,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(TypeException typeException) {
+		LogMethodName();
 		switch (typeException.getKind()) {
 		case GLOBAL:
 			return "std::exception";
@@ -659,25 +737,40 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			return typeException.getName();
 		}
 	}
-	
+
 	public String getCode(RecognizedDependency recognizedDependency) {
+		LogMethodName();
 		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());
+		if(imports == null)
+			return "";
 		if(imports.isEmpty())
 			return "/* import "+recognizedDependency.getName()+" not generated by GOOL, passed on. */";
 		String result = "";
-		for (String Import : imports) {
-			if (Import.startsWith("+"))
-				Import = Import.substring(1);
-			result += "#include \"" + Import.replace(".", "/") + ".h\"\n";
+		String className = GeneratorMatcher.matchGoolClass(recognizedDependency.getName());
+		if (className.equalsIgnoreCase("std")){
+			for (String Import : imports) {
+				if (Import.startsWith("+"))
+					Import = Import.substring(1);
+				result += "#include <" + Import + ">\n";
+			}
+		}
+		else{
+			for (String Import : imports) {
+				if (Import.startsWith("+"))
+					Import = Import.substring(1);
+				result += "#include \"" + Import.replace(".", "/") + ".h\"\n";
+			}
 		}
 
 		return result;
 	}
-	
+
 	@Override
 	public String getCode(TypeGoolLibraryClass typeMatchedGoolClass) {
+		LogMethodName();
 		String res = GeneratorMatcher.matchGoolClass(typeMatchedGoolClass
 				.getGoolclassname());
+		Log.d("<CppGenerator - getCode : TypeGoolLibraryClass> return " + res + "*");
 		if (res == null)
 			return typeMatchedGoolClass.getGoolclassname()
 					+ " /* Ungenerated by GOOL, passed on. */";
@@ -685,4 +778,21 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			return res+"*";
 		}
 	}
+
+	private void LogMethodName() {
+		compt++;
+		String mess = ">----";
+		mess += String.format("%" + compt + "s", "").replace(' ', '-');
+		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].toString()
+				+ " | " + Thread.currentThread().getStackTrace()[3].toString());
+	}
+
+	//	private void UnLogMethodName() {
+	//		if (compt > 1)
+	//			compt--;
+	//		String mess = "<----";
+	//		mess += String.format("%" + compt + "s", "").replace(' ', '-');
+	//		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].getMethodName()
+	//				+ " - Bye !");
+	//	}
 }
