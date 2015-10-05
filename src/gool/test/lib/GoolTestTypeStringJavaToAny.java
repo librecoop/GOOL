@@ -138,7 +138,7 @@ public class GoolTestTypeStringJavaToAny {
 								MAIN_CLASS_NAME + "_Test02");
 		String expected = "true";
 		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		//excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 	
@@ -168,7 +168,7 @@ public class GoolTestTypeStringJavaToAny {
 										+ "else{ System.out.println(\"false\"); }",
 								MAIN_CLASS_NAME + "_Test04");
 		String expected = "true";
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		//excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}

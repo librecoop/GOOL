@@ -30,6 +30,7 @@ import gool.ast.core.EqualsCall;
 import gool.ast.core.Field;
 import gool.ast.core.Finally;
 import gool.ast.core.MainMeth;
+import gool.ast.core.MemberSelect;
 import gool.ast.core.Meth;
 import gool.ast.core.MethCall;
 import gool.ast.core.Modifier;
@@ -334,6 +335,8 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 		}
 		if (methodCall.getTarget() instanceof StringIsEmptyCall)
 			return (String)Log.MethodOut(Thread.currentThread(), out);
+		if (methodCall.getTarget().toString().endsWith("Length"))
+			return (String)Log.MethodOut(Thread.currentThread(), out);
 		// if (methodCall.getType() != null) {
 		// out += "< " + methodCall.getType() + " >";
 		// }
@@ -346,6 +349,16 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 
+	@Override
+	public String getCode(MemberSelect memberSelect) {
+		Log.MethodIn(Thread.currentThread());
+		if (memberSelect.getIdentifier().equals("length"))			
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s.Length", memberSelect.getTarget()));
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				super.getCode(memberSelect));
+	}
+	
 	/**
 	 * Produces code for the isEmpty() method of String
 	 * 
@@ -357,7 +370,6 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 	public String getCode(StringIsEmptyCall lmc) {
 		Log.MethodIn(Thread.currentThread());
 		String out = "String.IsNullOrEmpty(" + lmc.getTarget().toString() + ")";
-		Log.d("<CppGenerator - getCode(MemberSelect)> return " + out);
 		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 	
