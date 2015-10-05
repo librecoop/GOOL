@@ -137,7 +137,7 @@ public class GoolTestTypeStringJavaToAny {
 										+ "else{ System.out.println(\"false\"); }",
 								MAIN_CLASS_NAME + "_Test02");
 		String expected = "true";
-		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
+		//excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
 		//excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}

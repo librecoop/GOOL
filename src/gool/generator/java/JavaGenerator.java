@@ -62,6 +62,7 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
+import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
 import gool.ast.type.TypeDecimal;
@@ -103,10 +104,15 @@ public class JavaGenerator extends CommonCodeGenerator /*
 
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
+		String left = binaryOp.getLeft().toString();
+		String right = binaryOp.getRight().toString();
 		if (!(binaryOp.getLeft() instanceof Constant)
 				&& binaryOp.getOperator() == Operator.EQUAL) {
-			return String.format("%s.equals(%s)", binaryOp.getLeft(),
-					binaryOp.getRight());
+			if (binaryOp.getLeft().getType() instanceof PrimitiveType)
+			{
+				return String.format("%s == %s", left, right);
+			}
+			return String.format("%s.equals(%s)", left, right);
 		} else {
 			return super.getCode(binaryOp);
 		}
