@@ -153,7 +153,7 @@ public class GoolTestTypeStringJavaToAny {
 								MAIN_CLASS_NAME + "_Test03");
 		String expected = "true";
 		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		//excludePlatformForThisTest((Platform) CppPlatform.getInstance());
 
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}

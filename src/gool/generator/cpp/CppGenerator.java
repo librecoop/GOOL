@@ -42,6 +42,7 @@ import gool.ast.core.Modifier;
 import gool.ast.core.Operator;
 import gool.ast.core.ParentCall;
 import gool.ast.core.RecognizedDependency;
+import gool.ast.core.StringIsEmptyCall;
 import gool.ast.core.ThisCall;
 import gool.ast.core.Throw;
 import gool.ast.core.ToStringCall;
@@ -290,6 +291,21 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 				.format("%s%s", memberAccess, memberSelect.getIdentifier()));
 		return (String)Log.MethodOut(Thread.currentThread(), String
 				.format("%s%s", memberAccess, memberSelect.getIdentifier()));
+	}
+	
+	/**
+	 * Produces code for the isEmpty() method of String
+	 * 
+	 * @param StringIsEmptyCall
+	 *            the method to be invoked.
+	 * @return the formatted method invocation.
+	 */
+	@Override
+	public String getCode(StringIsEmptyCall lmc) {
+		Log.MethodIn(Thread.currentThread());
+		String out = lmc.getTarget().toString() + "->empty";
+		Log.d("<CppGenerator - getCode(MemberSelect)> return " + out);
+		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 
 	@Override
