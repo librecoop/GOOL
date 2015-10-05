@@ -60,6 +60,7 @@ import gool.ast.core.ParentCall;
 import gool.ast.core.RecognizedDependency;
 import gool.ast.core.Return;
 import gool.ast.core.Statement;
+import gool.ast.core.StringIsEmptyCall;
 import gool.ast.core.ThisCall;
 import gool.ast.core.Throw;
 import gool.ast.core.ToStringCall;
@@ -797,39 +798,39 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitAssert(AssertTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitBreak(BreakTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitCase(CaseTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitCatch(CatchTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		VarDeclaration parameter = (VarDeclaration) n.getParameter().accept(
 				this, context);
 		Block block = (Block) n.getBlock().accept(this, context);
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new Catch(parameter, block);
 	}
 
 	@Override
 	public Object visitCompoundAssignment(CompoundAssignmentTree n,
 			Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
@@ -838,7 +839,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		String textualoperator = n.toString()
 				.replace(n.getVariable().toString(), "")
 				.replaceFirst("=.*", "").trim();
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new CompoundAssign(variable, expression, operator,
 				textualoperator, type);
 	}
@@ -846,80 +847,80 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitConditionalExpression(ConditionalExpressionTree n,
 			Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitContinue(ContinueTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitDoWhileLoop(DoWhileLoopTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitEmptyStatement(EmptyStatementTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(n, context), n.toString());
 	}
 
 	@Override
 	public Object visitInstanceOf(InstanceOfTree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitLabeledStatement(LabeledStatementTree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitOther(Tree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 
 	}
 
 	@Override
 	public Object visitSwitch(SwitchTree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitSynchronized(SynchronizedTree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitThrow(ThrowTree node, Context p) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Expression expression = (Expression) node.getExpression().accept(this,
 				p);
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new Throw(expression);
 	}
 
 	@Override
 	public Object visitTry(TryTree node, Context p) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		List<? extends CatchTree> javaCatches = node.getCatches();
 		List<Catch> catches = new ArrayList<Catch>();
 		for (CatchTree javaCatche : javaCatches) {
@@ -930,21 +931,21 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Block finilyBlock = new Block();
 		if (node.getFinallyBlock() != null)
 			finilyBlock = (Block) node.getFinallyBlock().accept(this, p);
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new Try(catches, block, finilyBlock);
 	}
 
 	@Override
 	public Object visitTypeParameter(TypeParameterTree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
 	@Override
 	public Object visitWildcard(WildcardTree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ExpressionUnknown(goolType(node, p), node.toString());
 	}
 
@@ -956,23 +957,23 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitArrayType(ArrayTypeTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return goolType(n, context);
 	}
 
 	@Override
 	public Object visitParameterizedType(ParameterizedTypeTree node,
 			Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return goolType(node, context);
 	}
 
 	@Override
 	public Object visitPrimitiveType(PrimitiveTypeTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return goolType(n.getPrimitiveTypeKind(), n.toString());
 	}
 
@@ -989,25 +990,25 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitArrayAccess(ArrayAccessTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new ArrayAccess((Expression) n.getExpression().accept(this,
 				context), (Expression) n.getIndex().accept(this, context));
 	}
 
 	@Override
 	public Object visitAssignment(AssignmentTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Node variable = (Node) n.getVariable().accept(this, context);
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new Assign(variable, expression);
 	}
 
 	@Override
 	public Object visitBlock(BlockTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Block block = new Block();
 		for (StatementTree stmt : n.getStatements()) {
 			Statement statement = (Statement) stmt.accept(this, new Context(
@@ -1016,55 +1017,55 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				block.addStatement(statement);
 			}
 		}
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return block;
 	}
 
 	@Override
 	public Object visitWhileLoop(WhileLoopTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new While((Expression) n.getCondition().accept(this, context),
 				(Statement) n.getStatement().accept(this, context));
 	}
 
 	@Override
 	public Object visitForLoop(ForLoopTree node, Context p) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		List<? extends StatementTree> initializers = node.getInitializer();
 		if (initializers.size() > 1) {
-			UnLogMethodName();
+			Log.MethodOut(Thread.currentThread());
 			return new ExpressionUnknown(goolType(node, p), node.toString());
 		}
 		List<? extends StatementTree> updaters = node.getUpdate();
 		if (updaters.size() > 1) {
-			UnLogMethodName();
+			Log.MethodOut(Thread.currentThread());
 			return new ExpressionUnknown(goolType(node, p), node.toString());
 		}
 		Statement initializer = (Statement) initializers.get(0).accept(this, p);
 		Expression condition = (Expression) node.getCondition().accept(this, p);
 		Statement updater = (Statement) updaters.get(0).accept(this, p);
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new For(initializer, condition, updater, (Statement) node
 				.getStatement().accept(this, p));
 	}
 
 	@Override
 	public Object visitEnhancedForLoop(EnhancedForLoopTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		VarDeclaration varDec = (VarDeclaration) n.getVariable().accept(this,
 				context);
 		Expression expr = (Expression) n.getExpression().accept(this, context);
 
 		Statement statements = (Statement) n.getStatement().accept(this,
 				context);
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new EnhancedForLoop(varDec, expr, statements);
 	}
 
 	@Override
 	public Object visitIf(IfTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Expression condition = (Expression) n.getCondition().accept(this,
 				context);
 		Statement thenStmt = (Statement) n.getThenStatement().accept(this,
@@ -1074,40 +1075,40 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			elseStmt = (Statement) n.getElseStatement().accept(this, context);
 		}
 
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new If(condition, thenStmt, elseStmt);
 	}
 
 	@Override
 	public Object visitNewClass(NewClassTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		IType type = goolType(n.getIdentifier(), context);
 		ClassNew c = new ClassNew(type);
 
 		addParameters(n.getArguments(), c, context);
 
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return c;
 	}
 
 	@Override
 	public Object visitParenthesized(ParenthesizedTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return n.getExpression().accept(this, context);
 	}
 
 	@Override
 	public Object visitReturn(ReturnTree node, Context p) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new Return((Expression) node.getExpression().accept(this, p));
 	}
 
 	@Override
 	public Object visitTypeCast(TypeCastTree node, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return new CastExpression(goolType(node.getType(), context),
 				(Expression) node.getExpression().accept(this, context));
 	}
@@ -1119,20 +1120,20 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitUnary(UnaryTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Expression expression = (Expression) n.getExpression().accept(this,
 				context);
 		Operator operator = getOperator(n.getKind());
 		IType type = goolType(n, context);
 		String textualoperator = n.toString()
 				.replace(n.getExpression().toString(), "").trim();
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new UnaryOperation(operator, expression, type, textualoperator);
 	}
 
 	@Override
 	public Object visitBinary(BinaryTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 
 		Expression leftExp = (Expression) n.getLeftOperand().accept(this,
 				context);
@@ -1144,7 +1145,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		String textualoperator = n.toString()
 				.replace(n.getLeftOperand().toString(), "")
 				.replace(n.getRightOperand().toString(), "").trim();
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new BinaryOperation(operator, leftExp, rightExp, type,
 				textualoperator);
 	}
@@ -1156,7 +1157,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	// This is when Sun's java parser failed.
 	@Override
 	public Object visitErroneous(ErroneousTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		throw new IllegalArgumentException(error(
 				"The sun java parser failed at %s.", n.toString()));
 	}
@@ -1165,8 +1166,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitExpressionStatement(ExpressionStatementTree n,
 			Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		return n.getExpression().accept(this, context);
 	}
 
@@ -1184,9 +1185,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitLiteral(LiteralTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String value = n.getValue() != null ? n.getValue().toString() : "null";
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new Constant(goolType(n, context), value);
 	}
 
@@ -1195,7 +1196,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitVariable(VariableTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
 			throw new IllegalArgumentException(error(
 					"The variable named '%s' uses reserved keyword.",
@@ -1224,17 +1225,17 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
 			context.addDeclaration(f, f.getName(), getTypeMirror(n));
-			UnLogMethodName();
+			Log.MethodOut(Thread.currentThread());
 			return f;
 		}
 		context.addDeclaration(variable, variable.getName(), getTypeMirror(n));
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return variable;
 	}
 
 	@Override
 	public Object visitIdentifier(IdentifierTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Log.d("<JavaRecognizer - visitIdentifier> Entering .....");
 		if (FORBIDDEN_KEYWORDS.contains(n.getName().toString())) {
 			throw new IllegalArgumentException(error(
@@ -1253,7 +1254,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 		if (typeName.equals(nName)) {
 			Log.d("<JavaRecognizer - visitIdentifier> return constant .....");
-			UnLogMethodName();
+			Log.MethodOut(Thread.currentThread());
 			return new Constant(type, nName);
 		}
 
@@ -1277,7 +1278,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					typeName, nName));
 			dec = new VarDeclaration(type, nName);
 		}
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new VarAccess(dec);
 	}
 
@@ -1293,7 +1294,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitNewArray(NewArrayTree node, Context p) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		List<Expression> initialiList = new ArrayList<Expression>();
 		if (node.getInitializers() != null) {
 			for (ExpressionTree expression : node.getInitializers()) {
@@ -1307,7 +1308,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				dimesExpressions.add((Expression) expression.accept(this, p));
 			}
 		}
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return new ArrayNew(goolType(node.getType(), p), dimesExpressions,
 				initialiList);
 	}
@@ -1318,7 +1319,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Log.d("<JavaRecognizer - visitMemberSelect> Entering MemberSelect with node : " + 
 				n.toString());
 		Expression target = (Expression) n.getExpression()
@@ -1331,11 +1332,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		 * Object class.
 		 */
 		if (identifier.equalsIgnoreCase("equals")) {
-			UnLogMethodName();
+			Log.MethodOut(Thread.currentThread());
 			return new EqualsCall(target);
 		}
 		if (identifier.equals("toString")) {
-			UnLogMethodName();
+			Log.MethodOut(Thread.currentThread());
 			return new ToStringCall(target);
 		}
 
@@ -1346,82 +1347,82 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 			if (type instanceof TypeList) {
 				if (identifier.equals("add")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListAddCall(target);
 				}
 				if (identifier.equals("remove")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListRemoveCall(target);
 				}
 				if (identifier.equals("removeAt")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListRemoveAtCall(target);
 				}
 				if (identifier.equals("get")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListGetCall(target);
 				}
 				if (identifier.equals("size")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListSizeCall(target);
 				}
 				if (identifier.equals("isEmpty")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListIsEmptyCall(target);
 				}
 				if (identifier.equals("getIterator")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListGetIteratorCall(target);
 				}
 				if (identifier.equals("contains")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new ListContainsCall(target);
 				}
 			}
 			if (type instanceof TypeMap) {
 				if (identifier.equals("put")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapPutCall(target);
 				}
 				if (identifier.equals("remove")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapRemoveCall(target);
 				}
 				if (identifier.equals("get")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapGetCall(target);
 				}
 				if (identifier.equals("size")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapSizeCall(target);
 				}
 				if (identifier.equals("isEmpty")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapIsEmptyCall(target);
 				}
 				if (identifier.equals("getIterator")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapGetIteratorCall(target);
 				}
 				if (identifier.equals("containsKey")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapContainsKeyCall(target);
 				}
 				if (identifier.equals("entrySet")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return target;
 				}
 			}
 			if (type instanceof TypeEntry) {
 				if (identifier.equals("getKey")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapEntryGetKeyCall(target);
 				}
 				if (identifier.equals("getValue")) {
-					UnLogMethodName();
+					Log.MethodOut(Thread.currentThread());
 					return new MapEntryGetValueCall(target);
 				}
-			}
+			}		
 		}
 		// the type of the target
 		// or the identifier
@@ -1432,14 +1433,23 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Dec dec = null;
 		if (context != null){
 			dec = context.getClassContext().getDeclaration(identifier, getTypeMirror(n));
+		}
+		if (dec == null){
+			dec = new VarDeclaration(goolType(n, context), identifier);
 			Log.w(String.format("<JavaRecognizer - visitMemberSelect> No declaration found for '%s' of type '%s' in curent context",
 					identifier, getTypeMirror(n)));
 		}
-		if (dec == null)
-			dec = new VarDeclaration(goolType(n, context), identifier);
+		
+		if (type != null && type instanceof TypeString){
+			if (identifier.equals("isEmpty")) {
+				Log.d("<JavaRecognizer - visitMemberSelect> ********* StringIsEmptyCall created.");
+				return (StringIsEmptyCall)Log.MethodOut(Thread.currentThread(),
+						new StringIsEmptyCall(target, dec));
+			}
+		}
 		MemberSelect f = new MemberSelect(target, dec);
 		Log.d("<JavaRecognizer - visitMemberSelect> Return MemberSelect : " + f.toString());
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return f;
 	}
 
@@ -1449,7 +1459,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitClass(ClassTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 
 		// Get the name of the class
 		JCClassDecl c = (JCClassDecl) n;
@@ -1540,7 +1550,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 							false));
 				}
 			}
-			UnLogMethodName();
+			Log.MethodOut(Thread.currentThread());
 			return classDef;
 		}
 
@@ -1604,7 +1614,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return classDef;
 	}
 
@@ -1615,7 +1625,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitCompilationUnit(CompilationUnitTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		//System.out.println("[JavaRecognizer] BEGIN of visitCompilationUnit");
 		// The destination package is either null or that specified by the
 		// visited package
@@ -1684,15 +1694,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					+ goolClassAst.getName() + "\n\n");
 		}
 		Log.d("\n\n<JavaRecognizer - visitCompilationUnit> END of visitCompilationUnit.\n\n");
-		UnLogMethodName();
-		return null;
+		return Log.MethodOut(Thread.currentThread(),null);
 	}
 
 	// This was handled already with the getImports of visitCompilationUnit
 	@Override
 	public Object visitImport(ImportTree n, Context context) {
-		LogMethodName();
-		UnLogMethodName();
+		Log.MethodIn(Thread.currentThread());
+		Log.MethodOut(Thread.currentThread());
 		throw new IllegalStateException(
 				"return TypeDependency(TypeClass(n.getQualifiedIdentifier().accept(this, context).toString()))");
 	}
@@ -1703,7 +1712,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitMethod(MethodTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		boolean customCode = findAnnotation(n.getModifiers().getAnnotations(),
 				"CustomCode");
 		boolean isInherited = findAnnotation(n.getModifiers().getAnnotations(),
@@ -1712,7 +1721,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Meth method = createMethod(n, new Context(context), customCode, true);
 		method.setInherited(isInherited);
 		Log.d(String.format("<JavaRecognizer - visitMethod> %s", method.getName()));
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return method;
 	}
 
@@ -1831,7 +1840,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	@Override
 	public Object visitMethodInvocation(MethodInvocationTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Symbol method = (Symbol) TreeInfo.symbol((JCTree) n.getMethodSelect());
 
 		// Here, we build a method signature that may get matched with a
@@ -1892,7 +1901,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		if ((target instanceof MethCall) && (goolMethod != null))
 			((MethCall) target).setGoolLibraryMethod(goolMethod);
 
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return target;
 	}
 
@@ -1901,7 +1910,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	 */
 	@Override
 	public Object visitModifiers(ModifiersTree n, Context context) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Collection<Modifier> result = new HashSet<Modifier>();
 
 		Set<javax.lang.model.element.Modifier> flags = n.getFlags();
@@ -1945,28 +1954,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		for (Modifier modif : result)
 			Log.d("<JavaRecognizer - visitModifier> Find the modifier " + modif.toString());
-		UnLogMethodName();
+		Log.MethodOut(Thread.currentThread());
 		return result;
 	}
 
 	public void setTypes(javax.lang.model.util.Types types) {
 		Context.setTypes(types);
-	}
-
-	private void LogMethodName() {
-		compt++;
-		String mess = ">----";
-		mess += String.format("%" + compt + "s", "").replace(' ', '-');
-		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].getMethodName());
-	}
-
-	private void UnLogMethodName() {
-		if (compt > 1)
-			compt--;
-		String mess = "<----";
-		mess += String.format("%" + compt + "s", "").replace(' ', '-');
-		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].getMethodName()
-				+ " - Bye !");
 	}
 }
 
@@ -2024,19 +2017,12 @@ class Context {
 
 	public Context(Context parent) {
 		this(null, parent);
-		Log.d("======> Context creation ");
 	}
 
 	public Context(ClassDef classDef, Context parent) {
 		map = new HashMap<String, HashMap<TypeMirror, Dec>>();
 		this.parent = parent;
 		this.classDef = classDef;
-		Log.d("======> Context creation with classdef = ");
-		if (classDef != null){
-			Log.d("======> " + classDef.getName());
-		}else{
-			Log.d("======> NULL ");
-		}
 	}
 
 	/**

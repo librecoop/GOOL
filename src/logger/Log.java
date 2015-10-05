@@ -9,7 +9,10 @@ import org.ini4j.Config;
 import org.ini4j.Ini;
 
 public class Log {
-
+	
+	private static int compt = 0;
+	static public Boolean DEBUG_LOG = false;
+	
 	// The instance
 	private static final Log log = new Log();
 
@@ -79,7 +82,8 @@ public class Log {
 
 	// Print a debug message
 	public static void d(String message) {
-		print(Level.DEBUG, Color.GREEN, message);
+		if (DEBUG_LOG)
+			print(Level.DEBUG, Color.GREEN, message);
 	}
 
 	// Print a information message
@@ -156,5 +160,33 @@ public class Log {
 			date = "";
 		}
 		return date;
+	}
+	
+	public static void MethodIn(Thread th) {
+		compt++;
+		String mess = ">" + compt;
+		mess += String.format("%" + compt + "s", "").replace(' ', '-');
+		Log.d(mess + " " + th.getStackTrace()[2].toString()
+				+ " | " + th.getStackTrace()[3].toString());
+	}
+	
+	public static void MethodOut(Thread th) {
+		String mess = "<" + compt;
+		mess += String.format("%" + compt + "s", "").replace(' ', '-');
+		Log.d(mess + " " + th.getStackTrace()[2].toString()
+				+ " | " + th.getStackTrace()[3].toString() + " - Bye !");
+		if (compt > 1)
+			compt--;
+	}
+	
+	public static Object MethodOut(Thread th, Object retarg) {
+		String mess = "<" + compt;
+		mess += String.format("%" + compt + "s", "").replace(' ', '-');
+		Log.d(mess + " " + th.getStackTrace()[2].toString()
+				+ " | " + th.getStackTrace()[3].toString() + " - Bye !");
+
+		if (compt > 1)
+			compt--;
+		return retarg;
 	}
 }

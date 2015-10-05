@@ -55,6 +55,7 @@ import gool.ast.core.Package;
 import gool.ast.core.ParentCall;
 import gool.ast.core.RecognizedDependency;
 import gool.ast.core.Return;
+import gool.ast.core.StringIsEmptyCall;
 import gool.ast.core.This;
 import gool.ast.core.ThisCall;
 import gool.ast.core.Throw;
@@ -246,6 +247,8 @@ public interface CodeGenerator {
 
 	String getCode(MapSizeCall mapSizeCall);
 
+	String getCode(StringIsEmptyCall stringIsEmptyCall);
+	
 	String getCode(MemberSelect memberSelect);
 
 	String getCode(Meth meth);

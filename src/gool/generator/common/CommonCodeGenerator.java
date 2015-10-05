@@ -49,6 +49,7 @@ import gool.ast.core.Package;
 import gool.ast.core.RecognizedDependency;
 import gool.ast.core.Return;
 import gool.ast.core.Statement;
+import gool.ast.core.StringIsEmptyCall;
 import gool.ast.core.This;
 import gool.ast.core.ThisCall;
 import gool.ast.core.TypeDependency;
@@ -374,6 +375,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		}
 		return sb.toString().trim();
 	}
+	
+	@Override
+	public String getCode(StringIsEmptyCall lmc) {
+		return getCode((MemberSelect)lmc);
+	}
 
 	@Override
 	public String getCode(ListMethCall lmc) {
@@ -401,6 +407,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(Meth meth) {
+		Log.d("==================================> Meth Call");
 		return String.format("%s %s %s (%s)", getCode(meth.getModifiers()),
 				meth.getType(), meth.getName(),
 				StringUtils.join(meth.getParams(), ", "));

@@ -52,6 +52,7 @@ import gool.ast.core.ParentCall;
 import gool.ast.core.RecognizedDependency;
 import gool.ast.core.Return;
 import gool.ast.core.Statement;
+import gool.ast.core.StringIsEmptyCall;
 import gool.ast.core.This;
 import gool.ast.core.ThisCall;
 import gool.ast.core.Throw;
@@ -114,6 +115,7 @@ import java.util.Set;
 import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
+import org.hamcrest.core.IsInstanceOf;
 
 public class PythonGenerator extends CommonCodeGenerator implements
 CodeGeneratorNoVelocity {
@@ -200,6 +202,7 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(ArrayNew arrayNew) {
+		Log.MethodIn(Thread.currentThread());
 		// a newly declared array is a list of nulls
 		// or a list of list ... of nulls for multidimensional arrays
 		if (arrayNew.getInitialiList().isEmpty()){
@@ -209,7 +212,7 @@ CodeGeneratorNoVelocity {
 			return "(" + ret + ")";}
 
 
-		return String.format("[%s]",StringUtils.join(arrayNew.getInitialiList(), ", "));
+		return (String)Log.MethodOut(Thread.currentThread(),String.format("[%s]",StringUtils.join(arrayNew.getInitialiList(), ", ")));
 
 
 
@@ -217,6 +220,7 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(Block block) {
+		Log.MethodIn(Thread.currentThread());
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
 			if (statement.toString().contains(
@@ -224,11 +228,12 @@ CodeGeneratorNoVelocity {
 				Log.e("mon stat :" + statement.toString());
 			result.append(printWithComment(statement));
 		}
-		return result.toString();
+		return (String)Log.MethodOut(Thread.currentThread(),result.toString());
 	}
 
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
+		Log.MethodIn(Thread.currentThread());
 		String textualOp;
 		switch (binaryOp.getOperator()) {
 		case AND:
@@ -247,48 +252,49 @@ CodeGeneratorNoVelocity {
 		case PLUS:
 			if (binaryOp.getLeft().getType().getName().equals("str")
 					&& !binaryOp.getRight().getType().getName().equals("str")) {
-				return String.format("(%s %s str(%s))", binaryOp.getLeft(),
-						"+", binaryOp.getRight());
+				return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s %s str(%s))", binaryOp.getLeft(),
+						"+", binaryOp.getRight()));
 			} else if (binaryOp.getRight().getType().getName().equals("str")
 					&& !binaryOp.getLeft().getType().getName().equals("str")) {
-				return String.format("(str(%s) %s %s)", binaryOp.getLeft(),
-						"+", binaryOp.getRight());
+				return (String)Log.MethodOut(Thread.currentThread(),String.format("(str(%s) %s %s)", binaryOp.getLeft(),
+						"+", binaryOp.getRight()));
 			} else {
 				textualOp = binaryOp.getTextualoperator();
 			}
 			break;
 		case EQUAL:
 			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
-				return String.format("(%s is %s)", binaryOp.getLeft(), 
-						binaryOp.getRight());
+				return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s is %s)", binaryOp.getLeft(), 
+						binaryOp.getRight()));
 		case NOT_EQUAL:
 			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
-				return String.format("(%s is not %s)", binaryOp.getLeft(), 
-						binaryOp.getRight());
+				return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s is not %s)", binaryOp.getLeft(), 
+						binaryOp.getRight()));
 		default:
 			textualOp = binaryOp.getTextualoperator();
 		}
 		if (binaryOp.getOperator().equals(Operator.UNKNOWN))
 			comment("Unrecognized by GOOL, passed on: " + textualOp);
-		return String.format("(%s %s %s)", binaryOp.getLeft(), textualOp,
-				binaryOp.getRight());
+		return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s %s %s)", binaryOp.getLeft(), textualOp,
+				binaryOp.getRight()));
 	}
 
 	@Override
 	public String getCode(Constant constant) {
+		Log.MethodIn(Thread.currentThread());
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
-			return String.valueOf(constant.getValue().toString()
-					.equalsIgnoreCase("true") ? "True" : "False");
+			return (String)Log.MethodOut(Thread.currentThread(),String.valueOf(constant.getValue().toString()
+					.equalsIgnoreCase("true") ? "True" : "False"));
 		} else if(constant.getType().equals(TypeNull.INSTANCE)){
-			return "None";
+			return (String)Log.MethodOut(Thread.currentThread(),"None");
 		}else {
 			String ret = super.getCode(constant);
 			// unicode strings have to be prefixed with a 'u'
 			if (constant.getType() == TypeString.INSTANCE
 					&& ret.contains("\\u")) {
-				return "u" + ret;
+				return (String)Log.MethodOut(Thread.currentThread(),"u" + ret);
 			} else {
-				return ret;
+				return (String)Log.MethodOut(Thread.currentThread(),ret);
 			}
 		}
 	}
@@ -312,74 +318,89 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(CastExpression cast) {
+		Log.MethodIn(Thread.currentThread());
 		if (castableTypes.contains(cast.getType().getClass())) {
-			return String
-					.format("%s(%s)", cast.getType(), cast.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(),String
+					.format("%s(%s)", cast.getType(), cast.getExpression()));
 		} else {
-			return cast.getExpression().toString();
+			return (String)Log.MethodOut(Thread.currentThread(),
+					cast.getExpression().toString());
 		}
 	}
 
 	@Override
 	public String getCode(ClassNew classNew) {
-
+		Log.MethodIn(Thread.currentThread());
 		if (classNew.getName().equals("goolHelper.Util.Scanner"))
-			return String.format("%s()", classNew.getName());
-		return String.format("%s(%s)", classNew.getType(),
-				StringUtils.join(classNew.getParameters(), ", "));
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s()", classNew.getName()));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s(%s)", classNew.getType(),
+				StringUtils.join(classNew.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(Comment comment) {
+		Log.MethodIn(Thread.currentThread());
 		// only works with comments that are alone on their line(s)
-		return comment.getValue().replaceAll("(^ *)([^ ])", "$1# $2");
+		return (String)Log.MethodOut(Thread.currentThread(),
+				comment.getValue().replaceAll("(^ *)([^ ])", "$1# $2"));
 	}
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
+		Log.MethodIn(Thread.currentThread());
 		// foreach-style loops define a local variable, we register it
 		localIndentifiers.add(enhancedForLoop.getVarDec().getName());
 		if (enhancedForLoop.getExpression().getType() instanceof TypeMap)
-			return formatIndented("for %s in %s.iteritems():%1",
+			return (String)Log.MethodOut(Thread.currentThread(),
+					formatIndented("for %s in %s.iteritems():%1",
 					enhancedForLoop.getVarDec().getName(),
 					enhancedForLoop.getExpression(),
-					enhancedForLoop.getStatements());
-		return formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec()
+					enhancedForLoop.getStatements()));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec()
 				.getName(), enhancedForLoop.getExpression(),
-				enhancedForLoop.getStatements());
+				enhancedForLoop.getStatements()));
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		return String.format("%s == %s", equalsCall.getTarget(), equalsCall
-				.getParameters().get(0));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s == %s", equalsCall.getTarget(), equalsCall
+				.getParameters().get(0)));
 	}
 
 	@Override
 	public String getCode(Field field) {
+		Log.MethodIn(Thread.currentThread());
 		String value;
 		if (field.getDefaultValue() != null) {
 			value = field.getDefaultValue().toString();
 		} else {
 			value = "None";
 		}
-		return printWithComment(String.format("%s = %s\n", field.getName(),
-				value));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				printWithComment(String.format("%s = %s\n", field.getName(),
+				value)));
 	}
 
 	@Override
 	public String getCode(For forr) {
+		Log.MethodIn(Thread.currentThread());
 		// there is no 'for(;;)' construct in Python
-		return formatIndented(
+		return (String)Log.MethodOut(Thread.currentThread(),formatIndented(
 				"%swhile %s:%1",
 				printWithComment(forr.getInitializer()),
 				forr.getCondition(),
 				forr.getWhileStatement().toString()
-				+ printWithComment(forr.getUpdater()));
+				+ printWithComment(forr.getUpdater())));
 	}
 
 	@Override
 	public String getCode(If pif) {
+		Log.MethodIn(Thread.currentThread());
 		String out = formatIndented("if %s:%1", pif.getCondition(),
 				pif.getThenStatement());
 		if (pif.getElseStatement() != null) {
@@ -390,156 +411,202 @@ CodeGeneratorNoVelocity {
 				out += formatIndented("else:%1", pif.getElseStatement());
 			}
 		}
-		return out;
+		return (String)Log.MethodOut(Thread.currentThread(),out);
 	}
 
 	@Override
 	public String getCode(Collection<Modifier> modifiers) {
+		Log.MethodIn(Thread.currentThread());
 		// there are no modifiers in Python
-		return "";
+		return (String)Log.MethodOut(Thread.currentThread(),"");
 	}
 
 	@Override
 	public String getCode(ListAddCall lac) {
+		Log.MethodIn(Thread.currentThread());
 		switch (lac.getParameters().size()) {
 		case 1:
-			return String.format("%s.append(%s)", lac.getExpression(), lac
-					.getParameters().get(0));
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s.append(%s)", lac.getExpression(), lac
+					.getParameters().get(0)));
 		case 2:
-			return String.format("%s.insert(%s, %s)", lac.getExpression(), lac
-					.getParameters().get(1), lac.getParameters().get(0));
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s.insert(%s, %s)", lac.getExpression(), lac
+					.getParameters().get(1), lac.getParameters().get(0)));
 		default:
 			comment("Unrecognized by GOOL, passed on: add");
-			return String.format("%s.add(%s)", lac.getExpression(),
-					GeneratorHelper.joinParams(lac.getParameters()));
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s.add(%s)", lac.getExpression(),
+					GeneratorHelper.joinParams(lac.getParameters())));
 		}
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		return String.format("%s in %s", GeneratorHelper.joinParams(lcc.getParameters()),
-				lcc.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s in %s", GeneratorHelper.joinParams(lcc.getParameters()),
+				lcc.getExpression()));
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
+		Log.MethodIn(Thread.currentThread());
 		if (lgc.getParameters().isEmpty())
-			return String.format("%s[]", lgc.getExpression());
-		return String.format("%s[%s]", lgc.getExpression(), 
-				lgc.getParameters().get(0));
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s[]", lgc.getExpression()));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[%s]", lgc.getExpression(), 
+				lgc.getParameters().get(0)));
 	}
 
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
-		return String.format("iter(%s)", lgic.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("iter(%s)", lgic.getExpression()));
 	}
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
+		Log.MethodIn(Thread.currentThread());
 		// An empty list is a list whose boolean value is false.
 		// It is the official recommended 'pythonic' way to do it.
-		return String.format("(not %s)", liec.getExpression());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("(not %s)", liec.getExpression()));
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		return String.format("%s.pop(%s)", lrc.getExpression(),
-				StringUtils.join(lrc.getParameters(), ", "));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.pop(%s)", lrc.getExpression(),
+				StringUtils.join(lrc.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
+		Log.MethodIn(Thread.currentThread());
 		if (!lrc.getType().getTypeArguments().contains("[Int]"))
-			return String.format("%s.remove(%s)", lrc.getExpression(),
-					StringUtils.join(lrc.getParameters(), ", "));
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s.remove(%s)", lrc.getExpression(),
+					StringUtils.join(lrc.getParameters(), ", ")));
 		else
-			return String.format("%s.pop(%s)", lrc.getExpression(),
-					StringUtils.join(lrc.getParameters(), ", "));
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s.pop(%s)", lrc.getExpression(),
+					StringUtils.join(lrc.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(ListSizeCall lsc) {
-		return String.format("len(%s)", lsc.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("len(%s)", lsc.getExpression()));
 	}
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
+		Log.MethodIn(Thread.currentThread());
 		// the 'main' is not a method in python
-		return mainMeth.getBlock().toString();
+		return (String)Log.MethodOut(Thread.currentThread(),
+				mainMeth.getBlock().toString());
 	}
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
+		Log.MethodIn(Thread.currentThread());
 		if (mapContainsKeyCall.getParameters().isEmpty())
-			return String.format("in %s", mapContainsKeyCall.getExpression());
-		return String.format("%s in %s", mapContainsKeyCall.getParameters()
-				.get(0), mapContainsKeyCall.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("in %s", mapContainsKeyCall.getExpression()));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s in %s", mapContainsKeyCall.getParameters()
+				.get(0), mapContainsKeyCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
+		Log.MethodIn(Thread.currentThread());
 		// a map entry is simply a tuple of the form (key, value)
-		return String.format("%s[0]", mapEntryGetKeyCall.getExpression());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[0]", mapEntryGetKeyCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MapEntryGetValueCall mapEntryGetKeyCall) {
-		return String.format("%s[1]", mapEntryGetKeyCall.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[1]", mapEntryGetKeyCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MapEntryMethCall mapEntryMethCall) {
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return "";
+		return (String)Log.MethodOut(Thread.currentThread(),"");
 	}
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		return String.format("%s[%s]", mapGetCall.getExpression(),
-				GeneratorHelper.joinParams(mapGetCall.getParameters()));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[%s]", mapGetCall.getExpression(),
+				GeneratorHelper.joinParams(mapGetCall.getParameters())));
 	}
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		return String.format("iter(%s)", mapGetIteratorCall.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("iter(%s)", mapGetIteratorCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
+		Log.MethodIn(Thread.currentThread());
 		// c.f. getCode(ListIsEmptyCall)
-		return String.format("(not %s)", mapIsEmptyCall.getExpression());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("(not %s)", mapIsEmptyCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MapMethCall mapMethCall) {
+		Log.MethodIn(Thread.currentThread());
 		// TODO: unbalanced parenthesis in produced code
-		return String.format("%s[%s])", mapMethCall.getExpression(),
-				mapMethCall.getParameters().get(0));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[%s])", mapMethCall.getExpression(),
+				mapMethCall.getParameters().get(0)));
 	}
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
+		Log.MethodIn(Thread.currentThread());
 		if (mapPutCall.getParameters().isEmpty())
-			return String.format("%s[] =", mapPutCall.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s[] =", mapPutCall.getExpression()));
 		//		if (mapPutCall.getParameters().size() == 1)
 		//			return String.format("%s[%s] =", mapPutCall.getExpression(), 
 		//					mapPutCall.getParameters().get(0));
-		return String.format("%s[%s] = %s", mapPutCall.getExpression(),
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[%s] = %s", mapPutCall.getExpression(),
 				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
-				.get(1));
+				.get(1)));
 	}
 
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
+		Log.MethodIn(Thread.currentThread());
 		// we don't use 'dict[key]' for compatibility with the java API
 		// if the key does'nt exists
-		return String.format("%s.pop(%s, None)", mapRemoveCall.getExpression(),
-				StringUtils.join(mapRemoveCall.getParameters(), ", "));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.pop(%s, None)", mapRemoveCall.getExpression(),
+				StringUtils.join(mapRemoveCall.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(MapSizeCall mapSizeCall) {
-		return String.format("len(%s)", mapSizeCall.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("len(%s)", mapSizeCall.getExpression()));
 	}
 
 	/**
@@ -552,6 +619,7 @@ CodeGeneratorNoVelocity {
 	 * @return the Python code of the method
 	 */
 	private String printMeth(Meth meth, String prefix) {
+		Log.MethodIn(Thread.currentThread());
 		currentMeth = meth;
 		// register parameters as local identifiers
 		localIndentifiers.clear();
@@ -588,11 +656,12 @@ CodeGeneratorNoVelocity {
 		// Python dosn't allow a empty block (it messes the indentation)
 		if (prefix == "" && meth.getBlock().getStatements().isEmpty())
 			prefix = "pass";
-		return formatIndented("%sdef %s(self%s):%1", meth.getModifiers()
+		return (String)Log.MethodOut(Thread.currentThread(),
+				formatIndented("%sdef %s(self%s):%1", meth.getModifiers()
 				.contains(Modifier.STATIC) ? "@classmethod\n" : "",
 						methodsNames.get(meth),
 						methodsNames.get(meth).equals(meth.getName()) ? ", *args"
-								: printMethParamsNames(meth), prefix + meth.getBlock());
+								: printMethParamsNames(meth), prefix + meth.getBlock()));
 	}
 
 	/**
@@ -604,6 +673,7 @@ CodeGeneratorNoVelocity {
 	 */
 	@Override
 	public String getCode(MethCall methodCall) {
+		Log.MethodIn(Thread.currentThread());
 		String out = "";
 		if (methodCall.getTarget() != null) {
 			out = methodCall.getTarget().toString();
@@ -614,19 +684,34 @@ CodeGeneratorNoVelocity {
 				out = GeneratorMatcher.matchGoolMethod(goolMethod);
 			}
 		}
-
-		// if (methodCall.getType() != null) {
-		// out += "< " + methodCall.getType() + " >";
-		// }
+		Log.d(String.format("<PythonGenerator - getCode(MethCall> %s ", methodCall.getTarget()));
+		if (methodCall.getTarget() instanceof StringIsEmptyCall)
+			return out;
+		if (methodCall.getTarget().toString().startsWith("len("))
+			return out;
 		out += "(";
 		if (methodCall.getParameters() != null) {
 			out += StringUtils.join(methodCall.getParameters(), ", ");
 		}
 		out += ")";
 		//Log.i("<CppGenerator> " + out);
-		return out;
+		return (String)Log.MethodOut(Thread.currentThread(),out);
 	}
-
+	
+	/**
+	 * Produces code for the isEmpty() method of String
+	 * 
+	 * @param StringIsEmptyCall
+	 *            the method to be invoked.
+	 * @return the formatted method invocation.
+	 */
+	@Override
+	public String getCode(StringIsEmptyCall lmc) {
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),String.format("(not %s)",
+				lmc.getTarget()));
+	}
+	
 	/**
 	 * Produces the comma-separated list of the names of the parameters of a
 	 * method, with a leading comma.
@@ -635,11 +720,12 @@ CodeGeneratorNoVelocity {
 	 * @return the corresponding string
 	 */
 	private String printMethParamsNames(Meth meth) {
+		Log.MethodIn(Thread.currentThread());
 		String ret = "";
 		for (VarDeclaration p : meth.getParams()) {
 			ret += ", " + p.getName();
 		}
-		return ret;
+		return (String)Log.MethodOut(Thread.currentThread(),ret);
 	}
 
 	/**
@@ -650,33 +736,37 @@ CodeGeneratorNoVelocity {
 	 * @return the corresponding string
 	 */
 	private String printMethParamsTypes(Meth meth, String separator) {
+		Log.MethodIn(Thread.currentThread());
 		String ret = "";
 		for (VarDeclaration p : meth.getParams()) {
 			ret += separator + p.getType();
 		}
-		return ret;
+		return (String)Log.MethodOut(Thread.currentThread(),ret);
 	}
 
 	@Override
 	public String getCode(Meth meth) {
-		return printMeth(meth, "");
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),printMeth(meth, ""));
 	}
 
 	@Override
 	public String getCode(VarAccess varAccess) {
+		Log.MethodIn(Thread.currentThread());
 		String name = varAccess.getDec().getName();
 		// packages names are not modified
 		// is'nt there a better test?
 		if (varAccess.getType() == null
 				|| varAccess.getType().getName().isEmpty()) {
-			return name;
+			return (String)Log.MethodOut(Thread.currentThread(), name);
 		}
 		// this method seems to be called before dealing with any class
 		// so we have to check for 'null'
 		if (name.equals("super") && currentClass != null)
-			return String.format("super(%s, self)", currentClass.getName());
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("super(%s, self)", currentClass.getName()));
 		if (name.equals("this"))
-			return "self";
+			return (String)Log.MethodOut(Thread.currentThread(), "self");
 
 		if (varAccess.getDec().getModifiers().contains(Modifier.PRIVATE)) {
 			name = name.replaceFirst("^__", "");
@@ -688,17 +778,20 @@ CodeGeneratorNoVelocity {
 				name = "__" + name;
 		}
 		if (localIndentifiers.contains(name)) {
-			return name;
+			return (String)Log.MethodOut(Thread.currentThread(), name);
 		} else {
 			if (currentMeth != null && currentMeth.isMainMethod())
-				return currentClass.getName() + "." + name;
+				return (String)Log.MethodOut(Thread.currentThread(), 
+						currentClass.getName() + "." + name);
 			else
-				return "self." + name;
+				return (String)Log.MethodOut(Thread.currentThread(), 
+						"self." + name);
 		}
 	}
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
+		Log.MethodIn(Thread.currentThread());
 		String name = memberSelect.getIdentifier();
 		if (memberSelect.getDec().getModifiers().contains(Modifier.PRIVATE)) {
 			name = name.replaceFirst("^__", "");
@@ -709,153 +802,187 @@ CodeGeneratorNoVelocity {
 			else
 				name = "__" + name;
 		}
-		return String.format("%s.%s", memberSelect.getTarget(), name);
+		if (memberSelect.getIdentifier().equals("length"))			
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("len(%s)", memberSelect.getTarget()));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.%s", memberSelect.getTarget(), name));
 	}
 
 	@Override
 	public String getCode(Modifier modifier) {
+		Log.MethodIn(Thread.currentThread());
 		// there are no modifiers in Python
-		return "";
+		return (String)Log.MethodOut(Thread.currentThread(), "");
 	}
 
 	@Override
 	public String getCode(NewInstance newInstance) {
-		return String.format(
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), String.format(
 				"%s = %s(%s)",
 				newInstance.getVariable(),
 				// why would there be any trailing '\'?
 				newInstance.getVariable().getType().toString()
 				.replaceFirst("\\*$", ""),
-				StringUtils.join(newInstance.getParameters(), ", "));
+				StringUtils.join(newInstance.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(ParentCall parentCall) {
-		return String.format("super(%s, self).__init__(%s)", currentClass,
-				StringUtils.join(parentCall.getParameters(), ", "));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("super(%s, self).__init__(%s)", currentClass,
+				StringUtils.join(parentCall.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(Return returnExpr) {
-		return String.format("return %s", returnExpr.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("return %s", returnExpr.getExpression()));
 	}
 
 	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {
+		Log.MethodIn(Thread.currentThread());
 		Log.d("<PythonGenerator - getCode(SystemOutDependency)> return noprint");
-		return "noprint";
+		return (String)Log.MethodOut(Thread.currentThread(), "noprint");
 	}
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
+		Log.MethodIn(Thread.currentThread());
 		// TODO: what about the new 'print is a function' standard?
-		return String.format("print %s",
-				StringUtils.join(systemOutPrintCall.getParameters(), ","));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("print %s",
+				StringUtils.join(systemOutPrintCall.getParameters(), ",")));
 	}
 
 	@Override
 	public String getCode(This pthis) {
-		return "self";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				"self");
 	}
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return String.format("self.__init__(%s)",
-				GeneratorHelper.joinParams(thisCall.getParameters()));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("self.__init__(%s)",
+				GeneratorHelper.joinParams(thisCall.getParameters())));
 	}
 
 	@Override
 	public String getCode(ToStringCall tsc) {
-		return String.format("str(%s)", tsc.getTarget());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("str(%s)", tsc.getTarget()));
 	}
 
 	@Override
 	public String getCode(TypeBool typeBool) {
-		return "bool";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"bool");
 	}
 
 	@Override
 	public String getCode(TypeByte typeByte) {
-		return "bytearray";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"bytearray");
 	}
 
 	@Override
 	public String getCode(TypeDecimal typeReal) {
-		return "float";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"float");
 	}
 
 	@Override
 	public String getCode(TypeDependency typeDependency) {
+		Log.MethodIn(Thread.currentThread());
 
 		if (typeDependency.getType() instanceof TypeInt) {
-			return "noprint";
+			return (String)Log.MethodOut(Thread.currentThread(),"noprint");
 		}
 		if (typeDependency.getType() instanceof TypeString) {
-			return "noprint";
+			return (String)Log.MethodOut(Thread.currentThread(),"noprint");
 		}
 		if (typeDependency.getType() instanceof TypeList) {
-			return "noprint";
+			return (String)Log.MethodOut(Thread.currentThread(),"noprint");
 		}
 		if (typeDependency.getType() instanceof TypeMap) {
-			return "noprint";
+			return (String)Log.MethodOut(Thread.currentThread(),"noprint");
 		}
 		if (typeDependency.getType() instanceof TypeEntry)
-			return "noprint";
+			return (String)Log.MethodOut(Thread.currentThread(),"noprint");
 		return super.getCode(typeDependency);
 	}
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
+		Log.MethodIn(Thread.currentThread());
 		// it's just a tuple
-		return String.format("(%s, %s)", typeEntry.getKeyType(),
-				typeEntry.getElementType());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("(%s, %s)", typeEntry.getKeyType(),
+				typeEntry.getElementType()));
 	}
 
 	@Override
 	public String getCode(TypeInt typeInt) {
+		Log.MethodIn(Thread.currentThread());
 		// should we use 'long' instead (infinite precision)?
-		return "int";
+		return (String)Log.MethodOut(Thread.currentThread(),"int");
 	}
 
 	@Override
 	public String getCode(TypeList typeList) {
-		return "list";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"list");
 	}
 
 	@Override
 	public String getCode(TypeMap typeMap) {
-		return "dict";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"dict");
 	}
 
 	@Override
 	public String getCode(TypeNone type) {
-		return "None";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"None");
 	}
 
 	@Override
 	public String getCode(TypeNull type) {
-		return "None";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"None");
 	}
 
 	@Override
 	public String getCode(TypeObject typeObject) {
-		return "object";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"object");
 	}
 
 	@Override
 	public String getCode(TypeString typeString) {
+		Log.MethodIn(Thread.currentThread());
 		// does not support unicode is Python 2.x
-		return "str";
+		return (String)Log.MethodOut(Thread.currentThread(),"str");
 	}
 
 	@Override
 	public String getCode(TypeVoid typeVoid) {
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return "";
+		return (String)Log.MethodOut(Thread.currentThread(),"");
 	}
 
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
+		Log.MethodIn(Thread.currentThread());
 		switch (unaryOperation.getOperator()) {
 		// TODO: Python is said to be 'call-by-assignment'.
 		// Increment and decrement helper functions do not update the variable.
@@ -876,25 +1003,30 @@ CodeGeneratorNoVelocity {
 		case POSTFIX_INCREMENT:
 		case PREFIX_INCREMENT:
 			comment("GOOL warning: semantic may have changed");
-			return unaryOperation.getExpression() + " +=1";
+			return (String)Log.MethodOut(Thread.currentThread(),
+					unaryOperation.getExpression() + " +=1");
 		case POSTFIX_DECREMENT:
 		case PREFIX_DECREMENT:
 			comment("GOOL warning: semantic may have changed");
-			return unaryOperation.getExpression() + " -=1";
+			return (String)Log.MethodOut(Thread.currentThread(),
+					unaryOperation.getExpression() + " -=1");
 		case NOT:
-			return String.format("(not %s)", unaryOperation.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("(not %s)", unaryOperation.getExpression()));
 		case UNKNOWN:
 			comment("Unrecognized by GOOL, passed on: "
 					+ unaryOperation.getTextualoperator());
 			// no break: follow to the next case
 		default:
-			return String.format("%s %s", unaryOperation.getTextualoperator(),
-					unaryOperation.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s %s", unaryOperation.getTextualoperator(),
+					unaryOperation.getExpression()));
 		}
 	}
 
 	@Override
 	public String getCode(VarDeclaration varDec) {
+		Log.MethodIn(Thread.currentThread());
 		// It's just an assignment. Even though it is not needed if there is no
 		// Initialization, we can't distinguish between no initialization and
 		// initialization to 'null'
@@ -908,25 +1040,30 @@ CodeGeneratorNoVelocity {
 		// even if the declaration were not to be outputted, we would still need
 		// to register the local identifier
 		localIndentifiers.add(varDec.getName());
-		return String.format("%s = %s", varDec.getName(), value);
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s = %s", varDec.getName(), value));
 	}
-
+	
 	@Override
 	public String getCode(While whilee) {
-		return formatIndented("while %s:%1", whilee.getCondition(),
-				whilee.getWhileStatement());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				formatIndented("while %s:%1", whilee.getCondition(),
+				whilee.getWhileStatement()));
 	}
 
 	@Override
 	public String getCode(TypeArray typeArray) {
+		Log.MethodIn(Thread.currentThread());
 		// Should we use the 'array' module?
-		return "list";
+		return (String)Log.MethodOut(Thread.currentThread(),"list");
 	}
 
 	@Override
 	public String getCode(CustomDependency customDependency) {
+		Log.MethodIn(Thread.currentThread());
 		if (customDependency.getName().startsWith("java.io")) {
-			return "goolHelper.IO";
+			return (String)Log.MethodOut(Thread.currentThread(),"goolHelper.IO");
 		}
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			Log.e(String.format("Custom dependencies: %s, Desired: %s",
@@ -936,16 +1073,19 @@ CodeGeneratorNoVelocity {
 							"There is no equivalent type in Python for the GOOL type '%s'.",
 							customDependency.getName()));
 		}
-		return customDependencies.get(customDependency.getName()).toString();
+		return (String)Log.MethodOut(Thread.currentThread(),
+				customDependencies.get(customDependency.getName()).toString());
 	}
 
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		return "noprint";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"noprint");
 	}
 
 	@Override
 	public String getCode(CompoundAssign compoundAssign) {
+		Log.MethodIn(Thread.currentThread());
 		String textualOp;
 		if (compoundAssign.getOperator() == Operator.DIV
 				&& compoundAssign.getType().equals(TypeInt.INSTANCE)) {
@@ -956,26 +1096,30 @@ CodeGeneratorNoVelocity {
 		}
 		if (compoundAssign.getOperator().equals(Operator.UNKNOWN))
 			comment("Unrecognized by GOOL, passed on: " + textualOp);
-		return String.format("%s %s= %s", compoundAssign.getLValue(),
-				textualOp, compoundAssign.getValue());
+		return (String)Log.MethodOut(Thread.currentThread(),String.format("%s %s= %s", compoundAssign.getLValue(),
+				textualOp, compoundAssign.getValue()));
 	}
 
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
+		Log.MethodIn(Thread.currentThread());
 		comment("Unrecognized by GOOL, expression passed on");
-		return unknownExpression.getTextual();
+		return (String)Log.MethodOut(Thread.currentThread(),
+				unknownExpression.getTextual());
 	}
 
 	@Override
 	public String getCode(ClassFree classFree) {
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return "";
+		return (String)Log.MethodOut(Thread.currentThread(),"");
 	}
 
 	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
+		Log.MethodIn(Thread.currentThread());
 		// a verifier car de partout à null et je ne sais pas ce que ça fait
-		return null;
+		return (String)Log.MethodOut(Thread.currentThread(),null);
 	}
 
 	@Override
@@ -1146,6 +1290,7 @@ CodeGeneratorNoVelocity {
 		}
 
 		for (Meth method : classDef.getMethods()) {
+			Log.MethodIn(Thread.currentThread());
 			if (!method.isMainMethod()) {
 				// we add a comment for renamed methods
 				if (!methodsNames.get(method).equals(method.getName())
@@ -1175,23 +1320,28 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(TypeChar typeChar) {
-		return "str";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),"str");
 	}
 
 	public String getCode(Throw throwStatement) {
-		return String.format("raise %s", throwStatement.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("raise %s", throwStatement.getExpression()));
 	}
 
 	@Override
 	public String getCode(Catch catchStatement) {
+		Log.MethodIn(Thread.currentThread());
 		localIndentifiers.add(catchStatement.getParameter().getName());
-		return formatIndented("except %s as %s:%1", catchStatement
+		return (String)Log.MethodOut(Thread.currentThread(),formatIndented("except %s as %s:%1", catchStatement
 				.getParameter().getType(), catchStatement.getParameter()
-				.getName(), catchStatement.getBlock());
+				.getName(), catchStatement.getBlock()));
 	}
 
 	@Override
 	public String getCode(Try tryStatement) {
+		Log.MethodIn(Thread.currentThread());
 		String retour = formatIndented("try:%1", tryStatement.getBlock());
 		for (Catch c : tryStatement.getCatches()) {
 			retour += c;
@@ -1199,32 +1349,33 @@ CodeGeneratorNoVelocity {
 		if (!tryStatement.getFinilyBlock().getStatements().isEmpty())
 			retour += formatIndented("finally:%1",
 					tryStatement.getFinilyBlock());
-		return retour;
+		return (String)Log.MethodOut(Thread.currentThread(),retour);
 	}
 
 	@Override
 	public String getCode(TypeException typeException) {
+		Log.MethodIn(Thread.currentThread());
 		// TODO: add more exceptions
 		switch (typeException.getKind()) {
 		case GLOBAL:
-			return "BaseException";
+			return (String)Log.MethodOut(Thread.currentThread(),"BaseException");
 		case ARITHMETIC:
-			return "ArithmeticError";
+			return (String)Log.MethodOut(Thread.currentThread(),"ArithmeticError");
 		case COLLECTION:
-			return "LookupError";
+			return (String)Log.MethodOut(Thread.currentThread(),"LookupError");
 		case CAST:
-			return "ValueError";
+			return (String)Log.MethodOut(Thread.currentThread(),"ValueError");
 		case ARGUMENT:
-			return "AttributeError";
+			return (String)Log.MethodOut(Thread.currentThread(),"AttributeError");
 		case ARRAY:
-			return "IndexError";
+			return (String)Log.MethodOut(Thread.currentThread(),"IndexError");
 		case TYPE:
-			return "TypeError";
+			return (String)Log.MethodOut(Thread.currentThread(),"TypeError");
 		case NULLREFERENCE:
 			// in Python, 'None' is an object but it does'nt have many methods
-			return "AttributeError";
+			return (String)Log.MethodOut(Thread.currentThread(),"AttributeError");
 		default:
-			return typeException.getName();
+			return (String)Log.MethodOut(Thread.currentThread(), typeException.getName());
 		}
 	}
 
@@ -1237,11 +1388,14 @@ CodeGeneratorNoVelocity {
 	//	}
 
 	public String getCode(RecognizedDependency recognizedDependency) {
+		Log.MethodIn(Thread.currentThread());
 		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());
 		if(imports == null)
-			return "";
+			return (String)Log.MethodOut(Thread.currentThread(), "");
 		if(imports.isEmpty())
-			return "/* import "+recognizedDependency.getName()+" not generated by GOOL, passed on. */";
+			return (String)Log.MethodOut(Thread.currentThread(),
+					"/* import "+recognizedDependency.getName() + 
+					" not generated by GOOL, passed on. */");
 		Log.d("<PythonGenerator - getCode(RecognizedDependency)> Print RecognizedDependencies :");
 		String result = "";
 		for (String Import : imports) {
@@ -1251,7 +1405,7 @@ CodeGeneratorNoVelocity {
 			result += "import " + Import + "\n";
 		}
 
-		return result;
+		return (String)Log.MethodOut(Thread.currentThread(),result);
 	}
 
 }

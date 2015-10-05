@@ -113,16 +113,16 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(Modifier modifier) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (modifier == Modifier.FINAL) {
-			return "const";
+			return (String)Log.MethodOut(Thread.currentThread(), "const");
 		}
-		return super.getCode(modifier);
+		return (String)Log.MethodOut(Thread.currentThread(), super.getCode(modifier));
 	}
 
 	@Override
 	public String getCode(Field field) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Modifier m = field.getAccessModifier();
 		List<Modifier> modifiers = new ArrayList<Modifier>(field.getModifiers());
 		modifiers.remove(m);
@@ -141,12 +141,12 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			}
 		}
 
-		return out;
+		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 
 	@Override
 	public String getCode(MethCall methodCall) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String out = "";
 		if (methodCall.getTarget() != null) {
 			out = methodCall.getTarget().toString();
@@ -173,73 +173,80 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		}
 		out += ")";
 		//Log.i("<CppGenerator> " + out);
-		return out;
+		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 
 	@Override
 	public String getCode(TypeBool typeBool) {
-		LogMethodName();
-		return "int";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "int");
 	}
 
 	@Override
 	public String getCode(TypeClass typeClass) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String pointer = typeClass.isEnum() ? "" : "*";
-		return super.getCode(typeClass).replaceAll("\\.", "::") + pointer;
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				super.getCode(typeClass).replaceAll("\\.", "::") + pointer);
 	}
 
 	@Override
 	public String getCode(TypeInt typeInt) {
-		LogMethodName();
-		return "int";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "int");
 	}
 
 	@Override
 	public String getCode(TypeString typeString) {
-		LogMethodName();
-		return "std::string*";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "std::string*");
 	}
 
 	@Override
 	public String getCode(TypeObject typeObject) {
-		LogMethodName();
-		return "boost::any";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "boost::any");
 	}
 
 	@Override
 	public String getCode(CastExpression cast) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (cast.getType().equals(cast.getExpression().getType())) {
-			return String.format("%s", cast.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s", cast.getExpression()));
 		} else if (cast.getExpression().getType() == TypeObject.INSTANCE) {
-			return String.format("any_cast< %s >( %s )", cast.getType(),
-					cast.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("any_cast< %s >( %s )", cast.getType(),
+					cast.getExpression()));
 		} else {
-			return String.format("( ( %s )( %s ) )", cast.getType(),
-					cast.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("( ( %s )( %s ) )", cast.getType(),
+					cast.getExpression()));
 		}
 	}
 
 	@Override
 	public String getCode(Constant constant) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (constant.getType().equals(TypeString.INSTANCE)) {
-			return String.format("( new std::string ( %s ) )",
-					super.getCode(constant));
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("( new std::string ( %s ) )",
+					super.getCode(constant)));
 		} else if (constant.getType().equals(TypeNull.INSTANCE)) {
-			return "NULL";
+			return (String)Log.MethodOut(Thread.currentThread(), "NULL");
 		} else if (constant.getType().equals(TypeBool.INSTANCE)) {
-			return String.valueOf(constant.getValue().toString()
-					.equalsIgnoreCase("true") ? 1 : 0);
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.valueOf(constant.getValue().toString()
+					.equalsIgnoreCase("true") ? 1 : 0));
 		} else {
-			return super.getCode(constant);
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					super.getCode(constant));
 		}
 	}
 
 	@Override
 	public String getCode(TypeList typeList) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (typeList.getElementType() == null) {
 			/*
 			 * TODO: Avoid elements of different types within the same list.
@@ -248,14 +255,16 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			 * should have the same type, otherwise the C++ compiler throws an
 			 * error).
 			 */
-			return "std::vector<" + TypeObject.INSTANCE + ">*";
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					"std::vector<" + TypeObject.INSTANCE + ">*");
 		}
-		return "std::vector<" + typeList.getElementType().toString() + ">*";
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				"std::vector<" + typeList.getElementType().toString() + ">*");
 	}
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 
 		IType targetType = memberSelect.getTarget().getType();
 		String memberAccess = memberSelect.getTarget().toString();
@@ -279,118 +288,126 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		}
 		Log.d("<CppGenerator - getCode(MemberSelect)> return " + String
 				.format("%s%s", memberAccess, memberSelect.getIdentifier()));
-		return String
-				.format("%s%s", memberAccess, memberSelect.getIdentifier());
+		return (String)Log.MethodOut(Thread.currentThread(), String
+				.format("%s%s", memberAccess, memberSelect.getIdentifier()));
 	}
 
 	@Override
 	public String getCode(TypeDecimal typeReal) {
-		LogMethodName();
-		return "double";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "double");
 	}
 
 	@Override
 	public String getCode(TypeChar typeChar) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return "char";
+		return (String)Log.MethodOut(Thread.currentThread(), "char");
 	}
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
-			return String.format("std::cout << (%s)->data() << std::endl",
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("std::cout << (%s)->data() << std::endl",
 					GeneratorHelper.joinParams(systemOutPrintCall
-							.getParameters()));
+							.getParameters())));
 		} else {
-			return String.format("std::cout << (%s) << std::endl",
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("std::cout << (%s) << std::endl",
 					GeneratorHelper.joinParams(systemOutPrintCall
-							.getParameters()));
+							.getParameters())));
 		}
 	}
 
 	@Override
 	public String getCode(ParentCall parentCall) {
-		LogMethodName();
-		return null;
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), null);
 
 	}
 
 	public String getCode(SystemOutDependency systemOutDependency) {
-		LogMethodName();
-		return "iostream";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "iostream");
 	}
 
 	@Override
 	public String getCode(TypeDependency typeDependency) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (typeDependency.getType() instanceof TypeList) {
 			// Use the vector type because it allows random access over
 			// lists.
 			if (((TypeList) typeDependency.getType()).getElementType() == null) {
-				return "vector";
+				return (String)Log.MethodOut(Thread.currentThread(), "vector");
 			}
-			return "vector"; // TODO what type should be used when it is not a
+			return (String)Log.MethodOut(Thread.currentThread(), "vector"); // TODO what type should be used when it is not a
 			// generic list?
 		}
 		if (typeDependency.getType() instanceof TypeMap) {
-			return "map";
+			return (String)Log.MethodOut(Thread.currentThread(), "map");
 		}
 		if (typeDependency.getType() instanceof TypeEntry) {
-			return "map";
+			return (String)Log.MethodOut(Thread.currentThread(), "map");
 		}
 		if (typeDependency.getType() instanceof TypeString) {
-			return "string";
+			return (String)Log.MethodOut(Thread.currentThread(), "string");
 		}
 		if (typeDependency.getType() instanceof TypeBool) {
-			return "noprint";
+			return (String)Log.MethodOut(Thread.currentThread(), "noprint");
 		}
 		if (typeDependency.getType() instanceof TypeInt) {
-			return "noprint";
+			return (String)Log.MethodOut(Thread.currentThread(), "noprint");
 		}
-		return removePointer(super.getCode(typeDependency)).concat(".h");
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				removePointer(super.getCode(typeDependency)).concat(".h"));
 	}
 
 	@Override
 	public String getCode(MapSizeCall mapSizeCall) {
-		LogMethodName();
-		return String.format("%s -> size()", mapSizeCall.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> size()", mapSizeCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MapRemoveCall mapRemoveCall) {
-		LogMethodName();
-		return String.format("%s -> erase(%s)", mapRemoveCall.getExpression(),
-				GeneratorHelper.joinParams(mapRemoveCall.getParameters()));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> erase(%s)", mapRemoveCall.getExpression(),
+				GeneratorHelper.joinParams(mapRemoveCall.getParameters())));
 	}
 
 	@Override
 	public String getCode(MapPutCall mapPutCall) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (mapPutCall.getParameters().isEmpty())
-			return String.format("%s -> insert()", 
-					mapPutCall.getExpression());
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s -> insert()", 
+					mapPutCall.getExpression()));
 //		if (mapPutCall.getParameters().size() == 1)
 //			return String.format("%s -> insert( %s )", 
 //					mapPutCall.getExpression(), 
 //					mapPutCall.getParameters().get(0));		
-		return String.format("%s -> insert( std::make_pair( %s, %s ) )",
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> insert( std::make_pair( %s, %s ) )",
 				mapPutCall.getExpression(), mapPutCall.getParameters().get(0),
-				mapPutCall.getParameters().get(1));
+				mapPutCall.getParameters().get(1)));
 	}
 
 	@Override
 	public String getCode(MapIsEmptyCall mapIsEmptyCall) {
-		LogMethodName();
-		return String.format("%s -> empty()",
-				mapIsEmptyCall.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> empty()",
+				mapIsEmptyCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String left = binaryOp.getLeft().toString();
 		String right = binaryOp.getRight().toString();
 
@@ -409,47 +426,53 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			left = String.format("(%s)", left);
 			right = String.format("(%s)", right);
 
-			return String.format("new std::string(%s -> append(* (%s)))", left,
-					right);
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("new std::string(%s -> append(* (%s)))", left,
+					right));
 		}
 		
 		if (binaryOp.getOperator() == Operator.REMAINDER
 				&& ((binaryOp.getLeft().getType() instanceof TypeDecimal) || 
 					(binaryOp.getRight().getType() instanceof TypeDecimal))) 
 		{
-			return String.format("std::fmod(%s,%s)", left,	right);
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("std::fmod(%s,%s)", left,	right));
 		}
 
-		return super.getCode(binaryOp);
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				super.getCode(binaryOp));
 	}
 
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return mapGetIteratorCall.getClass().toString();
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				mapGetIteratorCall.getClass().toString());
 	}
 
 	@Override
 	public String getCode(MapGetCall mapGetCall) {
-		LogMethodName();
-		return String.format("%s -> find( %s ) -> second",
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> find( %s ) -> second",
 				mapGetCall.getExpression(),
-				GeneratorHelper.joinParams(mapGetCall.getParameters()));
+				GeneratorHelper.joinParams(mapGetCall.getParameters())));
 	}
 
 	@Override
 	public String getCode(MapContainsKeyCall mapContainsKeyCall) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String expr = mapContainsKeyCall.getExpression().toString();
-		return String.format("(%s) -> find(%s) != (%s) -> end()", expr,
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("(%s) -> find(%s) != (%s) -> end()", expr,
 				GeneratorHelper.joinParams(mapContainsKeyCall.getParameters()),
-				expr);
+				expr));
 	}
 
 	@Override
 	public String getCode(TypeMap typeMap) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		/*
 		 * Maps with with keys of type Object are not allowed in C++ because
 		 * there is not a base type.
@@ -460,21 +483,23 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 					"The map's key is of type Object, this is not supported in C++.");
 		}
 		if (typeMap.getElementType() == null) {
-			return "std::map<" + typeMap.getKeyType() + ", "
-					+ TypeObject.INSTANCE + ">*";
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					"std::map<" + typeMap.getKeyType() + ", "
+					+ TypeObject.INSTANCE + ">*");
 		}
-		return "std::map<" + StringUtils.join(typeMap.getTypeArguments(), ", ")
-		+ ">*";
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				"std::map<" + StringUtils.join(typeMap.getTypeArguments(), ", ")
+				+ ">*");
 	}
 
 	@Override
 	public String getCode(EnhancedForLoop enhancedForLoop) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		VarDeclaration varDec = enhancedForLoop.getVarDec();
 		String varName = varDec.getName();
 		Expression expression = enhancedForLoop.getExpression();
 		String expressionToString = enhancedForLoop.getExpression().toString();
-		return String
+		return (String)Log.MethodOut(Thread.currentThread(), String
 				.format("for(%s::iterator %sIterator = %s->begin(); %sIterator != %s->end(); ++%sIterator){\n"
 						+ "%s %s *%sIterator;" + "%s" + "\n}",
 						removePointer(expression.getType()),
@@ -488,21 +513,22 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 								.format("* %s = (%s*)&", varName,
 										varDec.getType())) : (String.format(
 												"%s = ", varName)), varName, enhancedForLoop
-								.getStatements());
+								.getStatements()));
 
 	}
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 
 	public String getCode(CustomDependency customDependency) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			throw new IllegalArgumentException(
 					String.format(
 							"There is no equivalent type in C++ for the GOOL type '%s'.",
 							customDependency.getName()));
 		}
-		return customDependencies.get(customDependency.getName()).toString();
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				customDependencies.get(customDependency.getName()).toString());
 	}
 
 	public void addCustomDependency(String key, Dependency value) {
@@ -511,113 +537,123 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(TypeEntry typeEntry) {
-		LogMethodName();
-		return String.format("std::pair<%s, %s>", typeEntry.getKeyType(),
-				typeEntry.getElementType());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("std::pair<%s, %s>", typeEntry.getKeyType(),
+				typeEntry.getElementType()));
 	}
 
 	@Override
 	public String getCode(MapEntryGetKeyCall mapEntryGetKeyCall) {
-		LogMethodName();
-		return String.format("%s->first", mapEntryGetKeyCall.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s->first", mapEntryGetKeyCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(MapEntryGetValueCall mapEntryGetValueCall) {
-		LogMethodName();
-		return String
-				.format("%s->second", mapEntryGetValueCall.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), String
+				.format("%s->second", mapEntryGetValueCall.getExpression()));
 	}
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return null;
+		return (String)Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public String getCode(EqualsCall equalsCall) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 
-		return String.format("%s -> equals(%s)", equalsCall.getTarget(),
-				StringUtils.join(equalsCall.getParameters(), ", "));
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> equals(%s)", equalsCall.getTarget(),
+				StringUtils.join(equalsCall.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(ToStringCall tsc) {
-		LogMethodName();
-		return String.format("%s -> toString()", tsc.getTarget());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> toString()", tsc.getTarget()));
 	}
 
 	@Override
 	public String getCode(ListContainsCall lcc) {
-		LogMethodName();
-
-		return String
-				.format("/* ListContainsCall not implemented in C++ at the moment */");
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), String
+				.format("/* ListContainsCall not implemented in C++ at the moment */"));
 	}
 
 	@Override
 	public String getCode(ListGetCall lgc) {
-		LogMethodName();
-		return String.format("%s->%s(%s)", lgc.getExpression(), "at",
-				GeneratorHelper.joinParams(lgc.getParameters()));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s->%s(%s)", lgc.getExpression(), "at",
+				GeneratorHelper.joinParams(lgc.getParameters())));
 	}
 
 	@Override
 	public String getCode(ListGetIteratorCall lgic) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return null;
+		return (String)Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public String getCode(ListIsEmptyCall liec) {
-		LogMethodName();
-		return String.format("%s -> empty()", liec.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> empty()", liec.getExpression()));
 	}
 
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
-		LogMethodName();
-		return String.format("%s -> erase(%s -> begin()+%s)",
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> erase(%s -> begin()+%s)",
 				lrc.getExpression(), lrc.getExpression(),
-				GeneratorHelper.joinParams(lrc.getParameters()));
+				GeneratorHelper.joinParams(lrc.getParameters())));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String expr = lrc.getExpression().toString();
-		return String
+		return (String)Log.MethodOut(Thread.currentThread(), String
 				.format("for (%s::iterator it = %s -> begin(); it != %s -> end(); ++it)\n\t"
 						+ "if (**it == *%s)\n\t{\n\t\t"
 						+ "list->erase(it);\n\t\tbreak;\n\t}\n",
 						removePointer(lrc.getExpression().getType()),
 						lrc.getExpression(), lrc.getExpression(),
-						GeneratorHelper.joinParams(lrc.getParameters()));
+						GeneratorHelper.joinParams(lrc.getParameters())));
 
 
 	}
 
 	@Override
 	public String getCode(ListSizeCall lsc) {
-		LogMethodName();
-		return String.format("%s -> size()", lsc.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s -> size()", lsc.getExpression()));
 	}
 
 	@Override
 	public String getCode(ListAddCall lac) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		if (lac.getParameters().size() == 2)
-			return String.format("%s->%s(%s -> begin() + %s, %s)", lac.getExpression(), "insert",
-					lac.getExpression(), lac.getParameters().get(0),
-					GeneratorHelper.joinParams(lac.getParameters().
-							subList(1, lac.getParameters().size())));
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s->%s(%s -> begin() + %s, %s)", 
+							lac.getExpression(), "insert",
+							lac.getExpression(), lac.getParameters().get(0),
+							GeneratorHelper.joinParams(lac.getParameters().
+									subList(1, lac.getParameters().size()))));
 		else
-			return String.format("%s->%s(%s)", lac.getExpression(), "push_back",
-					GeneratorHelper.joinParams(lac.getParameters()));
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s->%s(%s)", lac.getExpression(), "push_back",
+					GeneratorHelper.joinParams(lac.getParameters())));
 	}
 
 	/**
@@ -626,44 +662,47 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	 */
 	@Override
 	public String getCode(Meth meth) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		List<Modifier> modifiers = new ArrayList<Modifier>(meth.getModifiers());
 		// Remove (public, private, protected, final) invalid modifiers.
 		modifiers.remove(meth.getAccessModifier());
 		modifiers.remove(Modifier.FINAL);
 
-		return String.format("%s %s %s::%s(%s)", getCode(modifiers),
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s %s %s::%s(%s)", getCode(modifiers),
 				meth.getType(), meth.getClassDef().getName(), meth.getName(),
-				StringUtils.join(meth.getParams(), ", "));
+				StringUtils.join(meth.getParams(), ", ")));
 	}
 	@Override
 	public String getCode(TypeArray typeArray) {
-		LogMethodName();
-		return String.format("%s*", typeArray.getElementType());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s*", typeArray.getElementType()));
 	}
 	@Override
 	public String getCode(ClassNew classNew) {
-		LogMethodName();
-		return String.format("(new %s(%s))", removePointer(classNew.getType()),
-				StringUtils.join(classNew.getParameters(), ", "));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("(new %s(%s))", removePointer(classNew.getType()),
+				StringUtils.join(classNew.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
-		LogMethodName();
-		return "int main()";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "int main()");
 	}
 
 	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return null;
+		return (String)Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	//@Override
 	public String printClass(ClassDef classDef) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		StringBuilder sb = new StringBuilder(String.format(
 				"// Platform: %s\n\n", classDef.getPlatform()));
 		// print the package containing the class
@@ -694,26 +733,28 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		}
 		if (classDef.getPpackage() != null)
 			sb = sb.append("}");
-		return sb.toString();
+		return (String)Log.MethodOut(Thread.currentThread(), sb.toString());
 	}
 
 	@Override
 	public String getCode(Throw throwStatement) {
-		LogMethodName();
-		return String.format("throw %s", throwStatement.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("throw %s", throwStatement.getExpression()));
 	}
 
 	@Override
 	public String getCode(Catch catchStatement) {
-		LogMethodName();
-		return formatIndented("catch (%s * %s)\n{%1}\n", catchStatement
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				formatIndented("catch (%s * %s)\n{%1}\n", catchStatement
 				.getParameter().getType(), catchStatement.getParameter()
-				.getName(), catchStatement.getBlock());
+				.getName(), catchStatement.getBlock()));
 	}
 
 	@Override
 	public String getCode(Try tryStatement) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String ret = "";
 		if (tryStatement.getFinilyBlock().getStatements().isEmpty()) {
 			ret = formatIndented("try\n{%1}", tryStatement.getBlock());
@@ -724,27 +765,29 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		for (Catch c : tryStatement.getCatches()) {
 			ret += "\n" + c;
 		}
-		return ret;
+		return (String)Log.MethodOut(Thread.currentThread(), ret);
 	}
 
 	@Override
 	public String getCode(TypeException typeException) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		switch (typeException.getKind()) {
 		case GLOBAL:
-			return "std::exception";
+			return (String)Log.MethodOut(Thread.currentThread(), "std::exception");
 		default:
-			return typeException.getName();
+			return (String)Log.MethodOut(Thread.currentThread(), typeException.getName());
 		}
 	}
 
 	public String getCode(RecognizedDependency recognizedDependency) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());
 		if(imports == null)
-			return "";
+			return (String)Log.MethodOut(Thread.currentThread(), "");
 		if(imports.isEmpty())
-			return "/* import "+recognizedDependency.getName()+" not generated by GOOL, passed on. */";
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					"/* import "+recognizedDependency.getName() + 
+					" not generated by GOOL, passed on. */");
 		String result = "";
 		String className = GeneratorMatcher.matchGoolClass(recognizedDependency.getName());
 		if (className.equalsIgnoreCase("std")){
@@ -762,37 +805,22 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			}
 		}
 
-		return result;
+		return (String)Log.MethodOut(Thread.currentThread(), result);
 	}
 
 	@Override
 	public String getCode(TypeGoolLibraryClass typeMatchedGoolClass) {
-		LogMethodName();
+		Log.MethodIn(Thread.currentThread());
 		String res = GeneratorMatcher.matchGoolClass(typeMatchedGoolClass
 				.getGoolclassname());
 		Log.d("<CppGenerator - getCode : TypeGoolLibraryClass> return " + res + "*");
 		if (res == null)
-			return typeMatchedGoolClass.getGoolclassname()
-					+ " /* Ungenerated by GOOL, passed on. */";
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					typeMatchedGoolClass.getGoolclassname()
+					+ " /* Ungenerated by GOOL, passed on. */");
 		else {
-			return res+"*";
+			return (String)Log.MethodOut(Thread.currentThread(), res + "*");
 		}
 	}
 
-	private void LogMethodName() {
-		compt++;
-		String mess = ">----";
-		mess += String.format("%" + compt + "s", "").replace(' ', '-');
-		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].toString()
-				+ " | " + Thread.currentThread().getStackTrace()[3].toString());
-	}
-
-	//	private void UnLogMethodName() {
-	//		if (compt > 1)
-	//			compt--;
-	//		String mess = "<----";
-	//		mess += String.format("%" + compt + "s", "").replace(' ', '-');
-	//		Log.d(mess + " " + Thread.currentThread().getStackTrace()[2].getMethodName()
-	//				+ " - Bye !");
-	//	}
 }
