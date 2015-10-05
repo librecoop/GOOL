@@ -209,10 +209,12 @@ CodeGeneratorNoVelocity {
 			String ret = "None";
 			for (Expression e : arrayNew.getDimesExpressions())
 				ret = String.format("[%s]*%s", ret, e);
-			return "(" + ret + ")";}
+			return (String)Log.MethodOut(Thread.currentThread(), "(" + ret + ")");
+			}
 
 
-		return (String)Log.MethodOut(Thread.currentThread(),String.format("[%s]",StringUtils.join(arrayNew.getInitialiList(), ", ")));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("[%s]",StringUtils.join(arrayNew.getInitialiList(), ", ")));
 
 
 
@@ -252,11 +254,13 @@ CodeGeneratorNoVelocity {
 		case PLUS:
 			if (binaryOp.getLeft().getType().getName().equals("str")
 					&& !binaryOp.getRight().getType().getName().equals("str")) {
-				return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s %s str(%s))", binaryOp.getLeft(),
+				return (String)Log.MethodOut(Thread.currentThread(),
+						String.format("(%s %s str(%s))", binaryOp.getLeft(),
 						"+", binaryOp.getRight()));
 			} else if (binaryOp.getRight().getType().getName().equals("str")
 					&& !binaryOp.getLeft().getType().getName().equals("str")) {
-				return (String)Log.MethodOut(Thread.currentThread(),String.format("(str(%s) %s %s)", binaryOp.getLeft(),
+				return (String)Log.MethodOut(Thread.currentThread(),
+						String.format("(str(%s) %s %s)", binaryOp.getLeft(),
 						"+", binaryOp.getRight()));
 			} else {
 				textualOp = binaryOp.getTextualoperator();
@@ -264,18 +268,21 @@ CodeGeneratorNoVelocity {
 			break;
 		case EQUAL:
 			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
-				return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s is %s)", binaryOp.getLeft(), 
+				return (String)Log.MethodOut(Thread.currentThread(),
+						String.format("(%s is %s)", binaryOp.getLeft(), 
 						binaryOp.getRight()));
 		case NOT_EQUAL:
 			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
-				return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s is not %s)", binaryOp.getLeft(), 
+				return (String)Log.MethodOut(Thread.currentThread(),
+						String.format("(%s is not %s)", binaryOp.getLeft(), 
 						binaryOp.getRight()));
 		default:
 			textualOp = binaryOp.getTextualoperator();
 		}
 		if (binaryOp.getOperator().equals(Operator.UNKNOWN))
 			comment("Unrecognized by GOOL, passed on: " + textualOp);
-		return (String)Log.MethodOut(Thread.currentThread(),String.format("(%s %s %s)", binaryOp.getLeft(), textualOp,
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("(%s %s %s)", binaryOp.getLeft(), textualOp,
 				binaryOp.getRight()));
 	}
 
@@ -283,7 +290,8 @@ CodeGeneratorNoVelocity {
 	public String getCode(Constant constant) {
 		Log.MethodIn(Thread.currentThread());
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
-			return (String)Log.MethodOut(Thread.currentThread(),String.valueOf(constant.getValue().toString()
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.valueOf(constant.getValue().toString()
 					.equalsIgnoreCase("true") ? "True" : "False"));
 		} else if(constant.getType().equals(TypeNull.INSTANCE)){
 			return (String)Log.MethodOut(Thread.currentThread(),"None");
@@ -411,14 +419,14 @@ CodeGeneratorNoVelocity {
 				out += formatIndented("else:%1", pif.getElseStatement());
 			}
 		}
-		return (String)Log.MethodOut(Thread.currentThread(),out);
+		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 
 	@Override
 	public String getCode(Collection<Modifier> modifiers) {
 		Log.MethodIn(Thread.currentThread());
 		// there are no modifiers in Python
-		return (String)Log.MethodOut(Thread.currentThread(),"");
+		return (String)Log.MethodOut(Thread.currentThread(), "");
 	}
 
 	@Override
@@ -686,9 +694,9 @@ CodeGeneratorNoVelocity {
 		}
 		Log.d(String.format("<PythonGenerator - getCode(MethCall> %s ", methodCall.getTarget()));
 		if (methodCall.getTarget() instanceof StringIsEmptyCall)
-			return out;
+			return (String)Log.MethodOut(Thread.currentThread(), out);
 		if (methodCall.getTarget().toString().startsWith("len("))
-			return out;
+			return (String)Log.MethodOut(Thread.currentThread(), out);
 		out += "(";
 		if (methodCall.getParameters() != null) {
 			out += StringUtils.join(methodCall.getParameters(), ", ");
@@ -917,7 +925,7 @@ CodeGeneratorNoVelocity {
 		}
 		if (typeDependency.getType() instanceof TypeEntry)
 			return (String)Log.MethodOut(Thread.currentThread(),"noprint");
-		return super.getCode(typeDependency);
+		return (String)Log.MethodOut(Thread.currentThread(), super.getCode(typeDependency));
 	}
 
 	@Override
@@ -1290,7 +1298,6 @@ CodeGeneratorNoVelocity {
 		}
 
 		for (Meth method : classDef.getMethods()) {
-			Log.MethodIn(Thread.currentThread());
 			if (!method.isMainMethod()) {
 				// we add a comment for renamed methods
 				if (!methodsNames.get(method).equals(method.getName())

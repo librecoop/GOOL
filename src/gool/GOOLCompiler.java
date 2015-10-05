@@ -113,7 +113,7 @@ public class GOOLCompiler {
 				// JAVA input -> JAVA output
 								gc.runGOOLCompiler(new JavaParser(), JavaPlatform.getInstance(filesNonChange), files);
 				// JAVA input -> CSharp output
-				//				gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
+				gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
 				// JAVA input -> CPP output
 				 gc.runGOOLCompiler(new JavaParser(), CppPlatform.getInstance(filesNonChange), files);
 				//				// JAVA input -> PYTHON output
