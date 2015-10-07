@@ -526,7 +526,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		String typeName;
 		IType goolType;
 		Log.d("<JavaRecognizer - goolType> Type is a not primtive one : " +
-				typeMirror.toString());
+				typeMirror.toString() + " of kind " + typeMirror.getKind());
 		switch (typeMirror.getKind()) {
 		case PACKAGE: // -- Dealing with Packages
 			// Create a GOOL type of a type that matches the full name of the
@@ -548,6 +548,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// However some classes receive a particular treatment like Lists,
 			// Maps etc.
 			typeName = classSymbol.getSimpleName().toString();
+			Log.d("<Javarecognizer - goolType(TypeMirror> typeName = " + typeName);
 			goolType = string2IType(typeName, context);
 
 			// Whether in abstract Java or in GOOL, enums are codes as classes

@@ -70,6 +70,7 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
+import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeChar;
@@ -200,7 +201,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	@Override
 	public String getCode(TypeString typeString) {
 		Log.MethodIn(Thread.currentThread());
-		return (String)Log.MethodOut(Thread.currentThread(), "std::string*");
+		return (String)Log.MethodOut(Thread.currentThread(), "std::string");
 	}
 
 	@Override
@@ -218,11 +219,11 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		} else if (cast.getExpression().getType() == TypeObject.INSTANCE) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("any_cast< %s >( %s )", cast.getType(),
-					cast.getExpression()));
+							cast.getExpression()));
 		} else {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("( ( %s )( %s ) )", cast.getType(),
-					cast.getExpression()));
+							cast.getExpression()));
 		}
 	}
 
@@ -231,14 +232,14 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		if (constant.getType().equals(TypeString.INSTANCE)) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
-					String.format("( new std::string ( %s ) )",
-					super.getCode(constant)));
+					//					String.format("( new std::string ( %s ) )",
+					String.format("%s",	super.getCode(constant)));
 		} else if (constant.getType().equals(TypeNull.INSTANCE)) {
 			return (String)Log.MethodOut(Thread.currentThread(), "NULL");
 		} else if (constant.getType().equals(TypeBool.INSTANCE)) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.valueOf(constant.getValue().toString()
-					.equalsIgnoreCase("true") ? 1 : 0));
+							.equalsIgnoreCase("true") ? 1 : 0));
 		} else {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					super.getCode(constant));
@@ -283,16 +284,18 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 				&& ((TypeClass) targetType).isEnum()) {
 			memberAccess = "";
 		} else if (memberSelect.getTarget() instanceof Constant) {
-			memberAccess += " :: "; // A static member access
-		} else {
-			memberAccess += " -> ";
+			memberAccess += "::"; // A static member access
+		} else if (memberSelect.getTarget().getType() instanceof PrimitiveType) {
+			memberAccess += "."; // A normal member access
+		}else {// A pointer member access
+			memberAccess += "->";
 		}
 		Log.d("<CppGenerator - getCode(MemberSelect)> return " + String
 				.format("%s%s", memberAccess, memberSelect.getIdentifier()));
 		return (String)Log.MethodOut(Thread.currentThread(), String
 				.format("%s%s", memberAccess, memberSelect.getIdentifier()));
 	}
-	
+
 	/**
 	 * Produces code for the isEmpty() method of String
 	 * 
@@ -303,7 +306,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	@Override
 	public String getCode(StringIsEmptyCall lmc) {
 		Log.MethodIn(Thread.currentThread());
-		String out = lmc.getTarget().toString() + "->empty";
+		String out = lmc.getTarget().toString() + ".empty";
 		Log.d("<CppGenerator - getCode(MemberSelect)> return " + out);
 		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
@@ -327,14 +330,14 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
-					String.format("std::cout << (%s)->data() << std::endl",
-					GeneratorHelper.joinParams(systemOutPrintCall
-							.getParameters())));
+					String.format("std::cout << %s << std::endl",
+							GeneratorHelper.joinParams(systemOutPrintCall
+									.getParameters())));
 		} else {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("std::cout << (%s) << std::endl",
-					GeneratorHelper.joinParams(systemOutPrintCall
-							.getParameters())));
+							GeneratorHelper.joinParams(systemOutPrintCall
+									.getParameters())));
 		}
 	}
 
@@ -393,7 +396,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> erase(%s)", mapRemoveCall.getExpression(),
-				GeneratorHelper.joinParams(mapRemoveCall.getParameters())));
+						GeneratorHelper.joinParams(mapRemoveCall.getParameters())));
 	}
 
 	@Override
@@ -402,15 +405,15 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		if (mapPutCall.getParameters().isEmpty())
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("%s -> insert()", 
-					mapPutCall.getExpression()));
-//		if (mapPutCall.getParameters().size() == 1)
-//			return String.format("%s -> insert( %s )", 
-//					mapPutCall.getExpression(), 
-//					mapPutCall.getParameters().get(0));		
+							mapPutCall.getExpression()));
+		//		if (mapPutCall.getParameters().size() == 1)
+		//			return String.format("%s -> insert( %s )", 
+		//					mapPutCall.getExpression(), 
+		//					mapPutCall.getParameters().get(0));		
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> insert( std::make_pair( %s, %s ) )",
-				mapPutCall.getExpression(), mapPutCall.getParameters().get(0),
-				mapPutCall.getParameters().get(1)));
+						mapPutCall.getExpression(), mapPutCall.getParameters().get(0),
+						mapPutCall.getParameters().get(1)));
 	}
 
 	@Override
@@ -418,7 +421,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> empty()",
-				mapIsEmptyCall.getExpression()));
+						mapIsEmptyCall.getExpression()));
 	}
 
 	@Override
@@ -430,29 +433,42 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		if (binaryOp.getOperator() == Operator.PLUS
 				&& binaryOp.getType().equals(TypeString.INSTANCE)) {
 			if (!binaryOp.getLeft().getType().equals(TypeString.INSTANCE)) {
-				left = String
-						.format("new std::string(boost::lexical_cast<std::string>(%s))",
-								left);
+				left = String.format("boost::lexical_cast<std::string>(%s)", left);
 			}
 			if (!binaryOp.getRight().getType().equals(TypeString.INSTANCE)) {
-				right = String
-						.format("new std::string(boost::lexical_cast<std::string>(%s))",
-								right);
+				right = String.format("boost::lexical_cast<std::string>(%s)", right);
 			}
-			left = String.format("(%s)", left);
-			right = String.format("(%s)", right);
+			//			left = String.format("(%s)", left);
+			//			right = String.format("(%s)", right);
 
 			return (String)Log.MethodOut(Thread.currentThread(), 
-					String.format("new std::string(%s -> append(* (%s)))", left,
-					right));
+					String.format("%s.append(%s)", left,
+							right));
 		}
-		
+
 		if (binaryOp.getOperator() == Operator.REMAINDER
 				&& ((binaryOp.getLeft().getType() instanceof TypeDecimal) || 
-					(binaryOp.getRight().getType() instanceof TypeDecimal))) 
+						(binaryOp.getRight().getType() instanceof TypeDecimal))) 
 		{
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("std::fmod(%s,%s)", left,	right));
+		}
+
+		if ((binaryOp.getRight().getType() instanceof TypeNull) && 
+				(binaryOp.getLeft().getType() instanceof PrimitiveType)){
+			return String.format("(&%s %s%s %s)",
+					binaryOp.getLeft(),
+					binaryOp.getTextualoperator(),
+					binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+							: "", binaryOp.getRight());			
+		}		
+		if 	((binaryOp.getLeft().getType() instanceof TypeNull) && 
+				(binaryOp.getRight().getType() instanceof PrimitiveType)){		
+			return String.format("(&%s %s%s %s)",
+					binaryOp.getRight(),
+					binaryOp.getTextualoperator(),
+					binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+							: "", binaryOp.getLeft());		
 		}
 
 		return (String)Log.MethodOut(Thread.currentThread(), 
@@ -472,8 +488,8 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> find( %s ) -> second",
-				mapGetCall.getExpression(),
-				GeneratorHelper.joinParams(mapGetCall.getParameters())));
+						mapGetCall.getExpression(),
+						GeneratorHelper.joinParams(mapGetCall.getParameters())));
 	}
 
 	@Override
@@ -482,8 +498,8 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		String expr = mapContainsKeyCall.getExpression().toString();
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("(%s) -> find(%s) != (%s) -> end()", expr,
-				GeneratorHelper.joinParams(mapContainsKeyCall.getParameters()),
-				expr));
+						GeneratorHelper.joinParams(mapContainsKeyCall.getParameters()),
+						expr));
 	}
 
 	@Override
@@ -501,7 +517,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		if (typeMap.getElementType() == null) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					"std::map<" + typeMap.getKeyType() + ", "
-					+ TypeObject.INSTANCE + ">*");
+							+ TypeObject.INSTANCE + ">*");
 		}
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				"std::map<" + StringUtils.join(typeMap.getTypeArguments(), ", ")
@@ -556,7 +572,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("std::pair<%s, %s>", typeEntry.getKeyType(),
-				typeEntry.getElementType()));
+						typeEntry.getElementType()));
 	}
 
 	@Override
@@ -586,14 +602,20 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> equals(%s)", equalsCall.getTarget(),
-				StringUtils.join(equalsCall.getParameters(), ", ")));
+						StringUtils.join(equalsCall.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(ToStringCall tsc) {
 		Log.MethodIn(Thread.currentThread());
+		if(tsc.getTarget().getType() instanceof PrimitiveType)
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("std::to_string(%s) /*Since C++ 11 only. Do use -std=c++11 as compilation option.*/", tsc.getTarget()));
+		if(tsc.getTarget().getType() instanceof TypeException)
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s->what()", tsc.getTarget()));
 		return (String)Log.MethodOut(Thread.currentThread(), 
-				String.format("%s -> toString()", tsc.getTarget()));
+				String.format("/* %s -> toString() Not recognized by GOOL*/", tsc.getTarget()));
 	}
 
 	@Override
@@ -608,7 +630,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s->%s(%s)", lgc.getExpression(), "at",
-				GeneratorHelper.joinParams(lgc.getParameters())));
+						GeneratorHelper.joinParams(lgc.getParameters())));
 	}
 
 	@Override
@@ -630,21 +652,45 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> erase(%s -> begin()+%s)",
-				lrc.getExpression(), lrc.getExpression(),
-				GeneratorHelper.joinParams(lrc.getParameters())));
+						lrc.getExpression(), lrc.getExpression(),
+						GeneratorHelper.joinParams(lrc.getParameters())));
 	}
 
 	@Override
 	public String getCode(ListRemoveCall lrc) {
 		Log.MethodIn(Thread.currentThread());
-		String expr = lrc.getExpression().toString();
-		return (String)Log.MethodOut(Thread.currentThread(), String
-				.format("for (%s::iterator it = %s -> begin(); it != %s -> end(); ++it)\n\t"
-						+ "if (**it == *%s)\n\t{\n\t\t"
-						+ "list->erase(it);\n\t\tbreak;\n\t}\n",
-						removePointer(lrc.getExpression().getType()),
-						lrc.getExpression(), lrc.getExpression(),
-						GeneratorHelper.joinParams(lrc.getParameters())));
+		String expName = lrc.getExpression().toString();
+		int nbParameters = lrc.getParameters().size();
+		boolean boostAny = lrc.getExpression().getType().toString().contains("boost::any");
+		String boostAnyMessage = "/* An error will occur while comparing boost::any objects that way. Consider using typed vector.*/";
+		String expr = String
+				.format("%s->erase(std::find(%s->begin(),%s->end(),",
+						expName,expName,expName);
+		if (nbParameters == 1){
+			Expression arg = lrc.getParameters().get(0);
+			// Test the case of primitive type
+			if (arg.getType() instanceof PrimitiveType){
+				expr += GeneratorHelper.joinParams(lrc.getParameters()) + "))";
+				if(boostAny)
+					expr += boostAnyMessage;
+				return (String)Log.MethodOut(Thread.currentThread(),expr);
+			}
+		}
+		expr += "*" + GeneratorHelper.joinParams(lrc.getParameters()) + "))";
+		Log.d("<CppGenerator - getCode(ListRemoveCall> Expression type : " + lrc.getExpression().getType().toString());
+		if(boostAny)
+			expr += boostAnyMessage;
+		return (String)Log.MethodOut(Thread.currentThread(),expr);
+		//		return (String)Log.MethodOut(Thread.currentThread(), String
+		//				.format("%s->remove(%s)",lrc.getExpression(),
+		//						GeneratorHelper.joinParams(lrc.getParameters())));
+		//		return (String)Log.MethodOut(Thread.currentThread(), String
+		//				.format("for (%s::iterator it = %s -> begin(); it != %s -> end(); ++it)\n\t"
+		//						+ "if (**it == *%s)\n\t{\n\t\t"
+		//						+ "list->erase(it);\n\t\tbreak;\n\t}\n",
+		//						removePointer(lrc.getExpression().getType()),
+		//						lrc.getExpression(), lrc.getExpression(),
+		//						GeneratorHelper.joinParams(lrc.getParameters())));
 
 
 	}
@@ -657,19 +703,38 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	}
 
 	@Override
-	public String getCode(ListAddCall lac) {
+	public String getCode(ListAddCall lac){
 		Log.MethodIn(Thread.currentThread());
-		if (lac.getParameters().size() == 2)
+		int nbParameters = lac.getParameters().size();
+		if (nbParameters == 0){
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s->push_back()", lac.getExpression()));
+		}else if(nbParameters == 1){
+			Expression arg = lac.getParameters().get(0);
+			Log.d("<CppGenerator - getCode(ListAddCall> Expression type : " + lac.getExpression().getType().toString());
+			// Test the case of generic list with a string constant entry
+			if ((arg.getType() instanceof TypeString) && (arg instanceof Constant) 
+					&& (lac.getExpression().getType().toString().contains("<boost::any>"))){
+				Log.d("<CppGenerator - getCode(ListAddCall> No pointer case.");
+				return (String)Log.MethodOut(Thread.currentThread(),
+						String.format("%s->push_back(std::string(%s))", lac.getExpression(),
+								GeneratorHelper.joinParams(lac.getParameters())));
+			}
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s->push_back(%s)", lac.getExpression(),
+							GeneratorHelper.joinParams(lac.getParameters())));
+		}else if(nbParameters == 2){
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("%s->%s(%s -> begin() + %s, %s)", 
 							lac.getExpression(), "insert",
 							lac.getExpression(), lac.getParameters().get(0),
 							GeneratorHelper.joinParams(lac.getParameters().
 									subList(1, lac.getParameters().size()))));
-		else
+		}else{
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("%s->%s(%s)", lac.getExpression(), "push_back",
-					GeneratorHelper.joinParams(lac.getParameters())));
+							GeneratorHelper.joinParams(lac.getParameters())));
+		}
 	}
 
 	/**
@@ -686,8 +751,8 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s %s %s::%s(%s)", getCode(modifiers),
-				meth.getType(), meth.getClassDef().getName(), meth.getName(),
-				StringUtils.join(meth.getParams(), ", ")));
+						meth.getType(), meth.getClassDef().getName(), meth.getName(),
+						StringUtils.join(meth.getParams(), ", ")));
 	}
 	@Override
 	public String getCode(TypeArray typeArray) {
@@ -698,9 +763,13 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	@Override
 	public String getCode(ClassNew classNew) {
 		Log.MethodIn(Thread.currentThread());
+		if (classNew.getType() instanceof PrimitiveType)
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s(%s)", removePointer(classNew.getType()),
+							StringUtils.join(classNew.getParameters(), ", ")));
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("(new %s(%s))", removePointer(classNew.getType()),
-				StringUtils.join(classNew.getParameters(), ", ")));
+						StringUtils.join(classNew.getParameters(), ", ")));
 	}
 
 	@Override
@@ -764,8 +833,8 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				formatIndented("catch (%s * %s)\n{%1}\n", catchStatement
-				.getParameter().getType(), catchStatement.getParameter()
-				.getName(), catchStatement.getBlock()));
+						.getParameter().getType(), catchStatement.getParameter()
+						.getName(), catchStatement.getBlock()));
 	}
 
 	@Override

@@ -18,10 +18,10 @@
 #foreach( $dep in $dependencies )
 #if($dep.startsWith("/*")||$dep.startsWith("//")||$dep.startsWith("\#include"))
 $dep
-#elseif(!$dep.equals("noprint"))\#include "${dep}"
+#elseif(!$dep.equals("noprint"))\#include <${dep}>
 #end#end#end
 ##Standard inclusion of iostream to every CPP program
-#\#include<iostream>
+##\#include <iostream>
 ##
 ## -----------
 ##
