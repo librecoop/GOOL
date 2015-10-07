@@ -1,4 +1,3 @@
-#include<iostream>
 
 #include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
@@ -6,8 +5,8 @@
 
 #include "SimpleWhile.h"
 
-#include "string"
-#include "iostream"
+#include <string>
+#include <iostream>
 
 
 

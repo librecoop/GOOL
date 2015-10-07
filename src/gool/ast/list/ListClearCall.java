@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License along with GOOL,
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package gool.ast.list;
 
 import gool.ast.core.Expression;
@@ -23,16 +22,16 @@ import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
 
 /**
- * This class captures the invocation of a method to know if the list is empty.
+ * This class captures the invocation of a method to clear a list.
  */
-public class ListIsEmptyCall extends ListMethCall {
-
+public class ListClearCall extends ListMethCall {
+	
 	/**
-	 * The constructor of a "list is empty call" representation.
+	 * The constructor of a "list clear call" representation.
 	 * @param target
 	 * 		: The target expression used in the call.
 	 */
-	public ListIsEmptyCall(Expression target) {
+	public ListClearCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}
 

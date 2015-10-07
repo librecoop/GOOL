@@ -72,6 +72,7 @@ import gool.ast.core.VarAccess;
 import gool.ast.core.VarDeclaration;
 import gool.ast.core.While;
 import gool.ast.list.ListAddCall;
+import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
@@ -1378,6 +1379,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				if (identifier.equals("contains")) {
 					Log.MethodOut(Thread.currentThread());
 					return new ListContainsCall(target);
+				}
+				if (identifier.equals("clear")) {
+					Log.MethodOut(Thread.currentThread());
+					return new ListClearCall(target);
 				}
 			}
 			if (type instanceof TypeMap) {

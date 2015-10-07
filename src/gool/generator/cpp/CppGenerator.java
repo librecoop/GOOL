@@ -50,6 +50,7 @@ import gool.ast.core.Try;
 import gool.ast.core.TypeDependency;
 import gool.ast.core.VarDeclaration;
 import gool.ast.list.ListAddCall;
+import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
@@ -700,6 +701,13 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> size()", lsc.getExpression()));
+	}
+	
+	@Override
+	public String getCode(ListClearCall lcc) {
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), 
+				String.format("%s->clear()", lcc.getExpression()));
 	}
 
 	@Override

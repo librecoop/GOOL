@@ -48,6 +48,7 @@ import gool.ast.core.Try;
 import gool.ast.core.TypeDependency;
 
 import gool.ast.list.ListAddCall;
+import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
@@ -205,6 +206,10 @@ public class AndroidGenerator extends CommonCodeGenerator {
 
 	public String getCode(ListSizeCall lsc) {
 		return String.format("%s.size()", lsc.getExpression());
+	}
+	
+	public String getCode(ListClearCall lcc) {
+		return String.format("%s.clear()", lcc.getExpression());
 	}
 
 	/**

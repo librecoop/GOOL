@@ -64,6 +64,7 @@ import gool.ast.core.VarAccess;
 import gool.ast.core.VarDeclaration;
 import gool.ast.core.While;
 import gool.ast.list.ListAddCall;
+import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
@@ -510,6 +511,11 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("len(%s)", lsc.getExpression()));
+	}
+	
+	@Override
+	public String getCode(ListClearCall lcc) {
+		return String.format("del %s[:]", lcc.getExpression());
 	}
 
 	@Override

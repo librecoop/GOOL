@@ -59,6 +59,7 @@ import gool.ast.core.UnrecognizedDependency;
 import gool.ast.core.VarAccess;
 import gool.ast.core.VarDeclaration;
 import gool.ast.core.While;
+import gool.ast.list.ListClearCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
@@ -386,6 +387,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return "===ListMethCall====";
 	}
 
+	@Override
+	public String getCode(ListClearCall lcc) {
+		return String.format("%s.clear()", lcc.getExpression());
+	}
+	
 	@Override
 	public String getCode(MapEntryMethCall mapEntryMethCall) {
 		throw new IllegalStateException("Unsupported MapEntryMethCall: "

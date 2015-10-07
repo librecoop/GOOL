@@ -44,6 +44,7 @@ import gool.ast.core.ToStringCall;
 import gool.ast.core.Try;
 import gool.ast.core.TypeDependency;
 import gool.ast.list.ListAddCall;
+import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
@@ -226,6 +227,11 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 				String.format("%s.GetIterator()", lgic.getExpression()));
 	}
 
+	@Override
+	public String getCode(ListClearCall lcc) {
+		return String.format("%s.Clear()", lcc.getExpression());
+	}
+	
 	@Override
 	public String getCode(TypeDependency typeDependency) {
 		Log.MethodIn(Thread.currentThread());

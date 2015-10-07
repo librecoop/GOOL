@@ -111,22 +111,23 @@ public class GOOLCompiler {
 				GOOLCompiler gc=new GOOLCompiler();
 
 				// JAVA input -> JAVA output
-				//gc.runGOOLCompiler(new JavaParser(), JavaPlatform.getInstance(filesNonChange), files);
+				gc.runGOOLCompiler(new JavaParser(), JavaPlatform.getInstance(filesNonChange), files);
 				// JAVA input -> CSharp output
-				//gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
+				gc.runGOOLCompiler(new JavaParser(), CSharpPlatform.getInstance(filesNonChange), files);
 				// JAVA input -> CPP output
 				 gc.runGOOLCompiler(new JavaParser(), CppPlatform.getInstance(filesNonChange), files);
-				//				// JAVA input -> PYTHON output
-				//gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
-				//
+				// JAVA input -> PYTHON output
+				 gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
+				// JAVA input -> OBJC output
+				gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
+				
 				//				// JAVA input -> XML output
 				//				//gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
 				//				// TODO: same for android & Objc
 				//				// JAVA input -> ANDROID output
 				//				//gc.runGOOLCompiler(new JavaParser(), AndroidPlatform.getInstance(), files);
 				//
-				//				// JAVA input -> OBJC output
-				//gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
+				
 
 			} catch (VelocityException e) {
 				String mess = e.toString();

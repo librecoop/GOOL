@@ -135,7 +135,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(list.contains(\"toto\")){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\");}"
-										+ "}catch(Exception e){" + "}",
+										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestAddContains");
 		String expected = "true" + "true";
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
@@ -167,7 +167,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\");}"
-										+ "}catch(Exception e){" + "}",
+										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestRemove");
 		String expected = "true" + "true";
 
@@ -199,7 +199,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(\"tata\" == list.get(0)){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){" + "}",
+										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestAddGet");
 		String expected = "true" + "true";
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
@@ -236,11 +236,11 @@ public class GoolTestTypeListToVectorCpp {
 										
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){" + "}",
+										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestSizeClear");
 		String expected = "true" + "true" + "true";
 		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+		//excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 	
@@ -274,7 +274,7 @@ public class GoolTestTypeListToVectorCpp {
 										
 										"if(list.equals(list2)){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){" + "}",
+										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestEquals");
 		String expected = "true" + "false";
 		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
@@ -307,7 +307,7 @@ public class GoolTestTypeListToVectorCpp {
 																				
 										"if(1 == list.indexOf(\"tata\")){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){" + "}",
+										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestIndexOf");
 		String expected = "true";
 		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
@@ -343,7 +343,7 @@ public class GoolTestTypeListToVectorCpp {
 										
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){" + "}",
+										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestSetRemove");
 		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
