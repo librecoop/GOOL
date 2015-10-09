@@ -293,23 +293,23 @@ public class GoolTestTypeListToVectorCpp {
 						.surroundWithClassMainFile(
 								"/* creation of a list -- equals + indexOf */"
 										+ "try{"
-										+ "List<String> list = new ArrayList<String>();"
+										+ "List<String> list1 = new ArrayList<String>();"
 										+ "List<String> list2 = new ArrayList<String>();"
 										+ 
 
-										"list.add(\"toto\");"
-										+ "list.add(\"tata\");"
-										+ "list.add(\"titi\");"
+										"list1.add(\"toto\");"
+										+ "list1.add(\"tata\");"
+										+ "list1.add(\"titi\");"
 										+
 																				
-										"if(1 == list.indexOf(\"tata\")){ System.out.println(\"true\"); }"
+										"if(1 == list1.indexOf(\"tata\")){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
 										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestIndexOf");
 		String expected = "true";
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+//		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+//		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+//		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 

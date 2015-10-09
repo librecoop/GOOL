@@ -68,6 +68,7 @@ import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
+import gool.ast.list.ListIndexOfCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
@@ -534,6 +535,14 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s[%s] = %s", lsc.getExpression(),param.get(0),
 						param.get(1), StringUtils.join(param.subList(2, param.size()), ", ")));
+	}
+	
+	@Override
+	public String getCode(ListIndexOfCall lioc) {
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.index(%s)", lioc.getExpression(),
+				StringUtils.join(lioc.getParameters(), ", ")));
 	}
 	
 	@Override

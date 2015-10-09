@@ -54,6 +54,7 @@ import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
+import gool.ast.list.ListIndexOfCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
@@ -349,7 +350,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		return (String)Log.MethodOut(Thread.currentThread(), null);
 
 	}
-	
+
 	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {
 		Log.MethodIn(Thread.currentThread());
@@ -553,7 +554,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 	}
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
-	
+
 	@Override
 	public String getCode(CustomDependency customDependency) {
 		Log.MethodIn(Thread.currentThread());
@@ -705,14 +706,14 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> size()", lsc.getExpression()));
 	}
-	
+
 	@Override
 	public String getCode(ListClearCall lcc) {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s->clear()", lcc.getExpression()));
 	}
-	
+
 	@Override
 	public String getCode(ListSetCall lsc) {
 		Log.MethodIn(Thread.currentThread());
@@ -763,6 +764,14 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 					String.format("%s->%s(%s)", lac.getExpression(), "push_back",
 							GeneratorHelper.joinParams(lac.getParameters())));
 		}
+	}
+
+	@Override
+	public String getCode(ListIndexOfCall lioc) {
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("(std::find(%s->begin(),%s->end(),%s) - %s->begin())", lioc.getExpression(),
+				lioc.getExpression(), StringUtils.join(lioc.getParameters(), ", "), lioc.getExpression()));
 	}
 
 	/**
@@ -891,7 +900,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 			return (String)Log.MethodOut(Thread.currentThread(), typeException.getName());
 		}
 	}
-	
+
 	@Override
 	public String getCode(RecognizedDependency recognizedDependency) {
 		Log.MethodIn(Thread.currentThread());

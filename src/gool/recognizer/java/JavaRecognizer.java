@@ -76,6 +76,7 @@ import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
+import gool.ast.list.ListIndexOfCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
@@ -391,7 +392,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
 	private void addDependencyToContext(Context context, Dependency newDep) {
 		if (newDep != null && context != null && context.getClassDef() != null) {
-			
+
 			String newDepString;
 			if (newDep instanceof RecognizedDependency)
 				newDepString = ((RecognizedDependency) newDep).getName();
@@ -406,7 +407,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					dString = ((RecognizedDependency) d).getName();
 				else
 					dString = d.toString();
-				
+
 				if (dString.equals(newDepString)){
 					Log.d("<JavaRecognizer - addDependencyToContext> Dependency "
 							+ dString + " has already been added.");
@@ -1142,10 +1143,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				context);
 		Operator operator = getOperator(n.getKind());
 		IType type = goolType(n, context);
-
-		String textualoperator = n.toString()
-				.replace(n.getLeftOperand().toString(), "")
-				.replace(n.getRightOperand().toString(), "").trim();
+		String textualoperator = n.toString();
+		if (n.getRightOperand().toString().contains(n.getLeftOperand().toString())){
+			textualoperator = textualoperator.replace(n.getRightOperand().toString(), "")
+					.replace(n.getLeftOperand().toString(), "");
+		}else{
+			textualoperator = textualoperator.replace(n.getLeftOperand().toString(), "")
+					.replace(n.getRightOperand().toString(), "");
+		}
+		textualoperator = textualoperator.trim();
 		Log.MethodOut(Thread.currentThread());
 		return new BinaryOperation(operator, leftExp, rightExp, type,
 				textualoperator);
@@ -1321,7 +1327,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
 		Log.MethodIn(Thread.currentThread());
-	    
+
 		Log.d("<JavaRecognizer - visitMemberSelect> Entering MemberSelect with node : " + 
 				n.toString());
 		Expression target = (Expression) n.getExpression()
@@ -1354,13 +1360,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				}
 				if (identifier.equals("remove") && getTypeMirror(n).toString().contains("boolean")) {
 					Log.MethodOut(Thread.currentThread());
-					Log.d("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Remove");
 					return new ListRemoveCall(target);
 				}				
 				if ((identifier.equals("remove") && !getTypeMirror(n).toString().contains("boolean")) 
 						|| (identifier.equals("removeAt"))) {
 					Log.MethodOut(Thread.currentThread());
-					Log.d("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Remove AT");
 					return new ListRemoveAtCall(target);
 				}
 				if (identifier.equals("get")) {
@@ -1390,6 +1394,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				if (identifier.equals("set")) {
 					Log.MethodOut(Thread.currentThread());
 					return new ListSetCall(target);
+				}
+				if (identifier.equals("indexOf")) {
+					Log.MethodOut(Thread.currentThread());
+					return new ListIndexOfCall(target);
 				}
 			}
 			if (type instanceof TypeMap) {
@@ -1452,7 +1460,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			Log.w(String.format("<JavaRecognizer - visitMemberSelect> No declaration found for '%s' of type '%s' in curent context",
 					identifier, getTypeMirror(n)));
 		}
-		
+
 		if (type != null && type instanceof TypeString){
 			if (identifier.equals("isEmpty")) {
 				Log.d("<JavaRecognizer - visitMemberSelect> ********* StringIsEmptyCall created.");

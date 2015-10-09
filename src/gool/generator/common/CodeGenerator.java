@@ -73,6 +73,7 @@ import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
+import gool.ast.list.ListIndexOfCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
@@ -228,6 +229,8 @@ public interface CodeGenerator {
 	String getCode(ListSizeCall lsc);
 	
 	String getCode(ListClearCall lcc);
+	
+	String getCode(ListIndexOfCall lioc);
 
 	String getCode(MainMeth mainMeth);
 

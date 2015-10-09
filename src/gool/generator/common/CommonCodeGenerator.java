@@ -60,6 +60,7 @@ import gool.ast.core.VarAccess;
 import gool.ast.core.VarDeclaration;
 import gool.ast.core.While;
 import gool.ast.list.ListClearCall;
+import gool.ast.list.ListIndexOfCall;
 import gool.ast.list.ListSetCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
@@ -170,13 +171,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(ArrayNew arrayNew) {
 		if (arrayNew.getInitialiList().isEmpty())
 			return String.format("new %s[%s]", arrayNew.getType(),
-				StringUtils.join(arrayNew.getDimesExpressions(), ", "));
-		
+					StringUtils.join(arrayNew.getDimesExpressions(), ", "));
+
 		return String.format("{%s}",StringUtils.join(arrayNew.getInitialiList(), ", "));
-			
-		
+
+
 	}
-	
+
 
 	/**
 	 * Produces code for an assign statement.
@@ -209,7 +210,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		return String
+		return  String
 				.format("(%s %s%s %s)",
 						binaryOp.getLeft(),
 						binaryOp.getTextualoperator(),
@@ -377,7 +378,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		}
 		return sb.toString().trim();
 	}
-	
+
 	@Override
 	public String getCode(StringIsEmptyCall lmc) {
 		return getCode((MemberSelect)lmc);
@@ -392,13 +393,19 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	public String getCode(ListClearCall lcc) {
 		return String.format("%s.clear() /* Default translation, GOOL may be wrong on it */", lcc.getExpression());
 	}
-		
+
 	@Override
 	public String getCode(ListSetCall lsc) {
 		return String.format("%s.set(%s) /* Default translation, GOOL may be wrong on it */", lsc.getExpression(),
 				StringUtils.join(lsc.getParameters(), ", "));
 	}
 	
+	@Override
+	public String getCode(ListIndexOfCall lioc) {
+		return String.format("%s.indexOf(%s) /* Default translation, GOOL may be wrong on it */", lioc.getExpression(),
+				StringUtils.join(lioc.getParameters(), ", "));
+	}
+
 	@Override
 	public String getCode(MapEntryMethCall mapEntryMethCall) {
 		throw new IllegalStateException("Unsupported MapEntryMethCall: "
@@ -468,7 +475,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				"%s = new %s( %s )",
 				newInstance.getVariable(),
 				newInstance.getVariable().getType().toString()
-						.replaceAll("\\*$", ""),
+				.replaceAll("\\*$", ""),
 				StringUtils.join(newInstance.getParameters(), ", "));
 	}
 
@@ -561,14 +568,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 							unaryOperation.getTextualoperator(),
 							unaryOperation.getOperator().equals(
 									Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-									: "");
+											: "");
 		default:
 			return String
 					.format("%s%s(%s)",
 							unaryOperation.getTextualoperator(),
 							unaryOperation.getOperator().equals(
 									Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-									: "", unaryOperation.getExpression());
+											: "", unaryOperation.getExpression());
 		}
 	}
 
@@ -677,14 +684,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	public String getCode(UnrecognizedDependency unrecognizedDependency) {
 		return "/* "+ unrecognizedDependency.getName()
-				+ " unrecognized by GOOL, passed on. */";
+		+ " unrecognized by GOOL, passed on. */";
 	}	
-	
+
 	public String getCode(UnImplemented unImplemented) {
 		return "/* "+ unImplemented.getCommentUnImplemented()
-				+ " unimplemented by GOOL, passed on : "
-				+ unImplemented.getCodeUnImplemented()
-				+ " */";
+		+ " unimplemented by GOOL, passed on : "
+		+ unImplemented.getCodeUnImplemented()
+		+ " */";
 	}
 
 }

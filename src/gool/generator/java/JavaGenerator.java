@@ -46,6 +46,7 @@ import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
+import gool.ast.list.ListIndexOfCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
@@ -211,6 +212,12 @@ public class JavaGenerator extends CommonCodeGenerator /*
 	public String getCode(ListSetCall lsc) {
 		return String.format("%s.set(%s)", lsc.getExpression(),
 				StringUtils.join(lsc.getParameters(), ", "));
+	}
+	
+	@Override
+	public String getCode(ListIndexOfCall lioc) {
+		return String.format("%s.indexOf(%s)", lioc.getExpression(),
+				StringUtils.join(lioc.getParameters(), ", "));
 	}
 	
 	@Override
