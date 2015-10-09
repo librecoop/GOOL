@@ -3,29 +3,19 @@ import java.util.ArrayList;
 
 public class test{
 	public static void main(String[] args){
-		/* creation of a list -- size + clear */
 		try{
 			List<String> list = new ArrayList<String>();
-			if(list.isEmpty()){ 
-				System.out.println("true");
-			}else
-			{ 
-				System.out.println("false");
-			}
+			List<String> list2 = new ArrayList<String>();
 			list.add("toto");
 			list.add("tata");
-			if(2 == list.size())
+			list.add("titi");
+			if(1 == list.indexOf("tata"))
 			{
-				System.out.println("true"); 
-			}else{
-				System.out.println("false");
-			}
-			list.clear();
-			if(list.isEmpty()){ 
 				System.out.println("true");
 			}else{
 				System.out.println("false");
 			}
+			
 		}catch(Exception e)
 		{
 			System.out.println(e.toString());

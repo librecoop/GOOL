@@ -27,6 +27,7 @@ import gool.ast.core.CustomDependency;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
+import gool.ast.core.Expression;
 import gool.ast.core.Field;
 import gool.ast.core.Finally;
 import gool.ast.core.MainMeth;
@@ -51,6 +52,7 @@ import gool.ast.list.ListGetIteratorCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
+import gool.ast.list.ListSetCall;
 import gool.ast.list.ListSizeCall;
 import gool.ast.map.MapContainsKeyCall;
 import gool.ast.map.MapEntryGetKeyCall;
@@ -93,8 +95,8 @@ import org.apache.commons.lang.StringUtils;
 /**
  * It generates specific C# code for certain GOOL nodes.
  */
-public class CSharpGenerator extends CommonCodeGenerator /*implements
-		CodeGeneratorNoVelocity*/{
+public class CSharpGenerator extends CommonCodeGenerator /* implements
+		CodeGeneratorNoVelocity */{
 	@Override
 	public String getCode(TypeBool typeBool) {
 		Log.MethodIn(Thread.currentThread());
@@ -140,6 +142,7 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 	 *            the object instantiation node.
 	 * @return the formatted object instantiation.
 	 */
+	@Override
 	public String getCode(ClassNew classNew) {
 		Log.MethodIn(Thread.currentThread());
 		if (classNew.getType() instanceof TypeString){
@@ -229,7 +232,26 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 
 	@Override
 	public String getCode(ListClearCall lcc) {
-		return String.format("%s.Clear()", lcc.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.Clear()", lcc.getExpression()));
+	}
+	
+	@Override
+	public String getCode(ListSetCall lsc) {
+		Log.MethodIn(Thread.currentThread());
+		List<Expression> param = lsc.getParameters();
+		if (param.size() == 0){
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s[]", lsc.getExpression()));
+		}else if (param.size() == 1){
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s[%s]", lsc.getExpression(),
+							param.get(0)));
+		}
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[%s] = %s", lsc.getExpression(),param.get(0),
+						param.get(1), StringUtils.join(param.subList(2, param.size()), ", ")));
 	}
 	
 	@Override
@@ -538,7 +560,8 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 	}
 
 	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
-
+	
+	@Override
 	public String getCode(CustomDependency customDependency) {
 		Log.MethodIn(Thread.currentThread());
 		if (!customDependencies.containsKey(customDependency.getName())) {
@@ -718,6 +741,7 @@ public class CSharpGenerator extends CommonCodeGenerator /*implements
 		}
 	}
 	
+	@Override
 	public String getCode(RecognizedDependency recognizedDependency) {
 		Log.MethodIn(Thread.currentThread());
 		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());

@@ -170,8 +170,6 @@ public class GoolTestTypeListToVectorCpp {
 										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestRemove");
 		String expected = "true" + "true";
-
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 	
@@ -239,8 +237,7 @@ public class GoolTestTypeListToVectorCpp {
 										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestSizeClear");
 		String expected = "true" + "true" + "true";
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		//excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 	
@@ -345,11 +342,7 @@ public class GoolTestTypeListToVectorCpp {
 										+ "else{ System.out.println(\"false\"); }"
 										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestSetRemove");
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		String expected = "true" + "true";
-
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 	

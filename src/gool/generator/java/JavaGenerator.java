@@ -42,12 +42,14 @@ import gool.ast.core.Try;
 import gool.ast.core.TypeDependency;
 import gool.ast.core.VarDeclaration;
 import gool.ast.list.ListAddCall;
+import gool.ast.list.ListClearCall;
 import gool.ast.list.ListContainsCall;
 import gool.ast.list.ListGetCall;
 import gool.ast.list.ListGetIteratorCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
+import gool.ast.list.ListSetCall;
 import gool.ast.list.ListSizeCall;
 import gool.ast.map.MapContainsKeyCall;
 import gool.ast.map.MapEntryGetKeyCall;
@@ -118,11 +120,13 @@ public class JavaGenerator extends CommonCodeGenerator /*
 		}
 	}
 
+	@Override
 	public String getCode(ClassNew classNew) {
 		return String.format("new %s(%s)", classNew.getType(),
 				StringUtils.join(classNew.getParameters(), ", "));
 	}
 
+	@Override
 	public String getCode(CustomDependency customDependency) {
 		if (!customDependencies.containsKey(customDependency.getName())) {
 			logger.info(String.format("Custom dependencies: %s, Desired: %s",
@@ -153,43 +157,63 @@ public class JavaGenerator extends CommonCodeGenerator /*
 				StringUtils.join(equalsCall.getParameters(), ", "));
 	}
 
+	@Override
 	public String getCode(ListAddCall lac) {
 		return String.format("%s.add(%s)", lac.getExpression(),
 				StringUtils.join(lac.getParameters(), ", "));
 	}
 
+	@Override
 	public String getCode(ListContainsCall lcc) {
 		return String.format("%s.contains(%s)", lcc.getExpression(),
 				StringUtils.join(lcc.getParameters(), ", "));
 	}
 
+	@Override
 	public String getCode(ListGetCall lgc) {
 		return String.format("%s.get(%s)", lgc.getExpression(),
 				StringUtils.join(lgc.getParameters(), ", "));
 	}
 
+	@Override
 	public String getCode(ListGetIteratorCall lgic) {
 		return String.format("%s.getIterator()", lgic.getExpression());
 	}
 
+	@Override
 	public String getCode(ListIsEmptyCall liec) {
 		return String.format("%s.isEmpty()", liec.getExpression());
 	}
-
+	
+	@Override
 	public String getCode(ListRemoveAtCall lrc) {
 		return String.format("%s.remove(%s)", lrc.getExpression(),
 				StringUtils.join(lrc.getParameters(), ", "));
 	}
-
+	
+	@Override
 	public String getCode(ListRemoveCall lrc) {
 		return String.format("%s.remove(%s)", lrc.getExpression(),
 				StringUtils.join(lrc.getParameters(), ", "));
 	}
-
+	
+	@Override
 	public String getCode(ListSizeCall lsc) {
 		return String.format("%s.size()", lsc.getExpression());
 	}
 
+	@Override
+	public String getCode(ListClearCall lcc) {
+		return String.format("%s.clear()", lcc.getExpression());
+	}
+		
+	@Override
+	public String getCode(ListSetCall lsc) {
+		return String.format("%s.set(%s)", lsc.getExpression(),
+				StringUtils.join(lsc.getParameters(), ", "));
+	}
+	
+	@Override
 	public String getCode(MainMeth mainMeth) {
 		return "public static void main(String[] args)";
 	}
@@ -256,6 +280,7 @@ public class JavaGenerator extends CommonCodeGenerator /*
 		return out;
 	}
 
+	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {
 		return "noprint";
 	}
@@ -266,6 +291,7 @@ public class JavaGenerator extends CommonCodeGenerator /*
 				StringUtils.join(systemOutPrintCall.getParameters(), ","));
 	}
 
+	@Override
 	public String getCode(ToStringCall tsc) {
 		return String.format("%s.toString()", tsc.getTarget());
 
@@ -286,6 +312,7 @@ public class JavaGenerator extends CommonCodeGenerator /*
 		return "char";
 	}
 
+	@Override
 	public String getCode(TypeDependency typeDependency) {
 		if (typeDependency.getType() instanceof TypeList) {
 			return "java.util.ArrayList";
@@ -479,6 +506,7 @@ public class JavaGenerator extends CommonCodeGenerator /*
 		}
 	}
 
+	@Override
 	public String getCode(RecognizedDependency recognizedDependency) {
 
 		List<String> imports = GeneratorMatcher.matchImports(recognizedDependency.getName());

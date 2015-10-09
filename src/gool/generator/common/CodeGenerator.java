@@ -76,6 +76,7 @@ import gool.ast.list.ListGetIteratorCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
+import gool.ast.list.ListSetCall;
 import gool.ast.list.ListSizeCall;
 import gool.ast.map.MapContainsKeyCall;
 import gool.ast.map.MapEntryGetKeyCall;
@@ -221,6 +222,8 @@ public interface CodeGenerator {
 	String getCode(ListRemoveAtCall lrc);
 
 	String getCode(ListRemoveCall lrc);
+
+	String getCode(ListSetCall lsc);
 
 	String getCode(ListSizeCall lsc);
 	

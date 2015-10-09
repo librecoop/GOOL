@@ -60,6 +60,7 @@ import gool.ast.core.VarAccess;
 import gool.ast.core.VarDeclaration;
 import gool.ast.core.While;
 import gool.ast.list.ListClearCall;
+import gool.ast.list.ListSetCall;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
@@ -389,7 +390,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(ListClearCall lcc) {
-		return String.format("%s.clear()", lcc.getExpression());
+		return String.format("%s.clear() /* Default translation, GOOL may be wrong on it */", lcc.getExpression());
+	}
+		
+	@Override
+	public String getCode(ListSetCall lsc) {
+		return String.format("%s.set(%s) /* Default translation, GOOL may be wrong on it */", lsc.getExpression(),
+				StringUtils.join(lsc.getParameters(), ", "));
 	}
 	
 	@Override

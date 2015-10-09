@@ -71,6 +71,7 @@ import gool.ast.list.ListGetIteratorCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
+import gool.ast.list.ListSetCall;
 import gool.ast.list.ListSizeCall;
 import gool.ast.map.MapContainsKeyCall;
 import gool.ast.map.MapEntryGetKeyCall;
@@ -518,6 +519,23 @@ CodeGeneratorNoVelocity {
 		return String.format("del %s[:]", lcc.getExpression());
 	}
 
+	@Override
+	public String getCode(ListSetCall lsc) {
+		Log.MethodIn(Thread.currentThread());
+		List<Expression> param = lsc.getParameters();
+		if (param.size() == 0){
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s[]", lsc.getExpression()));
+		}else if (param.size() == 1){
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s[%s]", lsc.getExpression(),
+							param.get(0)));
+		}
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[%s] = %s", lsc.getExpression(),param.get(0),
+						param.get(1), StringUtils.join(param.subList(2, param.size()), ", ")));
+	}
+	
 	@Override
 	public String getCode(MainMeth mainMeth) {
 		Log.MethodIn(Thread.currentThread());

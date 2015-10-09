@@ -79,6 +79,7 @@ import gool.ast.list.ListGetIteratorCall;
 import gool.ast.list.ListIsEmptyCall;
 import gool.ast.list.ListRemoveAtCall;
 import gool.ast.list.ListRemoveCall;
+import gool.ast.list.ListSetCall;
 import gool.ast.list.ListSizeCall;
 import gool.ast.map.MapContainsKeyCall;
 import gool.ast.map.MapEntryGetKeyCall;
@@ -210,8 +211,6 @@ import com.sun.tools.javac.tree.TreeInfo;
  * necessary for that and is declared at the bottom.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
-
-	private static int compt = 0;
 
 	/**
 	 * The Sun's abstract Java AST that we will now convert to abstract GOOL.
@@ -1322,12 +1321,13 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	@Override
 	public Object visitMemberSelect(MemberSelectTree n, Context context) {
 		Log.MethodIn(Thread.currentThread());
+	    
 		Log.d("<JavaRecognizer - visitMemberSelect> Entering MemberSelect with node : " + 
 				n.toString());
 		Expression target = (Expression) n.getExpression()
 				.accept(this, context);
 		String identifier = n.getIdentifier().toString();
-
+		Log.d("<JavaRecognizer - visitMemberSelect>  : " + getTypeMirror(n));
 		/*
 		 * TODO Currently we are assuming that the following methods are always
 		 * the same as the methods "toString" and "equals" belonging to the
@@ -1352,12 +1352,15 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 					Log.MethodOut(Thread.currentThread());
 					return new ListAddCall(target);
 				}
-				if (identifier.equals("remove")) {
+				if (identifier.equals("remove") && getTypeMirror(n).toString().contains("boolean")) {
 					Log.MethodOut(Thread.currentThread());
+					Log.d("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Remove");
 					return new ListRemoveCall(target);
-				}
-				if (identifier.equals("removeAt")) {
+				}				
+				if ((identifier.equals("remove") && !getTypeMirror(n).toString().contains("boolean")) 
+						|| (identifier.equals("removeAt"))) {
 					Log.MethodOut(Thread.currentThread());
+					Log.d("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Remove AT");
 					return new ListRemoveAtCall(target);
 				}
 				if (identifier.equals("get")) {
@@ -1383,6 +1386,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				if (identifier.equals("clear")) {
 					Log.MethodOut(Thread.currentThread());
 					return new ListClearCall(target);
+				}				
+				if (identifier.equals("set")) {
+					Log.MethodOut(Thread.currentThread());
+					return new ListSetCall(target);
 				}
 			}
 			if (type instanceof TypeMap) {

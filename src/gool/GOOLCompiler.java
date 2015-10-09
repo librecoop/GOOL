@@ -119,7 +119,7 @@ public class GOOLCompiler {
 				// JAVA input -> PYTHON output
 				 gc.runGOOLCompiler(new JavaParser(), PythonPlatform.getInstance(filesNonChange), files);
 				// JAVA input -> OBJC output
-				gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
+				//gc.runGOOLCompiler(new JavaParser(), ObjcPlatform.getInstance(), files);
 				
 				//				// JAVA input -> XML output
 				//				//gc.runGOOLCompiler(new JavaParser(), XmlPlatform.getInstance(filesNonChange), files);
