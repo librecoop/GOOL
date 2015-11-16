@@ -443,7 +443,7 @@ CodeGeneratorNoVelocity {
 		case 2:
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s.insert(%s, %s)", lac.getExpression(), lac
-					.getParameters().get(1), lac.getParameters().get(0)));
+					.getParameters().get(0), lac.getParameters().get(1)));
 		default:
 			comment("Unrecognized by GOOL, passed on: add");
 			return (String)Log.MethodOut(Thread.currentThread(),

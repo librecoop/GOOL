@@ -200,8 +200,6 @@ public class GoolTestTypeListToVectorCpp {
 										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestAddGet");
 		String expected = "true" + "true";
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
 	}
 	
