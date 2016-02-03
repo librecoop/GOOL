@@ -623,6 +623,10 @@ public class CSharpGenerator extends CommonCodeGenerator /* implements
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		Log.MethodIn(Thread.currentThread());
+		if  (equalsCall.getTarget().getType()instanceof TypeList)
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s.SequenceEqual(%s)", equalsCall.getTarget(),
+					GeneratorHelper.joinParams(equalsCall.getParameters())));
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.Equals(%s)", equalsCall.getTarget(),
 				GeneratorHelper.joinParams(equalsCall.getParameters())));

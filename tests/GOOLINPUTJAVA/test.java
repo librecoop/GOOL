@@ -4,20 +4,26 @@ import java.util.ArrayList;
 public class test{
 	public static void main(String[] args){
 		try{
-			List<String> list1 = new ArrayList<String>();
+			List<String> list = new ArrayList<String>();
 			List<String> list2 = new ArrayList<String>();
-			list1.add("toto");
-			list1.add("tata");
-			list1.add("titi");
-			if(1 == list1.indexOf("tata"))
-			{
+			list.add("toto");
+			list.add("tata");
+			list2.add("toto");
+			list2.add("tata");
+			if(list.equals(list2)){
 				System.out.println("true");
-			}else{
+			}
+			else{
 				System.out.println("false");
 			}
-			
-		}catch(Exception e)
-		{
+			list2.add("titi");
+			if(list.equals(list2)){
+				System.out.println("true");
+			}
+			else{
+				System.out.println("false");
+			}
+		}catch(Exception e){
 			System.out.println(e.toString());
 		}
 	}

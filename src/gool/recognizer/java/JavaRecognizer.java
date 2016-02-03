@@ -207,9 +207,8 @@ import com.sun.tools.javac.tree.TreeInfo;
 /**
  * The JavaRecognizer does the work of converting Sun's abstract Java to
  * abstract GOOL. The documentation of abstract Java is at
- * http://docs.oracle.com
- * /javase/7/docs/api/javax/lang/model/package-summary.html The class Context is
- * necessary for that and is declared at the bottom.
+ * http://docs.oracle.com/javase/7/docs/api/javax/lang/model/package-summary.html
+ * The class Context is necessary for that and is declared at the bottom.
  */
 public class JavaRecognizer extends TreePathScanner<Object, Context> {
 
@@ -549,7 +548,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// However some classes receive a particular treatment like Lists,
 			// Maps etc.
 			typeName = classSymbol.getSimpleName().toString();
-			Log.d("<Javarecognizer - goolType(TypeMirror> typeName = " + typeName);
+			Log.d("<Javarecognizer - goolType(TypeMirror)> typeName = " + typeName);
 			goolType = string2IType(typeName, context);
 
 			// Whether in abstract Java or in GOOL, enums are codes as classes
@@ -1227,8 +1226,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// and gets represented differently in GOOL, i.e. wrapped up with a
 		// Field().
 		// TODO: actually, any variable declaration could have modifiers.
-		Collection<Modifier> modifiers = (Collection<Modifier>) n
-				.getModifiers().accept(this, context);
+		Collection<Modifier> modifiers = (Collection<Modifier>) n.
+				getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
 			context.addDeclaration(f, f.getName(), getTypeMirror(n));
@@ -1888,7 +1887,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			// Here is when we possibly visitMemberSelect().
 			Log.d("<JavaRecognizer - visitMethodInvocation> The target is the xxxx part of some method invocation....");
 			target = (Expression) n.getMethodSelect().accept(this, context);
-			Log.d("<JavaRecognizer - visitMethodInvocation> Target is " + target.toString());
+			Log.d("<JavaRecognizer - visitMethodInvocation> Target is " + target.toString() + " with signature : " + signature);
 			goolMethod = RecognizerMatcher.matchMethod(signature);
 			if (goolMethod != null)
 				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is " + goolMethod.toString());
@@ -2063,6 +2062,7 @@ class Context {
 			map.put(name, identifier);
 		}
 		identifier.put(type, dec);
+		Log.d("<Context - addDeclaration> Adding " + name);
 
 	}
 
@@ -2077,6 +2077,7 @@ class Context {
 	 * @return The declaration, or null if no declaration was found.
 	 */
 	public Dec getDeclaration(String name, TypeMirror type) {
+		Log.d(String.format("<Context - getDeclaration> Looking for %s of type %s", name, type.toString()));
 		//displayMap();
 		Dec ret = getDeclarationHere(name, type);
 		if (ret != null)

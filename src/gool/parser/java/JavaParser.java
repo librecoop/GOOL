@@ -146,7 +146,8 @@ public class JavaParser extends ParseGOOL {
 		}
 
 		// Debug mode
-		RecognizerMatcher.printMatchTables();
+		if (Log.DEBUG_LOG)
+			RecognizerMatcher.printMatchTables();
 		
 		/**
 		 * Register each abstract GOOL class, so that they can see each other

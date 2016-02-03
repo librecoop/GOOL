@@ -143,10 +143,10 @@ public class RecognizerMatcher {
 
 			// matching the GOOL methods of the GOOL class with the input
 			// language methods
-			ArrayList<String> goolMethods = getGoolMethodsFromGoolClass(goolClass);			
+			ArrayList<String> goolMethods = getGoolMethodsFromGoolClass(goolClass);
 			for (String goolMethod : goolMethods) {
 				ArrayList<String> inputMethodSignatures = new ArrayList<String>();
-				String methFileName = getPathOfInputMethodMatchFile(goolMethod);
+				String methFileName = getPathOfInputMethodMatchFile(goolMethod);				
 				ips = new FileInputStream(methFileName);
 				ipsr = new InputStreamReader(ips);
 				br = new BufferedReader(ipsr);
@@ -236,13 +236,13 @@ public class RecognizerMatcher {
 			String goolClass) {
 		ArrayList<String> goolMethods = new ArrayList<String>();
 		try {
-			InputStream ips = new FileInputStream(
-					getPathOfInputMethodMatchFile(goolClass + "."));
+			String InputMethodFileName = getPathOfInputMethodMatchFile(goolClass + ".");
+			InputStream ips = new FileInputStream(InputMethodFileName);
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
 			while ((line = br.readLine()) != null) {
-				line = removeSpaces(line);
+				line = removeSpaces(line);				
 				if (isInputMatchLine(line)) {
 					String currentGoolMethod = getLeftPartOfInputMatchLine(line);
 					if (currentGoolMethod.contains(goolClass)) {

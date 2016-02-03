@@ -272,7 +272,7 @@ public class GoolTestTypeListToVectorCpp {
 										+ "}catch(Exception e){System.out.println(e.toString())}",
 								MAIN_CLASS_NAME + "_TestEquals");
 		String expected = "true" + "false";
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+	//	excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
 		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected, 1);
