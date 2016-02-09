@@ -33,12 +33,12 @@ public abstract class Node {
 	/**
 	 * This forces to override the toString; by forcing to override
 	 * callGetCode(). See wiki, Nitty Gritty details for more explanations.
-	 *//*
+	 */
 	@Override
 	final public String toString() {
-		return callGetCode();
+		return this.getClass().getSimpleName();
 	}
-*/
+
 	/**
 	 * This forces that each leaf of the abstract GOOL tree makes a
 	 * getCode(this). So that the visitor generates code specifically for it.

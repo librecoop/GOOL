@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.lang.model.element.Element;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
@@ -102,7 +103,10 @@ public class JavaParser extends ParseGOOL {
 		 * We now analyze using Sun's java compiler so as to get a Java abstract
 		 * type tree.
 		 */
-		task.analyze();
+		Iterable<? extends Element> elts = task.analyze();
+		for (Element elt : elts){
+			System.out.println(elt.toString());
+		}
 		Trees typetrees = Trees.instance(task);
 
 		// The visitor might need Sun's analyzed Java abstract type tree.
@@ -118,9 +122,7 @@ public class JavaParser extends ParseGOOL {
 			Log.d("\n\n****************** End Scan *******************\n\n");
 		}
 
-		// Debug mode
-		if (Log.DEBUG_LOG)
-			RecognizerMatcher.printMatchTables();
+		Log.d(RecognizerMatcher.printMatchTables());
 		
 		return visitor.getGoolClasses();
 	}

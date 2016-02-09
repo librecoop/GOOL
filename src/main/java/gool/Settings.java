@@ -46,7 +46,7 @@ public final class Settings {
 	private static String androidMainActivity;
 
 	static {
-		load("gool.properties");
+		load("gool/properties");
 	}
 
 	/**

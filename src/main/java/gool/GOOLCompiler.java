@@ -101,10 +101,11 @@ public class GOOLCompiler {
 
 				GOOLCompiler gc=new GOOLCompiler();
 
-				/*Collection<ClassDef> classDefs = gc.concretePlatformeToAbstractGool(new JavaParser(), files);
+				Collection<ClassDef> classDefs = 
+						gc.concretePlatformeToAbstractGool(new JavaParser(), files);
 				for(ClassDef cl : classDefs){
 					System.out.println(cl.getName());
-				}*/
+				}
 				
 
 			} catch (Exception e) {

@@ -120,7 +120,8 @@ public class RecognizerMatcher {
 			ArrayList<String> inputClasses = new ArrayList<String>();
 			String fileName = getPathOfInputClassMatchFile(goolClass);
 			Log.d("<RecognizerMatcher - enableRecognition> File to check : " + fileName);
-			InputStream ips = new FileInputStream(fileName);
+			InputStream ips = ClassLoader.getSystemResourceAsStream(fileName);
+			//InputStream ips = new FileInputStream(fileName);
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
@@ -147,7 +148,8 @@ public class RecognizerMatcher {
 			for (String goolMethod : goolMethods) {
 				ArrayList<String> inputMethodSignatures = new ArrayList<String>();
 				String methFileName = getPathOfInputMethodMatchFile(goolMethod);				
-				ips = new FileInputStream(methFileName);
+				ips = ClassLoader.getSystemResourceAsStream(methFileName);
+				//ips = new FileInputStream(methFileName);
 				ipsr = new InputStreamReader(ips);
 				br = new BufferedReader(ipsr);
 				Log.d(String.format("<RecognizerMatcher - enableRecognition> " +
@@ -179,8 +181,10 @@ public class RecognizerMatcher {
 		ArrayList<String> imports = new ArrayList<String>();
 
 		try {
-			InputStream ips = new FileInputStream(
+			InputStream ips = ClassLoader.getSystemResourceAsStream(
 					getPathOfInputImportMatchFile());
+			/*InputStream ips = new FileInputStream(
+					getPathOfInputImportMatchFile());*/
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
@@ -210,8 +214,10 @@ public class RecognizerMatcher {
 			String inputLangImport) {
 		ArrayList<String> goolClasses = new ArrayList<String>();
 		try {
-			InputStream ips = new FileInputStream(
+			InputStream ips = ClassLoader.getSystemResourceAsStream(
 					getPathOfInputImportMatchFile());
+			/*InputStream ips = new FileInputStream(
+					getPathOfInputImportMatchFile());*/
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
@@ -237,7 +243,8 @@ public class RecognizerMatcher {
 		ArrayList<String> goolMethods = new ArrayList<String>();
 		try {
 			String InputMethodFileName = getPathOfInputMethodMatchFile(goolClass + ".");
-			InputStream ips = new FileInputStream(InputMethodFileName);
+			InputStream ips = ClassLoader.getSystemResourceAsStream(InputMethodFileName);
+			//InputStream ips = new FileInputStream(InputMethodFileName);
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
@@ -324,12 +331,12 @@ public class RecognizerMatcher {
 		String goolPackageName = goolClass.substring(0,
 				goolClass.lastIndexOf("."));
 		goolPackageName = goolPackageName.replace('.', '/');
-		return "src/gool/recognizer/" + InputLang.toString().toLowerCase()
+		return "gool/recognizer/" + InputLang.toString().toLowerCase()
 				+ "/matching/" + goolPackageName + "/";
 	}
 
 	static private String getPathOfInputImportMatchFile() {
-		return "src/gool/recognizer/" + InputLang.toString().toLowerCase()
+		return "gool/recognizer/" + InputLang.toString().toLowerCase()
 				+ "/matching/ImportMatching.properties";
 	}
 
@@ -346,22 +353,23 @@ public class RecognizerMatcher {
 
 	// The following method may be used for debugging issues: it prints the
 	// content of the match tables.
-	public static void printMatchTables() {
-		System.out.println("[RecognizerMatcher] Printing ClassMatchTable...");
+	public static String printMatchTables() {
+		String ret = "\n[RecognizerMatcher] Printing ClassMatchTable...\n";
 		for (String goolClass : ClassMatchTable.keySet()) {
-			System.out.print("[RecognizerMatcher] -- " + goolClass + " <- ");
+			ret += "[RecognizerMatcher] -- " + goolClass + " <- ";
 			for (String inputLangClass : ClassMatchTable.get(goolClass))
-				System.out.print(inputLangClass + " ");
-			System.out.println();
+				ret += inputLangClass + " ";
+			ret += "\n";
 		}
-		System.out.println("[RecognizerMatcher] Printing MethodMatchTable...");
+		ret += "[RecognizerMatcher] Printing MethodMatchTable...\n";
 		for (String goolMethod : MethodMatchTable.keySet()) {
-			System.out.print("[RecognizerMatcher] -- " + goolMethod + " <- ");
+			ret += "[RecognizerMatcher] -- " + goolMethod + " <- ";
 			for (String inputLangMethodSignature : MethodMatchTable
 					.get(goolMethod))
-				System.out.print(inputLangMethodSignature + " ");
-			System.out.println();
+				ret += inputLangMethodSignature + " ";
+			ret += "\n";
 		}
+		return ret;
 	}
 
 	public static boolean copyFile(File source, File dest){

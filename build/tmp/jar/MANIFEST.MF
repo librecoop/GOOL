@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: Gool_Revisited
-Implementation-Version: 1.0
-

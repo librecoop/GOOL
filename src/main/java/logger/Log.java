@@ -35,7 +35,7 @@ public class Log {
 			Config cfg = new Config();
 			cfg.setMultiSection(true);
 			ini.setConfig(cfg);
-			InputStream stream = ClassLoader.getSystemResourceAsStream("config.ini");
+			InputStream stream = ClassLoader.getSystemResourceAsStream("logger/config.ini");
 			ini.load(stream);
 
 			// Adding printers into file
