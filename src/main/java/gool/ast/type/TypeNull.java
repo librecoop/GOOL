@@ -17,6 +17,7 @@
 
 package gool.ast.type;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * This is the basic type Null of the intermediate language.
@@ -29,8 +30,13 @@ public class TypeNull extends PrimitiveType {
 	public static final IType INSTANCE = new TypeNull();
 
 	@Override
+	public String callGetCode() {
+		return getName();
+	}
+
+	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

@@ -7,6 +7,7 @@ import gool.ast.core.Expression;
 import gool.ast.core.ListMethCall;
 import gool.ast.type.IType;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of the indexOf method on a list.
@@ -21,4 +22,10 @@ public class ListIndexOfCall extends ListMethCall {
 	public ListIndexOfCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

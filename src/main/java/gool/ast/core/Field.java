@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 import java.util.Collection;
 
@@ -117,6 +118,11 @@ public final class Field extends Dec {
 	 */
 	public Expression getDefaultValue() {
 		return defaultValue;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 import java.util.Arrays;
 import java.util.List;
@@ -150,4 +151,10 @@ public class ClassNew extends Parameterizable {
 	public List<IType> getTypeArguments() {
 		return getType().getTypeArguments();
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

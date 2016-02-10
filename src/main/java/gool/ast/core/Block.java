@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +69,11 @@ public class Block extends Statement {
 	 */
 	public void addStatement(Statement statement, int position) {
 		statements.add(position, statement);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

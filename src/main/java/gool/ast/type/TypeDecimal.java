@@ -17,6 +17,7 @@
 
 package gool.ast.type;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * This is the basic type Decimal of the intermediate language.
@@ -35,8 +36,13 @@ public final class TypeDecimal extends PrimitiveType {
 	}
 
 	@Override
+	public String callGetCode() {
+		return getName();
+	}
+
+	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

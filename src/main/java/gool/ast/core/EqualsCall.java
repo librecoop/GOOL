@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.TypeBool;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures an equals call in the intermediate language. 
@@ -52,4 +53,8 @@ public class EqualsCall extends Parameterizable {
 		return target;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

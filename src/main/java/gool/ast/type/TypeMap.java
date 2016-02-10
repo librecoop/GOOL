@@ -18,6 +18,7 @@
 package gool.ast.type;
 
 import gool.ast.core.ClassDef;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This is the basic type for map in the intermediate language.
@@ -72,6 +73,10 @@ public class TypeMap extends ReferenceType {
 		return TypeObject.INSTANCE;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 	
 	/**
 	 * Gets the class' definition where the map was defined.
@@ -104,7 +109,7 @@ public class TypeMap extends ReferenceType {
 
 	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return this.callGetCode();
 	}
 
 }

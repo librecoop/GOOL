@@ -39,4 +39,8 @@ public final class TypeNone extends PrimitiveType {
 		return "";
 	}
 
+	@Override
+	public String callGetCode() {
+		return getName();
+	}
 }

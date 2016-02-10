@@ -18,7 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
-
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of an parent class.
@@ -44,6 +44,11 @@ public class ParentCall extends InitCall {
 	 */
 	public ParentCall(IType type) {
 		super(type, null);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

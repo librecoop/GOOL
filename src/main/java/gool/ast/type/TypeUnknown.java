@@ -17,6 +17,7 @@
 
 package gool.ast.type;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * This is the basic type Unknown of the intermediate language.
@@ -48,7 +49,12 @@ public final class TypeUnknown extends PrimitiveType {
 
 	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return callGetCode();
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

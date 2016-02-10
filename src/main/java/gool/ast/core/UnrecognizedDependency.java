@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * See Dependency for comments.
@@ -34,6 +35,11 @@ public class UnrecognizedDependency extends Dependency {
 	 */
 	public UnrecognizedDependency(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

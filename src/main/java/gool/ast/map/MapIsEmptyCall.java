@@ -20,7 +20,7 @@ package gool.ast.map;
 import gool.ast.core.Expression;
 import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
-
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a method to know if an map is empty.
@@ -34,6 +34,11 @@ public class MapIsEmptyCall extends MapMethCall {
 	 */
 	public MapIsEmptyCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

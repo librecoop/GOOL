@@ -19,6 +19,11 @@ package gool.ast.core;
 
 import gool.ast.type.IType;
 import gool.ast.type.TypeClass;
+import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGeneratorNoVelocity;
+import gool.generator.common.CodePrinter;
+import gool.generator.common.Platform;
+import logger.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,6 +74,11 @@ public class ClassDef extends Dependency {
 	private IType classType;
 
 	/**
+	 * The destination platform.
+	 */
+	private Platform platform;
+
+	/**
 	 * Flag to know if it is an interface.
 	 */
 	private boolean isInterface;
@@ -94,9 +104,11 @@ public class ClassDef extends Dependency {
 	 * 		: The modifier used by the class.
 	 * @param name
 	 * 		: The name of the class.
+	 * @param platform
+	 * 		: The destination platform.
 	 */
-	public ClassDef(Modifier modifier, String name) {
-		this(name);
+	public ClassDef(Modifier modifier, String name, Platform platform) {
+		this(name, platform);
 		addModifier(modifier);
 	}
 
@@ -108,6 +120,18 @@ public class ClassDef extends Dependency {
 	public ClassDef(String name) {
 		this.name = name;
 		setType(new TypeClass(name));
+	}
+
+	/**
+	 * The constructor of a "class definition".
+	 * @param name
+	 * 		: The name of the class.
+	 * @param platform
+	 * 		: The destination platform.
+	 */
+	public ClassDef(String name, Platform platform) {
+		this(name);
+		this.platform = platform;
 	}
 
 	/**
@@ -270,6 +294,25 @@ public class ClassDef extends Dependency {
 	}
 
 	/**
+	 * Gets the platform.
+	 * 
+	 * @return
+	 */
+	public final Platform getPlatform() {
+		return platform;
+	}
+
+	/**
+	 * Assigns the platform of the current class.
+	 * 
+	 * @param platform
+	 *            the platform to be assigned.
+	 */
+	public final void setPlatform(Platform platform) {
+		this.platform = platform;
+	}
+
+	/**
 	 * Determines if the class is the main class.
 	 * @return
 	 * 		True if the class is the main class, else false.
@@ -344,6 +387,27 @@ public class ClassDef extends Dependency {
 	}
 
 	/**
+	 * Generates the target code using the specific CodePrinter related to the
+	 * class' platform.
+	 * 
+	 * Instead of concatenating strings, the code generation is implemented
+	 * using velocity templates, unless the generator implements the interface
+	 * CodeGeneratorNoVelocity.
+	 * 
+	 * @return the generated target code.
+	 * @throws Exception
+	 *             when velocity fails to render or find the relevant template.
+	 */
+	public String getCode() {
+		CodePrinter printer = getPlatform().getCodePrinter();
+		if (printer.getCodeGenerator() instanceof CodeGeneratorNoVelocity)
+			return ((CodeGeneratorNoVelocity) printer.getCodeGenerator())
+					.printClass(this);
+		else
+			return printer.processTemplate("class.vm", this);
+	}
+	
+	/**
 	 * Adds a field to the "class" representation.
 	 * @param fieldName
 	 * 		: The name of the "field" to add.
@@ -372,9 +436,13 @@ public class ClassDef extends Dependency {
 		if ((dependency instanceof TypeDependency)
 				&& (((TypeDependency) dependency).getType() instanceof TypeClass)
 				&& ((TypeClass) ((TypeDependency) dependency).getType())
-						.getClassDef() != null) {
+						.getClassDef() != null
+				&& ((TypeClass) ((TypeDependency) dependency).getType())
+						.getClassDef().getPlatform() != null
+				&& (!((TypeClass) ((TypeDependency) dependency).getType())
+						.getClassDef().getPlatform().equals(getPlatform()))) {
 			throw new IllegalArgumentException(
-					"There should not be dependencies between classes.");
+					"There should not be dependencies between classes of different platforms.");
 		}
 
 		if (dependency != null && !dependencies.contains(dependency)) {
@@ -389,6 +457,11 @@ public class ClassDef extends Dependency {
 	 */
 	public final List<Dependency> getDependencies() {
 		return dependencies;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * The class is used to represent an entry for
@@ -49,6 +50,11 @@ public class MapEntryMethCall extends Parameterizable {
 	public MapEntryMethCall(IType type, Expression expression) {
 		super(type);
 		this.expression = expression;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

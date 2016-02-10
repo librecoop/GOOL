@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures variable content invocation
@@ -67,4 +68,10 @@ public class MemberSelect extends VarAccess {
 	public void setIdentifier(String newName) {
 		var.setName(newName);
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

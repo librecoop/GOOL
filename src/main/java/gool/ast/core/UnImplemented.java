@@ -1,5 +1,7 @@
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 public class UnImplemented extends Dependency {
 	
 	/**
@@ -25,4 +27,9 @@ public class UnImplemented extends Dependency {
 		return comment ;
 	}
 	
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

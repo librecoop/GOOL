@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.TypeNone;
+import gool.generator.GoolGeneratorController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,4 +75,8 @@ public class Constructor extends Meth {
 		return initCalls;
 	}
 
+	@Override
+	public String getHeader() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

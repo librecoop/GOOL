@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 /**
  * See Dependency for comments.
  */
@@ -36,6 +38,10 @@ public class RecognizedDependency extends Dependency {
 		this.goolClassName = goolLibName;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 	/**
 	 * Gets the name of the gool class, associate to the dependency.

@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.TypeNone;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class accounts for an array access in the intermediate language.
@@ -45,6 +46,11 @@ public class ArrayAccess extends Expression {
 		super(TypeNone.INSTANCE);
 		this.expression = expr;
 		this.index = index;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

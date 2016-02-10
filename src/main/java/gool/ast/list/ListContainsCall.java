@@ -20,6 +20,7 @@ package gool.ast.list;
 import gool.ast.core.Expression;
 import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a method of treating the presence to list.
@@ -33,6 +34,11 @@ public class ListContainsCall extends ListMethCall {
 	 */
 	public ListContainsCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * This captures the if statements of the intermediate language. Hence it is an
@@ -78,6 +79,11 @@ public class If extends Statement {
 	 */
 	public Statement getElseStatement() {
 		return elseStatement;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

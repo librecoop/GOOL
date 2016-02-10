@@ -20,6 +20,7 @@ package gool.ast.map;
 import gool.ast.core.Expression;
 import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a method of treating the getting iterator of an map.
@@ -33,6 +34,11 @@ public class MapGetIteratorCall extends MapMethCall {
 	 */
 	public MapGetIteratorCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

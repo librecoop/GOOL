@@ -18,6 +18,7 @@
 package gool.ast.system;
 
 import gool.ast.core.Dependency;
+import gool.generator.GoolGeneratorController;
 
 
 /**
@@ -25,4 +26,8 @@ import gool.ast.core.Dependency;
  */
 public class SystemOutDependency extends Dependency {
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * Represents member invocation over class members. For example, in Java they
@@ -62,5 +63,9 @@ public class FieldAccess extends Expression {
 		return target;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 }

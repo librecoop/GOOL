@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 /**
  * This class captures a "throw" invocation in the intermediate language.
  */
@@ -32,6 +34,11 @@ public class Throw extends Statement {
 	 */
 	public Throw(Expression expression) {
 		this.expression = expression;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

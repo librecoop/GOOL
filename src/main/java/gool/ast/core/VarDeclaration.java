@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures a variable declaration in the intermediate language.
@@ -68,4 +69,8 @@ public class VarDeclaration extends Dec {
 		return initialValue;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

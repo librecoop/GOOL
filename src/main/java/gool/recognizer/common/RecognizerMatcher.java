@@ -61,17 +61,17 @@ public class RecognizerMatcher {
 		ArrayList<String> toReturn = new ArrayList<String>();
 		if(imports.isEmpty())
 			return imports ;
-		System.out.print("[RecognizerMatcher] Enabling the recognition of the import : "
+		Log.d("<RecognizerMatcher - matchImportAdd> Enabling the recognition of the import : "
 				+ inputLangImport );
 		File tmpFolder = new File(DirOutPut);
 		if(!tmpFolder.exists()){
 			tmpFolder.mkdir();
 		}
 		for (String importName : imports){
-			System.out.println(" and change to "+ importName);
+			Log.d("<RecognizerMatcher - matchImportAdd> and change to "+ importName);
 			File tmpFile = new File(DirOutPut+"/"+importName);
-			System.out.println(
-					copyFile(new File(importName),tmpFile ));
+			if (copyFile(new File(importName),tmpFile ))
+				Log.d("<RecognizerMatcher - matchImportAdd> copy done");
 			toReturn.add(DirOutPut+"/"+importName);
 		}
 		return toReturn;
@@ -110,9 +110,6 @@ public class RecognizerMatcher {
 	private static void enableRecognition(String goolClass) {
 		if(ClassMatchTable.keySet().contains(goolClass))
 			return;
-		System.out
-		.println("[RecognizerMatcher] Enabling the recognition of the GOOL class: "
-				+ goolClass + ".");
 		Log.d("<RecognizerMatcher - enableRecognition> Enabling the recognition of the GOOL class: "
 				+ goolClass + ".");
 		try {

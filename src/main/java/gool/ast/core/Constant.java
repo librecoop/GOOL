@@ -20,6 +20,7 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures all the expressions of the intermediate language which we
@@ -72,4 +73,10 @@ public class Constant extends Expression {
 	public Object getValue() {
 		return value;
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

@@ -19,6 +19,7 @@ package gool.ast.core;
 
 import gool.ast.type.IType;
 import gool.ast.type.TypeString;
+import gool.generator.GoolGeneratorController;
 
 /**
  * Allows to compute the value of a boolean or integer operation with two
@@ -78,6 +79,11 @@ public class BinaryOperation extends Operation {
 	 */
 	public Expression getRight() {
 		return right;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

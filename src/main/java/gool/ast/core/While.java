@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * A while statement.
@@ -61,6 +62,11 @@ public class While extends Statement {
 	 */
 	public Statement getWhileStatement() {
 		return whileStatement;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

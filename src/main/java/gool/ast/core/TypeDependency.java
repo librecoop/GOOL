@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class defines the type of a dependency.
@@ -36,6 +37,11 @@ public class TypeDependency extends Dependency {
 	 */
 	public TypeDependency(IType type) {
 		this.type = type;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

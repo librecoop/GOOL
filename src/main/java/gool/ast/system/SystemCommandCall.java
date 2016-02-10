@@ -19,7 +19,7 @@ package gool.ast.system;
 
 import gool.ast.core.GoolCall;
 import gool.ast.type.TypeVoid;
-
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a system method.
@@ -31,6 +31,11 @@ public class SystemCommandCall extends GoolCall {
 	 */
 	public SystemCommandCall() {
 		super(TypeVoid.INSTANCE);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

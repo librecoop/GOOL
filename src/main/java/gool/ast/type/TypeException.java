@@ -17,6 +17,8 @@
 
 package gool.ast.type;
 
+import gool.generator.GoolGeneratorController;
+
 import java.util.HashMap;
 
 /**
@@ -37,9 +39,7 @@ public class TypeException extends IType {
 		/** Type unrecognized */
 		UNRECOGNIZED,
 		/* exceptions related to some domain */
-		ARITHMETIC, COLLECTION, CAST, ENUM, ARGUMENT, THREAD, ARRAY, SECURITY,
-		TYPE, UNSUPORTED, ARRAYSIZE, STATE, CLASSNOTFOUND, ACCESS, NEWINSTANCE,
-		INTERUPT, NOSUCHFIELD, NOSUCHMETH, NULLREFERENCE,
+		ARITHMETIC, COLLECTION, CAST, ENUM, ARGUMENT, THREAD, ARRAY, SECURITY, TYPE, UNSUPORTED, ARRAYSIZE, STATE, CLASSNOTFOUND, ACCESS, NEWINSTANCE, INTERUPT, NOSUCHFIELD, NOSUCHMETH, NULLREFERENCE,
 	}
 
 	/**
@@ -121,6 +121,11 @@ public class TypeException extends IType {
 	 */
 	public Kind getKind() {
 		return kind;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

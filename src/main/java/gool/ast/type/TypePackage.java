@@ -17,6 +17,8 @@
 
 package gool.ast.type;
 
+import gool.generator.GoolGeneratorController;
+
 /**
  * This is the basic type Package of the intermediate language.
  */
@@ -47,7 +49,12 @@ public final class TypePackage extends IType {
 
 	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return callGetCode();
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

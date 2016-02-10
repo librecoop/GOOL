@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class accounts for compound assignments in the intermediate language. Hence it is
@@ -88,5 +89,9 @@ public class CompoundAssign extends Assign {
 		return type;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 }

@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,4 +67,10 @@ public class Package extends Dependency {
 	public final boolean addClass(ClassDef mclass) {
 		return classes.add(mclass);
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

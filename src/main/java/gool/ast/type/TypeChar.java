@@ -17,6 +17,7 @@
 
 package gool.ast.type;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * This is the basic type Char of the intermediate language.
@@ -29,8 +30,13 @@ public class TypeChar extends PrimitiveType {
 	public static final TypeChar INSTANCE = new TypeChar();
 
 	@Override
+	public String callGetCode() {
+		return getName();
+	}
+
+	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

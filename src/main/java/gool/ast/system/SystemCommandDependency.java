@@ -18,10 +18,15 @@
 package gool.ast.system;
 
 import gool.ast.core.Dependency;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class represents a dependency for a system command.
  */
 public class SystemCommandDependency extends Dependency {
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

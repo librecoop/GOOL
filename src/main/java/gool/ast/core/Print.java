@@ -45,6 +45,10 @@ public final class Print extends Statement {
 		return getExpression();
 	}
 
+	@Override
+	public String callGetCode() {
+		return "System.out.println(" + expr + ")";
+	}
 
 	/**
 	 * Creator of Print.

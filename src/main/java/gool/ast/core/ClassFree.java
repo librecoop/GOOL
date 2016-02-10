@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the "free" of the intermediate language, i.e freeing an
@@ -56,4 +57,8 @@ public final class ClassFree extends Statement {
 		return classnew;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

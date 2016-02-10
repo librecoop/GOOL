@@ -20,7 +20,7 @@ package gool.ast.map;
 import gool.ast.core.Expression;
 import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
-
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a method of treating the adding in an map.
@@ -36,5 +36,9 @@ public class MapPutCall extends MapMethCall {
 		super(TypeVoid.INSTANCE, target);
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 }

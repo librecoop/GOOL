@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 /**
  * This class captures variable content invocation. Hence is is an Expression.
  * This has to be distinguished from VarDeclaration because later it does not
@@ -49,6 +51,11 @@ public class VarAccess extends Expression {
 	 */
 	public Dec getDec() {
 		return var;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

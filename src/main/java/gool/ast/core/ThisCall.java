@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a "this".
@@ -48,6 +49,11 @@ public class ThisCall extends InitCall {
 	 */
 	public ThisCall(IType type) {
 		super(type, null);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

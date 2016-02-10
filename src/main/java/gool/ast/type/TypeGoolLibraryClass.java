@@ -17,6 +17,7 @@
 
 package gool.ast.type;
 
+import gool.generator.GoolGeneratorController;
 import logger.Log;
 
 /**
@@ -49,6 +50,13 @@ public final class TypeGoolLibraryClass extends ReferenceType {
 
 	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return callGetCode();
 	}
+
+	@Override
+	public String callGetCode() {
+		Log.d("<TypeGoolLibraryClass - callGetCode> Output generator is required for " + goolclassname);
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

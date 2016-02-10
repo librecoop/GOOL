@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 import java.util.List;
 
 /**
@@ -81,4 +83,8 @@ public class Try extends Statement {
 		return finilyBlock;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

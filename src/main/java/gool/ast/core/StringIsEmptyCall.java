@@ -19,7 +19,7 @@ package gool.ast.core;
 
 import gool.ast.core.Expression;
 import gool.ast.type.TypeVoid;
-
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a method to know if a string is empty.
@@ -35,6 +35,11 @@ public class StringIsEmptyCall extends MemberSelect {
 	 */
 	public StringIsEmptyCall(Expression target, Dec var) {
 		super(target, var);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

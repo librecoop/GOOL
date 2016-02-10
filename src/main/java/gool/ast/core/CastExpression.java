@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * Represents the conversion of an expression to a target type. In object
@@ -53,6 +54,14 @@ public final class CastExpression extends Expression {
 	 */
 	public Expression getExpression() {
 		return expression;
+	}
+
+	/**
+	 * Generates the code in the target language.
+	 */
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

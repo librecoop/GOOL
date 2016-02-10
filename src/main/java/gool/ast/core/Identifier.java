@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures a variable declaration in the intermediate language.
@@ -50,6 +51,10 @@ public final class Identifier extends Expression {
 		this.name = name;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 	/**
 	 * Gets the name of the identifier.

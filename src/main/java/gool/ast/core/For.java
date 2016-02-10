@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  *  This class captures the "for loop" of the intermediate language.
@@ -72,6 +73,11 @@ public class For extends While {
 	 */
 	public Statement getUpdater() {
 		return updater;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

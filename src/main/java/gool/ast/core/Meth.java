@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -215,6 +216,20 @@ public class Meth extends Dec {
 	 */
 	public boolean isAbstract() {
 		return getModifiers().contains(Modifier.ABSTRACT);
+	}
+
+	/**
+	 * Gets the header declaration of the method.
+	 * @return
+	 * 		The header declaration of the method.
+	 */
+	public String getHeader() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

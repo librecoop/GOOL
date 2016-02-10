@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.TypeNone;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures an enhanced for loop in the intermediate language.
@@ -94,6 +95,11 @@ public class EnhancedForLoop extends Expression {
 	 */
 	public Statement getStatements() {
 		return statements;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

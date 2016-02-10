@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,6 +89,11 @@ public final class NewInstance extends Parameterizable {
 	 */
 	public VarDeclaration getVariable() {
 		return variable;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

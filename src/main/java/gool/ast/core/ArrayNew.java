@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,11 @@ public class ArrayNew extends Expression {
 	 */
 	public List<Expression> getInitialiList() {
 		return initialiList;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

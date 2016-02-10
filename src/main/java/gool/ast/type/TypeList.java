@@ -18,6 +18,7 @@
 package gool.ast.type;
 
 import gool.ast.core.ClassDef;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This is the basic type for list in the intermediate language.
@@ -59,6 +60,11 @@ public class TypeList extends ReferenceType {
 		return null;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 	/**
 	 * Gets the class' definition where the list was defined.
 	 * @return
@@ -90,7 +96,7 @@ public class TypeList extends ReferenceType {
 
 	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return this.callGetCode();
 	}
 
 }

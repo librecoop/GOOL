@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.common.CodePrinter;
+import gool.generator.common.Platform;
 
 /**
  * This class captures the "main class" of the intermediate language, 
@@ -36,8 +38,8 @@ public class ClassMain extends ClassDef {
 	 * @param platform
 	 * 			: The destination platform.
 	 */
-	public ClassMain(String name) {
-		super(Modifier.PUBLIC, name);
+	public ClassMain(String name, Platform platform) {
+		super(Modifier.PUBLIC, name, platform);
 	}
 
 	/**
@@ -47,6 +49,17 @@ public class ClassMain extends ClassDef {
 	 */
 	public Block getMainBlock() {
 		return mainBlock;
+	}
+
+	/**
+	 * Gets the code generated for the main class.
+	 * @param codePrinter
+	 * 		: The code printer.
+	 * @return 
+	 * 		The code generated for the main class.
+	 */
+	public String getCode(CodePrinter codePrinter) {
+		return codePrinter.processTemplate("mainClass.vm", this);
 	}
 
 	/**

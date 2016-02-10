@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class accounts for method declarations in the intermediate language.
@@ -40,6 +41,10 @@ public class MainMeth extends Meth {
 		addModifier(Modifier.PUBLIC);
 	}
 
+	@Override
+	public String getHeader() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 	@Override
 	public boolean isMainMethod() {

@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +87,10 @@ public class Finally extends Block {
 
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 	/**
 	 * Returns the list of statements.

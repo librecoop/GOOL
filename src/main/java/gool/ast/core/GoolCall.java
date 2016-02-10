@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This captures the invocation of a gool class method.
@@ -48,6 +49,11 @@ public class GoolCall extends Parameterizable {
 	public GoolCall(IType type, String method) {
 		super(type);
 		this.method = method;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

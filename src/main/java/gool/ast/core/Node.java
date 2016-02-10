@@ -36,7 +36,7 @@ public abstract class Node {
 	 */
 	@Override
 	final public String toString() {
-		return this.getClass().getSimpleName();
+		return callGetCode();
 	}
 
 	/**
@@ -46,5 +46,5 @@ public abstract class Node {
 	 * 
 	 * @return
 	 */
-	//public abstract String callGetCode();
+	public abstract String callGetCode();
 }

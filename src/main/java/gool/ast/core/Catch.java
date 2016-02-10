@@ -17,7 +17,7 @@
 
 package gool.ast.core;
 
-
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class accounts for a catch block in the intermediate language.
@@ -64,4 +64,8 @@ public class Catch extends Statement {
 		return block;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 }

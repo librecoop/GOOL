@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
 
 /**
  * See Dependency for comments.
@@ -37,6 +38,10 @@ public class CustomDependency extends Dependency {
 		this.name = name;
 	}
 
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
 
 	/**
 	 * Gets the name of the custom dependency.

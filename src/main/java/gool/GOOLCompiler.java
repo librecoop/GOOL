@@ -27,6 +27,9 @@ package gool;
 
 import gool.ast.core.ClassDef;
 import gool.parser.java.JavaParser;
+import gool.generator.GeneratorHelper;
+import gool.generator.common.Platform;
+import gool.generator.cpp.CppPlatform;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -99,13 +102,18 @@ public class GOOLCompiler {
 				}
 				
 
-				GOOLCompiler gc=new GOOLCompiler();
+				//GOOLCompiler gc=new GOOLCompiler();
 
 				Collection<ClassDef> classDefs = 
-						gc.concretePlatformeToAbstractGool(new JavaParser(), files);
+						GOOLCompiler.concretePlatformeToAbstractGool(
+								CppPlatform.getInstance(filesNonChange),
+								new JavaParser(), files);
 				for(ClassDef cl : classDefs){
 					System.out.println(cl.getName());
+					cl.setPlatform(CppPlatform.getInstance(filesNonChange));
 				}
+				
+				Map<Platform, List<File>> out_files = GOOLCompiler.abstractGool2Target(classDefs);
 				
 
 			} catch (Exception e) {
@@ -175,18 +183,32 @@ public class GOOLCompiler {
 	/**
 	 * Parsing the concrete Language into abstract GOOL is done by a Parser.
 	 * 
-	 * @param parserIn
-	 * 			  : the Parser of the source language (It extends ParseGOOL)
 	 * @param outPlatform
 	 *            : the Target language
+	 * @param parserIn
+	 * 			  : the Parser of the source language (It extends ParseGOOL)
 	 * @param input
 	 *            : the concrete Java, as files
 	 * @return abstract GOOL classes
 	 * @throws Exception
 	 */
-	private static Collection<ClassDef> concretePlatformeToAbstractGool(
+	private static Collection<ClassDef> concretePlatformeToAbstractGool(Platform platform,
 			ParseGOOL parserIn, Collection<? extends File> inputFiles) throws Exception {
-		return parserIn.parseGool(inputFiles);
+		return parserIn.parseGool(platform, inputFiles);
 	}
+	
+	/**
+	 * Flattening the abstract GOOL into concrete Target is done by
+	 * GeneratorHelper.
+	 * 
+	 * @param classDefs
+	 * @return a map of the compiled files for the different platforms
+	 * @throws FileNotFoundException
+	 */
+	private static Map<Platform, List<File>> abstractGool2Target(
+			Collection<ClassDef> classDefs) throws FileNotFoundException {
+		return GeneratorHelper.printClassDefs(classDefs);
+	}
+
 
 }

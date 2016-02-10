@@ -20,6 +20,7 @@ package gool.ast.list;
 import gool.ast.core.Expression;
 import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a method to know the size of a list.
@@ -34,4 +35,10 @@ public class ListSizeCall extends ListMethCall {
 	public ListSizeCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

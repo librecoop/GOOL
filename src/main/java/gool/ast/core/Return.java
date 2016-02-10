@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 /**
  * This is the basic type Bool of the intermediate language.
  */
@@ -43,6 +45,11 @@ public class Return extends Statement {
 	 */
 	public Expression getExpression() {
 		return expression;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 }

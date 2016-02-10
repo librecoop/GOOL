@@ -17,6 +17,7 @@
 
 package gool.ast.core;
 
+import gool.generator.common.Platform;
 
 /**
  * This class captures the definition of a static class. 
@@ -32,8 +33,8 @@ public class StaticClass extends ClassDef {
 	 * @param platform
 	 * 		: The destination platform used by the system.
 	 */
-	public StaticClass(Modifier modifier, String name) {
-		super(modifier, name);
+	public StaticClass(Modifier modifier, String name, Platform platform) {
+		super(modifier, name, platform);
 		addModifier(Modifier.STATIC);
 	}
 

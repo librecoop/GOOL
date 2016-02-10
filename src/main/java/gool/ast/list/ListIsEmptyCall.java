@@ -20,6 +20,7 @@ package gool.ast.list;
 import gool.ast.core.Expression;
 import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
+import gool.generator.GoolGeneratorController;
 
 /**
  * This class captures the invocation of a method to know if the list is empty.
@@ -34,4 +35,10 @@ public class ListIsEmptyCall extends ListMethCall {
 	public ListIsEmptyCall(Expression target) {
 		super(TypeVoid.INSTANCE, target);
 	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
+	}
+
 }

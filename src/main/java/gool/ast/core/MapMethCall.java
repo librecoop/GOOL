@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.ast.type.IType;
+import gool.generator.GoolGeneratorController;
 
 /**
  * The class captures the invocation of a method of treating map.
@@ -48,6 +49,11 @@ public class MapMethCall extends Parameterizable {
 	public MapMethCall(IType type, Expression expression) {
 		super(type);
 		this.expression = expression;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**

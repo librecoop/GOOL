@@ -17,6 +17,8 @@
 
 package gool.ast.core;
 
+import gool.generator.GoolGeneratorController;
+
 /**
  * This class accounts for assignments in the intermediate language. Hence it is
  * a Statement.
@@ -66,6 +68,11 @@ public class Assign extends Statement {
 	 */
 	public Expression getValue() {
 		return value;
+	}
+
+	@Override
+	public String callGetCode() {
+		return GoolGeneratorController.generator().getCode(this);
 	}
 
 	/**
