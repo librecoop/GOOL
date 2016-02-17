@@ -19,6 +19,7 @@ package gool.ast.type;
 
 import gool.ast.core.ClassDef;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This is the basic type for map entry in the intermediate language.
@@ -72,7 +73,13 @@ public class TypeEntry extends ReferenceType {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 	/**

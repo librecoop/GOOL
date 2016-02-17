@@ -1846,14 +1846,17 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			Log.d("<JavaRecognizer - visitMethodInvocation> Target is " + target.toString() + " with signature : " + signature);
 			goolMethod = RecognizerMatcher.matchMethod(signature);
 			if (goolMethod != null)
-				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is " + goolMethod.toString());
+				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is " + goolMethod.toString() + " and is an instance of " + target.getClass().getName());
 			else
 				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is null.");
-			/*
-			 * if (goolMethod != null && target instanceof MemberSelect) {
-			 * ((MemberSelect) target).setIdentifier(goolMethod
-			 * .substring(goolMethod.lastIndexOf(".") + 1)); }
-			 */
+			
+			if (goolMethod != null && target instanceof MemberSelect) {
+				((MemberSelect) target).setIdentifier(goolMethod
+						.substring(goolMethod.lastIndexOf(".") + 1));
+				Log.d("<JavaRecognizer - visitMethodInvocation> target identified as." +
+						((MemberSelect) target).getIdentifier());
+			}
+			
 
 		}
 
@@ -1874,8 +1877,9 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		addParameters(n.getArguments(), (Parameterizable) target, context);
 
-		if ((target instanceof MethCall) && (goolMethod != null))
+		if ((target instanceof MethCall) && (goolMethod != null)){
 			((MethCall) target).setGoolLibraryMethod(goolMethod);
+		}
 
 		return Log.MethodOut(Thread.currentThread(), target);
 	}
@@ -1991,19 +1995,19 @@ class Context {
 
 	public Context(Context parent) {
 		this(null, parent);
-		Log.d("@@@@@@@@@@@@@@@@@ Context created @@@@@@@@@@@@@@@@@@@@@");
-		Log.d("Context tree :\n" + getContextTree(this));
+	//	Log.d("@@@@@@@@@@@@@@@@@ Context created @@@@@@@@@@@@@@@@@@@@@");
+	//	Log.d("Context tree :\n" + getContextTree(this));
 	}
 
 	public Context(ClassDef classDef, Context parent) {
 		map = new HashMap<String, HashMap<TypeMirror, Dec>>();
 		this.parent = parent;
 		this.classDef = classDef;
-		if (classDef != null)
+		/*if (classDef != null)
 			Log.d(String.format("@@@@@@@@@@@@@@@@@ Context created with ClassDef %s @@@@@@@@@@@@@@@@@@@@@", classDef.getName()));
 		else
-			Log.d("@@@@@@@@@@@@@@@@@ Context created with null ClassDef @@@@@@@@@@@@@@@@@@@@@");
-		Log.d("Context tree :\n" + getContextTree(this));
+			Log.d("@@@@@@@@@@@@@@@@@ Context created within ClassDef @@@@@@@@@@@@@@@@@@@@@");
+		Log.d("Context tree :\n" + getContextTree(this));*/
 	}
 
 	/**
@@ -2120,7 +2124,7 @@ class Context {
 	}
 
 	/**
-	 * log map for debug use
+	 * return map for debug use
 	 */
 	private String getMaptoString(){
 		if (map == null)
@@ -2130,6 +2134,19 @@ class Context {
 			ret += el + "\n";
 		}
 		return ret;
+	}
+	
+	/**
+	 * return dependencies of the current classDef
+	 */
+	private String getClassDefDependencies(){
+		if (classDef == null)
+			return "";
+		String ret=String.format("classDef %s dependencies = [", classDef.getName());
+		for (Dependency dp : classDef.getDependencies()){
+			ret += dp.toString() + ", ";
+		}
+		return ret + "]\n";
 	}
 
 	/**
@@ -2145,10 +2162,11 @@ class Context {
 			ret += "@@@@@@@@\n";
 		}
 		if (in.classDef != null)
-			ret += in.classDef.getName() + "\n";
+			ret += String.format("classDef name = %s \n", in.classDef.getName());
 		else
-			ret += "Null \n";
+			ret += "No classDef \n";
 		ret += in.getMaptoString();
+		ret += in.getClassDefDependencies();
 		return ret;
 	}
 }

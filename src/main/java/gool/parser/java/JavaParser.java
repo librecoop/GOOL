@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.lang.model.element.Element;
 import javax.tools.JavaCompiler;
@@ -60,11 +62,7 @@ public class JavaParser extends ParseGOOL {
 	 * call Sun's java parser to produce abstract Java; - We visit abstract Java
 	 * with the JavaRecognizer to produce abstract GOOL; - We annotate the
 	 * abstract GOOL so that it carries the Target language.
-	 * 
-	 * @param defaultPlatform
-	 *            : specifies the Target language of the code generation that
-	 *            will later be applied to the abstract GOOL, once this Java
-	 *            parsing is performed. 
+	 *
 	 * @param compilationUnits
 	 *            : An Iterable of JavaFileObject, which are Sun's java parser's
 	 *            representation of the files to be parsed.
@@ -77,7 +75,7 @@ public class JavaParser extends ParseGOOL {
 	 * @throws Exception
 	 */
 
-	public static Collection<ClassDef> parseGool(Platform defaultPlatform,
+	public static Collection<ClassDef> parseGool(
 			Iterable<? extends JavaFileObject> compilationUnits,
 			JavaRecognizer visitor) throws Exception 
 	{
@@ -115,21 +113,21 @@ public class JavaParser extends ParseGOOL {
 			System.out.println(elt.toString());
 		}
 		Trees typetrees = Trees.instance(task);
-	
+
 		/**
 		 * We now prepare the JavaRecognizer for conversion of abstract Java to
 		 * abstract GOOL.
 		 */
 
-		// The visitor needs to know what the Target language is
+		/*	// The visitor needs to know what the Target language is
 		// Because it will annotate the abstract GOOL with this information.
 		//visitor.setDefaultPlatform(defaultPlatform);
 		GoolGeneratorController.setCodeGenerator(defaultPlatform
 				.getCodePrinter().getCodeGenerator());
-		
+
 		// Adding by Denis A.
-		GeneratorMatcher.init(defaultPlatform);
-		
+		GeneratorMatcher.init(defaultPlatform);*/
+
 		// The visitor might need Sun's analyzed Java abstract type tree.
 		visitor.setTrees(typetrees);
 
@@ -144,33 +142,45 @@ public class JavaParser extends ParseGOOL {
 		}
 
 		Log.d(RecognizerMatcher.printMatchTables());
-		
+
 		return visitor.getGoolClasses();
 	}
-	
-	
+
+
 	public static Iterable<? extends JavaFileObject> getJavaFileObjects(
 			Collection<? extends File> inputFiles) {
 		return ToolProvider.getSystemJavaCompiler()
 				.getStandardFileManager(null, null, null)
 				.getJavaFileObjectsFromFiles(inputFiles);
 	}
-	
+
 	/**
 	 * Initially, call the parser with input files.
 	 */
-	public Collection<ClassDef> parseGool(Platform defaultPlatform, Collection<? extends File> inputFiles)
+	public Collection<ClassDef> parseGool(Collection<? extends File> inputFiles)
 			throws Exception {
-		return parseGool(defaultPlatform, getJavaFileObjects(inputFiles));
+		return parseGool(getJavaFileObjects(inputFiles));
 	}
 
 	/**
 	 * Then, call the parser with no dependency yet, and with the
 	 * JavaRecognizer.
 	 */
-	public Collection<ClassDef> parseGool(Platform defaultPlatform, Iterable<? extends JavaFileObject> compilationUnits)
+	public Collection<ClassDef> parseGool(Iterable<? extends JavaFileObject> compilationUnits)
 			throws Exception {
-		return parseGool(defaultPlatform, compilationUnits,	new JavaRecognizer());
+		return parseGool(compilationUnits,	new JavaRecognizer());
+	}
+
+	/**
+	 * If the parser is called on a map containing file names and associated codes,
+	 * wrap it into compilation units, and call the parser on that files.
+	 */
+	public Collection<ClassDef> parseGool(Map<String, String> input) throws Exception {
+		ArrayList<JavaFileObject> compilationUnits = new ArrayList<JavaFileObject>();
+		for(Entry<String, String> entry : input.entrySet()){
+			compilationUnits.add(new MyFileObject(entry.getValue(), entry.getKey()));
+		}
+		return parseGool(compilationUnits);
 	}
 
 	/**

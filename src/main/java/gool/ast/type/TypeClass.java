@@ -21,6 +21,7 @@ import gool.ast.core.ClassDef;
 import gool.ast.core.Constant;
 import gool.ast.core.Expression;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This is the basic type for classes defined in the intermediate language.
@@ -147,7 +148,13 @@ public class TypeClass extends ReferenceType {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

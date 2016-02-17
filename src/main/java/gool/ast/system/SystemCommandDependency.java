@@ -19,6 +19,7 @@ package gool.ast.system;
 
 import gool.ast.core.Dependency;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class represents a dependency for a system command.
@@ -27,6 +28,12 @@ public class SystemCommandDependency extends Dependency {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 }

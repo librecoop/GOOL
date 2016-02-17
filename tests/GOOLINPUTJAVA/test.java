@@ -1,3 +1,4 @@
+import java.lang.Math;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -26,5 +27,7 @@ public class test{
 		}catch(Exception e){
 			System.out.println(e.toString());
 		}
+		System.out.println(Math.abs(-20.5));
+		
 	}
 }

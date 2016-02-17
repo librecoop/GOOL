@@ -22,7 +22,6 @@ import logger.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,8 +104,6 @@ public class RecognizerMatcher {
 		return null;
 	}
 
-
-
 	private static void enableRecognition(String goolClass) {
 		if(ClassMatchTable.keySet().contains(goolClass))
 			return;
@@ -171,8 +168,9 @@ public class RecognizerMatcher {
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
+		Log.d("<RecognizerMatcher - enableRecognition> Print Match Tables : \n" + printMatchTables()); 
 	}
-
+	
 	static private ArrayList<String> getImportChange(
 			String inputLangImport) {
 		ArrayList<String> imports = new ArrayList<String>();
@@ -218,6 +216,7 @@ public class RecognizerMatcher {
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
 			String line;
+
 			while ((line = br.readLine()) != null) {
 				line = removeSpaces(line);
 				if (isInputMatchLine(line)) {
@@ -225,6 +224,7 @@ public class RecognizerMatcher {
 					ArrayList<String> currentInputImports = parseCommaSeparatedValues(getRightPartOfInputMatchLine(line));
 					if (currentInputImports.contains(inputLangImport)){
 						goolClasses.add(currentGoolClass);
+						Log.d(String.format("<RecognizerMatcher - getGoolClassesFromImport> Adding class %s", currentGoolClass));
 					}
 				}
 			}
@@ -232,6 +232,7 @@ public class RecognizerMatcher {
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
+		
 		return goolClasses;
 	}
 

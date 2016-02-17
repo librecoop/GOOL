@@ -18,6 +18,7 @@
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This is the basic type String of the intermediate language.
@@ -31,11 +32,17 @@ public class TypeString extends PrimitiveType {
 
 	@Override
 	public String callGetCode() {
-		return getName();
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 	@Override
 	public String getName() {
-		return GoolGeneratorController.generator().getCode(this);
+		return callGetCode();
 	}
 }

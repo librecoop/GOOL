@@ -19,6 +19,7 @@ package gool.ast.core;
 
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class captures function invocation. Hence is is an OOTExpr.
@@ -196,7 +197,13 @@ public class MethCall extends Parameterizable {
 	
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

@@ -21,6 +21,7 @@ import gool.ast.core.Expression;
 import gool.ast.core.MapMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class captures the invocation of a method to know if a key is contained in an map.
@@ -38,7 +39,13 @@ public class MapContainsKeyCall extends MapMethCall {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

@@ -18,6 +18,7 @@
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 import logger.Log;
 
 /**
@@ -55,8 +56,13 @@ public final class TypeGoolLibraryClass extends ReferenceType {
 
 	@Override
 	public String callGetCode() {
-		Log.d("<TypeGoolLibraryClass - callGetCode> Output generator is required for " + goolclassname);
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

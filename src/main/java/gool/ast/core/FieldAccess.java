@@ -19,6 +19,7 @@ package gool.ast.core;
 
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * Represents member invocation over class members. For example, in Java they
@@ -65,7 +66,13 @@ public class FieldAccess extends Expression {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

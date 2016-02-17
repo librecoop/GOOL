@@ -20,6 +20,7 @@ package gool.ast.system;
 import gool.ast.core.GoolCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class captures the invocation of a system method for out print.
@@ -35,7 +36,13 @@ public class SystemOutPrintCall extends GoolCall {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

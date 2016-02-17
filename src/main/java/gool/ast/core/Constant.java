@@ -21,6 +21,7 @@ import gool.ast.type.IType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeByte;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class captures all the expressions of the intermediate language which we
@@ -76,7 +77,13 @@ public class Constant extends Expression {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

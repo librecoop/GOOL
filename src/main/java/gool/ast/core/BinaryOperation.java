@@ -20,6 +20,7 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.ast.type.TypeString;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * Allows to compute the value of a boolean or integer operation with two
@@ -83,7 +84,13 @@ public class BinaryOperation extends Operation {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

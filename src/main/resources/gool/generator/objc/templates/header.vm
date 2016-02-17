@@ -1,0 +1,78 @@
+## Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1.
+## Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2.    
+##
+## This file is part of GOOL.
+## 
+## GOOL is free software: you can redistribute it and/or modify it under the terms of the GNU
+## General Public License as published by the Free Software Foundation, version 3.
+##
+## GOOL is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+## even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+## See the GNU General Public License version 3 for more details.
+## 
+## You should have received a copy of the GNU General Public License along with GOOL,
+## in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
+
+
+
+## Velocity template for writing out classes .h in Objective C
+#parse($macros)
+#set($m = "-")
+#set($ts = 1)
+
+#includes ($Helper.printDependencies($class))
+$Helper.printRecognizedDependencies($class)
+
+#includesPerso ($MManager.getDependencies())
+
+#if ($class.isEnum())
+enum $class.Name {
+	#foreach( $field in $class.Fields )
+	    $field.Name,
+	#end
+};
+#elseif(!$class.isInterface())
+@interface $class.Name :#if($class.ParentClass) #type($class.ParentClass) #set($dp = 1)#else NSObject #end #if(!$class.Interfaces.isEmpty())<#interfaces($class.Interfaces)>#end{
+	@private
+	#foreach( $field in $class.Fields )
+	#if($field.getAccessModifier() == "private" && !$field.toString().equals(""))
+	$field;
+	#end
+#end
+
+	@protected
+	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "protected" && !$field.toString().equals(""))
+	$field;
+	#end
+#end
+
+	@public
+	#foreach( $field in $class.Fields )#if($field.getAccessModifier() == "public" && !$field.toString().equals(""))
+	$field;
+	#end
+#end
+
+}
+	#foreach( $method in $class.Methods )
+		#set($p = 1)#foreach($mod in $method.getModifiers())#if($mod == "private")#set($p = 0)#end#end
+		#if($p != 0)
+	#if($method.isGoolMethodImplementation())
+	$method.getHeader()	
+	#elseif($method.isConstructor())-($method.getClassDef().getName() *)init#foreach( $p in $method.getParams())#if($velocityCount == 1)With#elseif($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end#end#if($method.getName() == "toString")#set($ts=0)#end
+	#end
+	
+	#if($ts==1)-(NSString *)toString;#end
+	
+@end
+#else
+@protocol $class.Name
+	#foreach( $method in $class.Methods )
+		
+	#if($method.isConstructor())-(id)init#foreach( $p in $method.getParams())#if($velocityCount == 1)With#elseif($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#elseif(!$method.isMainMethod())#foreach($mod in $method.getModifiers())#if($mod == "static")#set($m = "+")#end#end$m($method.Type)$method.Name#foreach($p in $method.getParams())#if($velocityCount != 1)and#end#type($p.Type):($p.Type)$p.Name #end;#end
+	#end
+	
+@end
+#end

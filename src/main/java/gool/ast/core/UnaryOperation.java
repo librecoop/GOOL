@@ -19,6 +19,7 @@ package gool.ast.core;
 
 import gool.ast.type.IType;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * Allows to compute the value of an unary operation. It may be used on boolean
@@ -59,7 +60,13 @@ public class UnaryOperation extends Operation {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

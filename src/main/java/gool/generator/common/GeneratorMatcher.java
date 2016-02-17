@@ -1,22 +1,11 @@
 package gool.generator.common;
 
-import gool.ast.core.ClassDef;
-import gool.ast.core.Field;
-import gool.ast.core.Language;
-import gool.ast.core.Meth;
-import gool.ast.core.Modifier;
-import gool.ast.core.VarDeclaration;
-import gool.ast.type.IType;
-import gool.ast.type.TypeUnknown;
 import logger.Log;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GeneratorMatcher {
 
@@ -36,7 +25,7 @@ public class GeneratorMatcher {
 	public static String matchGoolClass(String goolClass) {
 		Log.d("<GeneratorMatcher - matchGoolClass> " + goolClass);
 		try {
-			InputStream ips = new FileInputStream(
+			InputStream ips = ClassLoader.getSystemResourceAsStream(
 					getPathOfOutputClassMatchFile(goolClass));
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
@@ -70,7 +59,7 @@ public class GeneratorMatcher {
 	public static String matchGoolMethod(String goolMethod) {
 		Log.d("<GeneratorMatcher - matchGoolMethod> " + goolMethod);
 		try {
-			InputStream ips = new FileInputStream(
+			InputStream ips = ClassLoader.getSystemResourceAsStream(
 					getPathOfOutputMethodMatchFile(goolMethod.substring(0, goolMethod.lastIndexOf("."))));
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
@@ -108,7 +97,7 @@ public class GeneratorMatcher {
 		
 		String classImplementation = null;
 		try {
-			InputStream ips = new FileInputStream(
+			InputStream ips = ClassLoader.getSystemResourceAsStream(
 					getPathOfOutputClassImplementationFile(goolClass,
 							implementationFileName));
 			InputStreamReader ipsr = new InputStreamReader(ips);
@@ -139,7 +128,7 @@ public class GeneratorMatcher {
 	public static ArrayList<String> matchImports(String goolClass){
 		Log.d("<GeneratorMatcher - matchImports> " + goolClass);
 		try {
-			InputStream ips = new FileInputStream(
+			InputStream ips = ClassLoader.getSystemResourceAsStream(
 					getPathOfOutputImportMatchFile(goolClass));
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader br = new BufferedReader(ipsr);
@@ -166,7 +155,7 @@ public class GeneratorMatcher {
 
 	static private String getPathOfOutputMatchDir(String goolClass) {
 		String goolPackageName = goolClass.replace('.', '/');
-		return "src/gool/generator/" + OutputLang.toString().toLowerCase()
+		return "gool/generator/" + OutputLang.toString().toLowerCase()
 				+ "/matching/" + goolPackageName + "/";
 	}
 

@@ -36,6 +36,7 @@ public abstract class Node {
 	 */
 	@Override
 	final public String toString() {
+		//return this.getClass().getSimpleName();
 		return callGetCode();
 	}
 

@@ -20,6 +20,7 @@ package gool.ast.core;
 import gool.ast.type.IType;
 import gool.ast.type.TypeClass;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
@@ -461,7 +462,13 @@ public class ClassDef extends Dependency {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 	/**

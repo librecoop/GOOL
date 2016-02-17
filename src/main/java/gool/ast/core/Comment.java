@@ -19,6 +19,7 @@ package gool.ast.core;
 
 import gool.ast.type.TypeNone;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class captures all the expressions of the intermediate language which we
@@ -65,7 +66,13 @@ public class Comment extends Expression {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

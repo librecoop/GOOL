@@ -21,7 +21,7 @@ import gool.ast.core.ClassDef;
 
 import java.io.File;
 import java.util.Collection;
-import gool.generator.common.Platform;
+import java.util.Map;
 
 /**
  * This interface must be implemented by the parser input language
@@ -36,6 +36,13 @@ public abstract class ParseGOOL {
 	 * @return a list of classdefs, i.e. of abstract GOOL classes.
 	 * @throws Exception
 	 */
-	public abstract Collection<ClassDef> parseGool(Platform defaultPlatform, 
+	public abstract Collection<ClassDef> parseGool(
 			Collection<? extends File> inputFiles) throws Exception ;
+	
+	/**
+	 * If the parser is called on a map containing file names and associated codes,
+	 * wrap it into compilation units, and call the parser on that files.
+	 */
+	public abstract Collection<ClassDef> parseGool(
+			Map<String, String> input) throws Exception;
 }

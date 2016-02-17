@@ -26,14 +26,11 @@ import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import logger.Log;
 
@@ -46,41 +43,40 @@ import org.apache.commons.lang.StringUtils;
 public class CppCodePrinter extends CodePrinter {
 	private static final String TEMPLATE_DIR = "gool/generator/cpp/templates/";
 
-	private void createFinallyInclude(File outputDir) {
-		FileOutputStream goolHelperOut;
-		byte[] buffer = new byte[1024];
-		int noOfBytes;
-
-		// Helpers to create by copying the resource
-		List<String> goolHelperIn = new ArrayList<String>();
-		goolHelperIn.add("finally.h");
-		if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
-			Log.e(String.format("<CppCodePrinter> Impossible to create the directory '%s'",
-					outputDir));
-		} else {
-			// Print finally
-			for (String in : goolHelperIn) {
-				InputStream helper;
-				try {
-					helper = CppPlatform.class.getResource(in).openStream();
-
-					goolHelperOut = new FileOutputStream(outputDir + "/" + in);
-					while ((noOfBytes = helper.read(buffer)) != -1) {
-						goolHelperOut.write(buffer, 0, noOfBytes);
-					}
-					goolHelperOut.close();
-					helper.close();
-				} catch (IOException e) {
-					Log.e(String.format("<CppCodePrinter> Impossible to create the file '%s'",
-							in));
-				}
-			}
-		}
-	}
+//	private void createFinallyInclude(File outputDir) {
+//		FileOutputStream goolHelperOut;
+//		byte[] buffer = new byte[1024];
+//		int noOfBytes;
+//
+//		// Helpers to create by copying the resource
+//		List<String> goolHelperIn = new ArrayList<String>();
+//		goolHelperIn.add("finally.h");
+//		if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
+//			Log.e(String.format("<CppCodePrinter> Impossible to create the directory '%s'",
+//					outputDir));
+//		} else {
+//			// Print finally
+//			for (String in : goolHelperIn) {
+//				InputStream helper;
+//				try {
+//					helper = CppPlatform.class.getResource(in).openStream();
+//					goolHelperOut = new FileOutputStream(outputDir + "/" + in);
+//					while ((noOfBytes = helper.read(buffer)) != -1) {
+//						goolHelperOut.write(buffer, 0, noOfBytes);
+//					}
+//					goolHelperOut.close();
+//					helper.close();
+//				} catch (IOException e) {
+//					Log.e(String.format("<CppCodePrinter> Impossible to create the file '%s'",
+//							in));
+//				}
+//			}
+//		}
+//	}
 
 	public CppCodePrinter(File outputDir, Collection<File> myF) {
 		super(new CppGenerator(), outputDir, myF);
-		createFinallyInclude(outputDir);
+		//createFinallyInclude(outputDir);
 	}
 
 	@Override
@@ -89,12 +85,19 @@ public class CppCodePrinter extends CodePrinter {
 	}
 
 	@Override
-	public List<File> print(ClassDef pclass) throws FileNotFoundException {
+	public Map<String, String> print(ClassDef pclass){
 
 		// GOOL library classes are printed in a different manner
 		if (pclass.isGoolLibraryClass()) {
 			return printGoolLibraryClass(pclass);
 		}
+
+		Map<String, String> completeClassList = new HashMap<String, String>();
+		String outPutDir = ""; 
+		if (!getOutputDir().getName().isEmpty())
+			outPutDir = getOutputDir().getAbsolutePath() + 
+			StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
+			File.separator;
 		/*
 		 * In C++ the parent class and the interfaces are used in the same
 		 * statement. Example: class Foo : public ClassBar1, InterfaceBar2 ...
@@ -105,35 +108,27 @@ public class CppCodePrinter extends CodePrinter {
 			pclass.getInterfaces().add(0, pclass.getParentClass());
 		}
 
-		String headerFile = processTemplate("header.vm", pclass);
-		PrintWriter writer;
-
-		File dir = new File(getOutputDir().getAbsolutePath(),
-				StringUtils.replace(pclass.getPackageName(), ".",
-						File.separator));
-		dir.mkdirs();
-		File classFile = new File(dir, pclass.getName() + ".h");
-
-		writer = new PrintWriter(classFile);
-		writer.println(headerFile);
-		writer.close();
+		completeClassList.put(outPutDir + pclass.getName() + ".h", processTemplate("header.vm", pclass));
 
 		/*
 		 * Only generate header files if this element is an interface or an
 		 * enumeration.
 		 */
-		if (pclass.isEnum() || pclass.isInterface()) {
-			List<File> r = new ArrayList<File>();
-			r.add(classFile);
-			return r;
-		} else {
-			return super.print(pclass);
+		if (!pclass.isEnum() && !pclass.isInterface()) {
+
+			Map<String, String> sourceClass = super.print(pclass);
+
+			for (Entry<String, String> entry : sourceClass.entrySet()){
+				completeClassList.put(entry.getKey() + ".cpp", entry.getValue());
+			}
 		}
+		return completeClassList;
 	}
 
 	@Override
-	public List<File> printGoolLibraryClass(ClassDef pclass)
-			throws FileNotFoundException {
+	public Map <String, String> printGoolLibraryClass(ClassDef pclass){
+		Map<String, String> result = new HashMap<String, String>();
+
 		String goolClass = pclass.getPackageName() + "." + pclass.getName();
 
 		ArrayList<String> goolClassImplems = new ArrayList<String>();
@@ -141,16 +136,15 @@ public class CppCodePrinter extends CodePrinter {
 			if (Import.startsWith("+"))
 				goolClassImplems.add(Import.substring(1));
 
-		List<File> result = new ArrayList<File>();
 		for (String goolClassImplem : goolClassImplems) {
 			int dotIndex = goolClassImplem.lastIndexOf(".");
 			String goolClassImplemName = goolClassImplem;
 			String goolClassImplemPackage = "";
 			if (dotIndex != -1){
-				goolClassImplemName = goolClassImplem.substring(dotIndex + 1);				
+				goolClassImplemName = goolClassImplem.substring(dotIndex + 1);	
 				goolClassImplemPackage = goolClassImplem.substring(0, dotIndex);
 			}
-			Log.d("<CppCodePrinter - printGoolLibraryClass> " + goolClassImplemName);
+			Log.d("<CppCodePrinter - printGoolLibraryClass2Strings> " + goolClassImplemName);
 			Log.d("<CppCodePrinter - printGoolLibraryClass> " + goolClassImplemPackage);
 
 			String implemFileName = goolClassImplemName+".cpp";
@@ -160,28 +154,22 @@ public class CppCodePrinter extends CodePrinter {
 			String codeHeader = GeneratorMatcher.matchGoolClassImplementation(
 					goolClass, headerFileName);
 
-			File dir;
-			if (dotIndex != -1){
-				dir = new File(getOutputDir().getAbsolutePath(),
-						StringUtils.replace(goolClassImplemPackage, ".",
-								File.separator));
-				dir.mkdirs();
-			}else{
-				dir = new File(getOutputDir().getAbsolutePath());
+			String outputDir = ""; 
+			if (!getOutputDir().getName().isEmpty()){
+				if (dotIndex != -1){
+					outputDir = getOutputDir().getAbsolutePath() + 
+							StringUtils.replace(goolClassImplemPackage, ".",
+									File.separator) + File.separator;
+				}else{
+					outputDir = getOutputDir().getAbsolutePath() + File.separator;
+				}
 			}
 
 			if (codeImplem != null){
-				File implemFile = new File(dir, implemFileName);
-				PrintWriter writer = new PrintWriter(implemFile);
-				writer.println(codeImplem);
-				writer.close();
+				result.put(outputDir + implemFileName, codeImplem);
 			}
-			if (codeHeader != null){			
-				File headerFile = new File(dir, headerFileName);
-				//print header file
-				PrintWriter writer = new PrintWriter(headerFile);
-				writer.println(codeHeader);
-				writer.close();
+			if (codeHeader != null){
+				result.put(outputDir + headerFileName, codeHeader);
 			}
 		}
 		printedClasses.add(pclass);

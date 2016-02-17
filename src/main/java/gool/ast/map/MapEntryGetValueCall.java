@@ -21,6 +21,7 @@ import gool.ast.core.Expression;
 import gool.ast.core.MapEntryMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class captures the invocation of a method of treating the getting of value an map.
@@ -38,7 +39,13 @@ public class MapEntryGetValueCall extends MapEntryMethCall {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

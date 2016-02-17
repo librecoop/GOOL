@@ -4,6 +4,7 @@ import gool.ast.core.Expression;
 import gool.ast.core.ListMethCall;
 import gool.ast.type.TypeVoid;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class captures the invocation of the set method on a list.
@@ -21,7 +22,13 @@ public class ListSetCall extends ListMethCall {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

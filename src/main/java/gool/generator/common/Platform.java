@@ -17,11 +17,13 @@
 
 package gool.generator.common;
 
+import gool.Settings;
 import gool.ast.core.Dependency;
 import gool.ast.type.PrimitiveType;
 //import gool.executor.common.SpecificCompiler;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,10 +44,23 @@ public abstract class Platform extends PrimitiveType {
 	 * Chosen name for the platform.
 	 */
 	private String name;
+	
+	
 	/**
 	 * Which gool.generator generates the concrete Target for this platform.
 	 */
 	private CodePrinter codePrinter;
+	
+	/**
+	 * Name of the directory where the ouput files will be written in.
+	 */
+	protected static String outputDir;
+	
+	public String getOutputDir() {
+
+		return outputDir;
+	}
+	
 	/**
 	 * which gool.executor executes the generated concrete Target code.
 	 */
@@ -57,28 +72,27 @@ public abstract class Platform extends PrimitiveType {
 
 		return myFileToCopy;
 	}
-
+	
 	/**
 	 * This creates a platform and puts it in the global platform register.
 	 * 
 	 * @param name
 	 */
-	protected Platform(String name, Collection<File> myFile) {
+	protected Platform(String name, Collection<File> myFile, String outDir) {
 		if (name == null || name.trim().length() == 0) {
 			throw new IllegalArgumentException(
 					"The name parameter can not be null or empty.");
 		}
 		this.name = name.toUpperCase();
-		this.myFileToCopy = myFile;
-		registeredPlatforms.put(name, this);
-	}
-
-	protected Platform(String name) {
-		if (name == null || name.trim().length() == 0) {
-			throw new IllegalArgumentException(
-					"The name parameter can not be null or empty.");
-		}
-		this.name = name.toUpperCase();
+		if (myFile == null)
+			myFileToCopy = new ArrayList<File>();
+		else
+			myFileToCopy = myFile;
+		if (outDir == null)
+			outputDir = "";
+		else
+			outputDir = outDir;
+		
 		registeredPlatforms.put(name, this);
 	}
 

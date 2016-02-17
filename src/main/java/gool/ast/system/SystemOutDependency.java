@@ -19,6 +19,7 @@ package gool.ast.system;
 
 import gool.ast.core.Dependency;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 
 /**
@@ -28,6 +29,12 @@ public class SystemOutDependency extends Dependency {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 }

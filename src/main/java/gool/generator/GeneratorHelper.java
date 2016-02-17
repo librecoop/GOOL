@@ -17,7 +17,6 @@
 
 package gool.generator;
 
-import gool.GOOLCompiler;
 import gool.ast.core.ClassDef;
 import gool.ast.core.Dependency;
 import gool.ast.core.RecognizedDependency;
@@ -25,11 +24,7 @@ import gool.ast.type.IType;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 import gool.generator.common.Platform;
-import gool.recognizer.common.GoolLibraryClassAstBuilder;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,8 +35,7 @@ import java.util.Set;
 import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.log4j.Logger;
+
 
 /**
  * This class helps generate the concrete target from the abstract GOOL It has a
@@ -94,13 +88,13 @@ public class GeneratorHelper {
 
 	/**
 	 * This is the entry point. It generates code for the abstract GOOL classes
-	 * classDefs Listing them as a map (platform, file) in case there where
+	 * classDefs Listing them as a map (filename, code) in case there where
 	 * different target platforms For different classes.
 	 */
-	public static Map<Platform, List<File>> printClassDefs(
-			Collection<ClassDef> classDefs) throws FileNotFoundException {
+	public static Map<String, String> printClassDefs(
+			Collection<ClassDef> classDefs){
 		Log.d("\n\n****************** Start Print *******************\n\n");
-		Map<Platform, List<File>> compilationUnits = new HashMap<Platform, List<File>>();
+		Map<String, String> compilationUnits = new HashMap<String, String>();
 
 		for (ClassDef classDef : classDefs) {
 			Log.d("<GeneratorHelper - printClassDefs> Prepare the print of classDef " + classDef.getName());
@@ -108,36 +102,10 @@ public class GeneratorHelper {
 			Platform platform = (Platform) classDef.getPlatform();
 			// Get a codePrinter corresponding to that platform.
 			CodePrinter currentPrinter = CodePrinter.getPrinter(platform);
-			// If that platform is not yet in the map, add it.
-			if (!compilationUnits.containsKey(platform)) {
-				compilationUnits.put(platform, new ArrayList<File>());
-			}
-			// If the target output directory is not there yet, make it.
-			if (!currentPrinter.getOutputDir().exists()) {
-				Log.i("Creating the output directory "
-						+ currentPrinter.getOutputDir());
-				currentPrinter.getOutputDir().mkdirs();
-			}
-
 			// Just compile each abstract GOOL class and add it to the map.
-
-			// try {
 			GeneratorMatcher.init(platform);
 			Log.d("<GeneratorHelper - printClassDefs> Print of classDef " + classDef.getName());
-			compilationUnits.get(platform).addAll(
-					currentPrinter.print(classDef));
-
-
-			// } catch (ResourceNotFoundException e) {
-			// Log.e(String.format(
-			// "Impossible to produce file '%s': platforms should" +
-			// " either implements CodeGeneratorNoVelocity" +
-			// " or have a 'class.vm' template.",
-			// currentPrinter.getFileName(classDef.getName())));
-			// }
-			// compilationUnits.get(platform).addAll(
-			// currentPrinter.printPersonalLib());
-
+			compilationUnits.putAll(currentPrinter.print(classDef));
 		}
 
 		Log.d("\n\n****************** End Print *******************\n\n");

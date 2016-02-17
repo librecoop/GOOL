@@ -21,7 +21,6 @@
 
 package gool.generator.cpp;
 
-import gool.Settings;
 //import gool.executor.common.SpecificCompiler;
 //import gool.executor.cpp.CppCompiler;
 import gool.generator.common.CodePrinter;
@@ -32,10 +31,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CppPlatform extends Platform {
-	private final String outputDir = Settings.get("cpp_out_dir");
+	
 
-	public CppPlatform(Collection<File> myFile) {
-		super("CPP", myFile);
+	public CppPlatform(Collection<File> myFile, String outputDir) {
+		super("CPP", myFile, outputDir);
 	}
 
 	@Override
@@ -48,22 +47,44 @@ public class CppPlatform extends Platform {
 		return new CppCompiler(new File(outputDir), new ArrayList<File>());
 	}*/
 
-	private static CppPlatform instance = new CppPlatform(myFileToCopy);
+	private static CppPlatform instance = new CppPlatform(myFileToCopy, outputDir);
 
-	public static CppPlatform getInstance(Collection<File> myF) {
-		myFileToCopy = myF;
+	public static CppPlatform getInstance(Collection<File> myF, String outDir) {
+		if (myF == null) {
+			myFileToCopy = new ArrayList<File>();
+		}
+		else{
+			myFileToCopy = myF;
+		}
+		if (outDir == null){
+			outputDir = "";
+		}
+		else{
+			outputDir = outDir;
+		}
 		return instance;
 	}
 
+	public static CppPlatform getInstance(Collection<File> myF) {
+		return getInstance(myF, outputDir);
+	}
+	
+	public static CppPlatform getInstance(String outDir) {
+		return getInstance(myFileToCopy, outDir);
+	}
+	
 	public static CppPlatform getInstance() {
 		if (myFileToCopy == null) {
 			myFileToCopy = new ArrayList<File>();
+		}
+		if (outputDir == null){
+			outputDir = "";
 		}
 		return instance;
 	}
 
 	public static void newInstance() {
-		instance = new CppPlatform(myFileToCopy);
+		instance = new CppPlatform(myFileToCopy, outputDir);
 	}
 
 }

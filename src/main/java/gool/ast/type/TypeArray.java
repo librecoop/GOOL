@@ -18,6 +18,7 @@
 package gool.ast.type;
 
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class is for array types.
@@ -40,7 +41,7 @@ public class TypeArray extends ReferenceType {
 
 	@Override
 	public String getName() {
-		return GoolGeneratorController.generator().getCode(this);
+		return callGetCode();
 	}
 
 	/**
@@ -63,7 +64,13 @@ public class TypeArray extends ReferenceType {
 
 	@Override
 	public String callGetCode() {
-		return getName();
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 }

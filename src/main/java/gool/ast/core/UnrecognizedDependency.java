@@ -18,6 +18,7 @@
 package gool.ast.core;
 
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * See Dependency for comments.
@@ -39,7 +40,13 @@ public class UnrecognizedDependency extends Dependency {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName() + "." + getName();
+		}
+		return cg.getCode(this);
 	}
 
 	/**

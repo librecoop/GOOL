@@ -19,6 +19,7 @@ package gool.ast.core;
 
 import gool.ast.type.TypeNone;
 import gool.generator.GoolGeneratorController;
+import gool.generator.common.CodeGenerator;
 
 /**
  * This class accounts for an array access in the intermediate language.
@@ -50,7 +51,13 @@ public class ArrayAccess extends Expression {
 
 	@Override
 	public String callGetCode() {
-		return GoolGeneratorController.generator().getCode(this);
+		CodeGenerator cg;
+		try{
+			cg = GoolGeneratorController.generator();
+		}catch (IllegalStateException e){
+			return this.getClass().getSimpleName();
+		}
+		return cg.getCode(this);
 	}
 
 	/**
