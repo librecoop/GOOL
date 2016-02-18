@@ -96,7 +96,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * It generates specific C# code for certain GOOL nodes.
  */
-public class CSharpGenerator extends CommonCodeGenerator /* implements
+public class CSharpGenerator extends CommonCodeGenerator/* implements
 		CodeGeneratorNoVelocity */{
 	@Override
 	public String getCode(TypeBool typeBool) {
@@ -623,10 +623,11 @@ public class CSharpGenerator extends CommonCodeGenerator /* implements
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		Log.MethodIn(Thread.currentThread());
-		if  (equalsCall.getTarget().getType()instanceof TypeList)
+		if  (equalsCall.getTarget().getType()instanceof TypeList){
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("%s.SequenceEqual(%s)", equalsCall.getTarget(),
 					GeneratorHelper.joinParams(equalsCall.getParameters())));
+		}
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.Equals(%s)", equalsCall.getTarget(),
 				GeneratorHelper.joinParams(equalsCall.getParameters())));
@@ -659,13 +660,17 @@ public class CSharpGenerator extends CommonCodeGenerator /* implements
 
 		// BUG: yield a stack overflow
 		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
+		String recogDependencies = GeneratorHelper.printRecognizedDependencies(classDef);
 		if (!dependencies.isEmpty()) {
-			for (String dependency : dependencies)
-				sb = sb.append(String.format("using %s;\n", dependency));
+			for (String dependency : dependencies){
+				String incdep = String.format("using %s;", dependency);
+				if (recogDependencies.indexOf(incdep) == -1)
+					sb = sb.append(incdep + "\n");
+			}
 			sb = sb.append("\n");
 		}
 		
-		sb = sb.append(GeneratorHelper.printRecognizedDependencies(classDef));
+		sb = sb.append(recogDependencies);
 		
 		if (classDef.getPpackage() != null)
 			sb = sb.append(String.format("namespace %s;\n\n",

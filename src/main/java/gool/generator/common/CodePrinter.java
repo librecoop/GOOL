@@ -274,6 +274,7 @@ public abstract class CodePrinter {
 	}
 
 	public Map <String, String> printGoolLibraryClass(ClassDef pclass){
+		Log.d("<CodePrinter - printGoolLibraryClass> " + pclass.getName());
 		Map <String, String> result = new HashMap<String, String>();
 		String goolClass = pclass.getPackageName()+"."+pclass.getName();
 		ArrayList<String> goolClassImplems = new ArrayList<String>();
@@ -294,7 +295,7 @@ public abstract class CodePrinter {
 				}
 				String implemFileName = pclass.getPlatform().getCodePrinter().getFileName(goolClassImplemName);
 				String code = GeneratorMatcher.matchGoolClassImplementation(goolClass, implemFileName);
-				Log.d("<CodePrinter - printGoolLibraryClass2String> " + goolClassImplemPackage + " - File : " + implemFileName);
+				Log.d("<CodePrinter - printGoolLibraryClass> " + goolClassImplemPackage + " - File : " + implemFileName);
 
 				if (code != null){
 					String dir = ""; 

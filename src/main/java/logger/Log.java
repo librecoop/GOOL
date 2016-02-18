@@ -10,10 +10,10 @@ import org.ini4j.Config;
 import org.ini4j.Ini;
 
 public class Log {
-	
+
 	private static int compt = 0;
 	static public Boolean DEBUG_LOG = false;
-	
+
 	// The instance
 	private static final Log log = new Log();
 
@@ -44,8 +44,8 @@ public class Log {
 				for (Ini.Section printer : printersFile) {
 					try {
 						if (printer.get("enable", Boolean.class)) { // If the
-																	// printer
-																	// is enable
+							// printer
+							// is enable
 							Level level = getLevel(printer);
 							Boolean tag = getTag(printer);
 							String date = getDate(printer);
@@ -68,7 +68,7 @@ public class Log {
 			try {
 				Ini.Section printer = ini.get("printer-terminal");
 				if (printer.get("enable", Boolean.class)) {// If the printer is
-															// enable
+					// enable
 					Level level = getLevel(printer);
 					Boolean tag = getTag(printer);
 					String date = getDate(printer);
@@ -105,7 +105,12 @@ public class Log {
 	public static void w(String message) {
 		print(Level.WARN, Color.YELLOW, message);
 	}
-
+	
+	// Print a warn exception
+	public static void w(Exception e) {
+		print(Level.WARN, Color.YELLOW, e);
+	}
+	
 	// Print an error message
 	public static void e(String message) {
 		print(Level.ERROR, Color.RED, message);
@@ -171,7 +176,7 @@ public class Log {
 		}
 		return date;
 	}
-	
+
 	public static void MethodIn(Thread th) {
 		compt++;
 		String mess = ">" + compt;
@@ -179,7 +184,7 @@ public class Log {
 		Log.d(mess + " " + th.getStackTrace()[2].toString()
 				+ " | " + th.getStackTrace()[3].toString());
 	}
-	
+
 	public static void MethodOut(Thread th) {
 		String mess = "<" + compt;
 		mess += String.format("%" + compt + "s", "").replace(' ', '-');
@@ -188,7 +193,7 @@ public class Log {
 		if (compt > 1)
 			compt--;
 	}
-	
+
 	public static Object MethodOut(Thread th, Object retarg) {
 		String mess = "<" + compt;
 		mess += String.format("%" + compt + "s", "").replace(' ', '-');

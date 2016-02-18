@@ -99,6 +99,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 
 	protected String indentation = "\t";
+	
 
 	/**
 	 * <pre>

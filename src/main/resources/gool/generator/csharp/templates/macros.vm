@@ -14,11 +14,6 @@
 ## in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
-
-
-
 #macro( params $params )
 #set( $paramsNb = $params.size() )
 #foreach( $p in $params )$p.Type $p.Name#if($velocityCount != $paramsNb), #end#end
@@ -45,5 +40,16 @@
 #if($dep.startsWith("/*")||$dep.startsWith("//")||$dep.startsWith("using"))
 $dep
 #elseif(!$dep.equals("noprint"))using ${dep};#end
+#end
+#end
+
+#macro ( includescond $dependencies $recogdependencies)
+#foreach( $dep in $dependencies )
+#if($dep.startsWith("/*")||$dep.startsWith("//")||$dep.startsWith("using"))
+#if ($recogdependencies.indexOf($dep) == -1)${dep}#end
+#elseif(!$dep.equals("noprint"))
+#set( $cdep = "using " + ${dep} + ";")
+#if ($recogdependencies.indexOf($cdep) == -1)${cdep}#end
+#end
 #end
 #end

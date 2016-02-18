@@ -26,6 +26,7 @@
 package gool;
 
 import gool.ast.core.ClassDef;
+import gool.ast.core.Dependency;
 import gool.parser.java.JavaParser;
 import gool.generator.GeneratorHelper;
 import gool.generator.GoolGeneratorController;
@@ -107,25 +108,34 @@ public class GOOLCompiler {
 			
 			Collection<ClassDef> goolPort = GOOLCompiler.concreteToAbstractGool(parser,
 					filesToProcess);
+			Log.d("======== ClassDef found :");
+			for(ClassDef cl : goolPort){
+				Log.d("=> " + cl.getName());
+				Log.d("== With deps :");
+				for(Dependency dep : cl.getDependencies()){
+					Log.d("==> " + dep.callGetCode());
+				}
+				
+			}
 					
 			//Set the desired platform and generate files strings
 			Platform plt = null;
 			Map<String, String> outputFiles = new HashMap<String, String>();
-			/**** C++ ****/
-			plt = CppPlatform.getInstance(filesToExclude, Settings.get("cpp_out_dir"));
-			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+//			/**** C++ ****/
+//			plt = CppPlatform.getInstance(filesToExclude, Settings.get("cpp_out_dir"));
+//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			/**** C# ****/
 			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-			/**** java ****/
-			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
-			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-			/**** ObjC ****/
-			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
-			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-			/**** Python ****/
-			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
-			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+//			/**** java ****/
+//			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
+//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+//			/**** ObjC ****/
+//			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
+//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+//			/**** Python ****/
+//			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
+//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			
 			//print files
 			printFiles(outputFiles);

@@ -110,6 +110,7 @@ public class GeneratorMatcher {
 			br.close();
 		} catch (Exception e) {//No file defined, must be a standard library
 			Log.w(e.toString() + " - Must be a standard library file");
+			Log.w(e);
 		}
 		if (classImplementation != null)
 			Log.d("<GeneratorMatcher - matchGoolClassImplementation> found " + classImplementation);
@@ -147,7 +148,7 @@ public class GeneratorMatcher {
 			}
 			br.close();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			Log.w(e);
 		}
 		Log.d("<GeneratorMatcher - matchImports> nothing's found.");
 		return null;

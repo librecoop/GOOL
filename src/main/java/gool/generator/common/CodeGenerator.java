@@ -113,6 +113,7 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -122,7 +123,7 @@ import java.util.Collection;
 public interface CodeGenerator {
 
 	void addCustomDependency(String key, Dependency value);
-
+	
 	String getCode(ArrayAccess arrayAccess);
 
 	String getCode(ArrayNew arrayNew);
