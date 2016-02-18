@@ -15,10 +15,6 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 #ifndef __FINALLY_H__
 #define __FINALLY_H__
 class finally_class

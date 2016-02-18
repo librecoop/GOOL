@@ -25,7 +25,11 @@ import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,40 +47,28 @@ import org.apache.commons.lang.StringUtils;
 public class CppCodePrinter extends CodePrinter {
 	private static final String TEMPLATE_DIR = "gool/generator/cpp/templates/";
 
-//	private void createFinallyInclude(File outputDir) {
-//		FileOutputStream goolHelperOut;
-//		byte[] buffer = new byte[1024];
-//		int noOfBytes;
-//
-//		// Helpers to create by copying the resource
-//		List<String> goolHelperIn = new ArrayList<String>();
-//		goolHelperIn.add("finally.h");
-//		if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
-//			Log.e(String.format("<CppCodePrinter> Impossible to create the directory '%s'",
-//					outputDir));
-//		} else {
-//			// Print finally
-//			for (String in : goolHelperIn) {
-//				InputStream helper;
-//				try {
-//					helper = CppPlatform.class.getResource(in).openStream();
-//					goolHelperOut = new FileOutputStream(outputDir + "/" + in);
-//					while ((noOfBytes = helper.read(buffer)) != -1) {
-//						goolHelperOut.write(buffer, 0, noOfBytes);
-//					}
-//					goolHelperOut.close();
-//					helper.close();
-//				} catch (IOException e) {
-//					Log.e(String.format("<CppCodePrinter> Impossible to create the file '%s'",
-//							in));
-//				}
-//			}
-//		}
-//	}
+	private Map<String, String> getFinallyHeader(String outputDir) {
+		String code = "";
+		Map<String, String> res = new HashMap<String, String>();
+		try{
+			InputStream ips = ClassLoader.getSystemResourceAsStream("gool/generator/cpp/finally.h");
+			InputStreamReader ipsr = new InputStreamReader(ips);
+			BufferedReader br = new BufferedReader(ipsr);
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (!line.startsWith("/*") && !line.startsWith(" *") && !line.endsWith("*/"))
+					code += line + "\n";
+			}
+		} catch (Exception e) {
+			Log.e(e);
+			return res;
+		}
+		res.put(outputDir + "finally.h", code);
+		return res;
+	}
 
 	public CppCodePrinter(File outputDir, Collection<File> myF) {
 		super(new CppGenerator(), outputDir, myF);
-		//createFinallyInclude(outputDir);
 	}
 
 	@Override
@@ -95,7 +87,7 @@ public class CppCodePrinter extends CodePrinter {
 		Map<String, String> completeClassList = new HashMap<String, String>();
 		String outPutDir = ""; 
 		if (!getOutputDir().getName().isEmpty())
-			outPutDir = getOutputDir().getAbsolutePath() + 
+			outPutDir = getOutputDir().getAbsolutePath() + File.separator +
 			StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
 			File.separator;
 		/*
@@ -115,13 +107,9 @@ public class CppCodePrinter extends CodePrinter {
 		 * enumeration.
 		 */
 		if (!pclass.isEnum() && !pclass.isInterface()) {
-
-			Map<String, String> sourceClass = super.print(pclass);
-
-			for (Entry<String, String> entry : sourceClass.entrySet()){
-				completeClassList.put(entry.getKey() + ".cpp", entry.getValue());
-			}
+			completeClassList.putAll(super.print(pclass));
 		}
+		completeClassList.putAll(getFinallyHeader(outPutDir));
 		return completeClassList;
 	}
 
@@ -157,7 +145,7 @@ public class CppCodePrinter extends CodePrinter {
 			String outputDir = ""; 
 			if (!getOutputDir().getName().isEmpty()){
 				if (dotIndex != -1){
-					outputDir = getOutputDir().getAbsolutePath() + 
+					outputDir = getOutputDir().getAbsolutePath() + File.separator +
 							StringUtils.replace(goolClassImplemPackage, ".",
 									File.separator) + File.separator;
 				}else{

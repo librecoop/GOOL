@@ -245,7 +245,7 @@ public abstract class CodePrinter {
 		}
 		String outPutDir = ""; 
 		if (!getOutputDir().getName().isEmpty())
-			outPutDir = getOutputDir().getAbsolutePath() + 
+			outPutDir = getOutputDir().getAbsolutePath() + File.separator +
 			StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
 			File.separator;
 
@@ -299,7 +299,7 @@ public abstract class CodePrinter {
 				if (code != null){
 					String dir = ""; 
 					if (!getOutputDir().getName().isEmpty())
-						dir = getOutputDir().getAbsolutePath() +
+						dir = getOutputDir().getAbsolutePath() + File.separator +
 						StringUtils.replace(goolClassImplemPackage, ".",
 								File.separator) + File.separator;
 					result.put(dir + implemFileName, code);
@@ -337,6 +337,7 @@ public abstract class CodePrinter {
 	public File getOutputDir() {
 		return outputDir;
 	}
+	
 
 	private static Map<Platform, CodePrinter> codePrinters = new HashMap<Platform, CodePrinter>();
 

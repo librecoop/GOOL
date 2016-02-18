@@ -45,6 +45,10 @@ public class PrinterFile extends Printer {
 
 	@Override
 	public void printErr(Level lv, Exception e, Color color) {
-		print(lv, e.toString(), color);
+		String mess = e.toString() + "\n";
+		for(StackTraceElement st : e.getStackTrace()){
+			mess += st.toString() + "\n";
+		}			
+		print(lv, mess, color);
 	}
 }

@@ -108,24 +108,24 @@ public class GOOLCompiler {
 			Collection<ClassDef> goolPort = GOOLCompiler.concreteToAbstractGool(parser,
 					filesToProcess);
 					
-			//Set the desired platform and generate files
+			//Set the desired platform and generate files strings
 			Platform plt = null;
 			Map<String, String> outputFiles = new HashMap<String, String>();
-//			/**** C++ ****/
-//			plt = CppPlatform.getInstance(filesToExclude, Settings.get("cpp_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** C# ****/
-//			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** java ****/
-//			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** ObjC ****/
+			/**** C++ ****/
+			plt = CppPlatform.getInstance(filesToExclude, Settings.get("cpp_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** C# ****/
+			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** java ****/
+			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** ObjC ****/
 			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** Python ****/
-//			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** Python ****/
+			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			
 			//print files
 			printFiles(outputFiles);
@@ -193,9 +193,12 @@ public class GOOLCompiler {
 	 * @param files : map with absolute file's names as key and code as values
 	 * @throws FileNotFoundException
 	 */
-	public static void printFiles(Map<String, String> files) throws FileNotFoundException{
+	public static void printFiles(Map<String, String> files) throws FileNotFoundException, SecurityException{
 		for (Entry<String, String> entry : files.entrySet()){
 			File f = new File(entry.getKey());
+			File dir = f.getParentFile();
+			if (!dir.exists())
+				dir.mkdirs();
 			PrintWriter writer = new PrintWriter(f);
 			writer.println(entry.getValue());
 			writer.close();

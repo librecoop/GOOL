@@ -56,7 +56,7 @@ public class ObjcCodePrinter extends CodePrinter {
 		Map<String, String> completeClassList = new HashMap<String, String>();
 		String outPutDir = ""; 
 		if (!getOutputDir().getName().isEmpty())
-			outPutDir = getOutputDir().getAbsolutePath() + 
+			outPutDir = getOutputDir().getAbsolutePath() + File.separator +
 			StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
 			File.separator;
 		

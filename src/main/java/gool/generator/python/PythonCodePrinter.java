@@ -21,14 +21,18 @@ import gool.ast.core.ClassDef;
 import gool.generator.common.CodePrinter;
 import logger.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,48 +44,36 @@ import java.util.Set;
  */
 public class PythonCodePrinter extends CodePrinter {
 
-	//	private void createGoolHelperModule(File outputDir) {
-	//		FileOutputStream goolHelperOut;
-	//		byte[] buffer = new byte[1024];
-	//		int noOfBytes;
-	//
-	//		// Helpers to create by copying the resource
-	//		List<String> goolHelperIn = new ArrayList<String>();
-	//		goolHelperIn.add("goolHelper/__init__.py");
-	//		goolHelperIn.add("goolHelper/IO.py");
-	//		goolHelperIn.add("goolHelper/Util.py");
-	//
-	//		// create the directory
-	//		File dir = new File(outputDir + "/goolHelper");
-	//		if (!dir.isDirectory() && !dir.mkdirs()) {
-	//			Log.e(String.format(
-	//					"Impossible to create the module '%s/goolHelper'",
-	//					outputDir));
-	//		} else {
-	//			// Print helpers
-	//			for (String in : goolHelperIn) {
-	//				InputStream helper;
-	//				try {
-	//					helper = PythonPlatform.class.getResource(in).openStream();
-	//
-	//					goolHelperOut = new FileOutputStream(outputDir + "/" + in);
-	//					while ((noOfBytes = helper.read(buffer)) != -1) {
-	//						goolHelperOut.write(buffer, 0, noOfBytes);
-	//					}
-	//					goolHelperOut.close();
-	//					helper.close();
-	//				} catch (IOException e) {
-	//					Log.e(String.format("Impossible to create the file '%s'",
-	//							in));
-	//				}
-	//			}
-	//		}
-	//
-	//	}
+	private Map<String, String> getGoolHelperModule(String outputDir) {
+
+		Map<String, String> res = new HashMap<String, String>();
+
+		try{
+			File gooHelperDir = new File(ClassLoader.getSystemResource(
+					"gool/generator/python/goolHelper").getFile());
+			for (File f : gooHelperDir.listFiles()){
+				if (f.isFile()){
+					String code = "";
+					FileReader fr = new FileReader(f);
+					BufferedReader br = new BufferedReader(fr);
+					String line;
+					while ((line = br.readLine()) != null) {
+						if (!line.startsWith("#"))
+							code += line + "\n";
+					}
+					res.put(outputDir + "goolHelper" + File.separator +
+							f.getName(), code);
+					br.close();
+				}
+			}
+		} catch (Exception e) {
+			Log.e(e);
+		}
+		return res;
+	}
 
 	public PythonCodePrinter(File outputDir, Collection<File> myF) {
 		super(new PythonGenerator(), outputDir, myF);
-		//createGoolHelperModule(outputDir);
 	}
 
 	@Override
@@ -98,6 +90,11 @@ public class PythonCodePrinter extends CodePrinter {
 	public Map<String, String> print(ClassDef pclass) {
 		Map<String, String> res = super.print(pclass);
 		addInitFile(res);
+		String outPutDir = ""; 
+		if (!getOutputDir().getName().isEmpty())
+			outPutDir = getOutputDir().getAbsolutePath() +
+			File.separator;
+		res.putAll(getGoolHelperModule(outPutDir));
 		return res;
 	}
 
@@ -112,7 +109,9 @@ public class PythonCodePrinter extends CodePrinter {
 			subDirs.add(dirName);
 		}
 		for(String subDir : subDirs){
-			pyFiles.put(subDir + "__init__.py", "");
+			String initName = subDir + "__init__.py";
+			if (!pyFiles.containsKey(initName))
+				pyFiles.put(initName, "");
 		}
 	}
 }
