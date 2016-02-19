@@ -27,7 +27,6 @@ import gool.ast.core.Catch;
 import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
 import gool.ast.core.Constant;
-import gool.ast.core.CustomDependency;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
@@ -96,6 +95,7 @@ import logger.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -103,8 +103,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.IsInstanceOf;
 
-public class CppGenerator extends CommonCodeGenerator /*implements
-		CodeGeneratorNoVelocity*/ {
+public class CppGenerator extends CommonCodeGenerator implements
+CodeGeneratorNoVelocity {
 
 	private static int compt = 0;
 
@@ -114,6 +114,20 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	private String removePointer(String type) {
 		return type.replaceAll("[\\s*]+$", "");
+	}
+
+	private static Set<String> customDependencies = new HashSet<String>();
+
+	public void addCustomDependency(String dep) {
+		customDependencies.add(dep);
+	}
+
+	public Set<String> getCustomDependencies(){
+		return customDependencies;
+	}
+
+	public void clearCustomDependencies(){
+		customDependencies.clear();
 	}
 
 	@Override
@@ -553,25 +567,6 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 
 	}
 
-	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
-
-	@Override
-	public String getCode(CustomDependency customDependency) {
-		Log.MethodIn(Thread.currentThread());
-		if (!customDependencies.containsKey(customDependency.getName())) {
-			throw new IllegalArgumentException(
-					String.format(
-							"There is no equivalent type in C++ for the GOOL type '%s'.",
-							customDependency.getName()));
-		}
-		return (String)Log.MethodOut(Thread.currentThread(), 
-				customDependencies.get(customDependency.getName()).toString());
-	}
-
-	public void addCustomDependency(String key, Dependency value) {
-		customDependencies.put(key, value);
-	}
-
 	@Override
 	public String getCode(TypeEntry typeEntry) {
 		Log.MethodIn(Thread.currentThread());
@@ -771,7 +766,7 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("(std::find(%s->begin(),%s->end(),%s) - %s->begin())", lioc.getExpression(),
-				lioc.getExpression(), StringUtils.join(lioc.getParameters(), ", "), lioc.getExpression()));
+						lioc.getExpression(), StringUtils.join(lioc.getParameters(), ", "), lioc.getExpression()));
 	}
 
 	/**
@@ -822,40 +817,56 @@ public class CppGenerator extends CommonCodeGenerator /*implements
 		return (String)Log.MethodOut(Thread.currentThread(), null);
 	}
 
+	public String getDependenciesCode(ClassDef cl){
+		String res = "";
+		res += "#include <boost/any.hpp>\n";
+		res += "#include <boost/lexical_cast.hpp>\n";		
+		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
+		dependencies.addAll(getCustomDependencies());
+		clearCustomDependencies();
+		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
+		if (!dependencies.isEmpty()) {
+			for (String dependency : dependencies){
+				if (dependency != "noprint"){
+					String incdep = String.format("#include <%s>;", dependency);
+					if (recogDependencies.indexOf(incdep) == -1)
+						res += incdep + "\n";
+				}
+			}
+			res += "\n";
+		}
+		res += recogDependencies + "\n\n";
+		res += "#include \"finally.h\"\n";
+		res += String.format("#include \"%s.h\"\n", cl.getName());
+		return res;
+	}
+
 	//@Override
 	public String printClass(ClassDef classDef) {
 		Log.MethodIn(Thread.currentThread());
-		StringBuilder sb = new StringBuilder(String.format(
-				"// Platform: %s\n\n", classDef.getPlatform()));
+
+		String header = String.format("// Platform: %s\n\n",
+				classDef.getPlatform());
+
+
+		String body = "";
 		// print the package containing the class
 		if (classDef.getPpackage() != null)
-			sb = sb.append(String.format("namespace %s {",
-					classDef.getPackageName()));
-		sb = sb.append("#include <boost/any.hpp>\n");
-		sb = sb.append("#include <boost/lexical_cast.hpp>\n");
-		sb = sb.append("#include \"finally.h\"\n\n");
-		sb = sb.append(String.format("#include \"%s.h\"\n\n",
-				classDef.getName()));
-		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
-		if (!dependencies.isEmpty()) {
-			for (String dependency : dependencies) {
-				if (!dependency.equals("noprint"))
-					sb = sb.append(String.format("#include \"%s\"\n",
-							dependency));
-			}
-			sb = sb.append("\n");
-		}
+			body += String.format("namespace %s {",
+					classDef.getPackageName());
 		for (Meth meth : classDef.getMethods()) {
 			// TODO: deal with constructors ?
 			if (classDef.isInterface())
-				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
+				body += formatIndented("%-1%s;\n\n", meth.getHeader());
 			else
-				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n",
-						meth.getHeader(), meth.getBlock()));
+				body += formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(),
+						meth.getBlock());
 		}
 		if (classDef.getPpackage() != null)
-			sb = sb.append("}");
-		return (String)Log.MethodOut(Thread.currentThread(), sb.toString());
+			body += "}";
+
+		return (String)Log.MethodOut(Thread.currentThread(),
+				header + "\n" + getDependenciesCode(classDef) + "\n" + body);
 	}
 
 	@Override

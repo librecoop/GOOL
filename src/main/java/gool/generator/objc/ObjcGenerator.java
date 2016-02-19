@@ -22,9 +22,9 @@ import gool.ast.core.ArrayNew;
 import gool.ast.core.Assign;
 import gool.ast.core.BinaryOperation;
 import gool.ast.core.Catch;
+import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
 import gool.ast.core.Constructor;
-import gool.ast.core.CustomDependency;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
@@ -88,18 +88,22 @@ import gool.ast.type.TypeNull;
 import gool.ast.type.TypeObject;
 import gool.ast.type.TypeString;
 import gool.generator.GeneratorHelper;
+import gool.generator.common.CodeGeneratorNoVelocity;
 import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.GeneratorMatcher;
 import logger.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class ObjcGenerator extends CommonCodeGenerator {
+public class ObjcGenerator extends CommonCodeGenerator implements
+CodeGeneratorNoVelocity {
 
 	private String removePointer(IType type) {
 		return removePointer(type.toString());
@@ -109,11 +113,18 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		return type.replaceAll("[\\s*]+$", "");
 	}
 
-	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
+	private static Set<String> customDependencies = new HashSet<String>();
 
-	@Override
-	public void addCustomDependency(String key, Dependency value) {
-		customDependencies.put(key, value);
+	public void addCustomDependency(String dep) {
+		customDependencies.add(dep);
+	}
+
+	public Set<String> getCustomDependencies(){
+		return customDependencies;
+	}
+
+	public void clearCustomDependencies(){
+		customDependencies.clear();
 	}
 
 	@Override
@@ -278,9 +289,9 @@ public class ObjcGenerator extends CommonCodeGenerator {
 		String param0 = GeneratorHelperObjc.initWithObject(mapPutCall
 				.getParameters().get(0));
 
-//		if (mapPutCall.getParameters().size() == 1)
-//			return String.format("[%s setObject:%s]", 
-//					mapPutCall.getExpression(), param0);
+		//		if (mapPutCall.getParameters().size() == 1)
+		//			return String.format("[%s setObject:%s]", 
+		//					mapPutCall.getExpression(), param0);
 
 
 		String param1 = GeneratorHelperObjc.initWithObject(mapPutCall
@@ -653,12 +664,6 @@ public class ObjcGenerator extends CommonCodeGenerator {
 	}
 
 	@Override
-	public String getCode(CustomDependency customDependency) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getCode(SystemCommandDependency systemCommandDependency) {
 		// TODO Auto-generated method stub
 		return null;
@@ -830,5 +835,77 @@ public class ObjcGenerator extends CommonCodeGenerator {
 
 		return result;
 	}
+
+	public String getDependenciesCode(ClassDef cl){
+		String res = "";		
+		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
+		dependencies.addAll(getCustomDependencies());
+		dependencies.add("Foundation/Foundation.h");
+		clearCustomDependencies();
+		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
+		if (!dependencies.isEmpty()) {
+			for (String dependency : dependencies){
+				if (dependency != "noprint"){
+					String incdep = String.format("#import \"%s\"", dependency);
+					if (recogDependencies.indexOf(incdep) == -1)
+						res += incdep + "\n";
+				}
+			}
+			res += "\n";
+		}
+		res += recogDependencies + "\n\n";
+		res += String.format("#import \"%s.h\"\n", cl.getName());
+		return res;
+	}
+
+	//@Override
+	public String printClass(ClassDef classDef) {
+		Log.MethodIn(Thread.currentThread());
+
+		String header = String.format("// Platform: %s\n\n",
+				classDef.getPlatform());
+
+
+		String body = "@implementation " + classDef.getName() + "\n\n";
+		boolean containsToString = false;
+		for (Meth meth : classDef.getMethods()) {
+			if (meth.isGoolMethodImplementation()){
+				body += meth.callGetCode();
+			}
+			else if(!meth.isMainMethod() && !meth.isAbstract()){
+				body += meth.getHeader();
+				if (classDef.isInterface()){
+					body += ";\n";
+				}
+				else{
+					body += "{\n";
+					body += meth.getBlock().callGetCode();
+					if (meth.isConstructor())
+						body += "return self;\n}\n\n";
+				}
+			}
+			if (meth.getName() == "toString")
+				containsToString = true;
+		}
+		if(!containsToString){
+			body += "-(NSString *)toString{\nreturn @\"" + classDef.getName() +
+					"\";\n}\n\n";
+		}
+		body += "@end\n\n";
+
+		for (Meth meth : classDef.getMethods()) {
+			if(meth.isMainMethod()){
+				body += meth.getHeader();
+				body += "{\n";
+				body += meth.getBlock().callGetCode();
+				body += "\n";
+				body += "return 0;\n}";
+			}
+		}
+
+		return (String)Log.MethodOut(Thread.currentThread(),
+				header + "\n" + getDependenciesCode(classDef) + "\n" + body);
+	}
+
 
 }

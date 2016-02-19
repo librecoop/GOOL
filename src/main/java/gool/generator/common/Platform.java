@@ -17,8 +17,6 @@
 
 package gool.generator.common;
 
-import gool.Settings;
-import gool.ast.core.Dependency;
 import gool.ast.type.PrimitiveType;
 //import gool.executor.common.SpecificCompiler;
 
@@ -126,17 +124,6 @@ public abstract class Platform extends PrimitiveType {
 	 * @return An executor
 	 */
 	//protected abstract SpecificCompiler initializeCompiler();
-
-	/**
-	 * Tell the CodeGenerator of this platform that some class has been
-	 * generated, so that it gets imported by the other classes.
-	 * 
-	 * @param key
-	 * @param value
-	 */
-	public void registerCustomDependency(String key, Dependency value) {
-		getCodePrinter().getCodeGenerator().addCustomDependency(key, value);
-	}
 
 	/**
 	 * Getters and Setters

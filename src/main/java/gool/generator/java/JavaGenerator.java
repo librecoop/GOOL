@@ -23,7 +23,6 @@ import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
 import gool.ast.core.Constant;
 import gool.ast.core.Constructor;
-import gool.ast.core.CustomDependency;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
@@ -85,6 +84,7 @@ import logger.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,17 +92,24 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-public class JavaGenerator extends CommonCodeGenerator /*
- * implements
- * CodeGeneratorNoVelocity
- */{
+public class JavaGenerator extends CommonCodeGenerator  implements 
+CodeGeneratorNoVelocity {
 
-	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
 	private static Logger logger = Logger.getLogger(JavaGenerator.class
 			.getName());
 
-	public void addCustomDependency(String key, Dependency value) {
-		customDependencies.put(key, value);
+	private static Set<String> customDependencies = new HashSet<String>();
+
+	public void addCustomDependency(String dep) {
+		customDependencies.add(dep);
+	}
+
+	public Set<String> getCustomDependencies(){
+		return customDependencies;
+	}
+
+	public void clearCustomDependencies(){
+		customDependencies.clear();
 	}
 
 	@Override
@@ -125,19 +132,6 @@ public class JavaGenerator extends CommonCodeGenerator /*
 	public String getCode(ClassNew classNew) {
 		return String.format("new %s(%s)", classNew.getType(),
 				StringUtils.join(classNew.getParameters(), ", "));
-	}
-
-	@Override
-	public String getCode(CustomDependency customDependency) {
-		if (!customDependencies.containsKey(customDependency.getName())) {
-			logger.info(String.format("Custom dependencies: %s, Desired: %s",
-					customDependencies, customDependency.getName()));
-			throw new IllegalArgumentException(
-					String.format(
-							"There is no equivalent type in Java for the GOOL type '%s'.",
-							customDependency.getName()));
-		}
-		return customDependencies.get(customDependency.getName()).toString();
 	}
 
 	@Override
@@ -185,19 +179,19 @@ public class JavaGenerator extends CommonCodeGenerator /*
 	public String getCode(ListIsEmptyCall liec) {
 		return String.format("%s.isEmpty()", liec.getExpression());
 	}
-	
+
 	@Override
 	public String getCode(ListRemoveAtCall lrc) {
 		return String.format("%s.remove(%s)", lrc.getExpression(),
 				StringUtils.join(lrc.getParameters(), ", "));
 	}
-	
+
 	@Override
 	public String getCode(ListRemoveCall lrc) {
 		return String.format("%s.remove(%s)", lrc.getExpression(),
 				StringUtils.join(lrc.getParameters(), ", "));
 	}
-	
+
 	@Override
 	public String getCode(ListSizeCall lsc) {
 		return String.format("%s.size()", lsc.getExpression());
@@ -207,19 +201,19 @@ public class JavaGenerator extends CommonCodeGenerator /*
 	public String getCode(ListClearCall lcc) {
 		return String.format("%s.clear()", lcc.getExpression());
 	}
-		
+
 	@Override
 	public String getCode(ListSetCall lsc) {
 		return String.format("%s.set(%s)", lsc.getExpression(),
 				StringUtils.join(lsc.getParameters(), ", "));
 	}
-	
+
 	@Override
 	public String getCode(ListIndexOfCall lioc) {
 		return String.format("%s.indexOf(%s)", lioc.getExpression(),
 				StringUtils.join(lioc.getParameters(), ", "));
 	}
-	
+
 	@Override
 	public String getCode(MainMeth mainMeth) {
 		return "public static void main(String[] args)";
@@ -388,55 +382,64 @@ public class JavaGenerator extends CommonCodeGenerator /*
 		return null;
 	}
 
+	public String getDependenciesCode(ClassDef cl){
+		String res = "";	
+		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
+		dependencies.addAll(getCustomDependencies());
+		clearCustomDependencies();
+		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
+		if (!dependencies.isEmpty()) {
+			for (String dependency : dependencies){
+				if (dependency != "noprint" && dependency.contains(".")){
+					String incdep = String.format("import %s;", dependency);
+					if (recogDependencies.indexOf(incdep) == -1)
+						res += incdep + "\n";
+				}
+			}
+			res += "\n";
+		}
+		res += recogDependencies + "\n\n";
+		return res;
+	}
+
 	// @Override
 	public String printClass(ClassDef classDef) {
-		StringBuilder sb = new StringBuilder(String.format(
-				"// Platform: %s\n\n", classDef.getPlatform()));
+		String header = String.format("// Platform: %s\n\n", classDef.getPlatform());
 		// print the package containing the class
 		if (classDef.getPpackage() != null)
-			sb = sb.append(String.format("package %s;\n\n",
-					classDef.getPackageName()));
-		// print the includes
-		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
-		if (!dependencies.isEmpty()) {
-			for (String dependency : dependencies) {
-				if (dependency != "noprint" && dependency.contains("."))
-					sb = sb.append(String.format("import %s;\n", dependency));
-			}
+			header += String.format("package %s;\n\n", classDef.getPackageName());
 
-			sb = sb.append("\n");
-		}
+		String body = "";
 		// print the class prototype
-		sb = sb.append(String.format("%s %s %s",
-				StringUtils.join(classDef.getModifiers(), ' '),
-				classDef.isInterface() ? "interface" : "class",
-						classDef.getName()));
+		body += String.format("%s %s %s", StringUtils.join(
+				classDef.getModifiers(), ' '), classDef.isInterface() ?
+						"interface" : "class", classDef.getName());
 		if (classDef.getParentClass() != null)
-			sb = sb.append(String.format(" extends %s",
-					classDef.getParentClass()));
+			body += String.format(" extends %s", classDef.getParentClass());
 		if (!classDef.getInterfaces().isEmpty())
-			sb = sb.append(String.format(" interfaces %s",
-					StringUtils.join(classDef.getInterfaces(), ", ")));
-		sb = sb.append(" {\n\n");
+			body += String.format(" interfaces %s", StringUtils.join(
+					classDef.getInterfaces(), ", "));
+		body += " {\n\n";
 		// print the fields
 		for (Field field : classDef.getFields())
-			sb = sb.append(formatIndented("%-1%s;\n\n", field));
+			body += formatIndented("%-1%s;\n\n", field);
 		// print the methods
 		for (Meth meth : classDef.getMethods()) {
 			if (classDef.isInterface()) {
-				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
+				body += formatIndented("%-1%s;\n\n", meth.getHeader());
 			} else {
 				if (meth.isConstructor()) {
-					sb = sb.append(formatIndented("%-1%s {\n%-2%s;%2%-1}\n\n",
+					body += formatIndented("%-1%s {\n%-2%s;%2%-1}\n\n", 
 							meth.getHeader(), ((Constructor) meth)
-							.getInitCalls().get(0), meth.getBlock()));
+							.getInitCalls().get(0), meth.getBlock());
 				} else {
-					sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n",
-							meth.getHeader(), meth.getBlock()));
+					body += formatIndented("%-1%s {%2%-1}\n\n",
+							meth.getHeader(), meth.getBlock());
 				}
 			}
 		}
-		return sb.toString() + "}";
+		
+		return header + getDependenciesCode(classDef) + body + "}";
 	}
 
 	@Override

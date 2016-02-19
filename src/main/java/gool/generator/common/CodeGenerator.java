@@ -31,7 +31,6 @@ import gool.ast.core.Comment;
 import gool.ast.core.CompoundAssign;
 import gool.ast.core.Constant;
 import gool.ast.core.Constructor;
-import gool.ast.core.CustomDependency;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
@@ -115,6 +114,7 @@ import gool.ast.type.TypeVoid;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Generates the concrete target from the abstract GOOL. Many things are common
@@ -122,7 +122,14 @@ import java.util.Collection;
  */
 public interface CodeGenerator {
 
-	void addCustomDependency(String key, Dependency value);
+	/**
+	 * Adding dependencies that are specifics to the target language
+	 * @param dep
+	 */
+	void addCustomDependency(String dep);
+	Set<String> getCustomDependencies();
+	void clearCustomDependencies();
+	
 	
 	String getCode(ArrayAccess arrayAccess);
 
@@ -416,7 +423,7 @@ public interface CodeGenerator {
 
 	String getCode(TypeArray typeArray);
 
-	String getCode(CustomDependency customDependency);
+	//String getCode(CustomDependency customDependency);
 
 	String getCode(Identifier identifier);
 

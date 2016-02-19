@@ -29,7 +29,6 @@ import gool.ast.core.Comment;
 import gool.ast.core.CompoundAssign;
 import gool.ast.core.Constant;
 import gool.ast.core.Constructor;
-import gool.ast.core.CustomDependency;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
@@ -111,6 +110,7 @@ import gool.generator.common.GeneratorMatcher;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -154,6 +154,20 @@ CodeGeneratorNoVelocity {
 	 */
 	private ArrayList<String> localIndentifiers = new ArrayList<String>();
 
+	private static Set<String> customDependencies = new HashSet<String>();
+
+	public void addCustomDependency(String dep) {
+		customDependencies.add(dep);
+	}
+
+	public Set<String> getCustomDependencies(){
+		return customDependencies;
+	}
+
+	public void clearCustomDependencies(){
+		customDependencies.clear();
+	}
+
 	/**
 	 * Register a comment to be printed alongside the statement being parsed.
 	 * 
@@ -192,15 +206,8 @@ CodeGeneratorNoVelocity {
 	 */
 	private static Map<Meth, String> methodsNames = new HashMap<Meth, String>();
 
-	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
-
 	private String getName(Meth meth) {
 		return methodsNames.get(meth);
-	}
-
-	@Override
-	public void addCustomDependency(String key, Dependency value) {
-		customDependencies.put(key, value);
 	}
 
 	@Override
@@ -213,7 +220,7 @@ CodeGeneratorNoVelocity {
 			for (Expression e : arrayNew.getDimesExpressions())
 				ret = String.format("[%s]*%s", ret, e);
 			return (String)Log.MethodOut(Thread.currentThread(), "(" + ret + ")");
-			}
+		}
 
 
 		return (String)Log.MethodOut(Thread.currentThread(),
@@ -259,12 +266,12 @@ CodeGeneratorNoVelocity {
 					&& !binaryOp.getRight().getType().getName().equals("str")) {
 				return (String)Log.MethodOut(Thread.currentThread(),
 						String.format("(%s %s str(%s))", binaryOp.getLeft(),
-						"+", binaryOp.getRight()));
+								"+", binaryOp.getRight()));
 			} else if (binaryOp.getRight().getType().getName().equals("str")
 					&& !binaryOp.getLeft().getType().getName().equals("str")) {
 				return (String)Log.MethodOut(Thread.currentThread(),
 						String.format("(str(%s) %s %s)", binaryOp.getLeft(),
-						"+", binaryOp.getRight()));
+								"+", binaryOp.getRight()));
 			} else {
 				textualOp = binaryOp.getTextualoperator();
 			}
@@ -273,12 +280,12 @@ CodeGeneratorNoVelocity {
 			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
 				return (String)Log.MethodOut(Thread.currentThread(),
 						String.format("(%s is %s)", binaryOp.getLeft(), 
-						binaryOp.getRight()));
+								binaryOp.getRight()));
 		case NOT_EQUAL:
 			if (binaryOp.getRight().getType().equals(TypeNull.INSTANCE))
 				return (String)Log.MethodOut(Thread.currentThread(),
 						String.format("(%s is not %s)", binaryOp.getLeft(), 
-						binaryOp.getRight()));
+								binaryOp.getRight()));
 		default:
 			textualOp = binaryOp.getTextualoperator();
 		}
@@ -286,7 +293,7 @@ CodeGeneratorNoVelocity {
 			comment("Unrecognized by GOOL, passed on: " + textualOp);
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("(%s %s %s)", binaryOp.getLeft(), textualOp,
-				binaryOp.getRight()));
+						binaryOp.getRight()));
 	}
 
 	@Override
@@ -295,7 +302,7 @@ CodeGeneratorNoVelocity {
 		if (constant.getType().equals(TypeBool.INSTANCE)) {
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.valueOf(constant.getValue().toString()
-					.equalsIgnoreCase("true") ? "True" : "False"));
+							.equalsIgnoreCase("true") ? "True" : "False"));
 		} else if(constant.getType().equals(TypeNull.INSTANCE)){
 			return (String)Log.MethodOut(Thread.currentThread(),"None");
 		}else {
@@ -347,7 +354,7 @@ CodeGeneratorNoVelocity {
 					String.format("%s()", classNew.getName()));
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s(%s)", classNew.getType(),
-				StringUtils.join(classNew.getParameters(), ", ")));
+						StringUtils.join(classNew.getParameters(), ", ")));
 	}
 
 	@Override
@@ -366,13 +373,13 @@ CodeGeneratorNoVelocity {
 		if (enhancedForLoop.getExpression().getType() instanceof TypeMap)
 			return (String)Log.MethodOut(Thread.currentThread(),
 					formatIndented("for %s in %s.iteritems():%1",
-					enhancedForLoop.getVarDec().getName(),
-					enhancedForLoop.getExpression(),
-					enhancedForLoop.getStatements()));
+							enhancedForLoop.getVarDec().getName(),
+							enhancedForLoop.getExpression(),
+							enhancedForLoop.getStatements()));
 		return (String)Log.MethodOut(Thread.currentThread(),
 				formatIndented("for %s in %s:%1", enhancedForLoop.getVarDec()
-				.getName(), enhancedForLoop.getExpression(),
-				enhancedForLoop.getStatements()));
+						.getName(), enhancedForLoop.getExpression(),
+						enhancedForLoop.getStatements()));
 	}
 
 	@Override
@@ -380,7 +387,7 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s == %s", equalsCall.getTarget(), equalsCall
-				.getParameters().get(0)));
+						.getParameters().get(0)));
 	}
 
 	@Override
@@ -394,7 +401,7 @@ CodeGeneratorNoVelocity {
 		}
 		return (String)Log.MethodOut(Thread.currentThread(),
 				printWithComment(String.format("%s = %s\n", field.getName(),
-				value)));
+						value)));
 	}
 
 	@Override
@@ -439,16 +446,16 @@ CodeGeneratorNoVelocity {
 		case 1:
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s.append(%s)", lac.getExpression(), lac
-					.getParameters().get(0)));
+							.getParameters().get(0)));
 		case 2:
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s.insert(%s, %s)", lac.getExpression(), lac
-					.getParameters().get(0), lac.getParameters().get(1)));
+							.getParameters().get(0), lac.getParameters().get(1)));
 		default:
 			comment("Unrecognized by GOOL, passed on: add");
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s.add(%s)", lac.getExpression(),
-					GeneratorHelper.joinParams(lac.getParameters())));
+							GeneratorHelper.joinParams(lac.getParameters())));
 		}
 	}
 
@@ -457,7 +464,7 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s in %s", GeneratorHelper.joinParams(lcc.getParameters()),
-				lcc.getExpression()));
+						lcc.getExpression()));
 	}
 
 	@Override
@@ -468,7 +475,7 @@ CodeGeneratorNoVelocity {
 					String.format("%s[]", lgc.getExpression()));
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s[%s]", lgc.getExpression(), 
-				lgc.getParameters().get(0)));
+						lgc.getParameters().get(0)));
 	}
 
 	@Override
@@ -492,7 +499,7 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s.pop(%s)", lrc.getExpression(),
-				StringUtils.join(lrc.getParameters(), ", ")));
+						StringUtils.join(lrc.getParameters(), ", ")));
 	}
 
 	@Override
@@ -501,11 +508,11 @@ CodeGeneratorNoVelocity {
 		if (!lrc.getType().getTypeArguments().contains("[Int]"))
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s.remove(%s)", lrc.getExpression(),
-					StringUtils.join(lrc.getParameters(), ", ")));
+							StringUtils.join(lrc.getParameters(), ", ")));
 		else
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s.pop(%s)", lrc.getExpression(),
-					StringUtils.join(lrc.getParameters(), ", ")));
+							StringUtils.join(lrc.getParameters(), ", ")));
 	}
 
 	@Override
@@ -514,7 +521,7 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("len(%s)", lsc.getExpression()));
 	}
-	
+
 	@Override
 	public String getCode(ListClearCall lcc) {
 		return String.format("del %s[:]", lcc.getExpression());
@@ -536,15 +543,15 @@ CodeGeneratorNoVelocity {
 				String.format("%s[%s] = %s", lsc.getExpression(),param.get(0),
 						param.get(1), StringUtils.join(param.subList(2, param.size()), ", ")));
 	}
-	
+
 	@Override
 	public String getCode(ListIndexOfCall lioc) {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s.index(%s)", lioc.getExpression(),
-				StringUtils.join(lioc.getParameters(), ", ")));
+						StringUtils.join(lioc.getParameters(), ", ")));
 	}
-	
+
 	@Override
 	public String getCode(MainMeth mainMeth) {
 		Log.MethodIn(Thread.currentThread());
@@ -561,7 +568,7 @@ CodeGeneratorNoVelocity {
 					String.format("in %s", mapContainsKeyCall.getExpression()));
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s in %s", mapContainsKeyCall.getParameters()
-				.get(0), mapContainsKeyCall.getExpression()));
+						.get(0), mapContainsKeyCall.getExpression()));
 	}
 
 	@Override
@@ -591,7 +598,7 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s[%s]", mapGetCall.getExpression(),
-				GeneratorHelper.joinParams(mapGetCall.getParameters())));
+						GeneratorHelper.joinParams(mapGetCall.getParameters())));
 	}
 
 	@Override
@@ -615,7 +622,7 @@ CodeGeneratorNoVelocity {
 		// TODO: unbalanced parenthesis in produced code
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s[%s])", mapMethCall.getExpression(),
-				mapMethCall.getParameters().get(0)));
+						mapMethCall.getParameters().get(0)));
 	}
 
 	@Override
@@ -629,8 +636,8 @@ CodeGeneratorNoVelocity {
 		//					mapPutCall.getParameters().get(0));
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s[%s] = %s", mapPutCall.getExpression(),
-				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
-				.get(1)));
+						mapPutCall.getParameters().get(0), mapPutCall.getParameters()
+						.get(1)));
 	}
 
 	@Override
@@ -640,7 +647,7 @@ CodeGeneratorNoVelocity {
 		// if the key does'nt exists
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s.pop(%s, None)", mapRemoveCall.getExpression(),
-				StringUtils.join(mapRemoveCall.getParameters(), ", ")));
+						StringUtils.join(mapRemoveCall.getParameters(), ", ")));
 	}
 
 	@Override
@@ -699,10 +706,10 @@ CodeGeneratorNoVelocity {
 			prefix = "pass";
 		return (String)Log.MethodOut(Thread.currentThread(),
 				formatIndented("%sdef %s(self%s):%1", meth.getModifiers()
-				.contains(Modifier.STATIC) ? "@classmethod\n" : "",
-						methodsNames.get(meth),
-						methodsNames.get(meth).equals(meth.getName()) ? ", *args"
-								: printMethParamsNames(meth), prefix + meth.getBlock()));
+						.contains(Modifier.STATIC) ? "@classmethod\n" : "",
+								methodsNames.get(meth),
+								methodsNames.get(meth).equals(meth.getName()) ? ", *args"
+										: printMethParamsNames(meth), prefix + meth.getBlock()));
 	}
 
 	/**
@@ -738,7 +745,7 @@ CodeGeneratorNoVelocity {
 		//Log.i("<CppGenerator> " + out);
 		return (String)Log.MethodOut(Thread.currentThread(),out);
 	}
-	
+
 	/**
 	 * Produces code for the isEmpty() method of String
 	 * 
@@ -752,7 +759,7 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(),String.format("(not %s)",
 				lmc.getTarget()));
 	}
-	
+
 	/**
 	 * Produces the comma-separated list of the names of the parameters of a
 	 * method, with a leading comma.
@@ -874,7 +881,7 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("super(%s, self).__init__(%s)", currentClass,
-				StringUtils.join(parentCall.getParameters(), ", ")));
+						StringUtils.join(parentCall.getParameters(), ", ")));
 	}
 
 	@Override
@@ -897,7 +904,7 @@ CodeGeneratorNoVelocity {
 		// TODO: what about the new 'print is a function' standard?
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("print %s",
-				StringUtils.join(systemOutPrintCall.getParameters(), ",")));
+						StringUtils.join(systemOutPrintCall.getParameters(), ",")));
 	}
 
 	@Override
@@ -912,7 +919,7 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("self.__init__(%s)",
-				GeneratorHelper.joinParams(thisCall.getParameters())));
+						GeneratorHelper.joinParams(thisCall.getParameters())));
 	}
 
 	@Override
@@ -967,7 +974,7 @@ CodeGeneratorNoVelocity {
 		// it's just a tuple
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("(%s, %s)", typeEntry.getKeyType(),
-				typeEntry.getElementType()));
+						typeEntry.getElementType()));
 	}
 
 	@Override
@@ -1061,7 +1068,7 @@ CodeGeneratorNoVelocity {
 		default:
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s %s", unaryOperation.getTextualoperator(),
-					unaryOperation.getExpression()));
+							unaryOperation.getExpression()));
 		}
 	}
 
@@ -1084,13 +1091,13 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s = %s", varDec.getName(), value));
 	}
-	
+
 	@Override
 	public String getCode(While whilee) {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				formatIndented("while %s:%1", whilee.getCondition(),
-				whilee.getWhileStatement()));
+						whilee.getWhileStatement()));
 	}
 
 	@Override
@@ -1098,24 +1105,6 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		// Should we use the 'array' module?
 		return (String)Log.MethodOut(Thread.currentThread(),"list");
-	}
-
-	@Override
-	public String getCode(CustomDependency customDependency) {
-		Log.MethodIn(Thread.currentThread());
-		if (customDependency.getName().startsWith("java.io")) {
-			return (String)Log.MethodOut(Thread.currentThread(),"goolHelper.IO");
-		}
-		if (!customDependencies.containsKey(customDependency.getName())) {
-			Log.e(String.format("Custom dependencies: %s, Desired: %s",
-					customDependencies, customDependency.getName()));
-			throw new IllegalArgumentException(
-					String.format(
-							"There is no equivalent type in Python for the GOOL type '%s'.",
-							customDependency.getName()));
-		}
-		return (String)Log.MethodOut(Thread.currentThread(),
-				customDependencies.get(customDependency.getName()).toString());
 	}
 
 	@Override
@@ -1163,60 +1152,59 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(),null);
 	}
 
+	public String getDependenciesCode(ClassDef cl){
+		String res = "";
+		res += "import goolHelper\n";
+		res += "import goolHelper.IO\n";
+		res += "import goolHelper.Util\n";	
+		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
+		dependencies.addAll(getCustomDependencies());
+		clearCustomDependencies();
+		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
+		if (!dependencies.isEmpty()) {
+			for (String dependency : dependencies){
+				if (dependency != "noprint"){
+					String incdep = String.format("from %s import *;", dependency);
+					if (recogDependencies.indexOf(incdep) == -1)
+						res += incdep + "\n";
+				}
+			}
+			res += "\n";
+		}
+		res += recogDependencies + "\n\n";
+		return res;
+	}
 	@Override
 	public String printClass(ClassDef classDef) {
 		currentClass = classDef;
 
 		// every python script has to start with a hash-bang:
 		// do not change the "#!/usr/bin/env python" line!
-		StringBuilder code = new StringBuilder(
-				"#!/usr/bin/env python\n\nimport goolHelper\nimport goolHelper.IO\nimport goolHelper.Util\n\n");
-
-		// Printing the imports.
-		// This is not the best way to write it in Python, but doing it right
-		// would require a lot of renaming in other places.
-		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
-		for (String dependency : customDependencies.keySet()) {
-			if (!dependency.isEmpty() && !dependency.equals("noprint")) {
-
-				String name = dependency
-						.substring(dependency.lastIndexOf('.') + 1);
-				for (String dep : dependencies) {
-					if (dep.equals(name)) {
-						code = code.append(String
-								.format("from %s import *\n", (dependency
-										.startsWith(".") ? name : dependency)));
-						break;
-					}
-				}
-			}
-		}
-		code = code.append(GeneratorHelper.printRecognizedDependencies(classDef));
+		String header = "#!/usr/bin/env python\n\n";
 
 		/*
 		 * As it is not a method, we have do do everything manually. The
 		 * condition makes sure we do not execute the main when importing the
 		 * file TODO: deal with command line arguments
 		 */
-		StringBuilder codeMain = new StringBuilder();
+		String codeMain = "";
 		for (Meth meth : classDef.getMethods()) {
 			if (meth.isMainMethod()) {
 				localIndentifiers.clear();
 				currentMeth = meth;
-				codeMain = codeMain
-						.append(formatIndented(
-								"\nif __name__ == '__main__':\n%-1from %s import *\n# main program%1# end of main\n%-1exit()\n",
-								classDef.getName(), meth.getBlock()));
+				codeMain += formatIndented(
+						"\nif __name__ == '__main__':\n%-1from %s import *\n# main program%1# end of main\n%-1exit()\n",
+						classDef.getName(), meth.getBlock());
 			}
-
 		}
 
 		// We only produce new-style classes. Theses have to explicitly
 		// inherit from the 'object' class.
 		// Not needed in Python 3, but kept for compatibility.
-		code = code.append(String.format("\nclass %s(%s):\n", classDef
-				.getName(), (classDef.getParentClass() != null) ? classDef
-						.getParentClass().getName() : "object"));
+		String body = "";
+		body += String.format("\nclass %s(%s):\n", classDef.getName(),
+				(classDef.getParentClass() != null) ? 
+						classDef.getParentClass().getName() : "object");
 
 		String dynamicAttributs = "";
 		for (Field f : classDef.getFields()) {
@@ -1227,7 +1215,7 @@ CodeGeneratorNoVelocity {
 			// static fields are declared in the class, dynamic ones in the
 			// constructor
 			if (f.getModifiers().contains(Modifier.STATIC))
-				code = code.append(formatIndented("%1", f));
+				body += formatIndented("%1", f);
 			else
 				dynamicAttributs += String.format("self.%s", f);
 		}
@@ -1257,8 +1245,7 @@ CodeGeneratorNoVelocity {
 
 				if (meths.size() > 1) { // Si il y a plusieurs méthodes de même
 					// nom
-					code = code
-							.append(formatIndented("\n%-1# wrapper generated by GOOL\n"));
+					body += formatIndented("\n%-1# wrapper generated by GOOL\n");
 					String block = "";
 					String newName = method.getName();
 					boolean first = true;
@@ -1298,13 +1285,14 @@ CodeGeneratorNoVelocity {
 					// the wrapper is of the same kind. If both exists, we can't
 					// properly deal with it so we output a warning in the code.
 					if (someStatics && someDynamics) {
-						code = code
-								.append(formatIndented("%-1# GOOL warning: static and dynamic methods under a same wrapper\n"
-										+ "%-1#               impossible to call static methods\n"));
+						body += formatIndented(
+								"%-1# GOOL warning: static and dynamic methods " +
+										"under a same wrapper\n%-1#               " +
+								"impossible to call static methods\n");
 					} else if (someStatics) {
 						// '@static' would be more accurate, but we would have
 						// to replace 'self' with the name of the class.
-						code = code.append(formatIndented("%-1@classmethod\n"));
+						body += formatIndented("%-1@classmethod\n");
 					}
 
 					String name = method.getName();
@@ -1317,8 +1305,8 @@ CodeGeneratorNoVelocity {
 
 					// We have to manually print the header as it is not a
 					// method known to GOOL.
-					code = code.append(formatIndented(
-							"%-1def %s(self, *args):%2", name, block));
+					body += formatIndented("%-1def %s(self, *args):%2",
+							name, block);
 
 				} else {
 					if (method.isConstructor()) {
@@ -1335,27 +1323,26 @@ CodeGeneratorNoVelocity {
 				// we add a comment for renamed methods
 				if (!methodsNames.get(method).equals(method.getName())
 						&& !methodsNames.get(method).equals("__init__")) {
-					code = code.append(formatIndented(
-							"\n%-1# used in wrapper '%s'",
+					body += formatIndented("\n%-1# used in wrapper '%s'",
 							method.isConstructor() ? "__init__" : method
-									.getName()));
+									.getName());
 				}
 				// We add the declarations for dynamic attributes to the
 				// constructor
 				// if there is no wrapper for it.
 				if (method.isConstructor()
 						&& methodsNames.get(method).equals(method.getName())) {
-					code = code.append(formatIndented("%1",
-							printMeth(method, dynamicAttributs)));
+					body += formatIndented("%1",
+							printMeth(method, dynamicAttributs));
 				} else {
-					code = code.append(formatIndented("%1", method));
+					body += formatIndented("%1", method);
 				}
 			}
 		}
 
-		code.append("\n");
-		code.append(codeMain);
-		return code.toString();
+		body += "\n";
+		body = header + getDependenciesCode(classDef) + body + codeMain;
+		return body;
 	}
 
 	@Override
@@ -1418,14 +1405,6 @@ CodeGeneratorNoVelocity {
 			return (String)Log.MethodOut(Thread.currentThread(), typeException.getName());
 		}
 	}
-
-	//	public String getCode(RecognizedDependency recognizedDependency) {
-	//		//TODO: not implemented
-	//		String result = "RecognizedDependency not generated by GOOL, passd on.";
-	//		
-	//
-	//		return result;
-	//	}
 
 	public String getCode(RecognizedDependency recognizedDependency) {
 		Log.MethodIn(Thread.currentThread());

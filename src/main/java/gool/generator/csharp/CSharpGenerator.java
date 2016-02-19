@@ -23,7 +23,6 @@ import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
 import gool.ast.core.Constant;
 import gool.ast.core.Constructor;
-import gool.ast.core.CustomDependency;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
@@ -87,6 +86,7 @@ import gool.generator.common.GeneratorMatcher;
 import logger.Log;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,8 +96,23 @@ import org.apache.commons.lang.StringUtils;
 /**
  * It generates specific C# code for certain GOOL nodes.
  */
-public class CSharpGenerator extends CommonCodeGenerator/* implements
-		CodeGeneratorNoVelocity */{
+public class CSharpGenerator extends CommonCodeGenerator implements
+CodeGeneratorNoVelocity {
+
+	private static Set<String> customDependencies = new HashSet<String>();
+
+	public void addCustomDependency(String dep) {
+		customDependencies.add(dep);
+	}
+
+	public Set<String> getCustomDependencies(){
+		return customDependencies;
+	}
+
+	public void clearCustomDependencies(){
+		customDependencies.clear();
+	}
+
 	@Override
 	public String getCode(TypeBool typeBool) {
 		Log.MethodIn(Thread.currentThread());
@@ -111,7 +126,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 				&& binaryOp.getOperator() == Operator.EQUAL) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("%s.Equals(%s)", binaryOp.getLeft(),
-					binaryOp.getRight()));
+							binaryOp.getRight()));
 		} else {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					super.getCode(binaryOp));
@@ -175,7 +190,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		String method = lac.getParameters().size() > 1 ? "Insert" : "Add";
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.%s(%s)", lac.getExpression(), method,
-				GeneratorHelper.joinParams(lac.getParameters())));
+						GeneratorHelper.joinParams(lac.getParameters())));
 	}
 
 	@Override
@@ -183,7 +198,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.Remove(%s)", lrc.getExpression(),
-				GeneratorHelper.joinParams(lrc.getParameters())));
+						GeneratorHelper.joinParams(lrc.getParameters())));
 	}
 
 	@Override
@@ -191,7 +206,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.RemoveAt(%s)", lrc.getExpression(),
-				GeneratorHelper.joinParams(lrc.getParameters())));
+						GeneratorHelper.joinParams(lrc.getParameters())));
 	}
 
 	@Override
@@ -199,7 +214,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.Contains(%s)", lcc.getExpression(),
-				GeneratorHelper.joinParams(lcc.getParameters())));
+						GeneratorHelper.joinParams(lcc.getParameters())));
 	}
 
 	@Override
@@ -207,7 +222,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s[%s]", lgc.getExpression(),
-				GeneratorHelper.joinParams(lgc.getParameters())));
+						GeneratorHelper.joinParams(lgc.getParameters())));
 	}
 
 	@Override
@@ -237,7 +252,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s.Clear()", lcc.getExpression()));
 	}
-	
+
 	@Override
 	public String getCode(ListSetCall lsc) {
 		Log.MethodIn(Thread.currentThread());
@@ -254,15 +269,15 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 				String.format("%s[%s] = %s", lsc.getExpression(),param.get(0),
 						param.get(1), StringUtils.join(param.subList(2, param.size()), ", ")));
 	}
-	
+
 	@Override
 	public String getCode(ListIndexOfCall lioc) {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s.IndexOf(%s)", lioc.getExpression(),
-				StringUtils.join(lioc.getParameters(), ", ")));
+						StringUtils.join(lioc.getParameters(), ", ")));
 	}
-	
+
 	@Override
 	public String getCode(TypeDependency typeDependency) {
 		Log.MethodIn(Thread.currentThread());
@@ -329,7 +344,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("Console.WriteLine(%s)",
-				GeneratorHelper.joinParams(systemOutPrintCall.getParameters())));
+						GeneratorHelper.joinParams(systemOutPrintCall.getParameters())));
 	}
 
 	@Override
@@ -395,7 +410,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				super.getCode(memberSelect));
 	}
-	
+
 	/**
 	 * Produces code for the isEmpty() method of String
 	 * 
@@ -409,7 +424,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		String out = "String.IsNullOrEmpty(" + lmc.getTarget().toString() + ")";
 		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
-	
+
 	@Override
 	public String getCode(Meth meth) {
 		Log.MethodIn(Thread.currentThread());
@@ -423,8 +438,8 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s %s %s(%s)", getCode(meth.getModifiers()),
-				meth.getType(), name,
-				GeneratorHelper.joinParams(meth.getParams())));
+						meth.getType(), name,
+						GeneratorHelper.joinParams(meth.getParams())));
 	}
 
 	private void customizeModifiers(Meth meth) {
@@ -450,7 +465,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 			} else if (name.equals("equals")
 					&& meth.getParams().size() == 1
 					&& meth.getParams().get(0).getType()
-							.equals(TypeObject.INSTANCE)) {
+					.equals(TypeObject.INSTANCE)) {
 				return "Equals";
 			} else if (name.equals("hashCode") && meth.getParams().isEmpty()) {
 				return "GetHashCode";
@@ -501,7 +516,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.Remove(%s)", mapRemoveCall.getExpression(),
-				GeneratorHelper.joinParams(mapRemoveCall.getParameters())));
+						GeneratorHelper.joinParams(mapRemoveCall.getParameters())));
 	}
 
 	@Override
@@ -510,12 +525,12 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		if (mapPutCall.getParameters().isEmpty())
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("%s[] =", mapPutCall.getExpression()));
-//		if (mapPutCall.getParameters().size() == 1)
-//			return String.format("%s[%s] =", mapPutCall.getExpression(), 
-//					mapPutCall.getParameters().get(0));
+		//		if (mapPutCall.getParameters().size() == 1)
+		//			return String.format("%s[%s] =", mapPutCall.getExpression(), 
+		//					mapPutCall.getParameters().get(0));
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s[%s] = %s", mapPutCall.getExpression(),
-				mapPutCall.getParameters().get(0), mapPutCall.getParameters()
+						mapPutCall.getParameters().get(0), mapPutCall.getParameters()
 						.get(1)));
 	}
 
@@ -531,7 +546,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("(%s.GetIterator() == 0)",
-				mapGetIteratorCall.getExpression()));
+						mapGetIteratorCall.getExpression()));
 	}
 
 	@Override
@@ -539,7 +554,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s[%s]", mapGetCall.getExpression(),
-				GeneratorHelper.joinParams(mapGetCall.getParameters())));
+						GeneratorHelper.joinParams(mapGetCall.getParameters())));
 	}
 
 	@Override
@@ -547,8 +562,8 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.ContainsKey(%s)",
-				mapContainsKeyCall.getExpression(),
-				GeneratorHelper.joinParams(mapContainsKeyCall.getParameters())));
+						mapContainsKeyCall.getExpression(),
+						GeneratorHelper.joinParams(mapContainsKeyCall.getParameters())));
 	}
 
 	@Override
@@ -556,7 +571,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("Dictionary<%s, %s>", typeMap.getKeyType(),
-				typeMap.getElementType()));
+						typeMap.getElementType()));
 	}
 
 	@Override
@@ -564,38 +579,8 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("foreach(%s in %s){%s}",
-				enhancedForLoop.getVarDec(), enhancedForLoop.getExpression(),
-				enhancedForLoop.getStatements()));
-	}
-
-	private static Map<String, Dependency> customDependencies = new HashMap<String, Dependency>();
-	
-	@Override
-	public String getCode(CustomDependency customDependency) {
-		Log.MethodIn(Thread.currentThread());
-		if (!customDependencies.containsKey(customDependency.getName())) {
-			throw new IllegalArgumentException(
-					String.format(
-							"There is no equivalent type in C# for the GOOL type '%s'.",
-							customDependency.getName()));
-		}
-
-		Dependency dependency = customDependencies.get(customDependency
-				.getName());
-
-		if (dependency instanceof ClassDef) { // It is already a package.
-			// Return only the package. C# does not support individual class
-			// importation.
-			return (String)Log.MethodOut(Thread.currentThread(), 
-					((ClassDef) dependency).getPackageName());
-		}
-
-		return (String)Log.MethodOut(Thread.currentThread(), dependency.toString());
-
-	}
-
-	public void addCustomDependency(String key, Dependency value) {
-		customDependencies.put(key, value);
+						enhancedForLoop.getVarDec(), enhancedForLoop.getExpression(),
+						enhancedForLoop.getStatements()));
 	}
 
 	@Override
@@ -603,7 +588,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("KeyValuePair<%s, %s>", typeEntry.getKeyType(),
-				typeEntry.getElementType()));
+						typeEntry.getElementType()));
 	}
 
 	@Override
@@ -624,13 +609,14 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 	public String getCode(EqualsCall equalsCall) {
 		Log.MethodIn(Thread.currentThread());
 		if  (equalsCall.getTarget().getType()instanceof TypeList){
+			addCustomDependency("System.Linq");
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("%s.SequenceEqual(%s)", equalsCall.getTarget(),
-					GeneratorHelper.joinParams(equalsCall.getParameters())));
+							GeneratorHelper.joinParams(equalsCall.getParameters())));
 		}
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s.Equals(%s)", equalsCall.getTarget(),
-				GeneratorHelper.joinParams(equalsCall.getParameters())));
+						GeneratorHelper.joinParams(equalsCall.getParameters())));
 	}
 
 	@Override
@@ -653,54 +639,59 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		return (String)Log.MethodOut(Thread.currentThread(), null);
 	}
 
-	//@Override
-	public String printClass(ClassDef classDef) {
-		StringBuilder sb = new StringBuilder(String.format(
-				"// Platform: %s\n\n", classDef.getPlatform()));
-
-		// BUG: yield a stack overflow
-		Set<String> dependencies = GeneratorHelper.printDependencies(classDef);
-		String recogDependencies = GeneratorHelper.printRecognizedDependencies(classDef);
+	public String getDependenciesCode(ClassDef cl){
+		String res = "";
+		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
+		dependencies.addAll(getCustomDependencies());
+		clearCustomDependencies();
+		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
 		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies){
-				String incdep = String.format("using %s;", dependency);
-				if (recogDependencies.indexOf(incdep) == -1)
-					sb = sb.append(incdep + "\n");
+				if (dependency != "noprint"){
+					String incdep = String.format("using %s;", dependency);
+					if (recogDependencies.indexOf(incdep) == -1)
+						res += incdep + "\n";
+				}
 			}
-			sb = sb.append("\n");
+			res += "\n";
 		}
-		
-		sb = sb.append(recogDependencies);
-		
-		if (classDef.getPpackage() != null)
-			sb = sb.append(String.format("namespace %s;\n\n",
-					classDef.getPackageName()));
+		res += recogDependencies + "\n";
+		return res;
+	}
 
+	//@Override
+	public String printClass(ClassDef classDef) {
+
+		String header = String.format("// Platform: %s\n\n", classDef.getPlatform());
+
+		if (classDef.getPpackage() != null)
+			header += String.format("namespace %s;\n\n", classDef.getPackageName());
+
+		String body = "";
 		// print the class prototype
-		sb = sb.append(String.format("%s %s %s",
-				StringUtils.join(classDef.getModifiers(), ' '),
+		body += String.format("%s %s %s", StringUtils.join(classDef.getModifiers(), ' '),
 				classDef.isInterface() ? "interface" : "class",
-				classDef.getName()));
+						classDef.getName());
 		if (classDef.getParentClass() != null)
-			sb = sb.append(String.format(" : %s", classDef.getParentClass()));
+			body += String.format(" : %s", classDef.getParentClass());
 		if (!classDef.getInterfaces().isEmpty())
-			sb = sb.append(String.format(" : %s",
-					StringUtils.join(classDef.getInterfaces(), ", ")));
-		sb = sb.append(" {\n\n");
+			body += String.format(" : %s",
+					StringUtils.join(classDef.getInterfaces(), ", "));
+		body += " {\n\n";
 		// print the fields
 		for (Field field : classDef.getFields())
-			sb = sb.append(formatIndented("%-1%s;\n\n", field));
+			body += formatIndented("%-1%s;\n\n", field);
 		// print the methods
 		for (Meth meth : classDef.getMethods()) {
 			// TODO: deal with constructors ?
 			if (classDef.isInterface())
-				sb = sb.append(formatIndented("%-1%s;\n\n", meth.getHeader()));
+				body += formatIndented("%-1%s;\n\n", meth.getHeader());
 			else
-				sb = sb.append(formatIndented("%-1%s {%2%-1}\n\n",
-						meth.getHeader(), meth.getBlock()));
+				body += formatIndented("%-1%s {%2%-1}\n\n",
+						meth.getHeader(), meth.getBlock());
 		}
 
-		return sb.toString() + "}";
+		return header + getDependenciesCode(classDef) + body + "}";
 	}
 
 	@Override
@@ -715,8 +706,8 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				formatIndented("catch (%s %s)\n{%1}\n", catchStatement
-				.getParameter().getType(), catchStatement.getParameter()
-				.getName(), catchStatement.getBlock()));
+						.getParameter().getType(), catchStatement.getParameter()
+						.getName(), catchStatement.getBlock()));
 	}
 
 	@Override
@@ -758,7 +749,7 @@ public class CSharpGenerator extends CommonCodeGenerator/* implements
 			return (String)Log.MethodOut(Thread.currentThread(), typeException.getName());
 		}
 	}
-	
+
 	@Override
 	public String getCode(RecognizedDependency recognizedDependency) {
 		Log.MethodIn(Thread.currentThread());

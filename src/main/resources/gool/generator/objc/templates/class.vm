@@ -14,11 +14,6 @@
 ## in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
-
-
-
 ## Velocity template for writing out classes in Objective C
 #parse($macros)
 #set($ts = 1)

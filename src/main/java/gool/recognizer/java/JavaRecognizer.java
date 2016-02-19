@@ -35,7 +35,6 @@ import gool.ast.core.Comment;
 import gool.ast.core.CompoundAssign;
 import gool.ast.core.Constant;
 import gool.ast.core.Constructor;
-import gool.ast.core.CustomDependency;
 import gool.ast.core.Dec;
 import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
