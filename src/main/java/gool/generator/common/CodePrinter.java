@@ -431,7 +431,7 @@ public abstract class CodePrinter {
 			context.put("class", className);
 			context.put("macros", getTemplateDir() + "macros.vm");
 			context.put("Helper", GeneratorHelper.class);
-
+			
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
 			return writer.toString();

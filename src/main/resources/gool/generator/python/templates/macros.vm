@@ -47,8 +47,19 @@ $separator
 
 #macro ( includes $dependencies )
 #foreach( $dep in $dependencies )
-#if($dep.startsWith("#")||$dep.startsWith("\"\"\"")||$dep.startsWith("import"))
+#if($dep.startsWith("#")||$dep.startsWith("\"\"\"")||$dep.startsWith("import ")||$dep.startsWith("from "))
 $dep
-#elseif(!$dep.equals("noprint"))using ${dep};#end
+#elseif(!$dep.equals("noprint"))from ${dep} import *#end
+#end
+#end
+
+#macro ( includescond $dependencies $recogdependencies)
+#foreach( $dep in $dependencies )
+#if($dep.startsWith("#")||$dep.startsWith("\"\"\"")||$dep.startsWith("import ")||$dep.startsWith("from "))
+#if ($recogdependencies.indexOf($dep) == -1)${dep}#end
+#elseif(!$dep.equals("noprint"))
+#set( $cdep = "from " + ${dep} + " import *")
+#if ($recogdependencies.indexOf($cdep) == -1)${cdep}#end
+#end
 #end
 #end

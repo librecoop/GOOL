@@ -18,7 +18,7 @@
 #parse($macros)
 #set($ts = 1)
 
-#includes ($Helper.printDependencies($class))
+#includescond ($Helper.printDependencies($class) $Helper.printRecognizedDependencies($class))
 $Helper.printRecognizedDependencies($class)
 
 #import "${class.Name}.h"

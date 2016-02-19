@@ -130,7 +130,6 @@ public interface CodeGenerator {
 	Set<String> getCustomDependencies();
 	void clearCustomDependencies();
 	
-	
 	String getCode(ArrayAccess arrayAccess);
 
 	String getCode(ArrayNew arrayNew);

@@ -1174,7 +1174,7 @@ CodeGeneratorNoVelocity {
 		res += recogDependencies + "\n\n";
 		return res;
 	}
-	@Override
+	//@Override
 	public String printClass(ClassDef classDef) {
 		currentClass = classDef;
 

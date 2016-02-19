@@ -49,3 +49,13 @@ $dep
 #end
 #end
 ##-----
+#macro ( includescond $dependencies $recogdependencies)
+#foreach( $dep in $dependencies )
+#if($dep.startsWith("/*")||$dep.startsWith("//")||$dep.startsWith("import "))
+#if ($recogdependencies.indexOf($dep) == -1)${dep}#end
+#elseif(!$dep.equals("noprint")&&$dep.contains("."))
+#set( $cdep = "import " + ${dep} + ";")
+#if ($recogdependencies.indexOf($cdep) == -1)${cdep}#end
+#end
+#end
+#end

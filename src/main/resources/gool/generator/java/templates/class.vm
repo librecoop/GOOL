@@ -39,7 +39,7 @@
 #if($class.Ppackage)package ${class.PackageName};#end
 
 ## Print out the imports
-#includes ($Helper.printDependencies($class))
+#includescond ($Helper.printDependencies($class) $Helper.printRecognizedDependencies($class))
 $Helper.printRecognizedDependencies($class)
 
 ## Declare the class with the format: 

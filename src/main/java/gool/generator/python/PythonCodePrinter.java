@@ -43,7 +43,14 @@ import java.util.Set;
  * classes.
  */
 public class PythonCodePrinter extends CodePrinter {
-
+	
+	private static final String TEMPLATE_DIR = "gool/generator/python/templates/";
+	
+	@Override
+	public String getTemplateDir() {
+		return TEMPLATE_DIR;
+	}
+	
 	private Map<String, String> getGoolHelperModule(String outputDir) {
 
 		Map<String, String> res = new HashMap<String, String>();
@@ -79,11 +86,6 @@ public class PythonCodePrinter extends CodePrinter {
 	@Override
 	public String getFileName(String className) {
 		return className + ".py";
-	}
-
-	@Override
-	public String getTemplateDir() {
-		return "";
 	}
 
 	@Override

@@ -15,7 +15,7 @@
 
 #parse($macros)
 
-#includes ($Helper.printDependencies($class))
+#includescond ($Helper.printDependencies($class) $Helper.printRecognizedDependencies($class))
 
 $Helper.printRecognizedDependencies($class)
 

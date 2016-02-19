@@ -20,10 +20,10 @@
 \#include <boost/lexical_cast.hpp>
 //using boost::any_cast;
 
-\#include "${class.Name}.h"
-
-#includes ($Helper.printDependencies($class))
+#includescond ($Helper.printDependencies($class) $Helper.printRecognizedDependencies($class))
 $Helper.printRecognizedDependencies($class)
+
+\#include "${class.Name}.h"
 
 #foreach( $field in $class.Fields )
 #if($field.DefaultValue)
@@ -38,9 +38,11 @@ $method
 $method.Header#if($class.isInterface() || $method.isAbstract() );
 #else
 {
-	$method.Block
+$method.Block
+#if ( $class.isMainClass())
+return 0;
+#end
 }
-
 #end
 #end
 #end

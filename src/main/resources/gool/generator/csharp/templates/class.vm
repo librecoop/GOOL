@@ -21,7 +21,6 @@
 #includescond ($Helper.printDependencies($class) $Helper.printRecognizedDependencies($class))
 
 $Helper.printRecognizedDependencies($class)
-
 #join($class.Modifiers " ")#if($class.isInterface()) interface#elseif($class.isEnum()) enum#else class#end $class.Name #if($class.ParentClass): $class.ParentClass#if(!$class.Interfaces.isEmpty()), #interfaces($class.Interfaces)#end#else#if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end#end {
 
 #foreach( $field in $class.Fields )

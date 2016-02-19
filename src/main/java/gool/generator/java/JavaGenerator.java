@@ -92,7 +92,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-public class JavaGenerator extends CommonCodeGenerator  implements 
+public class JavaGenerator extends CommonCodeGenerator implements 
 CodeGeneratorNoVelocity {
 
 	private static Logger logger = Logger.getLogger(JavaGenerator.class
