@@ -21,8 +21,8 @@
 
 package gool.generator.cpp;
 
-//import gool.executor.common.SpecificCompiler;
-//import gool.executor.cpp.CppCompiler;
+import gool.executor.common.SpecificCompiler;
+import gool.executor.cpp.CppCompiler;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
@@ -42,10 +42,10 @@ public class CppPlatform extends Platform {
 		return new CppCodePrinter(new File(outputDir), myFileToCopy);
 	}
 
-	/*@Override
+	@Override
 	protected SpecificCompiler initializeCompiler() {
 		return new CppCompiler(new File(outputDir), new ArrayList<File>());
-	}*/
+	}
 
 	private static CppPlatform instance = new CppPlatform(myFileToCopy, outputDir);
 

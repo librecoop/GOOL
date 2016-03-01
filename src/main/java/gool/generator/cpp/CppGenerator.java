@@ -27,12 +27,10 @@ import gool.ast.core.Catch;
 import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
 import gool.ast.core.Constant;
-import gool.ast.core.Dependency;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
 import gool.ast.core.Expression;
 import gool.ast.core.Field;
-import gool.ast.core.Finally;
 import gool.ast.core.MainMeth;
 import gool.ast.core.MemberSelect;
 import gool.ast.core.Meth;
@@ -94,14 +92,11 @@ import gool.generator.common.GeneratorMatcher;
 import logger.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hamcrest.core.IsInstanceOf;
 
 public class CppGenerator extends CommonCodeGenerator implements
 CodeGeneratorNoVelocity {

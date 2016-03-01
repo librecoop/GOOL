@@ -17,8 +17,8 @@
 
 package gool.generator.csharp;
 
-//import gool.executor.common.SpecificCompiler;
-//import gool.executor.csharp.CSharpCompiler;
+import gool.executor.common.SpecificCompiler;
+import gool.executor.csharp.CSharpCompiler;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
@@ -37,10 +37,10 @@ public final class CSharpPlatform extends Platform {
 		return new CSharpCodePrinter(new File(outputDir), myFileToCopy);
 	}
 
-	/*@Override
+	@Override
 	protected SpecificCompiler initializeCompiler() {
 		return new CSharpCompiler(new File(outputDir), new ArrayList<File>());
-	}*/
+	}
 
 	private static CSharpPlatform instance = new CSharpPlatform(myFileToCopy, outputDir);
 

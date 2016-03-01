@@ -105,6 +105,18 @@ public class ClassDef extends Dependency {
 	 * 		: The modifier used by the class.
 	 * @param name
 	 * 		: The name of the class.
+	 */
+	public ClassDef(Modifier modifier, String name) {
+		this.name = name;
+		addModifier(modifier);
+	}
+	
+	/**
+	 * The constructor of a "class definition".
+	 * @param modifier
+	 * 		: The modifier used by the class.
+	 * @param name
+	 * 		: The name of the class.
 	 * @param platform
 	 * 		: The destination platform.
 	 */

@@ -17,8 +17,8 @@
 
 package gool.generator.python;
 
-//import gool.executor.common.SpecificCompiler;
-//import gool.executor.python.PythonCompiler;
+import gool.executor.common.SpecificCompiler;
+import gool.executor.python.PythonCompiler;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
@@ -37,10 +37,10 @@ public class PythonPlatform extends Platform {
 		return new PythonCodePrinter(new File(outputDir), myFileToCopy);
 	}
 
-//	@Override
-//	protected SpecificCompiler initializeCompiler() {
-//		return new PythonCompiler(new File(outputDir), new ArrayList<File>());
-//	}
+	@Override
+	protected SpecificCompiler initializeCompiler() {
+		return new PythonCompiler(new File(outputDir), new ArrayList<File>());
+	}
 
 	private static PythonPlatform instance = new PythonPlatform(myFileToCopy, outputDir);
 

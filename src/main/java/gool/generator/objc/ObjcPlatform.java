@@ -17,8 +17,8 @@
 
 package gool.generator.objc;
 
-//import gool.executor.common.SpecificCompiler;
-//import gool.executor.objc.ObjcCompiler;
+import gool.executor.common.SpecificCompiler;
+import gool.executor.objc.ObjcCompiler;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
@@ -36,10 +36,10 @@ public class ObjcPlatform extends Platform {
 		return new ObjcCodePrinter(new File(outputDir), myFileToCopy);
 	}
 
-//	@Override
-//	protected SpecificCompiler initializeCompiler() {
-//		return new ObjcCompiler(new File(outputDir), new ArrayList<File>());
-//	}
+	@Override
+	protected SpecificCompiler initializeCompiler() {
+		return new ObjcCompiler(new File(outputDir), new ArrayList<File>());
+	}
 
 	private static ObjcPlatform instance = new ObjcPlatform(myFileToCopy, outputDir);
 

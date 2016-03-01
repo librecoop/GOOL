@@ -17,8 +17,8 @@
 
 package gool.generator.java;
 
-//import gool.executor.common.SpecificCompiler;
-//import gool.executor.java.JavaCompiler;
+import gool.executor.common.SpecificCompiler;
+import gool.executor.java.JavaCompiler;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.Platform;
 
@@ -46,10 +46,10 @@ public final class JavaPlatform extends Platform {
 		return new JavaCodePrinter(new File(outputDir), myFileToCopy);
 	}
 
-//	@Override
-//	protected SpecificCompiler initializeCompiler() {
-//		return new JavaCompiler(new File(outputDir), new ArrayList<File>());
-//	}
+	@Override
+	protected SpecificCompiler initializeCompiler() {
+		return new JavaCompiler(new File(outputDir), new ArrayList<File>());
+	}
 
 	/**
 	 * What follows is to make sure that we always use the same instance of this

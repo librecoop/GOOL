@@ -27,6 +27,7 @@ package gool;
 
 import gool.ast.core.ClassDef;
 import gool.ast.core.Dependency;
+import gool.parser.cpp.CppParser;
 import gool.parser.java.JavaParser;
 import gool.generator.GeneratorHelper;
 import gool.generator.GoolGeneratorController;
@@ -99,9 +100,9 @@ public class GOOLCompiler {
 			if (inputLanguage.equalsIgnoreCase("java")) {
 				parser = new JavaParser();
 			}
-			/*else if(inputLang.equalsIgnoreCase("cpp")){
+			else if(inputLanguage.equalsIgnoreCase("cpp")){
 				parser = new CppParser();
-			}*/
+			}
 			else{
 				throw new Exception("Unknown input language.");
 			}
@@ -287,7 +288,6 @@ public class GOOLCompiler {
 		File folder = new File(Settings.get(inputLanguage + "_in_dir"));
 
 		//Get string to parse
-
 		ArrayList<File> infiles = (ArrayList<File>) getFilesInFolder(folder, inputLanguage,
 				fileToExclude);
 		for (File f:infiles){

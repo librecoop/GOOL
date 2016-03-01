@@ -18,7 +18,7 @@
 package gool.generator.common;
 
 import gool.ast.type.PrimitiveType;
-//import gool.executor.common.SpecificCompiler;
+import gool.executor.common.SpecificCompiler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public abstract class Platform extends PrimitiveType {
 	/**
 	 * which gool.executor executes the generated concrete Target code.
 	 */
-	//private SpecificCompiler compiler;
+	private SpecificCompiler compiler;
 
 	protected static Collection<File> myFileToCopy;
 
@@ -123,7 +123,7 @@ public abstract class Platform extends PrimitiveType {
 	 * 
 	 * @return An executor
 	 */
-	//protected abstract SpecificCompiler initializeCompiler();
+	protected abstract SpecificCompiler initializeCompiler();
 
 	/**
 	 * Getters and Setters
@@ -143,7 +143,7 @@ public abstract class Platform extends PrimitiveType {
 		codePrinter = initializeCodeWriter();
 	}
 
-	/*public void setCompiler(SpecificCompiler compiler) {
+	public void setCompiler(SpecificCompiler compiler) {
 		this.compiler = compiler;
 	}
 
@@ -153,7 +153,7 @@ public abstract class Platform extends PrimitiveType {
 		}
 		return compiler;
 	}
-*/
+
 	@Override
 	public String getName() {
 		return name;
