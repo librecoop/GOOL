@@ -134,12 +134,12 @@ public class JavaParser extends ParseGOOL {
 		/**
 		 * We launch the JavaRecognizer against each abstract Java AST
 		 */
+		Log.d("\n\n****************** Start Main Scan *******************\n\n");
 		for (CompilationUnitTree ast : asts) {
 			visitor.setCurrentCompilationUnit(ast);
-			Log.d("\n\n****************** Start Scan *******************\n\n");
 			visitor.scan();
-			Log.d("\n\n****************** End Scan *******************\n\n");
 		}
+		Log.d("\n\n****************** End Main Scan *******************\n\n");
 
 		Log.d(RecognizerMatcher.printMatchTables());
 

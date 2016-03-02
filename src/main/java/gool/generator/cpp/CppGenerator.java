@@ -823,7 +823,7 @@ CodeGeneratorNoVelocity {
 		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies){
 				if (dependency != "noprint"){
-					String incdep = String.format("#include <%s>;", dependency);
+					String incdep = String.format("#include <%s>", dependency);
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";
 				}

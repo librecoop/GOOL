@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -169,6 +170,7 @@ import gool.recognizer.cpp.ast.statement.ASTCppSwitchStatement;
 import gool.recognizer.cpp.ast.statement.ASTCppTryBlockStatement;
 import gool.recognizer.cpp.ast.statement.ASTCppWhileStatement;
 import gool.recognizer.cpp.visitor.IVisitorASTCpp;
+import logger.Log;
 
 
 
@@ -177,21 +179,21 @@ import gool.recognizer.cpp.visitor.IVisitorASTCpp;
  * a C++ AST into a GOOL AST.
  */
 public class CppRecognizer implements IVisitorASTCpp {
-	
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////   FIELDS   ///////////////////////////////////
-	
+
 	/**
 	 * The helper used to help the recognizer.
 	 */
 	protected HelperCppRecognizer helper = new HelperCppRecognizer(this) ;
-	
+
 	/**
 	 * The list of abstract GOOL classes and packages that will be generated.
 	 */
 	protected Map<gool.ast.type.IType, ClassDef> goolClasses = new HashMap<gool.ast.type.IType, ClassDef>();
-	
+
 	/**
 	 * The stack of actives classes (used to know in which class insert a method or a field).
 	 */
@@ -202,11 +204,11 @@ public class CppRecognizer implements IVisitorASTCpp {
 	 * If no method active is available, methActive is null.
 	 */
 	protected Meth methActive = null ;
-	
-	
-	
-	
-	
+
+
+
+
+
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////   GET/SET   ///////////////////////////////////
@@ -220,10 +222,10 @@ public class CppRecognizer implements IVisitorASTCpp {
 		return goolClasses.values();
 	}
 
-	
-	
-	
-	
+
+
+
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////  VISITORS OF AST VISITOR   ///////////////////////////
@@ -241,79 +243,81 @@ public class CppRecognizer implements IVisitorASTCpp {
 			unitaryClass = helper.createClassDef(className);
 			goolClasses.put(unitaryClass.getType(),unitaryClass);
 		}
-		
+
 		// Add to stack active.
 		stackClassActives.push(unitaryClass);
-		
+
 		// Initialized the recognizer matcher.
 		RecognizerMatcher.init("cpp");
-		
+
 		// Visit the dependency.
 		IDependencyTree tree = tu.getDependencyTree();
 		for(IASTInclusionNode inc : tree.getInclusions()){
 			helper.visitIncludeStatment(inc.getIncludeDirective(), this, data);
 		}
-		
+
 		// Visit the declarations.
 		helper.visitTranslationUnit(tu, this, new Context());
-		
+
 		// Visit errors.
 		helper.visitErrors(tu.getChildren(), this, data);
 
 		// Drop from stack active.
 		stackClassActives.pop();
-		
+
 		return null;
 	}
-	
+
 
 	@Override
 	public Object visit(ASTCppIncludeStatement node, Object data) {
 		IASTPreprocessorIncludeStatement inc = node.getNode();
-	
+
 		// Visit the named include.
 		String dependencyString = helper.visitName(inc.getName(), this, data);
-		
+
 		// Check this library.
 		if (!RecognizerMatcher.matchImport(dependencyString)) {
-			stackClassActives.peek()
+			if(! dependencyString.contains("iostream")){
+				stackClassActives.peek()
 				.addDependency(new UnrecognizedDependency(dependencyString));
+			}
 		}
 		/*else{ 
 			stackClassActives.peek()
 			.addDependency(new RecognizedDependency(dependencyString));
 		}*/
-		
+
 		return null  ;
 	}
 
 	@Override
 	public Object visit(ASTCppDeclaration node, Object data) {
 		IASTDeclaration dec = node.getNode();
-		
+
 		// Add an error because unrecognized.
 		helper.addAnError(dec.getRawSignature(), "This declaration");
-		
+
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCppSimpleDeclaration node, Object data) {
 		IASTSimpleDeclaration dec = node.getNode();
-		
+
 		// Visit the declaration specifier.
 		helper.visitDeclSpecifier(dec.getDeclSpecifier(), this, data) ;
-		 
+
 		// Visit and adds to return the declarators.
 		List<Dec> decs = new ArrayList<Dec>();
 		for(IASTNode decDecl : dec.getDeclarators()){
-				decs.add(helper.visitDeclarator((IASTDeclarator) decDecl, this, data));
+			decs.add(helper.visitDeclarator((IASTDeclarator) decDecl, this, data));
 		}
-		
+
 		// Change the context
 		Context context = (Context) data ;
 		context.nameSpec = null ;
-		
+
 		// Return declarations.
 		return decs;
 	}
@@ -331,14 +335,14 @@ public class CppRecognizer implements IVisitorASTCpp {
 		if(modifiers instanceof List<?>){
 			listmodifiers.addAll((Collection<? extends Modifier>) modifiers);
 		}
-		
+
 		// We resolved the binding to know the real type.
 		IASTName functionDefintionName = dec.getDeclarator().getName();
 		IBinding functionDefintionBind = functionDefintionName.resolveBinding() ;
 
 		// Is a method definition.
 		if(functionDefintionBind instanceof ICPPMethod){
-			
+
 			// Create and add the method.
 			ICPPMethod method = (ICPPMethod)functionDefintionBind ;
 			helper.createAndAddMethod(method, context.nameSpec);	
@@ -356,30 +360,30 @@ public class CppRecognizer implements IVisitorASTCpp {
 			stackClassActives.peek().addDependency(new UnImplemented(dec.getRawSignature(),
 					"Undefined declaration"));
 		}
-		
+
 		// Visit and add the statment to the method.
 		Statement stmt = helper.visitStatement(dec.getBody(), this, data);
 		if(methActive != null)
 			methActive.addStatement(stmt);
 		else
-			System.err.println("Error, it is impossible to associate the statement.");
-		
+			Log.e("<CppRecognizer -- visit(ASTCppFunctionDefinition ...> Error, it is impossible to associate the statement.");
+
 		// Visit the declarator (for example the parameters).
 		helper.visitDeclarator(dec.getDeclarator(), this, data);
-		
+
 		// And of the function.
 		methActive = null ;
-		
+
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCppVisibilityLabel node, Object data) {
 		ICPPASTVisibilityLabel decSpec = node.getNode() ;
-		
+
 		// Update the visibility label.
 		((Context)data).visibility = helper.visibilityLabelToModifier(decSpec.getVisibility());
-		
+
 		// Return the conversion of the visibility label.
 		return ((Context)data).visibility ;
 	}
@@ -393,44 +397,44 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppCompositeTypeSpecifier node, Object data) {
 		IASTCompositeTypeSpecifier decSpec = node.getNode() ;
-				
+
 		// Get the name of the composite type.
 		String className = helper.visitName(decSpec.getName(), this, data);
-		
+
 		// Create class.
 		ClassDef unitaryClass = helper.getClassDef(className);
 
 		// The class is added to goolClasses.
 		unitaryClass = helper.createClassDef(className);
 		goolClasses.put(unitaryClass.getType(),unitaryClass);
-						
+
 		// Add to stack active.
 		stackClassActives.push(unitaryClass);
-		
+
 		// Visit ICPPASTBaseSpecifier, ie. inherits declaration.
 		helper.visitInherits(decSpec.getChildren(), this, data) ;
 
-		
+
 		// Get the visibility label (by default PUBLIC).
 		Context context = (Context) data ;
 		context.visibility = helper.visitDeclarationVisibilityLabel(decSpec.getMembers(), this, data);
-		
+
 		// Visit the declarations.
 		helper.visitDeclarations(decSpec.getMembers(), this, context);
-		
+
 		// Drop from stack active.
 		stackClassActives.pop();
-		
+
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCppSimpleDeclSpecifier node, Object data) {
 		IASTSimpleDeclSpecifier decSpec = node.getNode() ;
-		
+
 		// Gets the list of modifier (isLong, isImaginary, isVolatile ...)
 		List<Modifier> toReturn = helper.getModifierDeclaration(decSpec);
-		
+
 		// Return the list of modifier associated.
 		return toReturn;
 	}
@@ -438,54 +442,54 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppNamedTypeSpecifier node, Object data) {
 		IASTNamedTypeSpecifier decSpec = node.getNode() ;
-		
+
 		// Get and add to the context, the name of the specifier.
 		Context context = (Context) data ;
 		context.nameSpec = helper.visitName(decSpec.getName(), this, data);
-		
+
 		return null; 
 	}
-	
+
 	@Override
 	public Object visit(ASTCppEnumerationSpecifier node, Object data) {
 		IASTEnumerationSpecifier decSpec = node.getNode();
-		
+
 		// Gets the name of the enumeration.
 		String name = helper.visitName(decSpec.getName(), this, data);
-		
+
 		// Gets the list of enumerators associated. 
 		List<Field> enumerators = helper.visitsEnumerators(
 				decSpec.getEnumerators(), this, data);
 
 		// Create and add the enumeration in the gool ast.
 		helper.createAndAddEnum(name, enumerators);
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public Object visit(ASTCppEnumerator node, Object data) {
 		IASTEnumerationSpecifier.IASTEnumerator enumerator = node.getNode();
-		
+
 		// Gets the name of the enumerator.
 		String name = helper.visitName(enumerator.getName(), this, data);
-		
+
 		// Gets the initial value of the enumerator.
 		Expression exp = helper.visitExpression(enumerator.getValue(), this, data);
-		
+
 		// Create the field with modifiers PUBLIC and STATIC.
 		Field toReturn = new Field(name, TypeInt.INSTANCE, exp) ;
 		toReturn.addModifier(Modifier.PUBLIC);
 		toReturn.addModifier(Modifier.STATIC);
-		
+
 		// Return the enumerator, as a field.
 		return toReturn;
 	}
-	
+
 	@Override
 	public Object visit(ASTCppBaseSpecifier node, Object data) {
 		ICPPASTBaseSpecifier baseSpecifier = node.getNode();
-		
+
 		boolean correct = false ;
 		IASTName name = baseSpecifier.getName();
 		if (name.isReference()) {
@@ -505,7 +509,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 				correct = true ;
 			}
 		}
-		
+
 		// Case error : unrecognized this part.
 		if(!correct && name.isReference()){
 			if(stackClassActives.peek().getParentClass() == null)
@@ -514,7 +518,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 				stackClassActives.peek().addDependency(
 						new UnImplemented(baseSpecifier.getRawSignature(), "Multiple inheritance (and Unknown type)"));
 		}
-		
+
 		return null;
 	}
 
@@ -524,26 +528,26 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Gets the context.
 		Context context = ((Context)data) ;
-		
+
 		// Get the visibility label.
 		Modifier visibility = ((Context) data).visibility ;
-		
+
 		// To know is its a construction.
 		String nameSpec = ((Context) data).nameSpec ;
 
 		// Get the name of the declarator.
 		String nameDec = helper.visitName(decl.getName(), this, data);
-		
+
 		// Get the initializer expression.
 		Expression init = helper.visitInitializer(decl.getInitializer(), this, data) ;
-		
+
 		// Case : it is a construction.
 		if(nameSpec != null){
 			if(init instanceof ClassNew){
 				((ClassNew)init).setType(new TypeClass(nameSpec));
 			}
 		}
-		
+
 		// We resolved the binding to get the real type.
 		IBinding bind = decl.getName().resolveBinding();
 
@@ -581,7 +585,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppArrayDeclarator node, Object data) {
 		IASTArrayDeclarator decl = node.getNode();
-		
+
 		// Get the visibility label.
 		Modifier visibility = ((Context) data).visibility ;
 
@@ -626,7 +630,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 			// Add error.
 			helper.addAnError(bind.getOwner().toString(), decl.getRawSignature(), "Undefined declarator");
 		}
-		
+
 		// Generate error for pointer operators.
 		for(IASTPointerOperator po : decl.getPointerOperators())
 			methActive.getClassDef().addDependency(
@@ -644,16 +648,16 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppFunctionDeclarator node, Object data) {
 		IASTFunctionDeclarator decl = node.getNode();
-	
+
 		// Visit the parameters, if exist.
 		int params = helper.visitParameters(decl.getChildren(), this, data);
 
-		
+
 		// Generate error for pointer operators.
 		for(IASTPointerOperator po : decl.getPointerOperators())
 			methActive.getClassDef().addDependency(
 					new UnImplemented(po.getRawSignature(), "Pointer operator"));
-		
+
 		// Case constructor. TODO : refactoring.
 		if(params == 0 && ((Context)data).nameSpec != null){
 			String name = helper.visitName(decl.getName(), this, data);
@@ -662,7 +666,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 			var.setInitialValue(new ClassNew(new TypeClass(((Context)data).nameSpec)));
 			return var ;
 		}
-		
+
 		return null;
 	}
 
@@ -676,7 +680,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppStatement node, Object data) {
 		IASTStatement stmt = node.getNode();
-		
+
 		// Error statement (generate error).
 		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature()) ;
 	}
@@ -684,7 +688,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppCompoundStatement node, Object data) {
 		IASTCompoundStatement stmts = node.getNode();
-		
+
 		// Create a block and add statements.
 		Block toReturn = new Block();
 		for(IASTStatement stmt : stmts.getStatements()){
@@ -692,7 +696,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 			if(stmtAdd != null)
 				toReturn.addStatement(stmtAdd);
 		}
-		
+
 		// Return the block of statements.
 		return toReturn;
 	}
@@ -700,10 +704,10 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppDeclarationStatement node, Object data) {
 		IASTDeclarationStatement stmt = node.getNode();
-		
+
 		// Get the list of declarations.
 		List<Dec> decs = (List<Dec>) helper.visitDeclaration(stmt.getDeclaration(), this, data);
-				
+
 		if(decs.size() > 1){
 			// Case : multiple declarations.
 			Block toReturn = new Block();
@@ -721,7 +725,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppDefaultStatement node, Object data) {
 		IASTDefaultStatement stmt = node.getNode();
-		
+
 		// Unimplemented in GOOL (generate an error).
 		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature());
 	}
@@ -729,7 +733,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppDoStatement node, Object data) {
 		IASTDoStatement stmt = node.getNode();
-		
+
 		// Unimplemented in GOOL (generate an error).
 		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature());
 	}
@@ -737,17 +741,17 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppExpressionStatement node, Object data) {
 		IASTExpressionStatement stmt = node.getNode();
-		
+
 		// Visit the expression as a statement.
 		Statement exp = helper.visitExpressionStatement(stmt.getExpression(),this,data);
-		
+
 		return exp ;
 	}
 
 	@Override
 	public Object visit(ASTCppForStatement node, Object data) {
 		IASTForStatement stmt = node.getNode();
-		
+
 		// Get the initializer (for(initializer;;)).
 		Statement init = helper.visitStatement(stmt.getInitializerStatement(), this, data);
 		// Get the condition (for(;condition;)).
@@ -756,13 +760,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 		Statement iter = helper.visitExpression(stmt.getIterationExpression(), this, data);
 		// Get the body (for(;;){body}).
 		Statement body = helper.visitStatement(stmt.getBody(), this, data);
-		
+
 		// Rebuild if empty.
 		if(init == null) init = new Block();
 		if(cond == null) cond = new Constant(TypeBool.INSTANCE, "");
 		if(iter == null) iter= new Block();
 		if(body == null) body = new Block();
-		
+
 		// Return a for statement.
 		return new For(init, cond, iter, body);
 	}
@@ -779,7 +783,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Get the else clause (if(){}else{else clause}).
 		Statement elseC = helper.visitStatement(stmt.getElseClause(), this, data);
-		
+
 		// Return a if statement.
 		return new If(cond, thenC, elseC);
 	}
@@ -787,10 +791,10 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppReturnStatement node, Object data) {
 		IASTReturnStatement stmt = node.getNode();
-		
+
 		// Get the expression returned (return expression).
 		Expression ret = helper.visitExpression(stmt.getReturnValue(), this, data);
-		
+
 		// Return a return statement.
 		return new Return(ret);
 	}
@@ -798,13 +802,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppWhileStatement node, Object data) {
 		IASTWhileStatement stmt = node.getNode();
-		
+
 		// Get the condition (while(condition){}).
 		Expression cond = helper.visitExpression(stmt.getCondition(), this, data);
-		
+
 		// Get the body (while(){body}).
 		Statement body = helper.visitStatement(stmt.getBody(), this, data);
-		
+
 		// Return a while statement.
 		return new While(cond, body);
 	}
@@ -812,7 +816,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppSwitchStatement node, Object data) {
 		IASTSwitchStatement stmt = node.getNode();
-		
+
 		// Unimplemented in GOOL (generate an error).
 		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature());
 	}
@@ -824,21 +828,21 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Visit the block try.
 		Statement tryStmt = helper.visitStatement(
 				stmt.getTryBody(), this, data);
-		
+
 		// Visits the catches statements.
 		// Normaly it is catch statement.
 		List<Statement> stmts = helper.visitStatements(
 				stmt.getCatchHandlers(), this, data) ; 
-		
+
 		// Check if its catch statements.
 		List<Catch> catches = new ArrayList<Catch>();
 		for(Statement catchStmt : stmts){
 			if(catchStmt instanceof Catch)
 				catches.add((Catch) catchStmt);
 			else
-				System.out.println("Catches Error");
+				Log.w("Catches Error");
 		}
-		
+
 		// Return the new try catch finally statement.
 		return new Try(catches, (Block) tryStmt, new Block());
 	}
@@ -850,11 +854,11 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Gets the parameters of the cath.
 		List<VarDeclaration> parameters =  (List<VarDeclaration>) helper.visitDeclaration(
 				stmt.getDeclaration(), this, data);
-		
+
 		// Gets the body associated of the catch.
 		Statement catchStmt = helper.visitStatement(
 				stmt.getCatchBody(), this, data);
-		
+
 		// Check the number of parameters.
 		if(parameters.size() == 0){
 			// 0 parameter, in the catch.
@@ -869,7 +873,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 						"Multiple parameter in a catch");
 			}
 		}
-		
+
 		// Return the catch statement.
 		return new Catch(parameters.get(0), (Block) catchStmt);
 	}
@@ -878,7 +882,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppExpression node, Object data) {
 		IASTExpression exp = node.getNode();
-		
+
 		// Unimplemented in GOOL (generate an error).
 		return new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature());
 	}
@@ -890,10 +894,10 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Gets the dims access.
 		List<Expression> expsArray = helper.visitExpressionsParameters(
 				exp.getChildren(), this, data);
-		
+
 		// Gets the array expression.
 		Expression expArray = helper.visitExpression(exp.getArrayExpression(), this, data);
-		
+
 		// Return a array access.
 		return new ArrayAccess(expArray, expsArray.get(1));
 	}
@@ -901,7 +905,6 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppBinaryExpression node, Object data) {
 		IASTBinaryExpression binExp = node.getNode();
-		
 		// Case : is the assign operator.
 		if(helper.isAssignOperator(binExp.getOperator())){
 			// Gets the left expression.
@@ -918,12 +921,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 			// Gets the operator, and its symbol, of the expression.
 			Operator op = helper.convertBinaryOperator(binExp.getOperator());
 			String symbol = helper.getSymboleBinaryOperator(binExp.getOperator()) ;
-
+			org.eclipse.cdt.core.dom.ast.IType expType = binExp.getExpressionType();
+			Log.d(String.format("<CppRecognizer -- visit(ASTCppBinaryExpression...)> %s",
+					ASTTypeUtil.getType(expType)));
 			// Gets the context.
-			Context context = ((Context)data) ; 
-
+			Context context = ((Context)data) ;
 			// Gets the type of the expression.
-			IType type = helper.convertTypeGool(binExp.getExpressionType(), context.nameSpec);
+			IType type = helper.convertTypeGool(expType, context.nameSpec);
 
 			// Gets the left expression.
 			Expression exp1 = helper.visitExpression(binExp.getOperand1(), this, data);
@@ -939,28 +943,35 @@ public class CppRecognizer implements IVisitorASTCpp {
 			// Gets the operator, and its symbol, of the expression.
 			Operator op = helper.convertBinaryOperator(binExp.getOperator());
 			String symbol = helper.getSymboleBinaryOperator(binExp.getOperator()) ;
-
+			org.eclipse.cdt.core.dom.ast.IType expType = binExp.getExpressionType();
+			Log.d(String.format("<CppRecognizer -- visit(ASTCppBinaryExpression...)> %s",
+					ASTTypeUtil.getType(expType)));
 			// Gets the context.
 			Context context = ((Context)data) ; 
-			
+
 			// Gets the type of the expression.
-			IType type = helper.convertTypeGool(binExp.getExpressionType(), context.nameSpec);
+			IType type = helper.convertTypeGool(expType, context.nameSpec);
 
 			// Gets the left expression.
 			Expression exp1 = helper.visitExpression(binExp.getOperand1(), this, data);
+			String exp1Code = binExp.getOperand1().getRawSignature();
 
 			// Gets the right expression.
 			Expression exp2 = helper.visitExpression(binExp.getOperand2(), this, data);
+			String exp2Code = binExp.getOperand2().getRawSignature();
 
+			Log.d(String.format("<CppRecognizer -- visit(ASTCppBinaryExpression...)> %s | %s | %s", 
+					exp1Code, symbol.toString(), exp2Code));
 			// Treat the case is System.out call.
 			if(symbol.compareTo("<<") == 0){
-				
+				Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> << operator.");
 				// Convert std::endl
-				if(exp2.toString().compareTo("std::endl") == 0){
+				if(exp2Code.compareTo("std::endl") == 0){
 					exp2 = new Constant(TypeString.INSTANCE, "\n") ;
 				}
 				// Case : add parameters.
 				if(exp1 instanceof SystemOutPrintCall){
+					Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> --> SystemOutPrintCall");
 					SystemOutPrintCall sysPrint = ((SystemOutPrintCall)exp1);
 					sysPrint.getParameters().set(0,
 							new BinaryOperation(Operator.PLUS, sysPrint.getParameters().get(0), 
@@ -968,14 +979,14 @@ public class CppRecognizer implements IVisitorASTCpp {
 					return sysPrint;
 				}
 				// Case : create SystemOutPrintCall.
-				else if(exp1.toString().compareTo("std::cout") == 0){
+				else if(exp1Code.compareTo("std::cout") == 0){
 					methActive.getClassDef().addDependency(new SystemOutDependency());
 					SystemOutPrintCall target = new SystemOutPrintCall();
 					target.addParameter(exp2) ;
 					return target ;
 				}
 			}
-			
+
 			// Return a binary expression.
 			return new BinaryOperation(op, exp1, exp2, type, symbol);
 		}
@@ -987,13 +998,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Gets the context.
 		Context context = ((Context)data) ; 
-		
+
 		// Get the type of the cast.
 		IType targetType = helper.convertTypeGool(expCast.getExpressionType(), context.nameSpec);
-		
+
 		// Get the casted expression.
 		Expression exp = helper.visitExpression(expCast.getOperand(), this, data);
-		
+
 		// Return a cast expression.
 		return new CastExpression(targetType, exp);
 	}
@@ -1001,7 +1012,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppConditionalExpression node, Object data) {
 		IASTConditionalExpression exp = node.getNode();
-		
+
 		// Unimplemented in GOOL (generate an error).
 		return new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature());
 	}
@@ -1009,7 +1020,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppExpressionList node, Object data) {
 		IASTExpressionList exp = node.getNode();
-		
+
 		// Unimplemented in GOOL (generate an error).
 		return new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature());
 	}
@@ -1020,17 +1031,17 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Gets the context.
 		Context context = ((Context)data) ; 
-		
+
 		// Gets the type of the expression.
 		gool.ast.type.IType type = helper.convertTypeGool(
 				exp.getExpressionType(), context.nameSpec);
-		
+
 		// Gets the name of the field.
 		String member = helper.visitName(exp.getFieldName(), this, data);
-		
+
 		// Gets the target.
 		Expression target = helper.visitExpression(exp.getFieldOwner(), this, data);
-		
+
 		// Case recognized method.
 		String methodGool = RecognizerMatcher.matchMethod(
 				helper.transformMethodMathcherInvocation(
@@ -1038,7 +1049,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 		if(methodGool != null){
 			context.methGool = methodGool ;
 		}
-		
+
 		// Return a field access.
 		return new FieldAccess(type, target, member);
 	}
@@ -1049,21 +1060,21 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Gets the context.
 		Context context = ((Context)data) ; 
-		
+
 		// Gets the type of the expression.
 		gool.ast.type.IType type = helper.convertTypeGool(
 				exp.getExpressionType(), context.nameSpec);
 
 		// The target object in the method invocation.
 		Expression target = null;
-		
+
 		// The method invocation.
 		Meth meth = null;
-		
+
 		// Visit expression.
 		Expression expAccess = helper.visitExpression(
 				exp.getFunctionNameExpression(), this, data);
-		
+
 		// Case : method.
 		if(expAccess instanceof FieldAccess){
 			meth = new Meth(type,((FieldAccess)expAccess).getMember());
@@ -1081,17 +1092,17 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Gets the parameters lists of the invocation.
 		List<Expression> params = helper.visitExpressionsParameters(
 				Arrays.copyOfRange(exp.getChildren(), 1, exp.getChildren().length), this, data) ;
-		
+
 		// Create the method invocation.
 		MethCall toReturn = MethCall.create(type, target, meth, null);
 		toReturn.addParameters(params);
-		
+
 		// Case : the method is in the gool library.
 		if(context.methGool != null){
 			toReturn.setGoolLibraryMethod(context.methGool);
 			context.methGool = null ; 
 		}
-		
+
 		// Return a method invocation.
 		return toReturn;
 	}
@@ -1102,14 +1113,14 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Gets the context.
 		Context context = ((Context)data) ; 
-		
+
 		// Gets the type of the expression.
 		gool.ast.type.IType type = helper.convertTypeGool(
 				exp.getExpressionType(), context.nameSpec);
-		
+
 		// Gets the name of the identifier.
 		String name = helper.visitName(exp.getName(), this, data);
-		
+
 		// Treat the case : static field access (refactoring).
 		if(exp.getName().isReference()){
 			IBinding bind = exp.getName().resolveBinding() ;
@@ -1123,7 +1134,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 				}
 			}
 		}
-				
+
 		// Return a identifier.
 		return new Identifier(type, name);
 	}
@@ -1134,14 +1145,14 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Gets the context.
 		Context context = ((Context)data) ; 
-		
+
 		// Case the expression is a this.
 		if(exp.getRawSignature().toString().compareTo("this") == 0){
 			// Return the this expression.
 			return new This(helper.convertTypeGool(
-				exp.getExpressionType(), context.nameSpec));
+					exp.getExpressionType(), context.nameSpec));
 		}
-		
+
 		// Return a constant expression.
 		return new Constant( helper.convertTypeGool(
 				exp.getExpressionType(), context.nameSpec), 
@@ -1154,24 +1165,24 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Gets the context.
 		Context context = ((Context)data) ; 
-		
+
 		// Gets the operator, and its symbol, of the expression.
 		Operator op = helper.convertUnaryOperator(unExp.getOperator());
 		String symbol = helper.getSymboleUnaryOperator(unExp.getOperator()) ;
-		
+
 		// Gets the type of the expression.
 		IType type = helper.convertTypeGool(
 				unExp.getExpressionType(), context.nameSpec);
-		
+
 		// Gets the expression.
 		Expression exp = helper.visitExpression(unExp.getOperand(), this, data);
-		
+
 		// Case : it is a throw.
 		if(symbol.compareTo("throw") == 0){
 			// Return a throw expression.
 			return new Throw(exp);
 		}
-		
+
 		// Return a unary expression. 
 		return new UnaryOperation(op, exp, type, symbol);
 	}
@@ -1185,7 +1196,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppInitializerExpression node, Object data) {
 		IASTEqualsInitializer init = node.getNode();
-		
+
 		// Gets the initializer expression.
 		Expression exp = helper.visitExpression(
 				(IASTExpression) init.getChildren()[0], this, data);
@@ -1197,7 +1208,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppConstructorInitializer node, Object data) {
 		ICPPASTConstructorInitializer init = node.getNode();
-		
+
 		// Visit expressions if exists and return a classNew.
 		return helper.visitExpressions(init.getChildren(), this, data);
 	}
@@ -1205,13 +1216,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 	@Override
 	public Object visit(ASTCppParameterDeclaration node, Object data) {
 		IASTParameterDeclaration dec = node.getNode();
-		
+
 		// Visit the declaration specifier of the parameter.
 		helper.visitDeclSpecifier(dec.getDeclSpecifier(), this, data);
-		
+
 		// Visit the declarator of the parameter.
 		helper.visitDeclarator(dec.getDeclarator(), this, data);
-		
+
 		return null;
 	}
 
@@ -1220,5 +1231,5 @@ public class CppRecognizer implements IVisitorASTCpp {
 		String nameSpec ;
 		String methGool ;
 	}
-	
+
 }

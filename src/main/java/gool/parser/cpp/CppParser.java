@@ -6,6 +6,7 @@ import gool.ast.core.ClassDef;
 import gool.recognizer.cpp.CppRecognizer;
 import gool.recognizer.cpp.CppRecognizerImport;
 import gool.recognizer.cpp.ast.ASTCppNode;
+import logger.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,11 +51,11 @@ public class CppParser extends ParseGOOL {
 		if (visitor == null) {
 			throw new IllegalArgumentException("The gool visitor is null.");
 		}
-		
+		Log.d("\n\n****************** Start Main Scan *******************\n\n");
 		for(IASTTranslationUnit translationUnit : translationUnits){
 			ASTCppNode.transforme(translationUnit).accept(visitor,null);
 		}
-		
+		Log.d("\n\n****************** End Main Scan *******************\n\n");
 //		for (ClassDef classDef : visitor.getGoolClasses()) {
 //			classDef.getPlatform().registerCustomDependency(
 //					classDef.getName(), new ClassDef(classDef.getName() + ".h"));

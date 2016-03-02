@@ -20,6 +20,7 @@ package gool.recognizer.cpp.visitor;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 import gool.recognizer.cpp.ast.ASTCppNode;
+import logger.Log;
 
 /**
  * Helper of debug session for a C++ AST.
@@ -77,25 +78,28 @@ public class DebugASTCpp {
 	}
 	
 	public void printAstIfYouWant(EASTstatu statu, String nodeName, ASTCppNode node){
+		String toPrint;
 		if(isPrintAstCDT()){
 			switch (statu) {
 			case LEAVE:
 				printer_tab-- ;
+				toPrint = "";
 				for(int i = 0 ; i < printer_tab ; i++)
-					System.out.print("--");
-				System.out.print("leave" + " : " + nodeName);
+					toPrint += "--";
+				toPrint += "leave" + " : " + nodeName;
 				if(isPrintAstCDTType())
-					System.out.print(" -> " + node.getClass().getName());
-				System.out.println();
+					toPrint += " -> " + node.getClass().getName();
+				Log.d(toPrint);
 				break;
 
 			case VISIT:
+				toPrint = "";
 				for(int i = 0 ; i < printer_tab ; i++)
-					System.out.print("--");
-				System.out.print("visit" + " : " + nodeName);
+					toPrint += "--";
+				toPrint += "visit" + " : " + nodeName;
 				if(isPrintAstCDTType())
-					System.out.print(" -> " + node.getClass().getName());
-				System.out.println();
+					toPrint += " -> " + node.getClass().getName();
+				Log.d(toPrint);
 				printer_tab++ ;
 				break; 
 				
@@ -108,7 +112,7 @@ public class DebugASTCpp {
 	
 	public void printChildrenTypes(IASTNode[] children){
 		for(IASTNode child : children){
-			System.out.println(child.getClass());
+			Log.d(child.getClass().toString());
 		}
 	}
 	

@@ -28,6 +28,7 @@ import gool.recognizer.common.RecognizerMatcher;
 import gool.recognizer.cpp.ast.ASTCppNode;
 import gool.recognizer.cpp.ast.other.ASTCppIncludeStatement;
 import gool.recognizer.cpp.ast.other.ASTCppTranslationUnit;
+import logger.Log;
 
 /**
  * This class is the recognizer for the import of the language C++. It is used
@@ -66,7 +67,7 @@ public class CppRecognizerImport extends CppRecognizer {
 					filesAdd.addAll(toAdd);
 			}
 			else
-				System.out.println("Impossible de visiter : " + incAst.getClass());
+				Log.w("Impossible de visiter : " + incAst.getClass());
 		}
 		return null;
 	}

@@ -166,7 +166,7 @@ public class RecognizerMatcher {
 				MethodMatchTable.put(goolMethod, inputMethodSignatures);
 			}
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			Log.w(e);
 		}
 		Log.d("<RecognizerMatcher - enableRecognition> Print Match Tables : \n" + printMatchTables()); 
 	}
@@ -200,7 +200,7 @@ public class RecognizerMatcher {
 			}
 			br.close();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			Log.w(e);
 		}
 		return imports;
 	}
@@ -230,7 +230,7 @@ public class RecognizerMatcher {
 			}
 			br.close();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			Log.w(e);
 		}
 		
 		return goolClasses;
@@ -257,7 +257,7 @@ public class RecognizerMatcher {
 			}
 			br.close();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			Log.w(e);
 		}
 		return goolMethods;
 	}

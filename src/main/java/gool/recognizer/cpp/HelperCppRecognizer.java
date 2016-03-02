@@ -92,6 +92,7 @@ import gool.recognizer.cpp.ast.other.ASTCppIncludeStatement;
 import gool.recognizer.cpp.ast.other.ASTCppParameterDeclaration;
 import gool.recognizer.cpp.ast.statement.ASTCppStatement;
 import gool.recognizer.cpp.visitor.IVisitorASTCpp;
+import logger.Log;
 
 public class HelperCppRecognizer {
 
@@ -119,7 +120,7 @@ public class HelperCppRecognizer {
 			((ASTCppIncludeStatement)incNode).accept(visistor, data);
 		}
 		else
-			System.out.println("Impossible de visiter : " + incAst.getClass());
+			Log.w("Impossible de visiter : " + incAst.getClass());
 	}
 	
 	public List<Dec> visitDeclarations(IASTDeclaration[] decsAst, IVisitorASTCpp visistor, Object data){
@@ -138,7 +139,7 @@ public class HelperCppRecognizer {
 			return ((ASTCppDeclaration)decNode).accept(visistor, data);
 		}
 		else
-			System.out.println("Impossible de visiter : " + decAst.getClass());
+			Log.w("Impossible de visiter : " + decAst.getClass());
 		return null ;
 	}
 	
@@ -150,7 +151,7 @@ public class HelperCppRecognizer {
 				return (Modifier) ((ASTCppVisibilityLabel)decNode).accept(visistor, data);
 			}
 			else if(!(decNode instanceof ASTCppDeclaration))
-				System.out.println("Impossible de visiter : " + dec.getClass());
+				Log.w("Impossible de visiter : " + dec.getClass());
 		}
 		return toReturn ;
 	}
@@ -161,7 +162,7 @@ public class HelperCppRecognizer {
 			return ((Dec) ((ASTCppDeclarator)decNode).accept(visistor, data));
 		}
 		else
-			System.out.println("Impossible de visiter : " + decAst.getClass());
+			Log.w("Impossible de visiter : " + decAst.getClass());
 		return null ;
 	}
 	
@@ -171,7 +172,7 @@ public class HelperCppRecognizer {
 			return ((ASTCppDeclSpecifier)decSpecNode).accept(visistor, data);
 		}
 		else
-			System.out.println("Impossible de visiter : " + decSpecAst.getClass());
+			Log.w("Impossible de visiter : " + decSpecAst.getClass());
 		return null ;
 	}
 	
@@ -183,7 +184,7 @@ public class HelperCppRecognizer {
 			return (Expression) ((ASTCppExpression)expNode).accept(visistor, data);
 		}
 		else
-			System.out.println("Impossible de visiter : " + expAst.getClass());
+			Log.w("Impossible de visiter : " + expAst.getClass());
 		return null ;
 	}
 	
@@ -195,7 +196,7 @@ public class HelperCppRecognizer {
 			return (Statement) ((ASTCppExpression)expNode).accept(visistor, data);
 		}
 		else
-			System.out.println("Impossible de visiter : " + expAst.getClass());
+			Log.w("Impossible de visiter : " + expAst.getClass());
 		return null ;
 	}
 	
@@ -235,7 +236,7 @@ public class HelperCppRecognizer {
 				toReturn.add((Field) ((ASTCppEnumerator)enumNode).accept(visistor, data));
 			}
 			else
-				System.out.println("Impossible de visiter : " + enumAst.getClass());
+				Log.w("Impossible de visiter : " + enumAst.getClass());
 		}
 		return toReturn ;
 	}
@@ -250,7 +251,7 @@ public class HelperCppRecognizer {
 				toReturn.add((Statement) ((ASTCppStatement)stmtNode).accept(visistor, data));
 			}
 			else
-				System.out.println("Impossible de visiter : " + stmtAst.getClass());
+				Log.w("Impossible de visiter : " + stmtAst.getClass());
 		}
 		return toReturn ;
 	}
@@ -263,7 +264,7 @@ public class HelperCppRecognizer {
 			return (Statement) ((ASTCppStatement)stmtNode).accept(visistor, data);
 		}
 		else
-			System.out.println("Impossible de visiter : " + stmtAst.getClass());
+			Log.w("Impossible de visiter : " + stmtAst.getClass());
 		return null ;
 	}
 	
@@ -273,7 +274,7 @@ public class HelperCppRecognizer {
 			return (String) ((ASTCppName)nameNode).accept(visistor, data);
 		}
 		else
-			System.out.println("Impossible de visiter : " + nameAst.getClass());
+			Log.w("Impossible de visiter : " + nameAst.getClass());
 		return null ;
 	}
 	
@@ -283,7 +284,7 @@ public class HelperCppRecognizer {
 			return (Expression) ((ASTCppInitializer)initNode).accept(visistor, data);
 		}
 		else if(initNode != null)
-			System.out.println("Impossible de visiter : " + initAst.getClass());
+			Log.w("Impossible de visiter : " + initAst.getClass());
 		return null ;
 	}
 	
@@ -970,21 +971,37 @@ public class HelperCppRecognizer {
 		String type = "" ;
 		
 		if(typeName == null)
-			type = typeAst.toString();
+			type = ASTTypeUtil.getType(typeAst);
 		else
 			type = typeName;
 		
+		Log.d("<HelperCppRecognizer -- convertTypePrimitiveGool> type = <" + type + ">");
+		
+		if (type.compareTo("?") == 0) return new TypeUnknown("UNKNOWN");
 		if (type.compareTo("int") == 0) return TypeInt.INSTANCE;
+		if (type.compareTo("const int") == 0) return TypeInt.INSTANCE;
 		if (type.compareTo("void") == 0) return TypeVoid.INSTANCE;
+		if (type.compareTo("const void") == 0) return TypeVoid.INSTANCE;
 		if (type.compareTo("char") == 0) return TypeChar.INSTANCE;
+		if (type.compareTo("const char") == 0) return TypeChar.INSTANCE;
+		if (type.replaceAll("\\s+","").startsWith("constchar[")) return TypeString.INSTANCE;
 		if (type.compareTo("std::string") == 0) return TypeString.INSTANCE;
+		if (type.compareTo("string") == 0) return TypeString.INSTANCE;
+		if (type.compareTo("const std::string") == 0) return TypeString.INSTANCE;
+		if (type.compareTo("const string") == 0) return TypeString.INSTANCE;
 		if (type.compareTo("short") == 0) return TypeInt.INSTANCE; /* short -> int */ 
+		if (type.compareTo("const short") == 0) return TypeInt.INSTANCE; /* short -> int */ 
 		if (type.compareTo("long") == 0) return TypeInt.INSTANCE; /* long -> int */ 
-		if (type.compareTo("float") == 0) return TypeDecimal.INSTANCE; /* float -> decimal */ 
-		if (type.compareTo("double") == 0) return TypeDecimal.INSTANCE; /* double -> decimal */ 
+		if (type.compareTo("const long") == 0) return TypeInt.INSTANCE; /* long -> int */ 
+		if (type.compareTo("float") == 0) return TypeDecimal.INSTANCE; /* float -> decimal */
+		if (type.compareTo("const float") == 0) return TypeDecimal.INSTANCE; /* float -> decimal */ 
+		if (type.compareTo("double") == 0) return TypeDecimal.INSTANCE; /* double -> decimal */  
+		if (type.compareTo("const double") == 0) return TypeDecimal.INSTANCE; /* double -> decimal */ 
 		if (type.compareTo("signed") == 0) return TypeInt.INSTANCE; /* signed -> int */ 
+		if (type.compareTo("const signed") == 0) return TypeInt.INSTANCE; /* signed -> int */ 
 		if (type.compareTo("unsigned") == 0) return TypeInt.INSTANCE; /*unsigned -> int */ 
-		if (type.compareTo("boolean") == 0) return TypeBool.INSTANCE;
+		if (type.compareTo("const unsigned") == 0) return TypeInt.INSTANCE; /*unsigned -> int */ 
+		if (type.compareTo("const bool") == 0) return TypeBool.INSTANCE;
 		if (type.compareTo("bool") == 0) return TypeBool.INSTANCE;
 		
 		if(type.contains("*"))
@@ -994,6 +1011,9 @@ public class HelperCppRecognizer {
 			return new TypeUnknown("UNKNOWN");
 		if(typeUnknown)
 			return new TypeUnknown(typeName);
+		
+		Log.w("<HelperCppRecognizer -- convertTypePrimitiveGool> Cannot recognize " + type);
+		
 		return new TypeVar(typeName);
 	}
 	/**
