@@ -45,10 +45,6 @@ dependencies {
 	compile name: 'diffutils-1.2.1'
 }
 
-test {
-    systemProperties 'property': 'value'
-}
-
 uploadArchives {
     repositories {
        flatDir {
@@ -71,12 +67,18 @@ run {
         args appProp
     }
     if (System.getProperty('DEBUG', 'false') == 'true') {
-        jvmArgs '-Xdebug',
-            '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006'
+        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5006'
     }
 }
 
-/*sourceSets{
+test {
+	systemProperties 'property': 'value'
+	if (System.getProperty('DEBUG', 'false') == 'true') {
+        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
+    }
+}
+
+sourceSets{
 	main {
 		java {
 			srcDir 'src/main/java'
@@ -93,4 +95,4 @@ run {
 			exclude 'GoolTestCpp.java'			
 		}
 	}
-}*/
+}

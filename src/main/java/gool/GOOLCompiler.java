@@ -47,6 +47,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -122,21 +123,21 @@ public class GOOLCompiler {
 			//Set the desired platform and generate files strings
 			Platform plt = null;
 			Map<String, String> outputFiles = new HashMap<String, String>();
-//			/**** C++ ****/
-//			plt = CppPlatform.getInstance(filesToExclude, Settings.get("cpp_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** C# ****/
-//			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** java ****/
-//			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** C++ ****/
+			plt = CppPlatform.getInstance(filesToExclude, Settings.get("cpp_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** C# ****/
+			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** java ****/
+			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			/**** ObjC ****/
 			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** Python ****/
-//			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** Python ****/
+			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			
 			//print files
 			printFiles(outputFiles);
@@ -197,14 +198,41 @@ public class GOOLCompiler {
 		return GOOLCompiler.abstractGool2Target(goolPort, plt);
 	}
 
-	
+	/**
+	 * Taking concrete Language into concrete Target is done in two steps: - we
+	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
+	 * GOOL into concrete Target. Notice that the Target is specified at this
+	 * stage already: it will be carried kept in the abstract GOOL. This choice
+	 * is justified if we want to do multi-platform compilation, i.e. have some
+	 * pieces of the abstract GOOL to compile in some Target, and another piece
+	 * is some other Target.
+	 * 
+	 * @param parserIn
+	 * 			  : the Parser of the source language (It extends ParseGOOL)
+	 * @param outPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Language, as a string
+	 * @return a map of the compiled files for the different platforms
+	 * @throws Exception
+	 */
+	public Map<Platform, List<File>> runGOOLCompiler(ParseGOOL parserIn, 
+			Platform outPlatform, Map<String, String> input) throws Exception {		
+		Collection<ClassDef> classDefs = GOOLCompiler.concreteToAbstractGool(parserIn, input);
+		Map<String, String> files = GOOLCompiler.abstractGool2Target(classDefs, outPlatform);
+		Map<Platform, List<File>> ret = new HashMap<Platform, List<File>>();
+		ret.put(outPlatform, printFiles(files));
+		return ret;
+	}
+
 	
 	/**
 	 * Print a list of files
 	 * @param files : map with absolute file's names as key and code as values
 	 * @throws FileNotFoundException
 	 */
-	public static void printFiles(Map<String, String> files) throws FileNotFoundException, SecurityException{
+	public static List<File> printFiles(Map<String, String> files) throws FileNotFoundException, SecurityException{
+		List<File> output = new ArrayList<File>();
 		for (Entry<String, String> entry : files.entrySet()){
 			File f = new File(entry.getKey());
 			File dir = f.getParentFile();
@@ -213,7 +241,9 @@ public class GOOLCompiler {
 			PrintWriter writer = new PrintWriter(f);
 			writer.println(entry.getValue());
 			writer.close();
+			output.add(f);
 		}
+		return output;
 	}
 	
 	/**
@@ -291,24 +321,33 @@ public class GOOLCompiler {
 		ArrayList<File> infiles = (ArrayList<File>) getFilesInFolder(folder, inputLanguage,
 				fileToExclude);
 		for (File f:infiles){
-			String code = "";
-			try{
-				if (f.canRead()){
-					FileReader fr = new FileReader(f);
-					BufferedReader gr = new BufferedReader(fr);
-					String ligne;
-					while ((ligne = gr.readLine()) != null){
-						code += ligne + "\n";
-					}
-					gr.close();
-				}
-			}catch (Exception e) {
-				Log.e(e);
-			}
-			input.put(f.getName(), code);
+			input.put(f.getName(), readFile(f));
 		}
 
 		return input;
+	}
+	
+	/**
+	 * Read the content of a file and return it in a string
+	 * @param File f
+	 * @return String file content
+	 */
+	public static String readFile(File f){
+		String code = "";
+		try{
+			if (f.canRead()){
+				FileReader fr = new FileReader(f);
+				BufferedReader gr = new BufferedReader(fr);
+				String ligne;
+				while ((ligne = gr.readLine()) != null){
+					code += ligne + "\n";
+				}
+				gr.close();
+			}
+		}catch (Exception e) {
+			Log.e(e);
+		}
+		return code;
 	}
 
 	/**
