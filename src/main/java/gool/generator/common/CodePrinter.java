@@ -244,10 +244,13 @@ public abstract class CodePrinter {
 			return printGoolLibraryClass(pclass);
 		}
 		String outPutDir = ""; 
-		if (!getOutputDir().getName().isEmpty())
-			outPutDir = getOutputDir().getAbsolutePath() + File.separator +
-			StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
-			File.separator;
+		if (!getOutputDir().getName().isEmpty()){
+			outPutDir = getOutputDir().getAbsolutePath() + File.separator;
+			if (!pclass.getPackageName().isEmpty()){
+				outPutDir += StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
+				File.separator;
+			}
+		}
 
 		Map <String, String> result = new HashMap<String, String>();
 		/*
@@ -338,7 +341,7 @@ public abstract class CodePrinter {
 	public File getOutputDir() {
 		return outputDir;
 	}
-	
+
 
 	private static Map<Platform, CodePrinter> codePrinters = new HashMap<Platform, CodePrinter>();
 
@@ -431,7 +434,7 @@ public abstract class CodePrinter {
 			context.put("class", className);
 			context.put("macros", getTemplateDir() + "macros.vm");
 			context.put("Helper", GeneratorHelper.class);
-			
+
 			StringWriter writer = new StringWriter();
 			template.merge(context, writer);
 			return writer.toString();

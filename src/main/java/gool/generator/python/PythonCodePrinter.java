@@ -45,6 +45,7 @@ import java.util.Set;
 public class PythonCodePrinter extends CodePrinter {
 	
 	private static final String TEMPLATE_DIR = "gool/generator/python/templates/";
+	private boolean addgoolHelper = false;
 	
 	@Override
 	public String getTemplateDir() {
@@ -96,7 +97,8 @@ public class PythonCodePrinter extends CodePrinter {
 		if (!getOutputDir().getName().isEmpty())
 			outPutDir = getOutputDir().getAbsolutePath() +
 			File.separator;
-		res.putAll(getGoolHelperModule(outPutDir));
+		if (isAddgoolHelper())
+			res.putAll(getGoolHelperModule(outPutDir));
 		return res;
 	}
 
@@ -115,5 +117,13 @@ public class PythonCodePrinter extends CodePrinter {
 			if (!pyFiles.containsKey(initName))
 				pyFiles.put(initName, "");
 		}
+	}
+
+	public boolean isAddgoolHelper() {
+		return addgoolHelper;
+	}
+
+	public void setAddgoolHelper(boolean addgoolHelper) {
+		this.addgoolHelper = addgoolHelper;
 	}
 }

@@ -34,8 +34,8 @@ public class GoolTestTranslationFromJava {
 
 	//For each platform added in the list, one should complete compare_files 
 	private List<Platform> outPlatforms = Arrays.asList(
-			(Platform) CppPlatform.getInstance(),
-			(Platform) PythonPlatform.getInstance()
+			(Platform) CppPlatform.getInstance(Settings.get("cpp_out_dir")),
+			(Platform) PythonPlatform.getInstance(Settings.get("python_out_dir"))
 			);
 
 	private boolean runGoolCompilerOnOneJavaFile(String filename, Platform outPlatform){
@@ -63,9 +63,10 @@ public class GoolTestTranslationFromJava {
 		String javafilename = javain + classname + ".java";
 		createdFileList.add(javafilename);
 		try {
+			Log.d("----> " + javafilename);
 			FileManager.write(javafilename, s);
 		} catch(Exception e){
-			e.printStackTrace();
+			Log.e(e);
 			Assert.fail(e.getMessage());
 		}
 		for (Platform outPlatform : outPlatforms){
@@ -79,6 +80,7 @@ public class GoolTestTranslationFromJava {
 	private void compare_files(String classname, Platform outPlatform){
 		//C++
 		if (outPlatform instanceof CppPlatform){
+			Log.d("----> CppPlatform : " + Settings.get("cpp_out_dir"));
 			String reference = Settings.get("cpp_ref_dir") + classname + ".cpp";
 			String output_basename = Settings.get("cpp_out_dir") + classname;
 			String output = output_basename + ".cpp";
@@ -87,7 +89,7 @@ public class GoolTestTranslationFromJava {
 			try{
 				Assert.assertTrue(FileManager.compareFile(reference, output));
 			} catch(Exception e){
-				e.printStackTrace();
+				Log.e(e);
 				Assert.fail(e.getMessage());
 			}
 		}
@@ -99,7 +101,7 @@ public class GoolTestTranslationFromJava {
 			try{
 				Assert.assertTrue(FileManager.compareFile(reference, output));
 			} catch(Exception e){
-				e.printStackTrace();
+				Log.e(e);
 				Assert.fail(e.getMessage());
 			}
 		}

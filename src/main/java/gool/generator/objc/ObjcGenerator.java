@@ -862,8 +862,8 @@ CodeGeneratorNoVelocity {
 	public String printClass(ClassDef classDef) {
 		Log.MethodIn(Thread.currentThread());
 
-		String header = String.format("// Platform: %s\n\n",
-				classDef.getPlatform());
+		String header = "";
+		//String.format("// Platform: %s\n\n", classDef.getPlatform());
 
 
 		String body = "@implementation " + classDef.getName() + "\n\n";

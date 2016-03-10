@@ -154,7 +154,7 @@ CodeGeneratorNoVelocity {
 	 */
 	private ArrayList<String> localIndentifiers = new ArrayList<String>();
 
-	private static Set<String> customDependencies = new HashSet<String>();
+	private Set<String> customDependencies = new HashSet<String>();
 
 	public void addCustomDependency(String dep) {
 		customDependencies.add(dep);
@@ -236,8 +236,9 @@ CodeGeneratorNoVelocity {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
 			if (statement.toString().contains(
-					"goolHelper.Util.Scanner(System.in"))
+					"goolHelper.Util.Scanner(System.in")){
 				Log.e("mon stat :" + statement.toString());
+			}
 			result.append(printWithComment(statement));
 		}
 		return (String)Log.MethodOut(Thread.currentThread(),result.toString());
@@ -349,9 +350,11 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(ClassNew classNew) {
 		Log.MethodIn(Thread.currentThread());
-		if (classNew.getName().equals("goolHelper.Util.Scanner"))
+		if (classNew.getName().equals("goolHelper.Util.Scanner")){
+			((PythonCodePrinter) currentClass.getPlatform().getCodePrinter()).setAddgoolHelper(true);
 			return (String)Log.MethodOut(Thread.currentThread(),
 					String.format("%s()", classNew.getName()));
+		}
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s(%s)", classNew.getType(),
 						StringUtils.join(classNew.getParameters(), ", ")));
@@ -677,6 +680,7 @@ CodeGeneratorNoVelocity {
 		// all methods that aren't used by a wrapper have a header to
 		// allow inheritance when multiple methods have the same name
 		if (methodsNames.get(meth).equals(meth.getName())) {
+			((PythonCodePrinter) currentClass.getPlatform().getCodePrinter()).setAddgoolHelper(true);
 			prefix = formatIndented(
 					"if not goolHelper.test_args(args%s):\n%-1super(%s, self).%s(*args)\n%-1return\n",
 					printMethParamsTypes(meth, ", "), currentClass.getName(),
@@ -902,6 +906,7 @@ CodeGeneratorNoVelocity {
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Log.MethodIn(Thread.currentThread());
 		// TODO: what about the new 'print is a function' standard?
+		((PythonCodePrinter) currentClass.getPlatform().getCodePrinter()).setAddgoolHelper(true);
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("print %s",
 						StringUtils.join(systemOutPrintCall.getParameters(), ",")));
@@ -1154,9 +1159,12 @@ CodeGeneratorNoVelocity {
 
 	public String getDependenciesCode(ClassDef cl){
 		String res = "";
-		res += "import goolHelper\n";
-		res += "import goolHelper.IO\n";
-		res += "import goolHelper.Util\n";	
+		if (((PythonCodePrinter)cl.getPlatform().getCodePrinter()).isAddgoolHelper()){
+			res += "import goolHelper\n";
+			res += "import goolHelper.IO\n";
+			res += "import goolHelper.Util\n";
+		}
+		
 		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
 		dependencies.addAll(getCustomDependencies());
 		clearCustomDependencies();
@@ -1164,7 +1172,7 @@ CodeGeneratorNoVelocity {
 		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies){
 				if (dependency != "noprint"){
-					String incdep = String.format("from %s import *;", dependency);
+					String incdep = String.format("from %s import *", dependency);
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";
 				}
@@ -1251,7 +1259,10 @@ CodeGeneratorNoVelocity {
 					boolean first = true;
 					boolean someStatics = false;
 					boolean someDynamics = false;
-
+					
+					addCustomDependency("goolHelper");
+					((PythonCodePrinter) currentClass.getPlatform().getCodePrinter()).setAddgoolHelper(true);
+					
 					for (Meth m2 : meths) {
 
 						if (m2.getModifiers().contains(Modifier.STATIC))

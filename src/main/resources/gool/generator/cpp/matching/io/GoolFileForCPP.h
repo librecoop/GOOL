@@ -3,15 +3,17 @@
 
 
 #include <cstdio>
-#include <climits>
 #include <cstring>
-
+#include <string>
+#include <climits>
+#include <fstream>
+#include <iostream>
 
 
 class GoolFileForCPP  {
-		private:	std::string name = null ; 
+		private:	std::string name = "" ;
 
-		public: 	GoolFileImpl(std::string name);
+		public: 	GoolFileForCPP(std::string name);
 
 		public: 	bool createNewFile();
 

@@ -35,16 +35,6 @@ public final class Settings {
 	 */
 	private static Properties properties;
 
-	/**
-	 * TODO Do the documentation.
-	 */
-	private static String androidPackage;
-
-	/**
-	 * TODO Do the documentation.
-	 */
-	private static String androidMainActivity;
-
 	static {
 		load("gool/properties");
 	}
@@ -112,27 +102,6 @@ public final class Settings {
 	 */
 	public static String set(String property, String value){
 		return (String)properties.setProperty(property, value);
-	}
-
-	/**
-	 * TODO Do the documentation.
-	 */
-	public static void setAndroidPackage(String androidPackage) {
-		Settings.androidPackage = androidPackage;
-	}
-
-	/**
-	 * TODO Do the documentation.
-	 */
-	public static void setAndroidMainActivity(String androidMainActivity) {
-		Settings.androidMainActivity = androidMainActivity;
-	}
-
-	/**
-	 * TODO Do the documentation.
-	 */
-	public static String getAndroidRunCommand() {
-		return androidPackage + "/." + androidMainActivity.replace(".java", "");
 	}
 
 	/**

@@ -27,8 +27,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class ObjcPlatform extends Platform {
-	protected ObjcPlatform(Collection<File> myFile, String outputDir) {
-		super("OBJC", myFile, outputDir);
+
+	/**
+	 * Name of the directory where the ouput files will be written in.
+	 */
+	protected static String outputDir;
+	
+	public String getOutputDir() {
+
+		return outputDir;
+	}
+	
+	protected ObjcPlatform(Collection<File> myFile, String outDir) {
+		super("OBJC", myFile);
+		if (outDir == null)
+			outputDir = "";
+		else
+			outputDir = outDir;
 	}
 
 	@Override

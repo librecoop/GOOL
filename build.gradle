@@ -73,20 +73,15 @@ run {
 
 test {
 	systemProperties 'property': 'value'
-	if (System.getProperty('DEBUG', 'false') == 'true') {
-        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
-    }
+//	if (System.getProperty('DEBUG', 'false') == 'true') {
+//        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
+//    }
 }
 
 sourceSets{
 	main {
 		java {
 			srcDir 'src/main/java'
-		}
-		resources {
-			srcDir 'src/main/resources'
-			include '*.ini'
-			include '*.properties'
 		}
 	}
 	test {

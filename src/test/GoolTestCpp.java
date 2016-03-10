@@ -17,12 +17,14 @@
 
 package gool.test;
 
+import gool.Settings;
 import gool.generator.android.AndroidPlatform;
 import gool.generator.common.Platform;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.objc.ObjcPlatform;
+import gool.generator.python.PythonPlatform;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,12 +47,11 @@ public class GoolTestCpp {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			(Platform) JavaPlatform.getInstance()//,
-			//(Platform) CSharpPlatform.getInstance(),
-		//	(Platform) CppPlatform.getInstance()//,
-//			(Platform) PythonPlatform.getInstance() ,
-//			 (Platform) AndroidPlatform.getInstance() ,
-//			 (Platform) ObjcPlatform.getInstance()
+			(Platform) JavaPlatform.getInstance(Settings.get("java_out_dir"))//,
+//			(Platform) CSharpPlatform.getInstance(Settings.get("csharp_out_dir")),
+//			(Platform) PythonPlatform.getInstance(Settings.get("python_out_dir")),
+//			(Platform) CppPlatform.getInstance(Settings.get("cpp_out_dir")),
+//			(Platform) ObjcPlatform.getInstance(Settings.get("objc_out_dir"))
 
 			);
 

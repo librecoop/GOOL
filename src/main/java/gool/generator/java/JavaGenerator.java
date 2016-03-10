@@ -404,7 +404,7 @@ CodeGeneratorNoVelocity {
 
 	// @Override
 	public String printClass(ClassDef classDef) {
-		String header = String.format("// Platform: %s\n\n", classDef.getPlatform());
+		String header = "";//String.format("// Platform: %s\n\n", classDef.getPlatform());
 		// print the package containing the class
 		if (classDef.getPpackage() != null)
 			header += String.format("package %s;\n\n", classDef.getPackageName());

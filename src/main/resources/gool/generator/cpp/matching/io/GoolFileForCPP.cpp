@@ -1,32 +1,32 @@
 #include "GoolFileForCPP.h"
 
-GoolFileForCPP::GoolFileForCPP(std::string name){
-	this->name=name;
-}
+GoolFileForCPP::GoolFileForCPP(std::string nameIn)
+:
+name(nameIn)
+{}
 
 
 bool GoolFileForCPP::createNewFile(){
-	char filename[UINT_MAX];
-	strcpy(filename, this->name.c_str());
-	FILE* file = fopen (filename, "w+");
-	bool toReturn = (file == null);
-	fclose(file);
+	std::ofstream f;
+	f.open (name.c_str(), std::ios::out);
+	bool toReturn = (f.is_open());
+	f.close();
 	return toReturn;
 }
 
 
 bool GoolFileForCPP::exists(){
-	char filename[UINT_MAX];
-	strcpy(filename, this->name.c_str());
-	FILE* file = fopen (filename, "w");
-	bool toReturn = (file == null);
-	fclose(file);
-	return toReturn;
+	std::ifstream f(name.c_str());
+	if (f.good()) {
+		f.close();
+		return true;
+	} else {
+		f.close();
+		return false;
+	}
 }
 
 
 bool GoolFileForCPP::deleteFile(){
-	char filename[UINT_MAX];
-	strcpy(filename, this->name.c_str());
-	return remove(filename) != -1;
+	return !std::remove(name.c_str());
 }

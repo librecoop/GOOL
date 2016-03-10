@@ -453,7 +453,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				target=target.substring(0, target.lastIndexOf(".")+1)+methodName;
 		}
 		Log.d("<CommonCodeGenerator - getCode(MethCall)> target " + target);
-		return String.format("%s (%s)", target,
+		return String.format("%s(%s)", target,
 				StringUtils.join(methodCall.getParameters(), ", "));
 	}
 

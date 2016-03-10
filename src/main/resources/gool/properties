@@ -1,4 +1,3 @@
-#Thu Feb 04 14:23:53 CET 2016
 python_ref_dir=src/test/GOOLREFERENCEPYTHON/
 write_file_path=tests/GOOLOUTPUTANDROID/b.txt
 objc_compiler_lib=`gnustep-config --objc-flags` -lgnustep-base

@@ -28,8 +28,22 @@ import java.util.Collection;
 
 public final class CSharpPlatform extends Platform {
 
-	private CSharpPlatform(Collection<File> myFile, String outputDir) {
-		super("CSHARP", myFile, outputDir);
+	/**
+	 * Name of the directory where the ouput files will be written in.
+	 */
+	protected static String outputDir;
+	
+	public String getOutputDir() {
+
+		return outputDir;
+	}
+	
+	private CSharpPlatform(Collection<File> myFile, String outDir) {
+		super("CSHARP", myFile);
+		if (outDir == null)
+			outputDir = "";
+		else
+			outputDir = outDir;
 	}
 
 	@Override

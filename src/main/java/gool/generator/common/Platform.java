@@ -49,15 +49,7 @@ public abstract class Platform extends PrimitiveType {
 	 */
 	private CodePrinter codePrinter;
 	
-	/**
-	 * Name of the directory where the ouput files will be written in.
-	 */
-	protected static String outputDir;
 	
-	public String getOutputDir() {
-
-		return outputDir;
-	}
 	
 	/**
 	 * which gool.executor executes the generated concrete Target code.
@@ -76,7 +68,7 @@ public abstract class Platform extends PrimitiveType {
 	 * 
 	 * @param name
 	 */
-	protected Platform(String name, Collection<File> myFile, String outDir) {
+	protected Platform(String name, Collection<File> myFile) {
 		if (name == null || name.trim().length() == 0) {
 			throw new IllegalArgumentException(
 					"The name parameter can not be null or empty.");
@@ -86,10 +78,6 @@ public abstract class Platform extends PrimitiveType {
 			myFileToCopy = new ArrayList<File>();
 		else
 			myFileToCopy = myFile;
-		if (outDir == null)
-			outputDir = "";
-		else
-			outputDir = outDir;
 		
 		registeredPlatforms.put(name, this);
 	}

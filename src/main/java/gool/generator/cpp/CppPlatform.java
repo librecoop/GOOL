@@ -33,8 +33,22 @@ import java.util.Collection;
 public class CppPlatform extends Platform {
 	
 
-	public CppPlatform(Collection<File> myFile, String outputDir) {
-		super("CPP", myFile, outputDir);
+	/**
+	 * Name of the directory where the ouput files will be written in.
+	 */
+	protected static String outputDir;
+	
+	public String getOutputDir() {
+
+		return outputDir;
+	}
+	
+	public CppPlatform(Collection<File> myFile, String outDir) {
+		super("CPP", myFile);
+		if (outDir == null)
+			outputDir = "";
+		else
+			outputDir = outDir;
 	}
 
 	@Override

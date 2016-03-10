@@ -27,6 +27,7 @@ import gool.ast.core.Catch;
 import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
 import gool.ast.core.Constant;
+import gool.ast.core.Constructor;
 import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
 import gool.ast.core.Expression;
@@ -111,7 +112,7 @@ CodeGeneratorNoVelocity {
 		return type.replaceAll("[\\s*]+$", "");
 	}
 
-	private static Set<String> customDependencies = new HashSet<String>();
+	private Set<String> customDependencies = new HashSet<String>();
 
 	public void addCustomDependency(String dep) {
 		customDependencies.add(dep);
@@ -340,6 +341,7 @@ CodeGeneratorNoVelocity {
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Log.MethodIn(Thread.currentThread());
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
+		addCustomDependency("iostream");
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("std::cout << %s << std::endl",
@@ -775,10 +777,14 @@ CodeGeneratorNoVelocity {
 		// Remove (public, private, protected, final) invalid modifiers.
 		modifiers.remove(meth.getAccessModifier());
 		modifiers.remove(Modifier.FINAL);
-
+		String meth_pref = getCode(modifiers);
+		if (!meth_pref.isEmpty())
+			meth_pref += " ";
+		meth_pref += meth.getType().callGetCode();
+		if (!meth_pref.isEmpty())
+			meth_pref += " ";
 		return (String)Log.MethodOut(Thread.currentThread(), 
-				String.format("%s %s %s::%s(%s)", getCode(modifiers),
-						meth.getType(), meth.getClassDef().getName(), meth.getName(),
+				meth_pref + String.format("%s::%s(%s)", meth.getClassDef().getName(), meth.getName(),
 						StringUtils.join(meth.getParams(), ", ")));
 	}
 	@Override
@@ -831,7 +837,7 @@ CodeGeneratorNoVelocity {
 			res += "\n";
 		}
 		res += recogDependencies + "\n\n";
-		res += "#include \"finally.h\"\n";
+		//res += "#include \"finally.h\"\n";
 		res += String.format("#include \"%s.h\"\n", cl.getName());
 		return res;
 	}
@@ -840,9 +846,9 @@ CodeGeneratorNoVelocity {
 	public String printClass(ClassDef classDef) {
 		Log.MethodIn(Thread.currentThread());
 
-		String header = String.format("// Platform: %s\n\n",
-				classDef.getPlatform());
-
+//		String header = String.format("// Platform: %s\n\n",
+//				classDef.getPlatform());
+		String header = "";
 
 		String body = "";
 		// print the package containing the class
@@ -852,9 +858,9 @@ CodeGeneratorNoVelocity {
 		for (Meth meth : classDef.getMethods()) {
 			// TODO: deal with constructors ?
 			if (classDef.isInterface())
-				body += formatIndented("%-1%s;\n\n", meth.getHeader());
+				body += formatIndented("%s;\n\n", meth.getHeader());
 			else
-				body += formatIndented("%-1%s {%2%-1}\n\n", meth.getHeader(),
+				body += formatIndented("%s {%1}\n\n", meth.getHeader(),
 						meth.getBlock());
 		}
 		if (classDef.getPpackage() != null)

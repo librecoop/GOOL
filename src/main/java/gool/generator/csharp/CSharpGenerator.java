@@ -342,6 +342,7 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Log.MethodIn(Thread.currentThread());
+		addCustomDependency("System");
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("Console.WriteLine(%s)",
 						GeneratorHelper.joinParams(systemOutPrintCall.getParameters())));
@@ -662,7 +663,7 @@ CodeGeneratorNoVelocity {
 	//@Override
 	public String printClass(ClassDef classDef) {
 
-		String header = String.format("// Platform: %s\n\n", classDef.getPlatform());
+		String header = "";//String.format("// Platform: %s\n\n", classDef.getPlatform());
 
 		if (classDef.getPpackage() != null)
 			header += String.format("namespace %s;\n\n", classDef.getPackageName());

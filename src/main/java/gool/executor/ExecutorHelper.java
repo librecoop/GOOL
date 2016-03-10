@@ -67,15 +67,16 @@ public final class ExecutorHelper {
 		List<File> compiledFiles = ExecutorHelper.compile(files);
 
 		Log.i(compiledFiles.toString());
-
-		result.append(platform.getCompiler().run(compiledFiles.get(0)));
+		for (File f : compiledFiles){
+			result.append(platform.getCompiler().run(f));
+		}
 		return result.toString();
 	}
 
 	public static File getClassDefFile(ClassDef classDef) {
 		return new File(classDef.getPlatform().getCodePrinter().getOutputDir()
 				.getAbsolutePath(), StringUtils.replace(
-				classDef.getPackageName(), ".", File.separator));
+						classDef.getPackageName(), ".", File.separator));
 	}
 
 	public static List<File> compile(Map<Platform, List<File>> files)

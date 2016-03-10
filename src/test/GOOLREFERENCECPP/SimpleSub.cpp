@@ -1,23 +1,20 @@
 
 #include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
-//using boost::any_cast;
-
-#include "SimpleSub.h"
-
 #include <string>
 #include <iostream>
 
 
 
-  SimpleSub::SimpleSub(){
+#include "SimpleSub.h"
+
+SimpleSub::SimpleSub() {
 	
 }
 
-int main(){
+int main() {
 	int n = (6 - 2);
-std::cout << (n) << std::endl;
-
+	std::cout << (n) << std::endl;
 }
 
 

@@ -104,7 +104,8 @@ public class GeneratorHelper {
 			CodePrinter currentPrinter = CodePrinter.getPrinter(platform);
 			// Just compile each abstract GOOL class and add it to the map.
 			GeneratorMatcher.init(platform);
-			Log.d("<GeneratorHelper - printClassDefs> Print of classDef " + classDef.getName());
+			Log.d(String.format("<GeneratorHelper - printClassDefs> Print of classDef %s with printer %s",
+					classDef.getName(), currentPrinter.toString()));
 			compilationUnits.putAll(currentPrinter.print(classDef));
 		}
 

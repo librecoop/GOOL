@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.Assert;
 
@@ -63,7 +64,8 @@ public final class TestHelperJava {
 		GOOLCompiler gc = new GOOLCompiler();
 		Map<String, String> inputFiles = new HashMap<String, String>();
 		inputFiles.put(mainClassName, input);
-		Map<Platform, List<File>> files = gc.runGOOLCompiler(new JavaParser(), platform, inputFiles);
+		Map<Platform, List<File>> files = gc.runGOOLCompiler(new JavaParser(),
+				platform, inputFiles, mainClassName);
 		return ExecutorHelper.compileAndRun(platform, files);
 	}
 

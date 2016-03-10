@@ -12,7 +12,7 @@ import org.ini4j.Ini;
 public class Log {
 
 	private static int compt = 0;
-	static public Boolean DEBUG_LOG = false;
+	static public Boolean DEBUG_LOG = true;
 
 	// The instance
 	private static final Log log = new Log();
@@ -27,7 +27,7 @@ public class Log {
 
 	private Log(){
 		printers = new ArrayList<Printer>();
-
+		
 		// Read the config file
 		Ini ini;
 		try {

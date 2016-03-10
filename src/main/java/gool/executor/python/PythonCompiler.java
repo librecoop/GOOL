@@ -19,6 +19,7 @@ package gool.executor.python;
 
 import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
+import logger.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,6 +57,7 @@ public class PythonCompiler extends SpecificCompiler {
 		params.add("python");
 		params.add("-B"); // do not produce compiled files
 		params.add(file.getAbsolutePath());
+		Log.d("<PythonCompiler - run> python -B " + file.getAbsolutePath());
 		return Command.exec(getOutputDir(), params, env);
 	}
 

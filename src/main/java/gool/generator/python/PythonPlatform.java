@@ -28,8 +28,22 @@ import java.util.Collection;
 
 public class PythonPlatform extends Platform {
 
-	protected PythonPlatform(Collection<File> myFile, String outputDir) {
-		super("PYTHON", myFile, outputDir);
+	/**
+	 * Name of the directory where the ouput files will be written in.
+	 */
+	protected static String outputDir;
+
+	public String getOutputDir() {
+
+		return outputDir;
+	}
+
+	protected PythonPlatform(Collection<File> myFile, String outDir) {
+		super("PYTHON", myFile);
+		if (outDir == null)
+			outputDir = "";
+		else
+			outputDir = outDir;
 	}
 
 	@Override
@@ -63,11 +77,11 @@ public class PythonPlatform extends Platform {
 	public static PythonPlatform getInstance(Collection<File> myF) {
 		return getInstance(myF, outputDir);
 	}
-	
+
 	public static PythonPlatform getInstance(String outDir) {
 		return getInstance(myFileToCopy, outDir);
 	}
-	
+
 	public static PythonPlatform getInstance() {
 		if (myFileToCopy == null) {
 			myFileToCopy = new ArrayList<File>();

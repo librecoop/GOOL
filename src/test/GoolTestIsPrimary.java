@@ -23,6 +23,7 @@ import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.python.PythonPlatform;
+import logger.Log;
 import gool.generator.objc.ObjcPlatform;
 
 import java.util.ArrayList;
@@ -47,11 +48,11 @@ public class GoolTestIsPrimary {
 	 */
 	private List<Platform> platforms = Arrays.asList(
 
-			(Platform) JavaPlatform.getInstance(),
-			(Platform) CSharpPlatform.getInstance(),
-			(Platform) CppPlatform.getInstance(),
-			(Platform) PythonPlatform.getInstance()// ,
-			//			 (Platform) ObjcPlatform.getInstance()
+			(Platform) JavaPlatform.getInstance(Settings.get("java_out_dir")),
+			(Platform) CSharpPlatform.getInstance(Settings.get("csharp_out_dir")),
+			(Platform) PythonPlatform.getInstance(Settings.get("python_out_dir")),
+			(Platform) CppPlatform.getInstance(Settings.get("cpp_out_dir"))//,
+//			(Platform) ObjcPlatform.getInstance(Settings.get("objc_out_dir"))
 
 			);
 

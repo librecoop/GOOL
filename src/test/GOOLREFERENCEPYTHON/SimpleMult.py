@@ -5,6 +5,8 @@ import goolHelper.IO
 import goolHelper.Util
 
 
+
+
 class SimpleMult(object):
 
     def __init__(self):

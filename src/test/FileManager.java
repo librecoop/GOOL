@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import difflib.*;
+import logger.Log;
 
 public class FileManager {
 
@@ -23,9 +24,12 @@ public class FileManager {
 		if (!f.exists()) {
 			try{
 				f.getParentFile().mkdirs();
-				f.createNewFile();
+				if (!f.createNewFile())
+					Log.e("FileManager ----> " + fileName + "Not created");
 			}catch(IOException e){
-				throw new IOException(e.getMessage() + " with file " + fileName);				
+				throw new IOException(e.getMessage() + " with file " + fileName);
+			}catch (Exception e){
+				throw e;
 			}
 		}
 		BufferedWriter out = new BufferedWriter(new FileWriter(f));
@@ -71,7 +75,7 @@ public class FileManager {
 		// Compute diff. Get the Patch object. Patch is the container for computed deltas.
 		Patch patch = DiffUtils.diff(gold, test);
 		for (Delta delta: patch.getDeltas()) {
-			System.out.println(delta);
+			Log.e(" Goldfile " + goldfile + " is different than test file " + testfile + " at :" + delta.toString());
 			return false;
 		}
 		return true;

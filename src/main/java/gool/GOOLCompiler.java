@@ -27,6 +27,7 @@ package gool;
 
 import gool.ast.core.ClassDef;
 import gool.ast.core.Dependency;
+import gool.executor.ExecutorHelper;
 import gool.parser.cpp.CppParser;
 import gool.parser.java.JavaParser;
 import gool.generator.GeneratorHelper;
@@ -95,7 +96,7 @@ public class GOOLCompiler {
 			//The list of the files to process
 			Map<String, String> filesToProcess = getInputStrings(inputLanguage,
 					filesToExclude);
-			
+
 			//Recognition step
 			ParseGOOL parser = null;
 			if (inputLanguage.equalsIgnoreCase("java")) {
@@ -107,7 +108,7 @@ public class GOOLCompiler {
 			else{
 				throw new Exception("Unknown input language.");
 			}
-			
+
 			Collection<ClassDef> goolPort = GOOLCompiler.concreteToAbstractGool(parser,
 					filesToProcess);
 			Log.d("======== ClassDef found :");
@@ -117,9 +118,9 @@ public class GOOLCompiler {
 				for(Dependency dep : cl.getDependencies()){
 					Log.d("==> " + dep.callGetCode());
 				}
-				
+
 			}
-					
+
 			//Set the desired platform and generate files strings
 			Platform plt = null;
 			Map<String, String> outputFiles = new HashMap<String, String>();
@@ -138,10 +139,10 @@ public class GOOLCompiler {
 			/**** Python ****/
 			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-			
+
 			//print files
 			printFiles(outputFiles);
-			
+
 		}
 		catch (Exception e) {
 			String mess = e.toString();
@@ -151,6 +152,21 @@ public class GOOLCompiler {
 			}
 			Log.e(mess);
 		}
+	}
+	
+	public static String getLanguageExtension(Platform platform){
+		String lang = platform.getName();
+		if (lang.equalsIgnoreCase("java"))
+				return "java";
+		if (lang.equalsIgnoreCase("CSHARP"))
+			return "cs";
+		if (lang.equalsIgnoreCase("CPP"))
+			return "cpp";
+		if (lang.equalsIgnoreCase("python"))
+			return "py";
+		if (lang.equalsIgnoreCase("objc"))
+			return "m";
+		return "";
 	}
 
 	/**
@@ -179,11 +195,11 @@ public class GOOLCompiler {
 		else{
 			throw new Exception("Unknown input language.");
 		}
-		
+
 		//Recognition
 		goolPort = GOOLCompiler.concreteToAbstractGool(parser, input);
 
-		
+
 		if (outputLang.equalsIgnoreCase("cpp")) {
 			plt = CppPlatform.getInstance();
 		}
@@ -193,7 +209,7 @@ public class GOOLCompiler {
 		else{
 			throw new Exception("Unknown output language.");
 		}
-		
+
 		//Generation
 		return GOOLCompiler.abstractGool2Target(goolPort, plt);
 	}
@@ -201,11 +217,7 @@ public class GOOLCompiler {
 	/**
 	 * Taking concrete Language into concrete Target is done in two steps: - we
 	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
-	 * GOOL into concrete Target. Notice that the Target is specified at this
-	 * stage already: it will be carried kept in the abstract GOOL. This choice
-	 * is justified if we want to do multi-platform compilation, i.e. have some
-	 * pieces of the abstract GOOL to compile in some Target, and another piece
-	 * is some other Target.
+	 * GOOL into concrete Target. 
 	 * 
 	 * @param parserIn
 	 * 			  : the Parser of the source language (It extends ParseGOOL)
@@ -213,19 +225,64 @@ public class GOOLCompiler {
 	 *            : the Target language
 	 * @param input
 	 *            : the concrete Language, as a string
-	 * @return a map of the compiled files for the different platforms
+	 * @return a map of the compiled files for the different platforms. Actually
+	 * it contains only one key which is outPlatform.
 	 * @throws Exception
 	 */
 	public Map<Platform, List<File>> runGOOLCompiler(ParseGOOL parserIn, 
-			Platform outPlatform, Map<String, String> input) throws Exception {		
+			Platform outPlatform, Map<String, String> input) throws Exception {
 		Collection<ClassDef> classDefs = GOOLCompiler.concreteToAbstractGool(parserIn, input);
+		Log.d(String.format("<GOOLCompiler - runGOOLCompiler> platform %s", outPlatform.getName()));
 		Map<String, String> files = GOOLCompiler.abstractGool2Target(classDefs, outPlatform);
 		Map<Platform, List<File>> ret = new HashMap<Platform, List<File>>();
 		ret.put(outPlatform, printFiles(files));
 		return ret;
 	}
 
-	
+	/**
+	 * Taking concrete Language into concrete Target is done in two steps: - we
+	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
+	 * GOOL into concrete Target.
+	 *  
+	 * @param parserIn
+	 * 			  : the Parser of the source language (It extends ParseGOOL)
+	 * @param outPlatform
+	 *            : the Target language
+	 * @param input
+	 *            : the concrete Language, as a string
+	 * @param mainClassName
+	 *            : the main class name
+	 * @return a map of the compiled files for the different platforms. Actually
+	 * it contains only one key which is outPlatform. In the value list, the main
+	 * file is the first element.
+	 * @throws Exception
+	 */
+	public Map<Platform, List<File>> runGOOLCompiler(ParseGOOL parserIn, 
+			Platform outPlatform, Map<String, String> input, String mainClassName)
+					throws Exception {
+		Collection<ClassDef> classDefs = GOOLCompiler.concreteToAbstractGool(parserIn, input);
+		Map<String, String> files = GOOLCompiler.abstractGool2Target(classDefs, outPlatform);
+		Map<Platform, List<File>> ret = new HashMap<Platform, List<File>>();
+		String mainname = mainClassName.toLowerCase() + "." + getLanguageExtension(outPlatform);
+		Log.d(String.format("<GOOLCompiler - runGOOLCompiler> platform %s - main file name %s",
+				outPlatform.getName(), mainname));
+		List<File> ff = new ArrayList<File>();
+		File mainFile = null;
+		for(Entry<String, String> entry : files.entrySet()){
+			File f = printFile(entry.getKey(),entry.getValue());
+			Log.d(String.format("<GOOLCompiler - runGOOLCompiler> File %s", entry.getKey()));
+			if (entry.getKey().toLowerCase().endsWith(mainname) &&
+					(!entry.getKey().toLowerCase().endsWith(".h"))){
+				mainFile = f;
+			}else{
+				ff.add(f);
+			}
+		}
+		ff.add(0, mainFile);
+		ret.put(outPlatform, ff);
+		return ret;
+	}
+
 	/**
 	 * Print a list of files
 	 * @param files : map with absolute file's names as key and code as values
@@ -234,18 +291,31 @@ public class GOOLCompiler {
 	public static List<File> printFiles(Map<String, String> files) throws FileNotFoundException, SecurityException{
 		List<File> output = new ArrayList<File>();
 		for (Entry<String, String> entry : files.entrySet()){
-			File f = new File(entry.getKey());
-			File dir = f.getParentFile();
-			if (!dir.exists())
-				dir.mkdirs();
-			PrintWriter writer = new PrintWriter(f);
-			writer.println(entry.getValue());
-			writer.close();
-			output.add(f);
+			output.add(printFile(entry.getKey(),entry.getValue()));
 		}
 		return output;
 	}
-	
+
+	/**
+	 * Print a file
+	 * @param fileName
+	 * @param fileContent
+	 * @return File that has been printed
+	 * @throws FileNotFoundException
+	 * @throws SecurityException
+	 */
+	public static File printFile(String fileName, String fileContent) throws FileNotFoundException, SecurityException{
+		Log.d(String.format("<GOOLCompiler - printFile> print %s", fileName));
+		File f = new File(fileName);
+		File dir = f.getParentFile();
+		if (!dir.exists())
+			dir.mkdirs();
+		PrintWriter writer = new PrintWriter(f);
+		writer.println(fileContent);
+		writer.close();
+		return(f);		
+	}
+
 	/**
 	 * Return the input language
 	 * @return "java" or "cpp"
@@ -303,7 +373,7 @@ public class GOOLCompiler {
 		return fileToExclude;
 	}
 
-	
+
 	/**
 	 * Return the input codes to process
 	 * @param inputLanguage : "java" or "cpp"
@@ -326,7 +396,7 @@ public class GOOLCompiler {
 
 		return input;
 	}
-	
+
 	/**
 	 * Read the content of a file and return it in a string
 	 * @param File f
@@ -368,7 +438,7 @@ public class GOOLCompiler {
 		}
 		return files;
 	}
-	
+
 	/**
 	 * Gets the files with a specific extension in a folder tree.
 	 * @param folder 
@@ -392,7 +462,7 @@ public class GOOLCompiler {
 		return files;
 	}
 
-	
+
 	/**
 	 * Parsing the concrete Language into abstract GOOL is done by a Parser.
 	 * 
@@ -405,11 +475,13 @@ public class GOOLCompiler {
 	 */
 	private static Collection<ClassDef> concreteToAbstractGool(
 			ParseGOOL parserIn, Map<String, String> input) throws Exception {
+		GeneratorMatcher.init(null);
+		GoolGeneratorController.setCodeGenerator(null);
 		return parserIn.parseGool(input);
 	}
 
 
-	
+
 	/**
 	 * Flattening the abstract GOOL into concrete Target is done by
 	 * GeneratorHelper.
@@ -422,6 +494,7 @@ public class GOOLCompiler {
 		GeneratorMatcher.init(plt);
 		GoolGeneratorController.setCodeGenerator(plt.getCodePrinter().getCodeGenerator());	
 		for(ClassDef cl : classDefs){
+			Log.d(String.format("<GOOLCompiler - abstractGool2Target> Platform %s", plt.getName()));
 			cl.setPlatform(plt);
 		}
 		return GeneratorHelper.printClassDefs(classDefs);
