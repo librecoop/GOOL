@@ -86,6 +86,7 @@ import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
 import gool.ast.type.IType;
+import gool.ast.type.PrimitiveType;
 import gool.ast.type.TypeArray;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
@@ -234,6 +235,10 @@ CodeGeneratorNoVelocity {
 	public String getCode(Block block) {
 		Log.MethodIn(Thread.currentThread());
 		StringBuilder result = new StringBuilder();
+		if (block.getStatements().isEmpty()){
+			result.append("pass");
+			return (String)Log.MethodOut(Thread.currentThread(),result.toString());
+		}
 		for (Statement statement : block.getStatements()) {
 			if (statement.toString().contains(
 					"goolHelper.Util.Scanner(System.in")){
@@ -244,6 +249,7 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(),result.toString());
 	}
 
+	
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
 		Log.MethodIn(Thread.currentThread());
@@ -732,8 +738,11 @@ CodeGeneratorNoVelocity {
 			String goolMethod = methodCall.getGoolLibraryMethod();
 			if(goolMethod!=null){
 				Log.d(String.format("<PythonGenerator - getCode(MethCall> out = %s | goolMethod = %s ", out, goolMethod));
-				//here, get matched output method name with the GeneratorMatcher
-				out = GeneratorMatcher.matchGoolMethod(goolMethod);
+				String methodName=GeneratorMatcher.matchGoolMethod(goolMethod);
+				if(methodName!=null){
+					Log.d("<PythonGenerator - getCode(MethCall> method name = " + methodName);
+					out=out.substring(0, out.lastIndexOf(".")+1)+methodName;
+				}
 			}
 		}
 		Log.d(String.format("<PythonGenerator - getCode(MethCall> %s ", methodCall.getTarget()));
@@ -1372,9 +1381,11 @@ CodeGeneratorNoVelocity {
 	public String getCode(Catch catchStatement) {
 		Log.MethodIn(Thread.currentThread());
 		localIndentifiers.add(catchStatement.getParameter().getName());
-		return (String)Log.MethodOut(Thread.currentThread(),formatIndented("except %s as %s:%1", catchStatement
+		String retour = formatIndented("except %s as %s:%1", catchStatement
 				.getParameter().getType(), catchStatement.getParameter()
-				.getName(), catchStatement.getBlock()));
+				.getName(), catchStatement.getBlock());
+		Log.d("<PythonGenerator - getCode(catchStatement)> : " + retour);
+		return (String)Log.MethodOut(Thread.currentThread(), retour);
 	}
 
 	@Override
@@ -1432,7 +1443,7 @@ CodeGeneratorNoVelocity {
 			if (Import.startsWith("+"))
 				Import = Import.substring(1);
 			Log.d("---> " + Import);
-			result += "import " + Import + "\n";
+			result += "from " + Import + " import *\n";
 		}
 
 		return (String)Log.MethodOut(Thread.currentThread(),result);

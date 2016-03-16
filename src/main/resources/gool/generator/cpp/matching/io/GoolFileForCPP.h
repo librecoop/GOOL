@@ -11,16 +11,16 @@
 
 
 class GoolFileForCPP  {
-		private:	std::string name = "" ;
 
-		public: 	GoolFileForCPP(std::string name);
+private:
+	std::string name;
 
-		public: 	bool createNewFile();
+public:
 
-		public: 	bool exists();
-
-		public: 	bool deleteFile();
-
-	
+	GoolFileForCPP(std::string name);
+	bool createNewFile();
+	bool exists();
+	bool deleteFile();
+	std::string getName();
 };
 #endif

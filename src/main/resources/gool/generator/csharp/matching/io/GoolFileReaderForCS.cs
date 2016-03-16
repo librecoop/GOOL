@@ -1,12 +1,12 @@
 
 public class GoolFileReaderForCS {
-	private string name = null ;
+	private GoolFileForCS f = null;
 
-	public GoolFileReaderForCS(string name){
-		this.name = name;
+	public GoolFileReaderForCS(GoolFileForCS f){
+		this.f = f;
 	}
 
 	public string getName(){
-		return name;
+		return f.getName();
 	}
 }

@@ -439,6 +439,17 @@ CodeGeneratorNoVelocity {
 						mapIsEmptyCall.getExpression()));
 	}
 
+	private String getNullElement(Expression exp){
+		IType expType = exp.getType();
+		if (expType instanceof TypeString)
+			return "\"\"";
+		if (expType instanceof TypeChar)
+			return "''";
+		if (expType instanceof PrimitiveType)
+			return "0";
+		return exp.callGetCode();
+	}
+
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
 		Log.MethodIn(Thread.currentThread());
@@ -471,19 +482,20 @@ CodeGeneratorNoVelocity {
 
 		if ((binaryOp.getRight().getType() instanceof TypeNull) && 
 				(binaryOp.getLeft().getType() instanceof PrimitiveType)){
-			return String.format("(&%s %s%s %s)",
-					binaryOp.getLeft(),
-					binaryOp.getTextualoperator(),
-					binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-							: "", binaryOp.getRight());			
-		}		
+			return String.format("(%s %s%s %s)",
+						binaryOp.getLeft(),
+						binaryOp.getTextualoperator(),
+						binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+								: "", getNullElement(binaryOp.getLeft()));			
+		}
+		
 		if 	((binaryOp.getLeft().getType() instanceof TypeNull) && 
 				(binaryOp.getRight().getType() instanceof PrimitiveType)){		
-			return String.format("(&%s %s%s %s)",
-					binaryOp.getRight(),
+			return String.format("(%s %s%s %s)",
+					getNullElement(binaryOp.getRight()),
 					binaryOp.getTextualoperator(),
 					binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-							: "", binaryOp.getLeft());		
+							: "", binaryOp.getRight());		
 		}
 
 		return (String)Log.MethodOut(Thread.currentThread(), 
@@ -846,8 +858,8 @@ CodeGeneratorNoVelocity {
 	public String printClass(ClassDef classDef) {
 		Log.MethodIn(Thread.currentThread());
 
-//		String header = String.format("// Platform: %s\n\n",
-//				classDef.getPlatform());
+		//		String header = String.format("// Platform: %s\n\n",
+		//				classDef.getPlatform());
 		String header = "";
 
 		String body = "";

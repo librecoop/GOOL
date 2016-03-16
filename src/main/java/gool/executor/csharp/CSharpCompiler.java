@@ -47,15 +47,16 @@ public class CSharpCompiler extends SpecificCompiler {
 	@Override
 	public File compileToExecutable(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
-			throws FileNotFoundException {
+					throws FileNotFoundException {
 		List<String> params = new ArrayList<String>();
 
+		String execFileName = "";
+		
 		if (mainFile == null) {
-			Log.i(files.toString());
 			mainFile = files.get(0);
+			execFileName += mainFile.getName().replace(".cs", ".exe") + " ";
 		}
 
-		String execFileName = mainFile.getName().replace(".cs", ".exe");
 		params.addAll(Arrays.asList(Settings.get("csharp_compiler_cmd"),
 				"-debug+", "/t:exe", "/out:" + execFileName));
 
@@ -75,6 +76,10 @@ public class CSharpCompiler extends SpecificCompiler {
 		for (File file : files) {
 			params.add(file.toString());
 		}
+		Log.d("-----------");
+		for (String p : params)
+			Log.d(p);
+		Log.d("-----------");
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
 	}
@@ -82,7 +87,7 @@ public class CSharpCompiler extends SpecificCompiler {
 	@Override
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
-			throws FileNotFoundException {
+					throws FileNotFoundException {
 		// TODO Duplicate code in compile and compileAll
 
 		if (mainFile == null) {
@@ -121,7 +126,7 @@ public class CSharpCompiler extends SpecificCompiler {
 			throws FileNotFoundException {
 		String[] runTest = IS_WINDOWS ? new String[] { new File(getOutputDir(),
 				file.getName()).getAbsolutePath() } : new String[] { "mono",
-				file.getName() };
+						file.getName() };
 		List<String> params = new ArrayList<String>();
 
 		List<String> deps = new ArrayList<String>();

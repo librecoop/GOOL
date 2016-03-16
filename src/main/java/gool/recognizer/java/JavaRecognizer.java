@@ -1226,10 +1226,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// variable, i.e. a VarDeclaration.
 		Dec dec;
 		if (context != null) {
-			dec = context.getDeclaration(nName, getTypeMirror(n));
+			TypeMirror tmr = getTypeMirror(n);
+			dec = context.getDeclaration(nName, tmr);
 			if (dec == null) {
 				Log.w(String.format("<JavaRecognizer - visitIdentifier> No declaration found for '%s' of type '%s' in curent context",
-						nName, getTypeMirror(n)));
+						nName, tmr));
 				//				dec = new VarDeclaration(goolType(n, context), n.getName()
 				//						.toString());
 				Log.d(String.format("<JavaRecognizer - visitIdentifier> Instanciate a new declaration for %s of type %s",

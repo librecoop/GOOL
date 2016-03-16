@@ -1,8 +1,8 @@
+
 class GoolFileReaderForPY:
 
-    
-    def __init__(self,name):
-		self.name = name ;
-	
-	def getName(self):
-		return self.name;
+    def __init__(self,f):
+        self.f = f
+
+    def getName(self):
+        return self.f.name

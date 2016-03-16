@@ -30,3 +30,7 @@ bool GoolFileForCPP::exists(){
 bool GoolFileForCPP::deleteFile(){
 	return !std::remove(name.c_str());
 }
+
+std::string GoolFileForCPP::getName(){
+	return this->name;
+}

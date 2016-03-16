@@ -1,23 +1,22 @@
 #include "GoolBufferedWriterForCPP.h"
 
-GoolBufferedWriterForCPP::GoolBufferedWriterForCPP(GoolFileWriterForCPP writer ){
-	file = fopen(writer.getName(), "w");
+GoolBufferedWriterForCPP::GoolBufferedWriterForCPP(GoolFileWriterForCPP * writer){
+	this->file = fopen(writer->getName().c_str(), "w");
 }
 
-void GoolBufferedWriterForCPP::write(int carac){
-	fput(carac);
+void GoolBufferedWriterForCPP::write(char carac){
+	fputc(carac, this->file);
 }
 
 void GoolBufferedWriterForCPP::write(std::string toAdd,int start,int length){
-	char realtoAdd[UINT_MAX];
-	strcpy(realtoAdd, this->toAdd.c_str());
-	FILE* fileAdd = fopen(writer.getName(), "rw");
-	int i = 0;
-	for(;i<start;i++){
-		fget(fileAdd);
-	}
-	fwrite ( realtoAddconst, length, sizeof(char), fileAdd );
-	fclose(fileAdd);
+	if (length < 0)
+		return;
+	if (start > toAdd.size())
+		return;
+	if (start + length > toAdd.size())
+		return;
+	for(int i=start; i<length; i++)
+		fputc(toAdd[i], this->file);
 }
 
 void GoolBufferedWriterForCPP::close(){

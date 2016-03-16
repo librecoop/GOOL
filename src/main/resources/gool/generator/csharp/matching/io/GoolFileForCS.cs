@@ -17,7 +17,17 @@ public class GoolFileForCS
 	}
 
 	public bool deleteFile(){
-		return System.IO.File.Delete(name);
+		try{
+			System.IO.File.Delete(name);
+		}
+		catch{
+			return false;
+		}
+		return true;
+	}
+
+	public string getName(){
+		return this.name;
 	}
 }
 

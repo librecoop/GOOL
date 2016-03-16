@@ -8,9 +8,10 @@
 
 class GoolBufferedReaderForCPP  {
 		private:
-				FILE* file = null ;
+				FILE* file = NULL ;
 
-		public: 	GoolBufferedReaderForCPP(GoolFileReaderForCPP reader );
+		public:
+				GoolBufferedReaderForCPP(GoolFileReaderForCPP * reader );
 				int read();
 				std::string readLine();
 				void close();

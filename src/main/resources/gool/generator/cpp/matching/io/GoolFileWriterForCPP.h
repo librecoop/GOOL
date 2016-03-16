@@ -1,17 +1,21 @@
 #ifndef __GOOL_FILE_WRITER_FOR_CPP_H
 #define __GOOL_FILE_WRITER_FOR_CPP_H
 
+#include <string>
 
-#include <climits>
-#include <cstring>
+#include "GoolFileForCPP.h"
 
 
+class GoolFileWriterForCPP{
 
-class GoolFileWriterForCPP  {
-		private:	char* name = null ; 
+private:
 
-		public: 	GoolFileWriterForCPP(std::string name);
-				char* getName();
-	
+	GoolFileForCPP * f = NULL;
+
+public:
+
+	GoolFileWriterForCPP(GoolFileForCPP * f);
+	std::string getName();
+
 };
 #endif

@@ -66,6 +66,7 @@ import gool.ast.map.MapSizeCall;
 import gool.ast.system.SystemCommandDependency;
 import gool.ast.system.SystemOutDependency;
 import gool.ast.system.SystemOutPrintCall;
+import gool.ast.type.IType;
 import gool.ast.type.TypeBool;
 import gool.ast.type.TypeByte;
 import gool.ast.type.TypeChar;
@@ -382,8 +383,11 @@ CodeGeneratorNoVelocity {
 			String goolMethod = methodCall.getGoolLibraryMethod();
 			if(goolMethod!=null){
 				Log.d(String.format("<CSharpGenerator - getCode(MethCall> out = %s | goolMethod = %s ", out, goolMethod));
-				//here, get matched output method name with the GeneratorMatcher
-				out = GeneratorMatcher.matchGoolMethod(goolMethod);
+				String methodName=GeneratorMatcher.matchGoolMethod(goolMethod);
+				if(methodName!=null){
+					Log.d("<CSharpGenerator - getCode(MethCall> method name = " + methodName);
+					out=out.substring(0, out.lastIndexOf(".")+1)+methodName;
+				}
 			}
 		}
 		if (methodCall.getTarget() instanceof StringIsEmptyCall)
@@ -405,11 +409,18 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(MemberSelect memberSelect) {
 		Log.MethodIn(Thread.currentThread());
+		String memberAccess = memberSelect.getTarget().toString();
+		memberAccess += ".";
+		
 		if (memberSelect.getIdentifier().equals("length"))			
 			return (String)Log.MethodOut(Thread.currentThread(), 
-					String.format("%s.Length", memberSelect.getTarget()));
-		return (String)Log.MethodOut(Thread.currentThread(), 
-				super.getCode(memberSelect));
+					memberAccess + "Length");
+		
+		memberAccess += memberSelect.getIdentifier();
+		
+		Log.d("<CSharpGenerator - getCode(MemberSelect)> return " + memberAccess);
+		
+		return (String)Log.MethodOut(Thread.currentThread(), memberAccess);
 	}
 
 	/**
@@ -767,7 +778,7 @@ CodeGeneratorNoVelocity {
 			if (Import.startsWith("+"))
 				Import = Import.substring(1);
 			Log.d("---> " + Import);
-			result += "using " + Import + ";\n";
+			result += "/* Do add " + Import + " at compilation time */\n";
 		}
 
 		return (String)Log.MethodOut(Thread.currentThread(),result);

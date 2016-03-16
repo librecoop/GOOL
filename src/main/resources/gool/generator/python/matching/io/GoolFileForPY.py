@@ -1,20 +1,29 @@
 import os
-class GoolFileForPY:
 
+
+class GoolFileForPY:
     
     def __init__(self,name):
-		self.name = name ;
-		
-    def exists(self):
-		try:
-			with open(self.name): pass
-		except IOError:
-			return false;
-		return true; 
+        self.name = name
 
-	def createNewFile(self):
-		 mfile = open(self.name, "w");
-		 mfile.close();
-	
-	def deleteFile(self):
-		remove(self.name);
+    def exists(self):
+        try:
+            with open(self.name): pass
+        except IOError:
+            return False
+        return True 
+
+    def createNewFile(self):
+        try:
+            mfile = open(self.name, "w")
+            mfile.close()
+            return True
+        except:
+            return False
+
+    def deleteFile(self):
+        try:
+            os.remove(self.name)
+            return True
+        except:
+            return False

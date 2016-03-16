@@ -1,12 +1,12 @@
 
 public class GoolFileWriterForCS {
-	private string name = null ;
+	private GoolFileForCS f = null;
 
-	public GoolFileWriterForCS(string name){
-		this.name = name;
+	public GoolFileWriterForCS(GoolFileForCS f){
+		this.f = f;
 	}
 
 	public string getName(){
-		return name;
+		return f.getName();
 	}
 }

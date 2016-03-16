@@ -141,7 +141,9 @@ public class RecognizerMatcher {
 			ArrayList<String> goolMethods = getGoolMethodsFromGoolClass(goolClass);
 			for (String goolMethod : goolMethods) {
 				ArrayList<String> inputMethodSignatures = new ArrayList<String>();
-				String methFileName = getPathOfInputMethodMatchFile(goolMethod);				
+				String methFileName = getPathOfInputMethodMatchFile(goolMethod);
+				Log.d(String.format("<RecognizerMatcher - enableRecognition> " +
+						"Matching methods %s from %s",goolMethod, methFileName));
 				ips = ClassLoader.getSystemResourceAsStream(methFileName);
 				//ips = new FileInputStream(methFileName);
 				ipsr = new InputStreamReader(ips);
@@ -170,7 +172,7 @@ public class RecognizerMatcher {
 		}
 		Log.d("<RecognizerMatcher - enableRecognition> Print Match Tables : \n" + printMatchTables()); 
 	}
-	
+
 	static private ArrayList<String> getImportChange(
 			String inputLangImport) {
 		ArrayList<String> imports = new ArrayList<String>();
@@ -232,7 +234,7 @@ public class RecognizerMatcher {
 		} catch (Exception e) {
 			Log.w(e);
 		}
-		
+
 		return goolClasses;
 	}
 
@@ -343,8 +345,12 @@ public class RecognizerMatcher {
 	}
 
 	static private String getPathOfInputMethodMatchFile(String goolMethod) {
-		String goolClassName = goolMethod.substring(0,
-				goolMethod.lastIndexOf("."));
+		String goolClassName = goolMethod;
+		int parenthesisIndex = goolClassName.indexOf("(");
+		if ( parenthesisIndex != -1)
+			goolClassName = goolClassName.substring(0, parenthesisIndex);
+		goolClassName = goolClassName.substring(0,
+				goolClassName.lastIndexOf("."));
 		return getPathOfInputMatchDir(goolClassName)
 				+ "MethodMatching.properties";
 	}

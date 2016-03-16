@@ -1,21 +1,29 @@
-#include "GoolFileReaderForCS.cs"
+using System;
+using System.IO;
+using System.Text;
 
 public class GoolBufferedReaderForCS {
-	private char[] text = null ;
-	long indice = 0 ;
-	public GoolBufferedReaderForCS(GoolBufferedReaderForCS reader){
-		text = System.IO.File.ReadAllText(reader.getName()).ToCharArray();
+	private string text = null ;
+	int indice = 0 ;
+
+	public GoolBufferedReaderForCS(GoolFileReaderForCS reader){
+		text = File.ReadAllText(reader.getName());
 	}
 
 	public int read(){
-		text [indice];
+		if (indice >= text.Length)
+			return -1;
+		int res = (int)(text[indice]);
 		indice++;
+		return res;
 	}
 
 	public string readLine(){
 		string toReturn = "";
-		while(text [indice] != "\n"){
-			toReturn += text [indice];
+		if (indice >= text.Length)
+			return null;
+		while(indice < text.Length && !text[indice].Equals('\n')){
+			toReturn += text[indice];
 			indice++;
 		}
 		indice++;
