@@ -845,7 +845,12 @@ CodeGeneratorNoVelocity {
 		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
 		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies){
-				if (dependency != "noprint"){
+				if (dependency.contains("unrecognized by GOOL")){
+					String incdep = String.format("%s", dependency);
+					if (recogDependencies.indexOf(incdep) == -1)
+						res += incdep + "\n";
+				}
+				else if (dependency != "noprint"){
 					String incdep = String.format("#import \"%s\"", dependency);
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";

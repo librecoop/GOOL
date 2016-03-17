@@ -669,7 +669,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	}
 
 	private IType string2IType(String typeName, Context context) {
-		Log.d("<JavaRecognizer - string2IType> Looking for the TypeClass associated with type name = " + typeName);
+		Log.d("<JavaRecognizer - string2IType> Looking for the IType associated with type name = " + typeName);
 		if (string2otdMap.containsKey(typeName)) {
 			IType type = string2otdMap.get(typeName).getType();
 			addDependencyToContext(context, new TypeDependency(type));
@@ -683,8 +683,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		} else if (TypeException.contains(typeName)) {
 			return TypeException.get(typeName);
 		} else {
-			Log.d("<JavaRecognizer - string2IType> TypeClass is associated with type name = " + typeName);
-			return new TypeClass(typeName);
+			Log.d("<JavaRecognizer - string2IType> IType is associated with a TypeClass named " + typeName);
+			IType type = new TypeClass(typeName);
+			TypeDependency typeDep = new TypeDependency(type);
+			typeDep.setPersonal(true);
+			addDependencyToContext(context, typeDep);
+			return type;
 		}
 	}
 
@@ -1185,7 +1189,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		// and gets represented differently in GOOL, i.e. wrapped up with a
 		// Field().
 		// TODO: actually, any variable declaration could have modifiers.
-		Collection<Modifier> modifiers = (Collection<Modifier>) 
+		Collection<Modifier> modifiers = (Collection<Modifier>)
 				n.getModifiers().accept(this, context);
 		if (n.getType() instanceof MemberSelectTree || !modifiers.isEmpty()) {
 			Field f = new Field(modifiers, variable);
@@ -1652,8 +1656,10 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		Log.d("\n\n<JavaRecognizer - visitCompilationUnit> Adding dependencies ......\n\n");
 		for (ClassDef classDef : getGoolClasses()) {
+			Log.d("\n\n<JavaRecognizer - visitCompilationUnit> Deal with classdef " + classDef.getName());
 			GoolLibraryClassAstBuilder.init();
 			for (Dependency dep : classDef.getDependencies()) {
+				Log.d("\n\n<JavaRecognizer - visitCompilationUnit> contains dep " + dep.toString());
 				if (dep instanceof RecognizedDependency) {
 					GoolLibraryClassAstBuilder
 					.buildGoolClass(((RecognizedDependency) dep)

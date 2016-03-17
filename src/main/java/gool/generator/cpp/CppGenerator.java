@@ -117,11 +117,11 @@ CodeGeneratorNoVelocity {
 	public void addCustomDependency(String dep) {
 		customDependencies.add(dep);
 	}
-
+	
 	public Set<String> getCustomDependencies(){
 		return customDependencies;
 	}
-
+	
 	public void clearCustomDependencies(){
 		customDependencies.clear();
 	}
@@ -365,7 +365,7 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(SystemOutDependency systemOutDependency) {
 		Log.MethodIn(Thread.currentThread());
-		return (String)Log.MethodOut(Thread.currentThread(), "iostream");
+		return (String)Log.MethodOut(Thread.currentThread(), "#include <iostream>");
 	}
 
 	@Override
@@ -375,19 +375,19 @@ CodeGeneratorNoVelocity {
 			// Use the vector type because it allows random access over
 			// lists.
 			if (((TypeList) typeDependency.getType()).getElementType() == null) {
-				return (String)Log.MethodOut(Thread.currentThread(), "vector");
+				return (String)Log.MethodOut(Thread.currentThread(), "#include <vector>");
 			}
-			return (String)Log.MethodOut(Thread.currentThread(), "vector"); // TODO what type should be used when it is not a
+			return (String)Log.MethodOut(Thread.currentThread(), "#include <vector>"); // TODO what type should be used when it is not a
 			// generic list?
 		}
 		if (typeDependency.getType() instanceof TypeMap) {
-			return (String)Log.MethodOut(Thread.currentThread(), "map");
+			return (String)Log.MethodOut(Thread.currentThread(), "#include <map>");
 		}
 		if (typeDependency.getType() instanceof TypeEntry) {
-			return (String)Log.MethodOut(Thread.currentThread(), "map");
+			return (String)Log.MethodOut(Thread.currentThread(), "#include <map>");
 		}
 		if (typeDependency.getType() instanceof TypeString) {
-			return (String)Log.MethodOut(Thread.currentThread(), "string");
+			return (String)Log.MethodOut(Thread.currentThread(), "#include <string>");
 		}
 		if (typeDependency.getType() instanceof TypeBool) {
 			return (String)Log.MethodOut(Thread.currentThread(), "noprint");
@@ -395,8 +395,10 @@ CodeGeneratorNoVelocity {
 		if (typeDependency.getType() instanceof TypeInt) {
 			return (String)Log.MethodOut(Thread.currentThread(), "noprint");
 		}
-		return (String)Log.MethodOut(Thread.currentThread(), 
-				removePointer(super.getCode(typeDependency)).concat(".h"));
+		String toReturn = "#include \"";
+		toReturn += removePointer(super.getCode(typeDependency)).concat(".h");
+		toReturn += "\"";
+		return (String)Log.MethodOut(Thread.currentThread(), toReturn);
 	}
 
 	@Override
@@ -830,18 +832,35 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(), null);
 	}
 
+
+	public Set<String> printCustomDependencies(){
+		Set<String> customDeps = new HashSet<String>();
+		for(String Dep : customDependencies){
+			String depStr = "#include <" + Dep + ">";
+			if (!customDeps.contains(depStr)){
+				customDeps.add(depStr);
+			}
+		}
+		return customDeps;
+	}
+	
 	public String getDependenciesCode(ClassDef cl){
 		String res = "";
 		res += "#include <boost/any.hpp>\n";
 		res += "#include <boost/lexical_cast.hpp>\n";		
 		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
-		dependencies.addAll(getCustomDependencies());
+		dependencies.addAll(printCustomDependencies());
 		clearCustomDependencies();
 		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
 		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies){
-				if (dependency != "noprint"){
-					String incdep = String.format("#include <%s>", dependency);
+				if (dependency.contains("unrecognized by GOOL")){
+					String incdep = String.format("%s", dependency);
+					if (recogDependencies.indexOf(incdep) == -1)
+						res += incdep + "\n";
+				}
+				else if (dependency != "noprint"){
+					String incdep = String.format("%s", dependency);
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";
 				}
