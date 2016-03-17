@@ -367,71 +367,79 @@ public class GoolTestJava {
 			
 			//excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 			//excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-			excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+			//excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 			excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
 	
 			compareResultsDifferentPlatforms(input, expected);
 		}
-	//
-	//	@Test
-	//	public void simpleForEach() throws Exception {
-	//		MAIN_CLASS_NAME = "testSimpleForEach";
-	//		String input = "import java.util.ArrayList;\n"
-	//				+ TestHelperJava
-	//				.surroundWithClassMain(
-	//						"Integer total = 0;"
-	//								+ " ArrayList<Integer> l = new ArrayList<Integer>();"
-	//								+ " l.add(-2); l.add(-1);l.add(0); l.add(1); l.add(2);l.add(4);"
-	//								+ " for(Integer i : l){"
-	//								+ "total = total + i;" + "}"
-	//								+ "System.out.println(total);",
-	//								MAIN_CLASS_NAME);
-	//		String expected = "4";
-	//
-	//		// There is a code generation problem to be fixed for this test in
-	//		// Objective C, so we exclude the ObjC platform for this test.
-	//		// (see GOOL wiki for further documentation)
-	//		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
-	//
-	//		compareResultsDifferentPlatforms(input, expected);
-	//	}
-	//
-	//	@Test
-	//	public void listWithDifferentTypeElement() throws Exception {
-	//		MAIN_CLASS_NAME = "testListWithDifferentTypeElement";
-	//		String input = "import java.util.ArrayList;\n"
-	//				+ TestHelperJava
-	//				.surroundWithClassMain(
-	//						"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
-	//						MAIN_CLASS_NAME);
-	//		compareResultsDifferentPlatforms(input, "2");
-	//	}
-	//
-	//	@Test
-	//	public void mapWithoutTypes() throws Exception {
-	//		MAIN_CLASS_NAME = "testMapWithoutTypes";
-	//		String input = "import java.util.HashMap;\n"
-	//				+ TestHelperJava
-	//				.surroundWithClassMain(
-	//						"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
-	//						MAIN_CLASS_NAME);
-	//
-	//		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-	//		compareResultsDifferentPlatforms(input, "2");
-	//	}
-	//
-	//	@Test
-	//	public void removeElementsFromUntypedList() throws Exception {
-	//		MAIN_CLASS_NAME = "testRemoveElementsFromUntypedList";
-	//		String input = "import java.util.ArrayList;\n"
-	//				+ TestHelperJava
-	//				.surroundWithClassMain(
-	//						"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
-	//						MAIN_CLASS_NAME);
-	//		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-	//		compareResultsDifferentPlatforms(input, "1");
-	//	}
-	//
+	
+		@Test
+		public void simpleForEach() throws Exception {
+			MAIN_CLASS_NAME = "testSimpleForEach";
+			String input = "import java.util.ArrayList;\n"
+					+ TestHelperJava
+					.surroundWithClassMain(
+							"Integer total = 0;"
+									+ " ArrayList<Integer> l = new ArrayList<Integer>();"
+									+ " l.add(-2); l.add(-1);l.add(0); l.add(1); l.add(2);l.add(4);"
+									+ " for(Integer i : l){"
+									+ "total = total + i;" + "}"
+									+ "System.out.println(total);",
+									MAIN_CLASS_NAME);
+			String expected = "4";
+	
+			// There is a code generation problem to be fixed for this test in
+			// Objective C, so we exclude the ObjC platform for this test.
+			// (see GOOL wiki for further documentation)
+			//excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+			//excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+			//excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+			excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+	
+			compareResultsDifferentPlatforms(input, expected);
+		}
+	
+		@Test
+		public void listWithDifferentTypeElement() throws Exception {
+			MAIN_CLASS_NAME = "testListWithDifferentTypeElement";
+			String input = "import java.util.ArrayList;\n"
+					+ TestHelperJava
+					.surroundWithClassMain(
+							"ArrayList l = new ArrayList();l.add(1);l.add(\"hola\");System.out.println(l.size());",
+							MAIN_CLASS_NAME);
+			
+			//excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+			//excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+			//excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
+			excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
+			compareResultsDifferentPlatforms(input, "2");
+		}
+	
+		@Test
+		public void mapWithoutTypes() throws Exception {
+			MAIN_CLASS_NAME = "testMapWithoutTypes";
+			String input = "import java.util.HashMap;\n"
+					+ TestHelperJava
+					.surroundWithClassMain(
+							"HashMap m = new HashMap();m.put(0, 1);m.put(\"hola\", 2);System.out.println(m.size());",
+							MAIN_CLASS_NAME);
+	
+			excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+			compareResultsDifferentPlatforms(input, "2");
+		}
+	
+		@Test
+		public void removeElementsFromUntypedList() throws Exception {
+			MAIN_CLASS_NAME = "testRemoveElementsFromUntypedList";
+			String input = "import java.util.ArrayList;\n"
+					+ TestHelperJava
+					.surroundWithClassMain(
+							"ArrayList l = new ArrayList();l.add(\"\");l.add(\"hola\");l.remove(\"hola\");System.out.println(l.size());",
+							MAIN_CLASS_NAME);
+			excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+			compareResultsDifferentPlatforms(input, "1");
+		}
+	
 	//	@Test
 	//	public void removeElementsFromIntegerList() throws Exception {
 	//		MAIN_CLASS_NAME = "testRemoveElementsFromIntegerList";

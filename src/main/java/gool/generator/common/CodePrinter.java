@@ -418,11 +418,6 @@ public abstract class CodePrinter {
 		return resultat;
 	}
 
-	public List<File> printPersonalLib() throws FileNotFoundException {
-		ArrayList<File> r = new ArrayList<File>();
-		return r;
-	}
-
 	public String processTemplate(String templateFilename, String className) {
 
 		try {
