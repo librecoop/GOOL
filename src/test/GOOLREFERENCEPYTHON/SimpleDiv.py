@@ -11,6 +11,7 @@ class SimpleDiv(object):
 
     def __init__(self):
         super(SimpleDiv, self).__init__()
+        pass
 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ class SimpleMod(object):
 
     def __init__(self):
         super(SimpleMod, self).__init__()
+        pass
 
 
 if __name__ == '__main__':

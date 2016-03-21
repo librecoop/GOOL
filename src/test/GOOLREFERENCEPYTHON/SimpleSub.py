@@ -11,6 +11,7 @@ class SimpleSub(object):
 
     def __init__(self):
         super(SimpleSub, self).__init__()
+        pass
 
 
 if __name__ == '__main__':

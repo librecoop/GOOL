@@ -11,6 +11,7 @@ class SimpleFor(object):
 
     def __init__(self):
         super(SimpleFor, self).__init__()
+        pass
 
 
 if __name__ == '__main__':

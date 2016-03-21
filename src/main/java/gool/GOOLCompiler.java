@@ -278,7 +278,8 @@ public class GOOLCompiler {
 				ff.add(f);
 			}
 		}
-		ff.add(0, mainFile);
+		if (mainFile != null)
+			ff.add(0, mainFile);
 		ret.put(outPlatform, ff);
 		return ret;
 	}

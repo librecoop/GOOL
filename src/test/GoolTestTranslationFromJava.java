@@ -173,11 +173,11 @@ public class GoolTestTranslationFromJava {
 
 
 
-	@AfterClass
-	public static void clean(){
-		for (String filename : createdFileList){
-			File f = new File(filename);
-			f.delete();
-		}
-	}
+//	@AfterClass
+//	public static void clean(){
+//		for (String filename : createdFileList){
+//			File f = new File(filename);
+//			f.delete();
+//		}
+//	}
 }

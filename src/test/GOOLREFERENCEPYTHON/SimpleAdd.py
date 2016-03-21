@@ -11,6 +11,7 @@ class SimpleAdd(object):
 
     def __init__(self):
         super(SimpleAdd, self).__init__()
+        pass
 
 
 if __name__ == '__main__':

@@ -1,0 +1,1 @@
+public class SimpleWhile {	public static void main(String[] args) {int i = 0;int total = 0;while(i < 4){total++;i++;}System.out.println(total);}}

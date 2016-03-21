@@ -11,6 +11,7 @@ class SimpleWhile(object):
 
     def __init__(self):
         super(SimpleWhile, self).__init__()
+        pass
 
 
 if __name__ == '__main__':

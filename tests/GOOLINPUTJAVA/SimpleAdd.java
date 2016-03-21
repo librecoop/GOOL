@@ -1,0 +1,1 @@
+public class SimpleAdd {	public static void main(String[] args) {int n = 2+2;System.out.println(n);}}

@@ -11,6 +11,7 @@ class SimpleMult(object):
 
     def __init__(self):
         super(SimpleMult, self).__init__()
+        pass
 
 
 if __name__ == '__main__':

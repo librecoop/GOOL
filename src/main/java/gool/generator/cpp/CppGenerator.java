@@ -538,19 +538,21 @@ CodeGeneratorNoVelocity {
 		 * Maps with with keys of type Object are not allowed in C++ because
 		 * there is not a base type.
 		 */
+		String toReturn = "std::map<";
 		if (typeMap.getKeyType() == null
-				|| typeMap.getKeyType().equals(TypeObject.INSTANCE)) {
-			throw new IllegalStateException(
-					"The map's key is of type Object, this is not supported in C++.");
+				|| typeMap.getKeyType().equals(TypeObject.INSTANCE)
+				|| typeMap.getKeyType().callGetCode().contains("boost::any")) {
+			toReturn += "/* Undefined key type is not supported in C++ */, ";
+		}else{
+			toReturn += typeMap.getKeyType().callGetCode() + ", ";
 		}
 		if (typeMap.getElementType() == null) {
-			return (String)Log.MethodOut(Thread.currentThread(), 
-					"std::map<" + typeMap.getKeyType() + ", "
-							+ TypeObject.INSTANCE + ">*");
+			toReturn += TypeObject.INSTANCE;
+		}else{
+			toReturn += typeMap.getElementType().callGetCode();
 		}
 		return (String)Log.MethodOut(Thread.currentThread(), 
-				"std::map<" + StringUtils.join(typeMap.getTypeArguments(), ", ")
-				+ ">*");
+				toReturn + ">*");
 	}
 
 	@Override
@@ -610,7 +612,16 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		Log.MethodIn(Thread.currentThread());
-
+		if(equalsCall.getTarget().getType() instanceof PrimitiveType){
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("%s == %s", equalsCall.getTarget(),
+							StringUtils.join(equalsCall.getParameters(), ", ")));
+		}
+		if  (equalsCall.getTarget().getType()instanceof TypeList){
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("*%s == *%s", equalsCall.getTarget(),
+							StringUtils.join(equalsCall.getParameters(), ", ")));
+		}
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s -> equals(%s)", equalsCall.getTarget(),
 						StringUtils.join(equalsCall.getParameters(), ", ")));
@@ -632,8 +643,12 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(ListContainsCall lcc) {
 		Log.MethodIn(Thread.currentThread());
-		return (String)Log.MethodOut(Thread.currentThread(), String
-				.format("/* ListContainsCall not implemented in C++ at the moment */"));
+		String exp = lcc.getExpression().callGetCode();
+		String el = StringUtils.join(lcc.getParameters(), ", ");
+		String toReturn  = String.format("(std::find(%s->begin(), %s->end(), %s) != %s->end())",
+				exp, exp, el, exp);
+		addCustomDependency("algorithm");
+		return (String)Log.MethodOut(Thread.currentThread(), toReturn );
 	}
 
 	@Override
