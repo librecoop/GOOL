@@ -20,4 +20,5 @@ tests/GOOLOUTPUTPYTHON/
 *.class
 *.bkp
 .pydevproject
-
+build/
+*.out
