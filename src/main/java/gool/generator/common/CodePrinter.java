@@ -239,16 +239,20 @@ public abstract class CodePrinter {
 	 * @return the list of the generated concrete target classes (filename, code)
 	 */
 	public Map<String, String> print(ClassDef pclass){
+		Log.d(String.format("<CodePrinter - print> Start print of %s : isGoolLibraryClassRedefinition : %s",
+				pclass.getName(), pclass.isGoolLibraryClassRedefinition()));
 		// GOOL library classes are printed in a different manner
-		if(pclass.isGoolLibraryClass()){
+		if(pclass.isGoolLibraryClass() && !pclass.isGoolLibraryClassRedefinition()){
 			return printGoolLibraryClass(pclass);
 		}
+		Log.d(String.format("<CodePrinter - print> %s is not printed as GoolLibraryClass ",
+				pclass.getName()));
 		String outPutDir = ""; 
 		if (!getOutputDir().getName().isEmpty()){
 			outPutDir = getOutputDir().getAbsolutePath() + File.separator;
 			if (!pclass.getPackageName().isEmpty()){
 				outPutDir += StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
-				File.separator;
+						File.separator;
 			}
 		}
 

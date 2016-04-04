@@ -1,1 +1,0 @@
-public class SimpleMod {	public static void main(String[] args) {int n = 4%5;System.out.println(n);}}

@@ -24,6 +24,20 @@ package gool.ast.core;
  */
 public abstract class Dependency extends Node {
 
+	/**
+	 * Flag that indicates if the dependency shall be include in header files
+	 */
+	private boolean headerDependency = true;
+	
+	
+	public boolean isHeaderDependency() {
+		return headerDependency;
+	}
+
+	public void setHeaderDependency(boolean headerDependency) {
+		this.headerDependency = headerDependency;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Dependency) || !(obj instanceof String)) {

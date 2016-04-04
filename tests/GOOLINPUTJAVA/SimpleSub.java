@@ -1,1 +1,0 @@
-public class SimpleSub {	public static void main(String[] args) {int n = 6-2;System.out.println(n);}}

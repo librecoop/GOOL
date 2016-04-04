@@ -31,21 +31,6 @@ public class TypeDependency extends Dependency {
 	 */
 	private IType type;
 
-	
-	/**
-	 * Flag for personal dependencies (helpful for C++ inclusions)
-	 */
-	private boolean personal = false;
-	
-	
-	public boolean isPersonal() {
-		return personal;
-	}
-
-	public void setPersonal(boolean personal) {
-		this.personal = personal;
-	}
-
 	/**
 	 * The constructor for a type of dependency.
 	 * @param type

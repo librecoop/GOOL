@@ -102,10 +102,17 @@ public final class TestHelperJava {
 	public static String surroundWithClassMainNet(String input, String className) {
 		return surroundWithClassMain(input, className);
 	}
-
-	public static String surroundWithClassMainThread(String input, String className) {
-		return surroundWithClassMain(input, className);
+	
+	public static String surroundWithClassWithStaticVar(String input, String className,
+			String accessModifier, String staticVar) {
+		return accessModifier + " class " + className + " { " + staticVar + "public "
+				+ className + "(){} " + input + " } ";
 	}
-
+	
+	public static String surroundWithClassMainWithStaticVar(String input, String className,
+			String staticVar) {
+		return surroundWithClassWithStaticVar("public static void main(String[] args){"
+				+ input + " } ", className, "", staticVar);
+	}
 
 }

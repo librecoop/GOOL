@@ -95,6 +95,11 @@ public class ClassDef extends Dependency {
 	private boolean isGoolLibraryClass;
 
 	/**
+	 * Flag to know if it is a redefinition of a gool library class.
+	 */
+	private boolean isGoolLibraryClassRedefinition;
+
+	/**
 	 * The package used by the class.
 	 */
 	private Package ppackage;
@@ -368,6 +373,7 @@ public class ClassDef extends Dependency {
 	 *            the type of the interface.
 	 */
 	public final void addInterface(IType type) {
+		Log.d("<ClassDef - addInterface> " + getName() + " recieve a new interface to implement : " + type.getName());
 		interfaces.add(type);
 	}
 
@@ -396,6 +402,7 @@ public class ClassDef extends Dependency {
 	 * @return a list of interfaces implemented by the class.
 	 */
 	public final List<IType> getInterfaces() {
+		Log.d("<ClassDef - getInterface> " + getName() + " return its interface list with " + interfaces.size() + " elements.");
 		return interfaces;
 	}
 
@@ -583,5 +590,23 @@ public class ClassDef extends Dependency {
 	 */
 	public boolean isGoolLibraryClass() {
 		return this.isGoolLibraryClass;
+	}
+	
+	/**
+	 * Determines if it is a redefinition of a gool library class.
+	 * @return
+	 * 		True if the it is a redefinition of a gool library class, else false.
+	 */
+	public boolean isGoolLibraryClassRedefinition() {
+		return isGoolLibraryClassRedefinition;
+	}
+
+	/**
+	 * Sets the flag to know if it is a gool library class redefinition.
+	 * @param isGoolLibraryClass
+	 * 		: True if the it is a gool library class redefinition, else false.
+	 */
+	public void setGoolLibraryClassRedefinition(boolean isGoolLibraryClassRedefinition) {
+		this.isGoolLibraryClassRedefinition = isGoolLibraryClassRedefinition;
 	}
 }

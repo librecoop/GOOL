@@ -145,7 +145,16 @@ CodeGeneratorNoVelocity {
 						: enhancedForLoop.getExpression(),
 						enhancedForLoop.getStatements());
 	}
-
+	
+	
+	@Override
+	public String getCode(Constructor cons) {
+		if (cons.getName().isEmpty())
+			return String.format("%s %s(%s)", getCode(cons.getModifiers()),
+					cons.getClassDef().getName(), StringUtils.join(cons.getParams(), ", "));
+		return getCode((Meth) cons);
+	}
+	
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		return String.format("%s.equals(%s)", equalsCall.getTarget(),
@@ -271,6 +280,17 @@ CodeGeneratorNoVelocity {
 		return String.format("%s.size()", mapSizeCall.getExpression());
 	}
 
+	@Override
+	public String getCode(Meth meth) {
+		if (meth.getThrowStatement().isEmpty())
+			return String.format("%s %s %s (%s)", getCode(meth.getModifiers()),
+					meth.getType(), meth.getName(),
+					StringUtils.join(meth.getParams(), ", "));
+		return String.format("%s %s %s (%s) throws Exception", getCode(meth.getModifiers()),
+				meth.getType(), meth.getName(),
+				StringUtils.join(meth.getParams(), ", "));
+	}
+	
 	@Override
 	public String getCode(ParentCall parentCall) {
 		String out = "super(";
@@ -422,7 +442,7 @@ CodeGeneratorNoVelocity {
 		if (classDef.getParentClass() != null)
 			body += String.format(" extends %s", classDef.getParentClass());
 		if (!classDef.getInterfaces().isEmpty())
-			body += String.format(" interfaces %s", StringUtils.join(
+			body += String.format(" implements %s", StringUtils.join(
 					classDef.getInterfaces(), ", "));
 		body += " {\n\n";
 		// print the fields

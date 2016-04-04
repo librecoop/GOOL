@@ -795,6 +795,28 @@ CodeGeneratorNoVelocity {
 						lioc.getExpression(), StringUtils.join(lioc.getParameters(), ", "), lioc.getExpression()));
 	}
 
+	
+//	@Override
+//	public String getCode(Constructor cons) {
+//		Log.MethodIn(Thread.currentThread());
+//		if (cons.getName().isEmpty()){
+//			List<Modifier> modifiers = new ArrayList<Modifier>(cons.getModifiers());
+//			// Remove (public, private, protected, final) invalid modifiers.
+//			modifiers.remove(cons.getAccessModifier());
+//			modifiers.remove(Modifier.FINAL);
+//			String meth_pref = getCode(modifiers);
+//			if (!meth_pref.isEmpty())
+//				meth_pref += " ";
+//			meth_pref += cons.getType().callGetCode();
+//			if (!meth_pref.isEmpty())
+//				meth_pref += " ";
+//			return (String)Log.MethodOut(Thread.currentThread(), 
+//					meth_pref + String.format("%s::%s(%s)", cons.getClassDef().getName(), cons.getClassDef().getName(),
+//							StringUtils.join(cons.getParams(), ", ")));
+//		}
+//		return (String)Log.MethodOut(Thread.currentThread(), getCode((Meth) cons));
+//	}
+	
 	/**
 	 * It is meant to be only used in the CPP file (it does not print the
 	 * modifiers).

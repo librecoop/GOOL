@@ -16,10 +16,11 @@
 ## Velocity templates for writing out diverse things C++
 #macro ( includes $dependencies )
 #foreach( $dep in $dependencies )
+#if ($dep.isHeaderDependency())
 #if($dep.startsWith("/*")||$dep.startsWith("//")||$dep.startsWith("\#include"))
 $dep
 #elseif(!$dep.equals("noprint"))\#include <${dep}>
-#end#end#end
+#end#end#end#end
 ##Standard inclusion of iostream to every CPP program
 ##\#include <iostream>
 ##
@@ -41,19 +42,28 @@ ${cdep}
 
 #macro( params $params )
 #set( $paramsNb = $params.size() )
-#foreach( $p in $params )$p.Type $p.Name#if($velocityCount != $paramsNb), #end#end
+#foreach( $p in $params )$p.getType() $p.getName()#if($velocityCount != $paramsNb), #end#end
 #end
 #macro ( block $block )
-#foreach( $stmt in $block.Statements )$stmt;
+#foreach( $stmt in $block.getStatements() )$stmt;
 #end
  
 #end
 ##
 ## -----------
 ##
-#macro (interfaces $interfaces)
+#macro (interfaces $interfaces $parentClass)
 #set( $size = $interfaces.size() )
-#if ($size > 0) #foreach( $interface in $interfaces )public $interface.toString().replaceAll("[ *]*$", "")#if($velocityCount != $size), #end#end#end
+#if ($size > 0) 
+	#foreach( $interface in $interfaces )
+		: public $interface.toString().replaceAll("[ *]*$", "")
+		#if($velocityCount != $size), #end
+	#end
+#end
+#if ($parentClass)
+	#if($size > 0), $parentClass.getName()
+	#else : public $parentClass.getName()#end
+#end
 #end
 ##
 ## -----------

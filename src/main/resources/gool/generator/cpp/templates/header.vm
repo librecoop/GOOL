@@ -23,21 +23,25 @@
 $Helper.printRecognizedDependencies($class)
 
 #if ($class.isEnum())
-enum $class.Name {
-#foreach( $field in $class.Fields )
-    $field.Name,
+enum $class.getName() {
+#foreach( $field in $class.getFields() )
+    $field.getName(),
 #end
 };
 #else
-class $class.Name #if(!$class.Interfaces.isEmpty()): #interfaces($class.Interfaces)#end {
-#foreach( $field in $class.Fields )
+class $class.getName() #interfaces($class.getInterfaces() $class.getParentClass()){
+#foreach( $field in $class.getFields() )
     $field;
 #end
 
-#foreach( $method in $class.Methods )
+#foreach( $method in $class.getMethods() )
 	#if($method.isGoolMethodImplementation())
 	$method.getHeader()
-	#elseif(!$method.isMainMethod())$method.AccessModifier: $method.Type $method.Name ( #params( $method.getParams() ) );#end
+	#elseif($method.getName().isEmpty())
+		$method.getAccessModifier(): $method.getType() $class.getName() ( #params( $method.getParams() ) );
+	#elseif(!$method.isMainMethod())
+		$method.getAccessModifier(): $method.getType() $method.getName() ( #params( $method.getParams() ) );
+	#end
 
 #end
 };

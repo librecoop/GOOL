@@ -30,7 +30,7 @@ public final class TypeGoolLibraryClass extends ReferenceType {
 	 * The name of the gool library class.
 	 */
 	private String goolclassname;
-
+	
 	/**
 	 * Gets the name of the gool library class.
 	 * @return

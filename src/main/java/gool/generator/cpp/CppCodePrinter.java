@@ -96,9 +96,6 @@ public class CppCodePrinter extends CodePrinter {
 		 * {}
 		 */
 
-		if (pclass.getParentClass() != null) {
-			pclass.getInterfaces().add(0, pclass.getParentClass());
-		}
 		Log.d("<CppCodePrinter - print> outputdir : " + outPutDir);
 		completeClassList.put(outPutDir + pclass.getName() + ".h", processTemplate("header.vm", pclass));
 

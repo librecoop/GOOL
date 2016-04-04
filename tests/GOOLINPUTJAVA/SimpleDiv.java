@@ -1,1 +1,0 @@
-public class SimpleDiv {	public static void main(String[] args) {int n = 8/2;System.out.println(n);}}

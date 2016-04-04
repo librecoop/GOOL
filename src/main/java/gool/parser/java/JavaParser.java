@@ -141,7 +141,7 @@ public class JavaParser extends ParseGOOL {
 		}
 		Log.d("\n\n****************** End Main Scan *******************\n\n");
 
-		Log.d(RecognizerMatcher.printMatchTables());
+		Log.d(String.format("<JavaParser - parseGool>\n%s", RecognizerMatcher.printMatchTables()));
 
 		return visitor.getGoolClasses();
 	}

@@ -60,6 +60,7 @@ import gool.ast.core.RecognizedDependency;
 import gool.ast.core.Return;
 import gool.ast.core.Statement;
 import gool.ast.core.StringIsEmptyCall;
+import gool.ast.core.This;
 import gool.ast.core.ThisCall;
 import gool.ast.core.Throw;
 import gool.ast.core.ToStringCall;
@@ -134,6 +135,8 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+
+import org.hamcrest.core.IsInstanceOf;
 
 import logger.Log;
 
@@ -686,7 +689,6 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			Log.d("<JavaRecognizer - string2IType> IType is associated with a TypeClass named " + typeName);
 			IType type = new TypeClass(typeName);
 			TypeDependency typeDep = new TypeDependency(type);
-			typeDep.setPersonal(true);
 			addDependencyToContext(context, typeDep);
 			return type;
 		}
@@ -976,7 +978,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		for (StatementTree stmt : n.getStatements()) {
 			Statement statement = (Statement) stmt.accept(this, new Context(
 					context));
-//			Statement statement = (Statement) stmt.accept(this,context);
+			//			Statement statement = (Statement) stmt.accept(this,context);
 			if (statement != null) {
 				block.addStatement(statement);
 			}
@@ -1047,9 +1049,65 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.MethodIn(Thread.currentThread());
 		IType type = goolType(n.getIdentifier(), context);
 		ClassNew c = new ClassNew(type);
-
 		addParameters(n.getArguments(), c, context);
-
+		Log.d("<JavaRecognizer - visitNewClass> Current element type is <" +
+				n.getIdentifier().toString() + "> with type name <" + type.getName() + ">");
+		ClassTree cltr = n.getClassBody();
+		if (cltr != null){
+			// That means that the instance contains redefined code
+			// Visit the added code
+			ClassDef classDef = (ClassDef) cltr.accept(this, context);
+			// It has been visited has it is, ie no class type has been given.
+			// We define a class type from the instance type
+			String clName;
+			if (type instanceof TypeGoolLibraryClass){
+				classDef.setGoolLibraryClassRedefinition(true);//useful for generation
+				clName = ((TypeGoolLibraryClass)type).getGoolclassname();
+				clName = clName.substring(clName.lastIndexOf(".") + 1, clName.length()) + "OL";
+			}else{
+				clName = c.getName() + "_b";
+			}
+			// First remove classDef from goolClasses (added by visitClass)
+			for (Map.Entry<IType, ClassDef> entry : goolClasses.entrySet()){
+				if (entry.getValue() == classDef){
+					goolClasses.remove(entry.getKey());
+					break;
+				}
+			}
+			// Then choose a new name that is not already assigned
+			ArrayList<String> similarNames = new ArrayList<String>();
+			for (Map.Entry<IType, ClassDef> entry : goolClasses.entrySet()){
+				if (entry.getKey().getName().contains(clName)){
+					similarNames.add(entry.getKey().getName());
+				}
+			}
+			while(similarNames.contains(clName)){
+				clName += "_b";
+			}
+			// Set classDef name and type (and for the instance also)
+			IType clType = new TypeClass(clName);
+			c.setType(clType);
+			classDef.setName(clName);
+			// Change the name of the constructor (no name by default with private modifier)
+			for(Meth m : classDef.getMethods()){
+				if ((m instanceof Constructor) && (!m.getModifiers().contains(Modifier.PUBLIC))){
+					m.addModifier(Modifier.PUBLIC);
+					m.setName(clName);
+				}
+			}
+			classDef.setType(clType);
+			// Add classDef type as dependency to the current context 
+			TypeDependency daughter = new TypeDependency(clType);
+			daughter.setHeaderDependency(false);
+			addDependencyToContext(context, daughter);
+			// Finally add the redefined classDef to goolClasses
+			goolClasses.put(classDef.getType(), classDef);
+//			Log.d("<JavaRecognizer - visitNewClass> ========================= goolClasses : ");
+//			for (Map.Entry<IType, ClassDef> entry : goolClasses.entrySet()){
+//				Log.d(String.format("-> (%s, %s) : isGoolLibraryClassRedefinition : %s",
+//						entry.getKey().getName(), entry.getValue().getName(), entry.getValue().isGoolLibraryClassRedefinition()));
+//			}
+		}
 		return Log.MethodOut(Thread.currentThread(), c);
 	}
 
@@ -1656,7 +1714,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		}
 		Log.d("\n\n<JavaRecognizer - visitCompilationUnit> Adding dependencies ......\n\n");
 		for (ClassDef classDef : getGoolClasses()) {
-			Log.d("\n\n<JavaRecognizer - visitCompilationUnit> Deal with classdef " + classDef.getName());
+			Log.d(String.format("\n\n<JavaRecognizer - visitCompilationUnit> Deal with classdef %s",
+					classDef.getName()));
 			GoolLibraryClassAstBuilder.init();
 			for (Dependency dep : classDef.getDependencies()) {
 				Log.d("\n\n<JavaRecognizer - visitCompilationUnit> contains dep " + dep.toString());
@@ -1668,11 +1727,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 		for (ClassDef goolClassAst : GoolLibraryClassAstBuilder.getBuiltAsts()) {
-			goolClasses.put(goolClassAst.getType(), goolClassAst);
-			Log.d("\n\n<JavaRecognizer - visitCompilationUnit> The following GOOL library AST has been successfully built and added to the current AST collection: "
-					+ goolClassAst.getPackageName()
-					+ "."
-					+ goolClassAst.getName() + "\n\n");
+				goolClasses.put(goolClassAst.getType(), goolClassAst);
+				Log.d("\n\n<JavaRecognizer - visitCompilationUnit> The following GOOL library AST has been successfully built and added to the current AST collection: "
+						+ goolClassAst.getPackageName()
+						+ "."
+						+ goolClassAst.getName() + "\n\n");
 		}
 		Log.d("@@@@@@@@@@@@@@@@@ Context Tree @@@@@@@@@@@@@@@@@@@@@");
 		Log.d("\n" + Context.getContextTree(context));
@@ -1749,6 +1808,8 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				method = new MainMeth();
 			} else {
 				method = new Meth(type, n.getName().toString());
+				if (!n.getThrows().isEmpty())
+					method.addThrowStatement(new TypeException("", "", TypeException.Kind.DEFAULT));
 			}
 			context.addDeclaration(method, method.getName(), getTypeMirror(n));
 		}
@@ -1855,14 +1916,14 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is " + goolMethod.toString() + " and is an instance of " + target.getClass().getName());
 			else
 				Log.d("<JavaRecognizer - visitMethodInvocation> GoolMethod is null.");
-			
+
 			if (goolMethod != null && target instanceof MemberSelect) {
 				((MemberSelect) target).setIdentifier(goolMethod
 						.substring(goolMethod.lastIndexOf(".") + 1));
 				Log.d("<JavaRecognizer - visitMethodInvocation> target identified as." +
 						((MemberSelect) target).getIdentifier());
 			}
-			
+
 
 		}
 
@@ -2001,8 +2062,8 @@ class Context {
 
 	public Context(Context parent) {
 		this(null, parent);
-	//	Log.d("@@@@@@@@@@@@@@@@@ Context created @@@@@@@@@@@@@@@@@@@@@");
-	//	Log.d("Context tree :\n" + getContextTree(this));
+		//	Log.d("@@@@@@@@@@@@@@@@@ Context created @@@@@@@@@@@@@@@@@@@@@");
+		//	Log.d("Context tree :\n" + getContextTree(this));
 	}
 
 	public Context(ClassDef classDef, Context parent) {
@@ -2141,7 +2202,7 @@ class Context {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * return dependencies of the current classDef
 	 */

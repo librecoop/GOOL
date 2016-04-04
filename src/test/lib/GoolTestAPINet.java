@@ -9,16 +9,19 @@ import gool.generator.python.PythonPlatform;
 import gool.generator.objc.ObjcPlatform;
 import gool.test.TestHelperJava;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 public class GoolTestAPINet {
 
 	/*
@@ -54,14 +57,11 @@ public class GoolTestAPINet {
 			this.excludedPlatforms = excludedPlatforms;
 		}
 
-		public void compare(Platform platform, int test) throws Exception {
-			if (excludedPlatforms.contains(platform)) {
-				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-				for (Platform p : excludedPlatforms)
-					if (testedPlatforms.contains(p))
-						errorMsg += p + " ";
-				Assert.fail(errorMsg
-						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
+		public void compare(Platform platform) throws Exception {
+			if (excludedPlatforms.contains(platform)){
+				System.err.println("The following target platform(s) have been "
+						+ "excluded for this test:" + platform.getName());
+				return;
 			}
 
 			String result = compileAndRun(platform);
@@ -70,26 +70,22 @@ public class GoolTestAPINet {
 			if (platform == ObjcPlatform.getInstance()
 					&& result.indexOf("] ") != -1)
 				result = result.substring(result.indexOf("] ") + 2);
-
-			//Assert.assertEquals(String.format("The platform %s", platform),
-			//		expected, result);
-			TestHelperJava.assertTestAPINet(String.format("The platform %s", platform),
-							expected, result, test);
-			
+			Assert.assertEquals(String.format("The platform %s", platform),
+					expected, result);
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
-			String cleanOutput = cleanOutput(TestHelperJava.generateCompileRun(
-					platform, input, MAIN_CLASS_NAME));
+			String res = TestHelperJava.generateCompileRun(platform, input, MAIN_CLASS_NAME);
+			String cleanOutput = cleanOutput(res);
 			return cleanOutput;
 		}
 
 		private static String cleanOutput(String result) {
-			return result.replaceAll(CLEAN_UP_REGEX, "").trim();
+			return result.replaceAll(CLEAN_UP_REGEX, "").trim().replaceAll("[\u0000-\u001f]", "");
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static String MAIN_CLASS_NAME = "TestAPINet";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -105,14 +101,16 @@ public class GoolTestAPINet {
 
 	@Test
 	public void goolLibraryNetTest1() throws Exception {
+		MAIN_CLASS_NAME = "TestAPINet1";
 		String input = "import java.lang.Thread;"
 				+ "import java.lang.Runnable;"
 				+ "import java.net.DatagramPacket;"
 				+ "import java.net.DatagramSocket;"
 				+ "import java.net.InetAddress;"
 				+ TestHelperJava
-						.surroundWithClassMainNet(
+						.surroundWithClass(
 								"/* création de 5 envoie au serveur qui les affiches */"
+								+ ""
 								+ "public static class ServeurUDPEcho{"
 								+ "	final static int port = 8532; "
 								+ "	final static int taille = 1024; "
@@ -126,7 +124,6 @@ public class GoolTestAPINet {
 								+ "			DatagramPacket data = new DatagramPacket(buffer,buffer.length); "
 								+ "			socket.receive(data);"
 								+ "			System.out.println(new String(data.getData())); "
-								+ "			"
 								+ "		}"
 								+ ""
 								+ "	}"
@@ -149,15 +146,17 @@ public class GoolTestAPINet {
 								+ "	"
 								+ "	} "
 								+ "}"
-								+ ""
+								+ "	"
+								+ "static final ServeurUDPEcho server = new ServeurUDPEcho();"
+								+ "static final ClientUDPEcho client = new ClientUDPEcho();"
+								+ "	"
 								+ "public static void main(String[] args) {"
-								+ "	final ServeurUDPEcho server = new ServeurUDPEcho();"
 								+ "	Thread serverThread =new Thread(new Runnable() {"
 								+ "		"
 								+ "		@Override"
 								+ "		public void run() {"
 								+ "			try {"
-								+ "				server.run();"
+								+ "				" + MAIN_CLASS_NAME + ".server.run();"
 								+ "			} catch (Exception e) {"
 								+ "				"
 								+ "			}"
@@ -166,13 +165,12 @@ public class GoolTestAPINet {
 								+ "	serverThread.start();"
 								+ "	"
 								+ "	for(int i = 0 ; i < 5 ; i++){"
-								+ "		final ClientUDPEcho client = new ClientUDPEcho();"
 								+ "		new Thread(new Runnable() {"
 								+ "			"
 								+ "			@Override"
 								+ "			public void run() {"
 								+ "				try {"
-								+ "					client.run();"
+								+ "					" + MAIN_CLASS_NAME + ".client.run();"
 								+ "				} catch (Exception e) {"
 								+ "					"
 								+ "				}"
@@ -185,26 +183,30 @@ public class GoolTestAPINet {
 								+ "		e.printStackTrace();"
 								+ "	}"
 								+ "}"
-								,MAIN_CLASS_NAME);
-		String expected = "HELLO" + "HELLO" + "HELLO" + "HELLO" + "HELLO";
+								,MAIN_CLASS_NAME, "");
+		String expected = "HELLOHELLOHELLOHELLOHELLO";
 
 		// Matching of the GoolFile library class and of its method
 		// work only for the Java target language at the moment,
 		// so we exclude the other platforms for this test.
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
 
-		compareResultsDifferentPlatforms(input, expected, 1);
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	@Test
 	public void goolLibraryNetTest2() throws Exception {
+		MAIN_CLASS_NAME = "TestAPINet2";
 		String input = "import java.lang.Thread;"
 				+ "import java.lang.Runnable;"
 				+ "import java.net.DatagramPacket;"
 				+ "import java.net.DatagramSocket;"
 				+ "import java.net.InetAddress;"
 				+ TestHelperJava
-						.surroundWithClassMainNet(
+						.surroundWithClass(
 								"/* création de 5 envoie au serveur qui les affiches */"
 								+ "public static class ServeurUDPEcho{"
 								+ "	final static int port = 8532; "
@@ -243,14 +245,16 @@ public class GoolTestAPINet {
 								+ "	} "
 								+ "}"
 								+ ""
+								+ "static final ServeurUDPEcho server = new ServeurUDPEcho();"
+								+ "static final ClientUDPEcho client = new ClientUDPEcho();"
+								+ ""
 								+ "public static void main(String[] args) {"
-								+ "	final ServeurUDPEcho server = new ServeurUDPEcho();"
 								+ "	Thread serverThread =new Thread(new Runnable() {"
 								+ "		"
 								+ "		@Override"
 								+ "		public void run() {"
 								+ "			try {"
-								+ "				server.run();"
+								+ "				 " + MAIN_CLASS_NAME + ".server.run();"
 								+ "			} catch (Exception e) {"
 								+ "				"
 								+ "			}"
@@ -259,13 +263,12 @@ public class GoolTestAPINet {
 								+ "	serverThread.start();"
 								+ "	"
 								+ "	for(int i = 0 ; i < 10 ; i++){"
-								+ "		final ClientUDPEcho client = new ClientUDPEcho();"
 								+ "		new Thread(new Runnable() {"
 								+ "			"
 								+ "			@Override"
 								+ "			public void run() {"
 								+ "				try {"
-								+ "					client.run();"
+								+ "					 " + MAIN_CLASS_NAME + ".client.run();"
 								+ "				} catch (Exception e) {"
 								+ "					"
 								+ "				}"
@@ -278,27 +281,31 @@ public class GoolTestAPINet {
 								+ "		e.printStackTrace();"
 								+ "	}"
 								+ "}"
-								,MAIN_CLASS_NAME);
+								,MAIN_CLASS_NAME, "");
 		String expected = "HELLO" + "HELLO" + "HELLO" + "HELLO" + "HELLO"
 								+ "HELLO" + "HELLO" + "HELLO" + "HELLO" + "HELLO";
 
 		// Matching of the GoolFile library class and of its method
 		// work only for the Java target language at the moment,
 		// so we exclude the other platforms for this test.
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
 
-		compareResultsDifferentPlatforms(input, expected, 2);
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	@Test
 	public void goolLibraryNetTest3() throws Exception {
+		MAIN_CLASS_NAME = "TestAPINet3";
 		String input = "import java.lang.Thread;"
 				+ "import java.lang.Runnable;"
-				+ "import java.net.DatagramPacket;"
-				+ "import java.net.DatagramSocket;"
-				+ "import java.net.InetAddress;"
+				+ "import java.net.Socket;"
+				+ "import java.net.ServerSocket;"
+				+ "import java.io.DataOutputStream;"
 				+ TestHelperJava
-						.surroundWithClassMainNet(
+						.surroundWithClass(
 								"/* création de 5 envoie au serveur qui les affiches */"
 								+ "public static class ServeurTCPEcho{"
 								+ ""
@@ -321,23 +328,25 @@ public class GoolTestAPINet {
 								+ "	public void run() throws Exception"
 								+ "	{ "
 								+ "		String sentence;"
-								+ "		  String modifiedSentence;"
-								+ "		  Socket clientSocket = new Socket(\"localhost\", 6789);"
-								+ "		  DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());"
-								+ "		  outToServer.writeBytes(\"HELLO\" + '\n');"
-								+ "		  System.out.println(\"1\" );"
-								+ "		  clientSocket.close();"
+								+ "		String modifiedSentence;"
+								+ "		Socket clientSocket = new Socket(\"localhost\", 6789);"
+								+ "		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());"
+								+ "		outToServer.writeBytes(\"HELLO\");"
+								+ "		System.out.println(\"1\" );"
+								+ "		clientSocket.close();"
 								+ "	} "
 								+ "}"
 								+ ""
+								+ "static final ServeurTCPEcho server = new ServeurTCPEcho();"
+								+ "static final ClientTCPEcho client = new ClientTCPEcho();"
+								+ ""
 								+ "public static void main(String[] args) {"
-								+ "	final ServeurTCPEcho server = new ServeurTCPEcho();"
 								+ "	Thread serverThread =new Thread(new Runnable() {"
 								+ "		"
 								+ "		@Override"
 								+ "		public void run() {"
 								+ "			try {"
-								+ "				server.run();"
+								+ "				 " + MAIN_CLASS_NAME + ".server.run();"
 								+ "			} catch (Exception e) {"
 								+ "				"
 								+ "			}"
@@ -346,13 +355,12 @@ public class GoolTestAPINet {
 								+ "	serverThread.start();"
 								+ "	"
 								+ "	for(int i = 0 ; i < 5 ; i++){"
-								+ "		final ClientTCPEcho client = new ClientTCPEcho();"
 								+ "		new Thread(new Runnable() {"
 								+ "			"
 								+ "			@Override"
-											+ "			public void run() {"
+								+ "			public void run() {"
 								+ "				try {"
-								+ "					client.run();"
+								+ "					 " + MAIN_CLASS_NAME + ".client.run();"
 								+ "				} catch (Exception e) {"
 								+ "					"
 								+ "				}"
@@ -365,26 +373,30 @@ public class GoolTestAPINet {
 								+ "		"
 								+ "	}"
 								+ "}"
-								,MAIN_CLASS_NAME);
+								, MAIN_CLASS_NAME, "");
 		String expected = "1111111111" ;
 
 		// Matching of the GoolFile library class and of its method
 		// work only for the Java target language at the moment,
 		// so we exclude the other platforms for this test.
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
 
-		compareResultsDifferentPlatforms(input, expected, 3);
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	@Test
 	public void goolLibraryNetTest4() throws Exception {
+		MAIN_CLASS_NAME = "TestAPINet4";
 		String input = "import java.lang.Thread;"
 				+ "import java.lang.Runnable;"
-				+ "import java.net.DatagramPacket;"
-				+ "import java.net.DatagramSocket;"
-				+ "import java.net.InetAddress;"
+				+ "import java.net.Socket;"
+				+ "import java.net.ServerSocket;"
+				+ "import java.io.DataOutputStream;"
 				+ TestHelperJava
-						.surroundWithClassMainNet(
+						.surroundWithClass(
 								"/* création de 10 envoie au serveur qui les affiches */"
 								+ "public static class ServeurTCPEcho{"
 								+ ""
@@ -410,20 +422,22 @@ public class GoolTestAPINet {
 								+ "		  String modifiedSentence;"
 								+ "		  Socket clientSocket = new Socket(\"localhost\", 6789);"
 								+ "		  DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());"
-								+ "		  outToServer.writeBytes(\"HELLO\" + '\n');"
+								+ "		  outToServer.writeBytes(\"HELLO\");"
 								+ "		  System.out.println(\"1\" );"
 								+ "		  clientSocket.close();"
 								+ "	} "
 								+ "}"
 								+ ""
+								+ "static final ServeurTCPEcho server = new ServeurTCPEcho();"
+								+ "static final ClientTCPEcho client = new ClientTCPEcho();"
+								+ ""
 								+ "public static void main(String[] args) {"
-								+ "	final ServeurTCPEcho server = new ServeurTCPEcho();"
 								+ "	Thread serverThread =new Thread(new Runnable() {"
 								+ "		"
 								+ "		@Override"
 								+ "		public void run() {"
 								+ "			try {"
-								+ "				server.run();"
+								+ "				" + MAIN_CLASS_NAME + ".server.run();"
 								+ "			} catch (Exception e) {"
 								+ "				"
 								+ "			}"
@@ -432,13 +446,12 @@ public class GoolTestAPINet {
 								+ "	serverThread.start();"
 								+ "	"
 								+ "	for(int i = 0 ; i < 10 ; i++){"
-								+ "		final ClientTCPEcho client = new ClientTCPEcho();"
 								+ "		new Thread(new Runnable() {"
 								+ "			"
 								+ "			@Override"
 											+ "			public void run() {"
 								+ "				try {"
-								+ "					client.run();"
+								+ "					" + MAIN_CLASS_NAME + ".client.run();"
 								+ "				} catch (Exception e) {"
 								+ "					"
 								+ "				}"
@@ -451,28 +464,59 @@ public class GoolTestAPINet {
 								+ "		"
 								+ "	}"
 								+ "}"
-								,MAIN_CLASS_NAME);
+								,MAIN_CLASS_NAME, "");
 		String expected = "11111111111111111111" ;
 
 		// Matching of the GoolFile library class and of its method
 		// work only for the Java target language at the moment,
 		// so we exclude the other platforms for this test.
+		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
+		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
+		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		excludePlatformForThisTest((Platform) ObjcPlatform.getInstance());
 
-		compareResultsDifferentPlatforms(input, expected, 4);
+		compareResultsDifferentPlatforms(input, expected);
 	}
 	
-	private void compareResultsDifferentPlatforms(String input, String expected, int test)
+	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
-				platforms, testNotImplementedOnPlatforms), test);
+				platforms, testNotImplementedOnPlatforms));
 		this.testNotImplementedOnPlatforms = new ArrayList<Platform>();
 	}
 
-	private void compareResultsDifferentPlatforms(GoolTestExecutor executor, int test)
+	private void compareResultsDifferentPlatforms(GoolTestExecutor executor)
 			throws Exception {
 		for (Platform platform : platforms) {
-			executor.compare(platform,test);
+			executor.compare(platform);
 		}
+	}
+	
+	@AfterClass
+	public static void clean(){
+		File dir = new File(Settings.get("java_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("cpp_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("csharp_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("python_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("objc_out_dir"));
+		cleanDir(dir);
+	}
+
+	private static void cleanDir(File dir){
+		if (!dir.exists())
+			return;
+		for (File f : dir.listFiles()){
+			if (f.isDirectory()){
+				cleanDir(f);
+			}
+			else{
+				f.delete();
+			}
+		}
+		dir.delete();
 	}
 }
