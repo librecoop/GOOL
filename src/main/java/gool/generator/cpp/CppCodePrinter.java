@@ -22,6 +22,12 @@
 package gool.generator.cpp;
 
 import gool.ast.core.ClassDef;
+import gool.ast.core.Dependency;
+import gool.ast.core.Field;
+import gool.ast.core.Meth;
+import gool.ast.core.VarDeclaration;
+import gool.ast.type.IType;
+import gool.generator.GeneratorHelper;
 import gool.generator.common.CodePrinter;
 import gool.generator.common.GeneratorMatcher;
 
@@ -33,12 +39,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.texen.Generator;
 
 /**
  * Provides the basic functionality to generate C++ code from a list of GOOL
@@ -90,14 +98,13 @@ public class CppCodePrinter extends CodePrinter {
 			outPutDir = getOutputDir().getAbsolutePath() + File.separator +
 			StringUtils.replace(pclass.getPackageName(), ".", File.separator) + 
 			File.separator;
-		/*
-		 * In C++ the parent class and the interfaces are used in the same
-		 * statement. Example: class Foo : public ClassBar1, InterfaceBar2 ...
-		 * {}
-		 */
 
 		Log.d("<CppCodePrinter - print> outputdir : " + outPutDir);
-		completeClassList.put(outPutDir + pclass.getName() + ".h", processTemplate("header.vm", pclass));
+
+		//completeClassList.put(outPutDir + pclass.getName() + ".h", processTemplate("header.vm", pclass));
+
+		completeClassList.put(outPutDir + pclass.getName() + ".h",
+				printClassHeader(pclass));
 
 		/*
 		 * Only generate header files if this element is an interface or an
@@ -159,6 +166,103 @@ public class CppCodePrinter extends CodePrinter {
 		}
 		printedClasses.add(pclass);
 		return result;
+	}
+
+
+	private String printInterfaces(ClassDef classDef){
+		String toReturn = "";
+		int size = classDef.getInterfaces().size();
+		if (size > 0){ 
+			for(IType iface : classDef.getInterfaces()){
+				toReturn = String.format(": public %s, ",
+						iface.toString().replaceAll("[ *]*$", ""));
+			}
+			toReturn = toReturn.substring(0, toReturn.lastIndexOf(","));
+		}
+		if (classDef.getParentClass() != null){
+			if(size > 0)
+				toReturn += ", ";
+			else
+				toReturn += ": public ";
+			toReturn += classDef.getParentClass().getName();
+		}
+		return toReturn;
+	}
+
+	public String printClassHeader(ClassDef classDef) {
+		Log.MethodIn(Thread.currentThread());
+
+		String header = String.format("#ifndef __%s_H\n", classDef.getName().toUpperCase());
+		header += String.format("#define __%s_H\n\n\n", classDef.getName().toUpperCase());
+
+		String body = "";
+		if (classDef.isEnum()){
+			body += String.format("enum %s{\n",classDef.getName());
+			Iterator<Field> it = classDef.getFields().iterator();
+			while(it.hasNext()) {
+				String fieldName = it.next().getName();
+				if(it.hasNext())
+					body += String.format("%s,\n", fieldName);
+				else
+					body += String.format("%s\n", fieldName);
+			}
+			body += "\n};\n";
+		}else{
+			body += "class " + classDef.getName() + printInterfaces(classDef) + "{\n";
+			for(Field field : classDef.getFields()){
+				body += String.format("%s;\n",field.callGetCode());
+			}
+			for(Meth method : classDef.getMethods()){
+				if(method.isGoolMethodImplementation()){
+					body += method.getHeader();
+				}else if(method.getName().isEmpty()){
+					// Constructor
+					body += String.format("\t%s : %s(",method.getAccessModifier(),
+							classDef.getName());
+					Iterator<VarDeclaration> it = method.getParams().iterator();
+					while(it.hasNext()) {
+						VarDeclaration varDec = it.next();
+						if(it.hasNext())
+							body += String.format("%s %s,\n", varDec.getType(),
+									varDec.getName());
+						else
+							body += String.format("%s %s\n", varDec.getType(),
+									varDec.getName());
+					}
+					body += ");\n";
+				}else if(!method.isMainMethod()){
+					body += String.format("\t%s: %s %s(",
+							method.getAccessModifier(), method.getType(), method.getName());
+					Iterator<VarDeclaration> it = method.getParams().iterator();
+					while(it.hasNext()) {
+						VarDeclaration varDec = it.next();
+						if(it.hasNext())
+							body += String.format("%s %s,\n", varDec.getType(),
+									varDec.getName());
+						else
+							body += String.format("%s %s\n", varDec.getType(),
+									varDec.getName());
+					}
+					body += ");\n";
+				}
+			}
+			body +="};\n";
+		}
+
+		for(Dependency dep : classDef.getDependencies()){
+			if (dep.isHeaderDependency()){
+				String depStr = dep.toString();
+				if(depStr.startsWith("/*") || depStr.startsWith("//") ||
+						depStr.startsWith("#include"))
+					header += depStr + "\n";
+				else if(!depStr.equals("noprint"))
+					header += String.format("#include <%s>\n",depStr);
+			}
+		}
+		
+		header += GeneratorHelper.printRecognizedDependencies(classDef) + "\n\n";
+		
+		return header + body + "\n\n#endif\n";
 	}
 
 	@Override

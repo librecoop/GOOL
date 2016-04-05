@@ -117,11 +117,11 @@ CodeGeneratorNoVelocity {
 	public void addCustomDependency(String dep) {
 		customDependencies.add(dep);
 	}
-	
+
 	public Set<String> getCustomDependencies(){
 		return customDependencies;
 	}
-	
+
 	public void clearCustomDependencies(){
 		customDependencies.clear();
 	}
@@ -485,12 +485,12 @@ CodeGeneratorNoVelocity {
 		if ((binaryOp.getRight().getType() instanceof TypeNull) && 
 				(binaryOp.getLeft().getType() instanceof PrimitiveType)){
 			return String.format("(%s %s%s %s)",
-						binaryOp.getLeft(),
-						binaryOp.getTextualoperator(),
-						binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-								: "", getNullElement(binaryOp.getLeft()));			
+					binaryOp.getLeft(),
+					binaryOp.getTextualoperator(),
+					binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+							: "", getNullElement(binaryOp.getLeft()));			
 		}
-		
+
 		if 	((binaryOp.getLeft().getType() instanceof TypeNull) && 
 				(binaryOp.getRight().getType() instanceof PrimitiveType)){		
 			return String.format("(%s %s%s %s)",
@@ -795,28 +795,28 @@ CodeGeneratorNoVelocity {
 						lioc.getExpression(), StringUtils.join(lioc.getParameters(), ", "), lioc.getExpression()));
 	}
 
-	
-//	@Override
-//	public String getCode(Constructor cons) {
-//		Log.MethodIn(Thread.currentThread());
-//		if (cons.getName().isEmpty()){
-//			List<Modifier> modifiers = new ArrayList<Modifier>(cons.getModifiers());
-//			// Remove (public, private, protected, final) invalid modifiers.
-//			modifiers.remove(cons.getAccessModifier());
-//			modifiers.remove(Modifier.FINAL);
-//			String meth_pref = getCode(modifiers);
-//			if (!meth_pref.isEmpty())
-//				meth_pref += " ";
-//			meth_pref += cons.getType().callGetCode();
-//			if (!meth_pref.isEmpty())
-//				meth_pref += " ";
-//			return (String)Log.MethodOut(Thread.currentThread(), 
-//					meth_pref + String.format("%s::%s(%s)", cons.getClassDef().getName(), cons.getClassDef().getName(),
-//							StringUtils.join(cons.getParams(), ", ")));
-//		}
-//		return (String)Log.MethodOut(Thread.currentThread(), getCode((Meth) cons));
-//	}
-	
+
+	//	@Override
+	//	public String getCode(Constructor cons) {
+	//		Log.MethodIn(Thread.currentThread());
+	//		if (cons.getName().isEmpty()){
+	//			List<Modifier> modifiers = new ArrayList<Modifier>(cons.getModifiers());
+	//			// Remove (public, private, protected, final) invalid modifiers.
+	//			modifiers.remove(cons.getAccessModifier());
+	//			modifiers.remove(Modifier.FINAL);
+	//			String meth_pref = getCode(modifiers);
+	//			if (!meth_pref.isEmpty())
+	//				meth_pref += " ";
+	//			meth_pref += cons.getType().callGetCode();
+	//			if (!meth_pref.isEmpty())
+	//				meth_pref += " ";
+	//			return (String)Log.MethodOut(Thread.currentThread(), 
+	//					meth_pref + String.format("%s::%s(%s)", cons.getClassDef().getName(), cons.getClassDef().getName(),
+	//							StringUtils.join(cons.getParams(), ", ")));
+	//		}
+	//		return (String)Log.MethodOut(Thread.currentThread(), getCode((Meth) cons));
+	//	}
+
 	/**
 	 * It is meant to be only used in the CPP file (it does not print the
 	 * modifiers).
@@ -880,7 +880,7 @@ CodeGeneratorNoVelocity {
 		}
 		return customDeps;
 	}
-	
+
 	public String getDependenciesCode(ClassDef cl){
 		String res = "";
 		res += "#include <boost/any.hpp>\n";
@@ -938,6 +938,7 @@ CodeGeneratorNoVelocity {
 				header + "\n" + getDependenciesCode(classDef) + "\n" + body);
 	}
 
+	
 	@Override
 	public String getCode(Throw throwStatement) {
 		Log.MethodIn(Thread.currentThread());

@@ -56,14 +56,6 @@ public class GoolTestHeritage {
 		}
 
 		public void compare(Platform platform) throws Exception {
-			//			if (excludedPlatforms.contains(platform)) {
-			//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-			//				for (Platform p : excludedPlatforms)
-			//					if (testedPlatforms.contains(p))
-			//						errorMsg += p + " ";
-			//				Assert.fail(errorMsg
-			//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
-			//			}
 			if (excludedPlatforms.contains(platform)){
 				System.err.println("The following target platform(s) have been "
 						+ "excluded for this test:" + platform.getName());
@@ -120,8 +112,6 @@ public class GoolTestHeritage {
 				,MAIN_CLASS_NAME + "Mother", "");
 		
 		String expected="Daughter" + "Mother";
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	

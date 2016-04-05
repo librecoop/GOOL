@@ -22,3 +22,7 @@ tests/GOOLOUTPUTPYTHON/
 .pydevproject
 build/
 *.out
+.classpath
+.project
+.settings/org.eclipse.jdt.core.prefs
+.externalToolBuilders/

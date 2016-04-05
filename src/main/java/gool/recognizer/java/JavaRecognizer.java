@@ -1701,6 +1701,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 		Log.d("\n\n<JavaRecognizer - visitCompilationUnit> Start visiting members ......\n\n");
 		for (Tree unit : n.getTypeDecls()) {
 			ClassDef classDef = (ClassDef) unit.accept(this, context);
+			if (!classDef.getName().equals(n.getSourceFile().getName())){
+				for(Constructor ct : classDef.getConstructors()){
+					ct.getModifiers().clear();
+					ct.getModifiers().add(Modifier.PUBLIC);
+				}
+			}
 			if (ppackage != null) {
 				Package p = packagesCache.get(ppackage);
 				if (p == null) {
