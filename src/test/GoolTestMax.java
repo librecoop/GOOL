@@ -139,7 +139,7 @@ public class GoolTestMax {
 //				+ "if (a < b){return b;}"
 //				+ "else {return a;}}}";
 		String expected = "6";
-		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
+	//	excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 

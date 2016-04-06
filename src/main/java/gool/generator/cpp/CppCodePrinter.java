@@ -223,10 +223,10 @@ public class CppCodePrinter extends CodePrinter {
 					while(it.hasNext()) {
 						VarDeclaration varDec = it.next();
 						if(it.hasNext())
-							body += String.format("%s %s,\n", varDec.getType(),
+							body += String.format("%s %s, ", varDec.getType(),
 									varDec.getName());
 						else
-							body += String.format("%s %s\n", varDec.getType(),
+							body += String.format("%s %s", varDec.getType(),
 									varDec.getName());
 					}
 					body += ");\n";
@@ -237,10 +237,10 @@ public class CppCodePrinter extends CodePrinter {
 					while(it.hasNext()) {
 						VarDeclaration varDec = it.next();
 						if(it.hasNext())
-							body += String.format("%s %s,\n", varDec.getType(),
+							body += String.format("%s %s, ", varDec.getType(),
 									varDec.getName());
 						else
-							body += String.format("%s %s\n", varDec.getType(),
+							body += String.format("%s %s", varDec.getType(),
 									varDec.getName());
 					}
 					body += ");\n";

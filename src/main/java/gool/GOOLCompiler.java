@@ -131,9 +131,9 @@ public class GOOLCompiler {
 //			/**** C# ****/
 //			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
 //			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** java ****/
-//			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** java ****/
+			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 //			/**** ObjC ****/
 //			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
 //			outputFiles.putAll(abstractGool2Target(goolPort, plt));

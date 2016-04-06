@@ -18,7 +18,7 @@ int main() {
 	while ((i < 4)) {
 		(total)++;
 		(i)++;
-	};
+	}
 	std::cout << (total) << std::endl;
 }
 

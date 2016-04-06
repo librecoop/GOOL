@@ -87,6 +87,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hamcrest.core.IsInstanceOf;
 
 /**
  * Basic code generator. It does what is common to the code generation of all
@@ -100,7 +101,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 
 	protected String indentation = "\t";
-	
+
 
 	/**
 	 * <pre>
@@ -232,9 +233,12 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
 			result.append(statement);
-
-			if (!(statement instanceof Block)) {
-				result.append(";").append("\n");
+			if (!(statement instanceof Block))
+			{
+				if ((result.charAt(result.length()-1) != '}') ||
+						(statement instanceof VarDeclaration))
+					result.append(";");
+				result.append("\n");
 			}
 		}
 		return result.toString();
@@ -401,7 +405,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		return String.format("%s.set(%s) /* Default translation, GOOL may be wrong on it */", lsc.getExpression(),
 				StringUtils.join(lsc.getParameters(), ", "));
 	}
-	
+
 	@Override
 	public String getCode(ListIndexOfCall lioc) {
 		return String.format("%s.indexOf(%s) /* Default translation, GOOL may be wrong on it */", lioc.getExpression(),
