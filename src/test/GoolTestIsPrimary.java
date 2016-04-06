@@ -26,11 +26,13 @@ import gool.generator.python.PythonPlatform;
 import logger.Log;
 import gool.generator.objc.ObjcPlatform;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -72,14 +74,6 @@ public class GoolTestIsPrimary {
 		}
 
 		public void compare(Platform platform) throws Exception {
-//			if (excludedPlatforms.contains(platform)) {
-//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-//				for (Platform p : excludedPlatforms)
-//					if (testedPlatforms.contains(p))
-//						errorMsg += p + " ";
-//				Assert.fail(errorMsg
-//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
-//			}
 			if (excludedPlatforms.contains(platform)){
 				System.err.println("The following target platform(s) have been "
 						+ "excluded for this test:" + platform.getName());
@@ -88,8 +82,8 @@ public class GoolTestIsPrimary {
 
 			String expect = this.expected;
 			if (platform instanceof CppPlatform){// C++ does not have booleans
-				expect = expect.replaceAll("True", "1");
-				expect = expect.replaceAll("False", "0");
+				expect = expect.toLowerCase().replaceAll("true", "1");
+				expect = expect.toLowerCase().replaceAll("false", "0");
 			}
 		
 			String result = compileAndRun(platform);
@@ -100,7 +94,7 @@ public class GoolTestIsPrimary {
 				result = result.substring(result.indexOf("] ") + 2);
 
 			Assert.assertEquals(String.format("The platform %s", platform),
-					expect, result);
+					expect.toLowerCase(), result.toLowerCase());
 		}
 
 		protected String compileAndRun(Platform platform) throws Exception {
@@ -141,8 +135,7 @@ public class GoolTestIsPrimary {
 						+ "System.out.println(test.isPrimary(4));}"
 						,MAIN_CLASS_NAME,"");
 
-		String expected = "True"+"False";
-		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
+		String expected = "true"+"false";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -160,9 +153,7 @@ public class GoolTestIsPrimary {
 						+ "System.out.println(test.isPrimary(4.0));}"
 						,MAIN_CLASS_NAME,"");
 
-		String expected = "True"+"False";
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
+		String expected = "true"+"false";
 		compareResultsDifferentPlatforms(input, expected);
 	}
 
@@ -178,5 +169,33 @@ public class GoolTestIsPrimary {
 		for (Platform platform : platforms) {
 			executor.compare(platform);
 		}
+	}
+	
+	@AfterClass
+	public static void clean(){
+		File dir = new File(Settings.get("java_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("cpp_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("csharp_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("python_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("objc_out_dir"));
+		cleanDir(dir);
+	}
+
+	private static void cleanDir(File dir){
+		if (!dir.exists())
+			return;
+		for (File f : dir.listFiles()){
+			if (f.isDirectory()){
+				cleanDir(f);
+			}
+			else{
+				f.delete();
+			}
+		}
+		dir.delete();
 	}
 }
