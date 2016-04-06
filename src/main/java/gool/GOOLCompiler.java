@@ -128,17 +128,18 @@ public class GOOLCompiler {
 			/**** C++ ****/
 			plt = CppPlatform.getInstance(filesToExclude, Settings.get("cpp_out_dir"));
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** C# ****/
-//			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** C# ****/
+			plt = CSharpPlatform.getInstance(filesToExclude, Settings.get("csharp_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			/**** java ****/
 			plt = JavaPlatform.getInstance(filesToExclude, Settings.get("java_out_dir"));
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** ObjC ****/
+			/**** Python ****/
+			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
+			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** ObjC ****/
+			// This target is not working for now
 //			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
-//			/**** Python ****/
-//			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
 //			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 
 			//print files

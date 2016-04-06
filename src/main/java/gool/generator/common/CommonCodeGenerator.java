@@ -161,22 +161,28 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(Identifier identifier) {
-		return identifier.getName();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), identifier.getName());
 	}
 
 	@Override
 	public String getCode(ArrayAccess arrayAccess) {
-		return String.format("%s[%s]", arrayAccess.getExpression(),
-				arrayAccess.getIndex());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), String.format(
+				"%s[%s]", arrayAccess.getExpression(),
+				arrayAccess.getIndex()));
 	}
 
 	@Override
 	public String getCode(ArrayNew arrayNew) {
+		Log.MethodIn(Thread.currentThread());
 		if (arrayNew.getInitialiList().isEmpty())
-			return String.format("new %s[%s]", arrayNew.getType(),
-					StringUtils.join(arrayNew.getDimesExpressions(), ", "));
+			return (String)Log.MethodOut(Thread.currentThread(), String.format(
+					"new %s[%s]", arrayNew.getType(),
+					StringUtils.join(arrayNew.getDimesExpressions(), ", ")));
 
-		return String.format("{%s}",StringUtils.join(arrayNew.getInitialiList(), ", "));
+		return (String)Log.MethodOut(Thread.currentThread(), String.format(
+				"{%s}",StringUtils.join(arrayNew.getInitialiList(), ", ")));
 
 
 	}
@@ -191,17 +197,21 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Assign assign) {
-		return assign.getLValue() + " = " + assign.getValue();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				assign.getLValue() + " = " + assign.getValue());
 	}
 
 	@Override
 	public String getCode(CompoundAssign compoundAssign) {
-		return String
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),  String
 				.format("%s %s=%s %s",
 						compoundAssign.getLValue(),
 						compoundAssign.getTextualoperator(),
-						compoundAssign.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-								: "", compoundAssign.getValue());
+						compoundAssign.getOperator().equals(
+								Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+										: "", compoundAssign.getValue()));
 	}
 
 	/**
@@ -213,12 +223,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
-		return  String
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),   String
 				.format("(%s %s%s %s)",
 						binaryOp.getLeft(),
 						binaryOp.getTextualoperator(),
-						binaryOp.getOperator().equals(Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-								: "", binaryOp.getRight());
+						binaryOp.getOperator().equals(
+								Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
+										: "", binaryOp.getRight()));
 	}
 
 	/**
@@ -230,6 +242,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Block block) {
+		Log.MethodIn(Thread.currentThread());
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
 			result.append(statement);
@@ -241,7 +254,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				result.append("\n");
 			}
 		}
-		return result.toString();
+		return (String)Log.MethodOut(Thread.currentThread(), result.toString());
 	}
 
 	/**
@@ -253,8 +266,10 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(CastExpression cast) {
-		return String.format("((%s) (%s))", cast.getType(),
-				cast.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("((%s) (%s))", cast.getType(),
+						cast.getExpression()));
 	}
 
 	/**
@@ -265,7 +280,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Comment comment) {
-		return String.format("/*\n%s\n*/", comment.getValue());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("/*\n%s\n*/", comment.getValue()));
 	}
 
 	/**
@@ -277,6 +294,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Constant constant) {
+		Log.MethodIn(Thread.currentThread());
 		if (constant.getType() instanceof TypeArray) {
 			StringBuffer sb = new StringBuffer();
 
@@ -286,31 +304,34 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			sb.append("{");
 			for (int i = 0; i < size; i++) {
 				if (escape) {
-					return "\""
-							+ StringEscapeUtils.escapeJava(Array.get(
-									constant.getValue(), i).toString()) + "\"";
+					return (String)Log.MethodOut(Thread.currentThread(), "\"" +
+							StringEscapeUtils.escapeJava(Array.get(constant.getValue(),
+									i).toString()) + "\"");
 				} else {
 					sb.append(Array.get(constant.getValue(), i));
 				}
 				sb.append(",");
 			}
 			sb.append("}");
-			return sb.toString();
+			return (String)Log.MethodOut(Thread.currentThread(), sb.toString());
 		} else if (constant.getType() == TypeString.INSTANCE) {
-			return "\""
+			return (String)Log.MethodOut(Thread.currentThread(), "\""
 					+ StringEscapeUtils.escapeJava(constant.getValue()
-							.toString()) + "\"";
+							.toString()) + "\"");
 		} else if (constant.getType() == TypeChar.INSTANCE) {
-			return "'"
+			return (String)Log.MethodOut(Thread.currentThread(), "'"
 					+ StringEscapeUtils.escapeJava(constant.getValue()
-							.toString()) + "'";
+							.toString()) + "'");
 		}
-		return constant.getValue().toString();
+		return (String)Log.MethodOut(Thread.currentThread(),
+				constant.getValue().toString());
 	}
 
 	@Override
 	public String getCode(Constructor cons) {
-		return getCode((Meth) cons);
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				getCode((Meth) cons));
 	}
 
 	/**
@@ -323,10 +344,11 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Field field) {
+		Log.MethodIn(Thread.currentThread());
 		String out = String.format("%s %s %s", getCode(field.getModifiers()),
 				field.getType(), field.getName());
 		if (field.getType().toString().equals("noprint"))
-			return "";
+			return (String)Log.MethodOut(Thread.currentThread(), "");
 		if (field.getDefaultValue() != null) {
 			// Notice that this will call a toString() on the field.defaultValue
 			// Which will become a JavaGenerator.getCode(defaultValue)
@@ -334,23 +356,28 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			// Is in fact a recursive descent on the abstract GOOL tree.
 			out = String.format("%s = %s", out, field.getDefaultValue());
 		}
-		return out;
+		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 
 	@Override
 	public String getCode(FieldAccess sfa) {
-		return sfa.getTarget() + "." + sfa.getMember();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				sfa.getTarget() + "." + sfa.getMember());
 	}
 
 	@Override
 	public String getCode(For forInstruction) {
-		return formatIndented("for (%s ; %s ; %s) {%1}",
-				forInstruction.getInitializer(), forInstruction.getCondition(),
-				forInstruction.getUpdater(), forInstruction.getWhileStatement());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				formatIndented("for (%s ; %s ; %s) {%1}",
+						forInstruction.getInitializer(), forInstruction.getCondition(),
+						forInstruction.getUpdater(), forInstruction.getWhileStatement()));
 	}
 
 	@Override
 	public String getCode(GoolCall goolCall) {
+		Log.MethodIn(Thread.currentThread());
 		throw new IllegalStateException(String.format(
 				"Invalid unimplemented Gool Method: (%s).",
 				goolCall.getMethod()));
@@ -365,6 +392,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(If pif) {
+		Log.MethodIn(Thread.currentThread());
 		String out = formatIndented("if (%s) {%1}", pif.getCondition(),
 				pif.getThenStatement());
 		if (pif.getElseStatement() != null) {
@@ -373,53 +401,66 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 			else
 				out += formatIndented("else {%1}", pif.getElseStatement());
 		}
-		return out;
+		return (String)Log.MethodOut(Thread.currentThread(), out);
 	}
 
 	@Override
 	public String getCode(Collection<Modifier> modifiers) {
+		Log.MethodIn(Thread.currentThread());
 		StringBuilder sb = new StringBuilder();
 		for (Modifier modifier : modifiers) {
 			sb.append(getCode(modifier)).append(" ");
 		}
-		return sb.toString().trim();
+		return (String)Log.MethodOut(Thread.currentThread(), sb.toString().trim());
 	}
 
 	@Override
 	public String getCode(StringIsEmptyCall lmc) {
-		return getCode((MemberSelect)lmc);
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), getCode((MemberSelect)lmc));
 	}
 
 	@Override
 	public String getCode(ListMethCall lmc) {
-		return "===ListMethCall====";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "===ListMethCall====");
 	}
 
 	@Override
 	public String getCode(ListClearCall lcc) {
-		return String.format("%s.clear() /* Default translation, GOOL may be wrong on it */", lcc.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.clear() /* Default translation, GOOL may be wrong on it */",
+						lcc.getExpression()));
 	}
 
 	@Override
 	public String getCode(ListSetCall lsc) {
-		return String.format("%s.set(%s) /* Default translation, GOOL may be wrong on it */", lsc.getExpression(),
-				StringUtils.join(lsc.getParameters(), ", "));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.set(%s) /* Default translation, GOOL may be wrong on it */",
+						lsc.getExpression(), StringUtils.join(lsc.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(ListIndexOfCall lioc) {
-		return String.format("%s.indexOf(%s) /* Default translation, GOOL may be wrong on it */", lioc.getExpression(),
-				StringUtils.join(lioc.getParameters(), ", "));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.indexOf(%s) /* Default translation, GOOL may be wrong on it */",
+						lioc.getExpression(),
+						StringUtils.join(lioc.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(MapEntryMethCall mapEntryMethCall) {
+		Log.MethodIn(Thread.currentThread());
 		throw new IllegalStateException("Unsupported MapEntryMethCall: "
 				+ mapEntryMethCall.getExpression());
 	}
 
 	@Override
 	public String getCode(MapMethCall mapMethCall) {
+		Log.MethodIn(Thread.currentThread());
 		throw new IllegalStateException(String.format(
 				"Invalid method call over maps (%s).",
 				mapMethCall.getExpression()));
@@ -427,16 +468,20 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 
 	@Override
 	public String getCode(MemberSelect memberSelect) {
-		return String.format("%s.%s", memberSelect.getTarget(),
-				memberSelect.getIdentifier());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.%s", memberSelect.getTarget(),
+						memberSelect.getIdentifier()));		
 	}
 
 	@Override
 	public String getCode(Meth meth) {
+		Log.MethodIn(Thread.currentThread());
 		Log.d("==================================> Meth Call");
-		return String.format("%s %s %s (%s)", getCode(meth.getModifiers()),
-				meth.getType(), meth.getName(),
-				StringUtils.join(meth.getParams(), ", "));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s %s %s (%s)", getCode(meth.getModifiers()),
+						meth.getType(), meth.getName(),
+						StringUtils.join(meth.getParams(), ", ")));
 	}
 
 	/**
@@ -448,6 +493,7 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(MethCall methodCall) {
+		Log.MethodIn(Thread.currentThread());
 		String target = methodCall.getTarget().toString();
 		String goolMethod = methodCall.getGoolLibraryMethod();
 		if(goolMethod!=null){
@@ -457,13 +503,16 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				target=target.substring(0, target.lastIndexOf(".")+1)+methodName;
 		}
 		Log.d("<CommonCodeGenerator - getCode(MethCall)> target " + target);
-		return String.format("%s(%s)", target,
-				StringUtils.join(methodCall.getParameters(), ", "));
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s(%s)", target,
+						StringUtils.join(methodCall.getParameters(), ", ")));
 	}
 
 	@Override
 	public String getCode(Modifier modifier) {
-		return modifier.name().toLowerCase();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				modifier.name().toLowerCase());
 	}
 
 	/**
@@ -477,12 +526,13 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(NewInstance newInstance) {
-		return String.format(
-				"%s = new %s( %s )",
-				newInstance.getVariable(),
-				newInstance.getVariable().getType().toString()
-				.replaceAll("\\*$", ""),
-				StringUtils.join(newInstance.getParameters(), ", "));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s = new %s( %s )",
+						newInstance.getVariable(),
+						newInstance.getVariable().getType().toString()
+						.replaceAll("\\*$", ""),
+						StringUtils.join(newInstance.getParameters(), ", ")));
 	}
 
 	/**
@@ -494,7 +544,9 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(Return returnExpr) {
-		return String.format("return (%s)", returnExpr.getExpression());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("return (%s)", returnExpr.getExpression()));
 	}
 
 	/**
@@ -506,12 +558,16 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(This pthis) {
-		return "this";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				"this");
 	}
 
 	@Override
 	public String getCode(TypeByte typeByte) {
-		return "byte";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				"byte");
 	}
 
 	/**
@@ -521,17 +577,20 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(TypeClass typeClass) {
+		Log.MethodIn(Thread.currentThread());
 		String code = "";
 		if (typeClass.getPackageName() != null) {
 			code += typeClass.getPackageName() + ".";
 		}
 		code += typeClass.getName();
-		return code;
+		return (String)Log.MethodOut(Thread.currentThread(), code);
 	}
 
 	@Override
 	public String getCode(TypeDependency typeDependency) {
-		return typeDependency.getType().toString();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				typeDependency.getType().toString());
 	}
 
 	/**
@@ -543,12 +602,14 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(TypeNone type) {
-		return "";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "");
 	}
 
 	@Override
 	public String getCode(TypeNull typeNull) {
-		return "null";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "null");
 	}
 
 	/**
@@ -560,28 +621,30 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(TypeVoid typeVoid) {
-		return "void";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(), "void");
 	}
 
 	@Override
 	public String getCode(UnaryOperation unaryOperation) {
+		Log.MethodIn(Thread.currentThread());
 		switch (unaryOperation.getOperator()) {
 		case POSTFIX_DECREMENT:
 		case POSTFIX_INCREMENT:
-			return String
-					.format("(%s)%s%s",
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("(%s)%s%s",
 							unaryOperation.getExpression(),
 							unaryOperation.getTextualoperator(),
 							unaryOperation.getOperator().equals(
 									Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-											: "");
+											: ""));
 		default:
-			return String
-					.format("%s%s(%s)",
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s%s(%s)",
 							unaryOperation.getTextualoperator(),
 							unaryOperation.getOperator().equals(
 									Operator.UNKNOWN) ? "/* Unrecognized by GOOL, passed on */"
-											: "", unaryOperation.getExpression());
+											: "", unaryOperation.getExpression()));
 		}
 	}
 
@@ -594,110 +657,144 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	 */
 	@Override
 	public String getCode(VarDeclaration varDec) {
+		Log.MethodIn(Thread.currentThread());
 		String initialValue = "";
 		if (varDec.getInitialValue() != null) {
 			initialValue = " = " + varDec.getInitialValue();
 		}
-		return String.format("%s %s%s", varDec.getType(), varDec.getName(),
-				initialValue);
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s %s%s", varDec.getType(), varDec.getName(),
+						initialValue));
 	}
 
 	@Override
 	public String getCode(VarAccess varAccess) {
-		return varAccess.getDec().getName();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				varAccess.getDec().getName());
 	}
 
 	@Override
 	public String getCode(While whilee) {
-		return formatIndented("while (%s) {%1}", whilee.getCondition(),
-				whilee.getWhileStatement());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				formatIndented("while (%s) {%1}", whilee.getCondition(),
+						whilee.getWhileStatement()));
 	}
 
 	@Override
 	public String getCode(TypeArray typeArray) {
-		return String.format("%s[]", typeArray.getElementType());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s[]", typeArray.getElementType()));
 	}
 
 	@Override
 	public String getCode(ThisCall thisCall) {
-		return String.format("this (%s)",
-				GeneratorHelper.joinParams(thisCall.getParameters()));
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("this (%s)",
+						GeneratorHelper.joinParams(thisCall.getParameters())));
 	}
 
 	@Override
 	public String getCode(TypeUnknown typeUnknown) {
-		return String.format("%s", typeUnknown.getTextualtype())
-				+ " /* Unrecognized by GOOL, passed on */";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s", typeUnknown.getTextualtype())
+				+ " /* Unrecognized by GOOL, passed on */");
 	}
 
 	@Override
 	public String getCode(ExpressionUnknown unknownExpression) {
-		return String.format("%s /* Unrecognized by GOOL, passed on */",
-				unknownExpression.getTextual());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s /* Unrecognized by GOOL, passed on */",
+						unknownExpression.getTextual()));
 	}
 
 	@Override
 	public String getCode(ClassFree classFree) {
-		return "free /* Not Implemented, passed on by GOOL */";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				"free /* Not Implemented, passed on by GOOL */");
 	}
 
 	@Override
 	public String getCode(Platform platform) {
-		return platform.getName();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				platform.getName());
 	}
 
 	@Override
 	public String getCode(ClassDef classDef) {
-		return String.format("%s.%s", classDef.getPackageName(),
-				classDef.getName());
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				String.format("%s.%s", classDef.getPackageName(),
+						classDef.getName()));
 	}
 
 	@Override
 	public String getCode(Package _package) {
-		return _package.getName();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				_package.getName());
 	}
 
 	@Override
 	public String getCode(TypePackage typePackage) {
-		return typePackage.getTextualtype();
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				typePackage.getTextualtype());
 	}
 
 	@Override
 	public String getCode(TypeVar typeVar) {
+		Log.MethodIn(Thread.currentThread());
 		// For now if one wants to print the type of a TypeVar, this returns
 		// just the name of the TypeVar.
-		return typeVar.getTextualtype();
+		return (String)Log.MethodOut(Thread.currentThread(),
+				typeVar.getTextualtype());
 	}
 
 	@Override
 	public String getCode(TypeMethod typeMethod) {
+		Log.MethodIn(Thread.currentThread());
 		// For now if one wants to print the type of a Method, this returns just
 		// the name of the method.
-		return typeMethod.getTextualtype();
+		return (String)Log.MethodOut(Thread.currentThread(),
+				typeMethod.getTextualtype());
 	}
 
 	@Override
 	public String getCode(TypeGoolLibraryClass typeMatchedGoolClass) {
+		Log.MethodIn(Thread.currentThread());
 		String res = GeneratorMatcher.matchGoolClass(typeMatchedGoolClass
 				.getGoolclassname());
 		if (res == null)
-			return typeMatchedGoolClass.getGoolclassname()
-					+ " /* Ungenerated by GOOL, passed on. */";
+			return (String)Log.MethodOut(Thread.currentThread(),
+					typeMatchedGoolClass.getGoolclassname()
+					+ " /* Ungenerated by GOOL, passed on. */");
 		else {
-			return res;
+			return (String)Log.MethodOut(Thread.currentThread(), res);
 		}
 	}
 
 	public String getCode(UnrecognizedDependency unrecognizedDependency) {
-		return "/* "+ unrecognizedDependency.getName()
-		+ " unrecognized by GOOL, passed on. */";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				"/* "+ unrecognizedDependency.getName()
+				+ " unrecognized by GOOL, passed on. */");
 	}	
 
 	public String getCode(UnImplemented unImplemented) {
-		return "/* "+ unImplemented.getCommentUnImplemented()
-		+ " unimplemented by GOOL, passed on : "
-		+ unImplemented.getCodeUnImplemented()
-		+ " */";
+		Log.MethodIn(Thread.currentThread());
+		return (String)Log.MethodOut(Thread.currentThread(),
+				"/* "+ unImplemented.getCommentUnImplemented()
+				+ " unimplemented by GOOL, passed on : "
+				+ unImplemented.getCodeUnImplemented()
+				+ " */");
 	}
 
 }

@@ -21,6 +21,7 @@
 
 package gool.generator.cpp;
 
+import gool.ast.core.ArrayNew;
 import gool.ast.core.BinaryOperation;
 import gool.ast.core.CastExpression;
 import gool.ast.core.Catch;
@@ -92,11 +93,13 @@ import gool.generator.common.CommonCodeGenerator;
 import gool.generator.common.GeneratorMatcher;
 import logger.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class CppGenerator extends CommonCodeGenerator implements
@@ -253,7 +256,7 @@ CodeGeneratorNoVelocity {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.valueOf(constant.getValue().toString()
 							.equalsIgnoreCase("true") ? 1 : 0));
-		} else {
+		}else {
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					super.getCode(constant));
 		}
@@ -838,12 +841,41 @@ CodeGeneratorNoVelocity {
 				meth_pref + String.format("%s::%s(%s)", meth.getClassDef().getName(), meth.getName(),
 						StringUtils.join(meth.getParams(), ", ")));
 	}
+
+
+	@Override
+	public String getCode(VarDeclaration varDec) {
+		Log.MethodIn(Thread.currentThread());
+
+		if (varDec.getType() instanceof TypeArray){
+			IType elemType = ((TypeArray)varDec.getType()).getElementType();
+			String initialValue = "";
+			String size = "";
+			if (varDec.getInitialValue() != null) {
+				String initialCode = varDec.getInitialValue().callGetCode();
+				if (initialCode.startsWith("new"))
+					size = initialCode.split("[\\[\\]]")[1];
+				else
+					initialValue = " = " + varDec.getInitialValue();
+			}
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("%s %s[%s]%s", elemType, varDec.getName(),
+							size, initialValue));
+		}
+		return (String)Log.MethodOut(Thread.currentThread(),
+				super.getCode(varDec));
+	}
+
+	/**
+	 * Warning, this method can be shortcut by getCode(VarDeclaration varDec)
+	 */
 	@Override
 	public String getCode(TypeArray typeArray) {
 		Log.MethodIn(Thread.currentThread());
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("%s*", typeArray.getElementType()));
 	}
+
 	@Override
 	public String getCode(ClassNew classNew) {
 		Log.MethodIn(Thread.currentThread());
@@ -938,7 +970,7 @@ CodeGeneratorNoVelocity {
 				header + "\n" + getDependenciesCode(classDef) + "\n" + body);
 	}
 
-	
+
 	@Override
 	public String getCode(Throw throwStatement) {
 		Log.MethodIn(Thread.currentThread());
