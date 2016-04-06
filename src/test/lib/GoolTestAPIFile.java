@@ -9,11 +9,13 @@ import gool.generator.python.PythonPlatform;
 import gool.generator.objc.ObjcPlatform;
 import gool.test.TestHelperJava;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -53,15 +55,7 @@ public class GoolTestAPIFile {
 			this.excludedPlatforms = excludedPlatforms;
 		}
 
-		public void compare(Platform platform, int test) throws Exception {
-//			if (excludedPlatforms.contains(platform)) {
-//				String errorMsg = "The following target platform(s) have been excluded for this test: ";
-//				for (Platform p : excludedPlatforms)
-//					if (testedPlatforms.contains(p))
-//						errorMsg += p + " ";
-//				Assert.fail(errorMsg
-//						+ "\nThis test may contain some patterns that are not supported by GOOL at the moment for these target platforms. You may see the GOOL wiki for further documentation.");
-//			}
+		public void compare(Platform platform) throws Exception {
 			if (excludedPlatforms.contains(platform)){
 				System.err.println("The following target platform(s) have been "
 						+ "excluded for this test:" + platform.getName());
@@ -75,10 +69,8 @@ public class GoolTestAPIFile {
 					&& result.indexOf("] ") != -1)
 				result = result.substring(result.indexOf("] ") + 2);
 
-//			Assert.assertEquals(String.format("The platform %s", platform),
-//					expected, result);
-			TestHelperJava.assertTestAPIFile(String.format("The platform %s", platform),
-							expected, result, test);
+			Assert.assertEquals(String.format("The platform %s", platform),
+					expected, result);
 			
 		}
 
@@ -93,7 +85,7 @@ public class GoolTestAPIFile {
 		}
 	}
 
-	private static final String MAIN_CLASS_NAME = "Test";
+	private static String MAIN_CLASS_NAME = "TestFileTest";
 
 	private List<Platform> testNotImplementedOnPlatforms = new ArrayList<Platform>();
 
@@ -109,6 +101,7 @@ public class GoolTestAPIFile {
 
 	@Test
 	public void goolLibraryFileTest1() throws Exception {
+		MAIN_CLASS_NAME = "TestFileTest1";
 		String input = "import java.io.File;"
 				+ TestHelperJava
 						.surroundWithClassMainFile(
@@ -142,15 +135,12 @@ public class GoolTestAPIFile {
 		// Matching of the GoolFile library class and of its method
 		// work only for the Java target language at the moment,
 		// so we exclude the other platforms for this test.
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
-
-		compareResultsDifferentPlatforms(input, expected, 1);
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	@Test
 	public void goolLibraryFileTest2() throws Exception {
+		MAIN_CLASS_NAME = "TestFileTest2";
 		String input = "import java.io.File;"
 				+ "import java.io.BufferedReader;"
 				+ "import java.io.FileReader;"
@@ -183,15 +173,13 @@ public class GoolTestAPIFile {
 		// Matching of the io GOOL library with classes and methods
 		// of the output language work only for the Java target at the moment,
 		// so we exclude the other platforms for this test.
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 
-		compareResultsDifferentPlatforms(input, expected, 2);
+		compareResultsDifferentPlatforms(input, expected);
 	}
 
 	@Test
 	public void goolLibraryFileTest3() throws Exception {
+		MAIN_CLASS_NAME = "TestFileTest3";
 		String input = "import java.io.File;"
 				+ "import java.io.BufferedReader;"
 				+ "import java.io.FileReader;"
@@ -223,24 +211,48 @@ public class GoolTestAPIFile {
 		// Matching of the io GOOL library with classes and methods
 		// of the output language work only for the Java target at the moment,
 		// so we exclude the other platforms for this test.
-		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
-		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
-
-		compareResultsDifferentPlatforms(input, expected, 3);
+		compareResultsDifferentPlatforms(input, expected);
 	}
 	
-	private void compareResultsDifferentPlatforms(String input, String expected, int test)
+	private void compareResultsDifferentPlatforms(String input, String expected)
 			throws Exception {
 		compareResultsDifferentPlatforms(new GoolTestExecutor(input, expected,
-				platforms, testNotImplementedOnPlatforms), test);
+				platforms, testNotImplementedOnPlatforms));
 		this.testNotImplementedOnPlatforms = new ArrayList<Platform>();
 	}
 
-	private void compareResultsDifferentPlatforms(GoolTestExecutor executor, int test)
+	private void compareResultsDifferentPlatforms(GoolTestExecutor executor)
 			throws Exception {
 		for (Platform platform : platforms) {
-			executor.compare(platform,test);
+			executor.compare(platform);
 		}
+	}
+	
+	@AfterClass
+	public static void clean(){
+		File dir = new File(Settings.get("java_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("cpp_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("csharp_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("python_out_dir"));
+		cleanDir(dir);
+		dir = new File(Settings.get("objc_out_dir"));
+		cleanDir(dir);
+	}
+
+	private static void cleanDir(File dir){
+		if (!dir.exists())
+			return;
+		for (File f : dir.listFiles()){
+			if (f.isDirectory()){
+				cleanDir(f);
+			}
+			else{
+				f.delete();
+			}
+		}
+		dir.delete();
 	}
 }
