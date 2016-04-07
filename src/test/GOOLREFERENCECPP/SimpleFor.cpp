@@ -17,7 +17,7 @@ int main() {
 	for (int i = 0 ; (i < 4) ; (i)++) {
 		(total)++;
 	}
-	std::cout << (total) << std::endl;
+	std::cout << total << std::endl;
 }
 
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import goolHelper
 import goolHelper.IO
 import goolHelper.Util
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     from SimpleSub import *
 # main program
     n = (6 - 2)
-    print n
+    print(n)
 # end of main
     exit()
 

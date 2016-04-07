@@ -26,6 +26,19 @@ import gool.generator.common.CodeGenerator;
  * This class captures the invocation of a system method for out print.
  */
 public class SystemOutPrintCall extends GoolCall {
+	
+	/**
+	 * Flag that indicates if the print has to end with an end of line or not
+	 */
+	boolean endofline = false;
+
+	public boolean isEndofline() {
+		return endofline;
+	}
+
+	public void setEndofline(boolean endofline) {
+		this.endofline = endofline;
+	}
 
 	/**
 	 * The constructor of a "system out print call" representation.

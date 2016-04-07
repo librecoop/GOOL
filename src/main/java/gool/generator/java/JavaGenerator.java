@@ -145,8 +145,8 @@ CodeGeneratorNoVelocity {
 						: enhancedForLoop.getExpression(),
 						enhancedForLoop.getStatements());
 	}
-	
-	
+
+
 	@Override
 	public String getCode(Constructor cons) {
 		if (cons.getName().isEmpty())
@@ -154,7 +154,7 @@ CodeGeneratorNoVelocity {
 					cons.getClassDef().getName(), StringUtils.join(cons.getParams(), ", "));
 		return getCode((Meth) cons);
 	}
-	
+
 	@Override
 	public String getCode(EqualsCall equalsCall) {
 		return String.format("%s.equals(%s)", equalsCall.getTarget(),
@@ -290,7 +290,7 @@ CodeGeneratorNoVelocity {
 				meth.getType(), meth.getName(),
 				StringUtils.join(meth.getParams(), ", "));
 	}
-	
+
 	@Override
 	public String getCode(ParentCall parentCall) {
 		String out = "super(";
@@ -308,6 +308,10 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
+		if (!systemOutPrintCall.isEndofline()){
+			return String.format("System.out.print(%s)",
+					StringUtils.join(systemOutPrintCall.getParameters(), ","));
+		}
 		return String.format("System.out.println(%s)",
 				StringUtils.join(systemOutPrintCall.getParameters(), ","));
 	}
@@ -463,7 +467,7 @@ CodeGeneratorNoVelocity {
 				}
 			}
 		}
-		
+
 		return header + getDependenciesCode(classDef) + body + "}";
 	}
 

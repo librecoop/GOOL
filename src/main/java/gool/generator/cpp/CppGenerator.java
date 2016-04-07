@@ -345,16 +345,19 @@ CodeGeneratorNoVelocity {
 		Log.MethodIn(Thread.currentThread());
 		Expression toPrint = systemOutPrintCall.getParameters().get(0);
 		addCustomDependency("iostream");
+		String endlstr = "";
+		if (systemOutPrintCall.isEndofline())
+			endlstr = " << std::endl";
 		if (toPrint.getType().equals(TypeString.INSTANCE)) {
 			return (String)Log.MethodOut(Thread.currentThread(), 
-					String.format("std::cout << %s << std::endl",
+					String.format("std::cout << %s%s",
 							GeneratorHelper.joinParams(systemOutPrintCall
-									.getParameters())));
+									.getParameters()), endlstr));
 		} else {
 			return (String)Log.MethodOut(Thread.currentThread(), 
-					String.format("std::cout << (%s) << std::endl",
+					String.format("std::cout << %s%s",
 							GeneratorHelper.joinParams(systemOutPrintCall
-									.getParameters())));
+									.getParameters()), endlstr));
 		}
 	}
 

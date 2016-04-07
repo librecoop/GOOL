@@ -114,7 +114,6 @@ public class GoolTestTypeMapJavaToAny {
 										+ "else{ System.out.println(\"false\");}",
 								MAIN_CLASS_NAME);
 		String expected = "true";
-		excludePlatformForThisTest((Platform) PythonPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -131,7 +130,6 @@ public class GoolTestTypeMapJavaToAny {
 										+ "else{ System.out.println(\"false\");}",
 								MAIN_CLASS_NAME);
 		String expected = "true";
-
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -149,7 +147,6 @@ public class GoolTestTypeMapJavaToAny {
 										+ "else{ System.out.println(\"false\");}",
 								MAIN_CLASS_NAME);
 		String expected = "true";
-		//excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -167,7 +164,6 @@ public class GoolTestTypeMapJavaToAny {
 										+ "else{ System.out.println(\"false\");}",
 								MAIN_CLASS_NAME);
 		String expected = "true";
-		//excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -185,7 +181,6 @@ public class GoolTestTypeMapJavaToAny {
 										+ "else{ System.out.println(\"false\");}",
 								MAIN_CLASS_NAME);
 		String expected = "true";
-
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -204,7 +199,6 @@ public class GoolTestTypeMapJavaToAny {
 										+ "else{ System.out.println(\"false\");}",
 								MAIN_CLASS_NAME);
 		String expected = "true";
-		//excludePlatformForThisTest((Platform) JavaPlatform.getInstance());
 		compareResultsDifferentPlatforms(input, expected);
 	}
 	
@@ -222,7 +216,6 @@ public class GoolTestTypeMapJavaToAny {
 										+ "else{ System.out.println(\"false\");}",
 								MAIN_CLASS_NAME);
 		String expected = "true";
-
 		compareResultsDifferentPlatforms(input, expected);
 	}
 

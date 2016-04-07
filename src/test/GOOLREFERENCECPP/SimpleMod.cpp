@@ -14,7 +14,7 @@ SimpleMod::SimpleMod() {
 
 int main() {
 	int n = (4 % 5);
-	std::cout << (n) << std::endl;
+	std::cout << n << std::endl;
 }
 
 

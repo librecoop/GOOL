@@ -249,7 +249,7 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(),result.toString());
 	}
 
-	
+
 	@Override
 	public String getCode(BinaryOperation binaryOp) {
 		Log.MethodIn(Thread.currentThread());
@@ -417,12 +417,20 @@ CodeGeneratorNoVelocity {
 	public String getCode(For forr) {
 		Log.MethodIn(Thread.currentThread());
 		// there is no 'for(;;)' construct in Python
+		String initializerCode = "";
+		String updaterCode = "";
+		if (forr.getInitializer() != null){
+			initializerCode = forr.getInitializer().callGetCode();
+		}
+		if (forr.getUpdater() != null){
+			updaterCode = forr.getUpdater().callGetCode();
+		}
 		return (String)Log.MethodOut(Thread.currentThread(),formatIndented(
 				"%swhile %s:%1",
-				printWithComment(forr.getInitializer()),
+				printWithComment(initializerCode),
 				forr.getCondition(),
 				forr.getWhileStatement().toString()
-				+ printWithComment(forr.getUpdater())));
+				+ printWithComment(updaterCode)));
 	}
 
 	@Override
@@ -914,10 +922,16 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Log.MethodIn(Thread.currentThread());
+		addCustomDependency("from __future__ import print_function");
 		// TODO: what about the new 'print is a function' standard?
 		((PythonCodePrinter) currentClass.getPlatform().getCodePrinter()).setAddgoolHelper(true);
+		if (!systemOutPrintCall.isEndofline()){
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("print(%s, end=\"\")",
+							StringUtils.join(systemOutPrintCall.getParameters(), ",")));
+		}
 		return (String)Log.MethodOut(Thread.currentThread(),
-				String.format("print %s",
+				String.format("print(%s)",
 						StringUtils.join(systemOutPrintCall.getParameters(), ",")));
 	}
 
@@ -1173,7 +1187,7 @@ CodeGeneratorNoVelocity {
 			res += "import goolHelper.IO\n";
 			res += "import goolHelper.Util\n";
 		}
-		
+
 		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
 		dependencies.addAll(getCustomDependencies());
 		clearCustomDependencies();
@@ -1185,8 +1199,10 @@ CodeGeneratorNoVelocity {
 					incdep = incdep.replace("*/", "");
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";
-				}
-				else if (dependency != "noprint"){
+				}else if(dependency.startsWith("from ")){
+					if (recogDependencies.indexOf(dependency) == -1)
+						res = dependency + "\n" + res;
+				}else if (dependency != "noprint"){
 					String incdep = String.format("from %s import *", dependency);
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";
@@ -1274,10 +1290,10 @@ CodeGeneratorNoVelocity {
 					boolean first = true;
 					boolean someStatics = false;
 					boolean someDynamics = false;
-					
+
 					addCustomDependency("goolHelper");
 					((PythonCodePrinter) currentClass.getPlatform().getCodePrinter()).setAddgoolHelper(true);
-					
+
 					for (Meth m2 : meths) {
 
 						if (m2.getModifiers().contains(Modifier.STATIC))

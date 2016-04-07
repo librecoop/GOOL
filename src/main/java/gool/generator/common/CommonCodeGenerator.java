@@ -369,10 +369,18 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 	@Override
 	public String getCode(For forInstruction) {
 		Log.MethodIn(Thread.currentThread());
+		String initializerCode = "";
+		String updaterCode = "";
+		if (forInstruction.getInitializer() != null){
+			initializerCode = forInstruction.getInitializer().callGetCode();
+		}
+		if (forInstruction.getUpdater() != null){
+			updaterCode = forInstruction.getUpdater().callGetCode();
+		}
 		return (String)Log.MethodOut(Thread.currentThread(),
 				formatIndented("for (%s ; %s ; %s) {%1}",
-						forInstruction.getInitializer(), forInstruction.getCondition(),
-						forInstruction.getUpdater(), forInstruction.getWhileStatement()));
+						initializerCode, forInstruction.getCondition(),
+						updaterCode, forInstruction.getWhileStatement()));
 	}
 
 	@Override

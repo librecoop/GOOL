@@ -14,7 +14,7 @@ SimpleAdd::SimpleAdd() {
 
 int main() {
 	int n = (2 + 2);
-	std::cout << (n) << std::endl;
+	std::cout << n << std::endl;
 }
 
 

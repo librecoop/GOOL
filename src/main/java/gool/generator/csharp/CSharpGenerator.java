@@ -344,6 +344,11 @@ CodeGeneratorNoVelocity {
 	public String getCode(SystemOutPrintCall systemOutPrintCall) {
 		Log.MethodIn(Thread.currentThread());
 		addCustomDependency("System");
+		if (!systemOutPrintCall.isEndofline()){
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("Console.Write(%s)",
+							GeneratorHelper.joinParams(systemOutPrintCall.getParameters())));
+		}
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("Console.WriteLine(%s)",
 						GeneratorHelper.joinParams(systemOutPrintCall.getParameters())));

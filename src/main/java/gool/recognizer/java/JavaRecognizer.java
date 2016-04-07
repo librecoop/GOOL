@@ -998,18 +998,22 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 	public Object visitForLoop(ForLoopTree node, Context p) {
 		Log.MethodIn(Thread.currentThread());
 		List<? extends StatementTree> initializers = node.getInitializer();
+		Statement initializer = null;
+		Expression condition = (Expression) node.getCondition().accept(this, p);
+		Statement updater = null;
 		if (initializers.size() > 1) {
 			return Log.MethodOut(Thread.currentThread(),
 					new ExpressionUnknown(goolType(node, p), node.toString()));
+		}else if (initializers.size() > 0){
+			initializer = (Statement) initializers.get(0).accept(this, p);
 		}
 		List<? extends StatementTree> updaters = node.getUpdate();
 		if (updaters.size() > 1) {
 			return Log.MethodOut(Thread.currentThread(),
 					new ExpressionUnknown(goolType(node, p), node.toString()));
+		}else if (updaters.size() > 0){
+			updater = (Statement) updaters.get(0).accept(this, p);
 		}
-		Statement initializer = (Statement) initializers.get(0).accept(this, p);
-		Expression condition = (Expression) node.getCondition().accept(this, p);
-		Statement updater = (Statement) updaters.get(0).accept(this, p);
 		return Log.MethodOut(Thread.currentThread(),
 				new For(initializer, condition, updater,
 						(Statement) node.getStatement().accept(this, p)));
@@ -1102,11 +1106,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			addDependencyToContext(context, daughter);
 			// Finally add the redefined classDef to goolClasses
 			goolClasses.put(classDef.getType(), classDef);
-//			Log.d("<JavaRecognizer - visitNewClass> ========================= goolClasses : ");
-//			for (Map.Entry<IType, ClassDef> entry : goolClasses.entrySet()){
-//				Log.d(String.format("-> (%s, %s) : isGoolLibraryClassRedefinition : %s",
-//						entry.getKey().getName(), entry.getValue().getName(), entry.getValue().isGoolLibraryClassRedefinition()));
-//			}
+			//			Log.d("<JavaRecognizer - visitNewClass> ========================= goolClasses : ");
+			//			for (Map.Entry<IType, ClassDef> entry : goolClasses.entrySet()){
+			//				Log.d(String.format("-> (%s, %s) : isGoolLibraryClassRedefinition : %s",
+			//						entry.getKey().getName(), entry.getValue().getName(), entry.getValue().isGoolLibraryClassRedefinition()));
+			//			}
 		}
 		return Log.MethodOut(Thread.currentThread(), c);
 	}
@@ -1733,11 +1737,11 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			}
 		}
 		for (ClassDef goolClassAst : GoolLibraryClassAstBuilder.getBuiltAsts()) {
-				goolClasses.put(goolClassAst.getType(), goolClassAst);
-				Log.d("\n\n<JavaRecognizer - visitCompilationUnit> The following GOOL library AST has been successfully built and added to the current AST collection: "
-						+ goolClassAst.getPackageName()
-						+ "."
-						+ goolClassAst.getName() + "\n\n");
+			goolClasses.put(goolClassAst.getType(), goolClassAst);
+			Log.d("\n\n<JavaRecognizer - visitCompilationUnit> The following GOOL library AST has been successfully built and added to the current AST collection: "
+					+ goolClassAst.getPackageName()
+					+ "."
+					+ goolClassAst.getName() + "\n\n");
 		}
 		Log.d("@@@@@@@@@@@@@@@@@ Context Tree @@@@@@@@@@@@@@@@@@@@@");
 		Log.d("\n" + Context.getContextTree(context));
@@ -1905,7 +1909,12 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 			addDependencyToContext(context, new SystemOutDependency());
 			//context.getClassDef().addDependency(new SystemOutDependency());
 			target = new SystemOutPrintCall();
-		} else if (n.getMethodSelect().toString().equals("super")) {
+			((SystemOutPrintCall) target).setEndofline(true);
+		} else if (n.getMethodSelect().toString().equals("System.out.print")) {
+			addDependencyToContext(context, new SystemOutDependency());
+			//context.getClassDef().addDependency(new SystemOutDependency());
+			target = new SystemOutPrintCall();
+		}else if (n.getMethodSelect().toString().equals("super")) {
 			target = new ParentCall(goolType(
 					((MethodSymbol) method).getReturnType(), context));
 		} else if (n.getMethodSelect().toString().equals("this")) {
