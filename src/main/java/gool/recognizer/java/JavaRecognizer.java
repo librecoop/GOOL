@@ -1450,6 +1450,7 @@ public class JavaRecognizer extends TreePathScanner<Object, Context> {
 							new MapContainsKeyCall(target));
 				}
 				if (identifier.equals("entrySet")) {
+					Log.d("<JavaRecognizer - visitMemberSelect> identifier is entrySet.");
 					return Log.MethodOut(Thread.currentThread(),
 							target);
 				}

@@ -152,10 +152,12 @@ CodeGeneratorNoVelocity {
 			// C++ does not seem to allow instance fields initialization.
 			if (!field.getModifiers().contains(Modifier.FINAL)
 					&& !field.getModifiers().contains(Modifier.STATIC)) {
-				throw new IllegalArgumentException(
-						String.format(
-								"The field '%s' should be initialized within one of the class constructors.",
-								field.getName()));
+				out += String.format(" /* GOOL WARNING : The field '%s' should be initialized. */",
+						field.getName());
+				//				throw new IllegalArgumentException(
+				//						String.format(
+				//								"The field '%s' should be initialized within one of the class constructors.",
+				//								field.getName()));
 			}
 		}
 
@@ -513,9 +515,10 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(MapGetIteratorCall mapGetIteratorCall) {
 		Log.MethodIn(Thread.currentThread());
-		// TODO Auto-generated method stub
+		String toReturn = String.format("%s->begin()",
+				mapGetIteratorCall.getExpression());
 		return (String)Log.MethodOut(Thread.currentThread(), 
-				mapGetIteratorCall.getClass().toString());
+				toReturn);
 	}
 
 	@Override
@@ -548,7 +551,8 @@ CodeGeneratorNoVelocity {
 		if (typeMap.getKeyType() == null
 				|| typeMap.getKeyType().equals(TypeObject.INSTANCE)
 				|| typeMap.getKeyType().callGetCode().contains("boost::any")) {
-			toReturn += "/* Undefined key type is not supported in C++ */, ";
+			toReturn = "/* GOOL WARNING : Undefined key type is not supported in C++ */ "+ toReturn;
+			toReturn += TypeObject.INSTANCE + ", ";
 		}else{
 			toReturn += typeMap.getKeyType().callGetCode() + ", ";
 		}
@@ -589,6 +593,11 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(TypeEntry typeEntry) {
 		Log.MethodIn(Thread.currentThread());
+		if (typeEntry.getTypeArguments().isEmpty()){
+			return (String)Log.MethodOut(Thread.currentThread(), 
+					String.format("std::pair<%s, %s>", TypeObject.INSTANCE,
+							TypeObject.INSTANCE));
+		}
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				String.format("std::pair<%s, %s>", typeEntry.getKeyType(),
 						typeEntry.getElementType()));

@@ -68,7 +68,10 @@ public class TypeEntry extends ReferenceType {
 	 * 		The type of the key used by the map.
 	 */
 	public IType getKeyType() {
-		return getTypeArguments().get(0);
+		if (getTypeArguments().size() > 1) {
+			return getTypeArguments().get(0);
+		}
+		return null;
 	}
 
 	@Override
