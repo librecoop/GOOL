@@ -964,24 +964,28 @@ public class CppRecognizer implements IVisitorASTCpp {
 					exp1Code, symbol.toString(), exp2Code));
 			// Treat the case is System.out call.
 			if(symbol.compareTo("<<") == 0){
-				Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> << operator.");
-				// Convert std::endl
-				if(exp2Code.compareTo("std::endl") == 0){
-					exp2 = new Constant(TypeString.INSTANCE, "\n") ;
-				}
+				Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> << operator.");				
 				// Case : add parameters.
 				if(exp1 instanceof SystemOutPrintCall){
-					Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> --> SystemOutPrintCall");
+					Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> --> add parameters to a SystemOutPrintCall");
 					SystemOutPrintCall sysPrint = ((SystemOutPrintCall)exp1);
-					sysPrint.getParameters().set(0,
-							new BinaryOperation(Operator.PLUS, sysPrint.getParameters().get(0), 
-									exp2, TypeString.INSTANCE, "+"));
+					if(exp2Code.compareTo("std::endl") == 0){
+						sysPrint.setEndofline(true);
+					}
+//					sysPrint.getParameters().set(0,
+//							new BinaryOperation(Operator.PLUS, sysPrint.getParameters().get(0), 
+//									exp2, TypeString.INSTANCE, "+"));
 					return sysPrint;
 				}
 				// Case : create SystemOutPrintCall.
 				else if(exp1Code.compareTo("std::cout") == 0){
+					Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> --> Create a SystemOutPrintCall");
 					methActive.getClassDef().addDependency(new SystemOutDependency());
 					SystemOutPrintCall target = new SystemOutPrintCall();
+					if(exp2Code.compareTo("std::endl") == 0){
+						target.setEndofline(true);
+					}
+					Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> exp2 type : " + exp2.getType().toString());
 					target.addParameter(exp2) ;
 					return target ;
 				}
@@ -1152,11 +1156,17 @@ public class CppRecognizer implements IVisitorASTCpp {
 			return new This(helper.convertTypeGool(
 					exp.getExpressionType(), context.nameSpec));
 		}
-
+		IType type = helper.convertTypeGool(exp.getExpressionType(), context.nameSpec);
+		String code = exp.getRawSignature().toString();
+		if (type instanceof TypeString){
+			//Remove quotes
+			code = code.substring(code.indexOf("\"")+1,code.lastIndexOf("\""));
+		}
+		
+		Log.d(String.format("<CppRecognizer - visit(ASTCppLiteralExpression)> expression <%s> with type %s",
+				code, type));
 		// Return a constant expression.
-		return new Constant( helper.convertTypeGool(
-				exp.getExpressionType(), context.nameSpec), 
-				exp.getRawSignature().toString());
+		return new Constant(type, code);
 	}
 
 	@Override

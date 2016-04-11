@@ -97,23 +97,23 @@ import logger.Log;
 public class HelperCppRecognizer {
 
 	private CppRecognizer recognizer = null ;
-	
+
 	public HelperCppRecognizer(CppRecognizer recognizer){
 		this.recognizer = recognizer ;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////   VISITORS   //////////////////////////////////
-	
+
 	public void visitTranslationUnit(IASTTranslationUnit tuAst, IVisitorASTCpp visistor, Object data){
 		visitDeclarations(tuAst.getDeclarations(), visistor, data);
 	}
-	
+
 	public void visitIncludeStatment(IASTPreprocessorIncludeStatement incAst, IVisitorASTCpp visistor, Object data){
 		ASTCppNode incNode = ASTCppNode.transforme(incAst) ;
 		if(incNode instanceof ASTCppIncludeStatement){
@@ -122,7 +122,7 @@ public class HelperCppRecognizer {
 		else
 			Log.w("Impossible de visiter : " + incAst.getClass());
 	}
-	
+
 	public List<Dec> visitDeclarations(IASTDeclaration[] decsAst, IVisitorASTCpp visistor, Object data){
 		List<Dec> toReturn = new ArrayList<Dec>();
 		for(IASTDeclaration dec : decsAst){
@@ -132,7 +132,7 @@ public class HelperCppRecognizer {
 		}
 		return toReturn;
 	}
-	
+
 	public Object visitDeclaration(IASTDeclaration decAst, IVisitorASTCpp visistor, Object data){
 		ASTCppNode decNode = ASTCppNode.transforme(decAst) ;
 		if(decNode instanceof ASTCppDeclaration){
@@ -142,7 +142,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + decAst.getClass());
 		return null ;
 	}
-	
+
 	public Modifier visitDeclarationVisibilityLabel(IASTDeclaration[] decsAst, IVisitorASTCpp visistor, Object data){
 		Modifier toReturn = Modifier.PUBLIC ;
 		for(IASTDeclaration dec : decsAst){
@@ -155,7 +155,7 @@ public class HelperCppRecognizer {
 		}
 		return toReturn ;
 	}
-	
+
 	public Dec visitDeclarator(IASTDeclarator decAst, IVisitorASTCpp visistor, Object data){
 		ASTCppNode decNode = ASTCppNode.transforme(decAst) ;
 		if(decNode instanceof ASTCppDeclarator){
@@ -165,7 +165,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + decAst.getClass());
 		return null ;
 	}
-	
+
 	public Object visitDeclSpecifier(IASTDeclSpecifier decSpecAst, IVisitorASTCpp visistor, Object data){
 		ASTCppNode decSpecNode = ASTCppNode.transforme(decSpecAst) ;
 		if(decSpecNode instanceof ASTCppDeclSpecifier){
@@ -175,7 +175,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + decSpecAst.getClass());
 		return null ;
 	}
-	
+
 	public Expression visitExpression(IASTExpression expAst, IVisitorASTCpp visistor, Object data){
 		if(expAst == null)
 			return null ;
@@ -187,7 +187,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + expAst.getClass());
 		return null ;
 	}
-	
+
 	public Statement visitExpressionStatement(IASTExpression expAst, IVisitorASTCpp visistor, Object data){
 		if(expAst == null)
 			return null ;
@@ -199,7 +199,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + expAst.getClass());
 		return null ;
 	}
-	
+
 	public ClassNew visitExpressions(IASTNode[] childrenAst, IVisitorASTCpp visistor, Object data){
 		if(childrenAst == null)
 			return null ;
@@ -212,7 +212,7 @@ public class HelperCppRecognizer {
 		}
 		return toReturn ;
 	}
-	
+
 	public List<Expression> visitExpressionsParameters(IASTNode[] childrenAst, IVisitorASTCpp visistor, Object data){
 		if(childrenAst == null)
 			return null ;
@@ -240,7 +240,7 @@ public class HelperCppRecognizer {
 		}
 		return toReturn ;
 	}
-	
+
 	public List<Statement> visitStatements(IASTStatement[] stmtsAst, IVisitorASTCpp visistor, Object data){
 		if(stmtsAst == null)
 			return null ;
@@ -255,7 +255,7 @@ public class HelperCppRecognizer {
 		}
 		return toReturn ;
 	}
-	
+
 	public Statement visitStatement(IASTStatement stmtAst, IVisitorASTCpp visistor, Object data){
 		if(stmtAst == null)
 			return null ;
@@ -267,7 +267,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + stmtAst.getClass());
 		return null ;
 	}
-	
+
 	public String visitName(IASTName nameAst, IVisitorASTCpp visistor, Object data){
 		ASTCppNode nameNode = ASTCppNode.transforme(nameAst);
 		if(nameNode instanceof ASTCppName){
@@ -277,7 +277,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + nameAst.getClass());
 		return null ;
 	}
-	
+
 	public Expression visitInitializer(IASTInitializer initAst, IVisitorASTCpp visistor, Object data){
 		ASTCppNode initNode = ASTCppNode.transforme(initAst);
 		if(initNode instanceof ASTCppInitializer){
@@ -287,7 +287,7 @@ public class HelperCppRecognizer {
 			Log.w("Impossible de visiter : " + initAst.getClass());
 		return null ;
 	}
-	
+
 	public int visitParameters(IASTNode[] childresAst, IVisitorASTCpp visistor, Object data){
 		int toReturn = 0 ;
 		for(IASTNode child : childresAst){
@@ -299,7 +299,7 @@ public class HelperCppRecognizer {
 		}
 		return toReturn;
 	}
-	
+
 	public void visitInherits(IASTNode[] childresAst, IVisitorASTCpp visistor, Object data){
 		for(IASTNode child : childresAst){
 			ASTCppNode inherit = ASTCppNode.transforme(child);
@@ -308,7 +308,7 @@ public class HelperCppRecognizer {
 			}
 		}
 	}
-	
+
 	public void visitErrors(IASTNode[] childresAst, IVisitorASTCpp visistor, Object data){
 		for(IASTNode child : childresAst){
 			ASTCppNode error = ASTCppNode.transforme(child);
@@ -319,18 +319,18 @@ public class HelperCppRecognizer {
 	}
 
 
-	
-		
-	
+
+
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////   CREATORS   //////////////////////////////////
-	
-	
+
+
 	//////////////////////////////////
 	//////////////////////////////////
 	//// CREATE AND ADD :
-	
+
 	/**
 	 * Create and add a method in the gool ast.
 	 * @param method
@@ -342,7 +342,7 @@ public class HelperCppRecognizer {
 
 		// The method to add in the class.
 		Meth toAdd = null ;
-		
+
 		// The class definition of the method.
 		ClassDef classdef = getClassDef(method.getOwner().toString());
 
@@ -351,7 +351,7 @@ public class HelperCppRecognizer {
 			toAdd = createConstructor(method) ;
 		else
 			toAdd = createMethod(method,typeName);
-		
+
 		// Activated the method.
 		recognizer.methActive = toAdd ;
 
@@ -362,7 +362,7 @@ public class HelperCppRecognizer {
 		// Add the method to the class.
 		classdef.addMethod(toAdd);
 	}
-	
+
 	/**
 	 * Create and add a method (as a function CPP) in the gool ast.
 	 * The function is converted in a static method.
@@ -377,11 +377,19 @@ public class HelperCppRecognizer {
 		Meth toAdd = null ;
 
 		// Case : it is the main method.
-		if(isTheMainFunction(function.getName(), function.getType()))
+		if(isTheMainFunction(function.getName(), function.getType())){
+			Log.d(String.format(
+					"<HelperCppRecognizer - createAndAddMethod> function %s is the main function.",
+					function.getName()));
 			toAdd = new MainMeth() ;
-		else
+		}
+		else{
+			Log.d(String.format(
+					"<HelperCppRecognizer - createAndAddMethod> function %s is not the main function.",
+					function.getName()));
 			toAdd = createMethod(function, typeName);
-		
+		}
+
 		// Activated the method.
 		recognizer.methActive = toAdd ;
 
@@ -396,7 +404,7 @@ public class HelperCppRecognizer {
 		else
 			recognizer.stackClassActives.peek().addMethod(toAdd);
 	}
-	
+
 	/**
 	 * Create and add a parameter of a method in the gool ast.
 	 * @param param
@@ -405,7 +413,7 @@ public class HelperCppRecognizer {
 	 * 		: The name of the type of the parameter.
 	 */
 	public void createAndAddParameter(IParameter param, String typeName){
-		
+
 		// Add the parameter to the method active.
 		if(recognizer.methActive != null)
 			recognizer.methActive.addParameter(createParameter(param, typeName));
@@ -428,10 +436,10 @@ public class HelperCppRecognizer {
 	 */
 	public void createAndAddField(String owner, IField field, 
 			Modifier visibility, String nameDec, Expression init, String typeName){
-		
+
 		// The class definition where is the field.
 		ClassDef classdef = getClassDef(owner);
-		
+
 		// The field definition, if exist.
 		Field fieldtoAdd = getField(classdef, field.getName());
 
@@ -446,7 +454,7 @@ public class HelperCppRecognizer {
 			fieldtoAdd.setDefaultValue(init);
 		}			
 	}
-	
+
 	/**
 	 * Create and add a variable (as a field) of a class definition in the gool ast.
 	 * Or return a variable for the method active (if exit a method active).
@@ -468,7 +476,7 @@ public class HelperCppRecognizer {
 	 */
 	public VarDeclaration createAndAddVariable(String owner, IVariable var, 
 			Modifier visibility, String nameDec, Expression init, String typeName){
-		
+
 		// Case : the variable as a field.
 		if(recognizer.methActive == null){
 			// Add the field to the class active, ie. to the fileClass.
@@ -482,7 +490,7 @@ public class HelperCppRecognizer {
 		}
 		return null ;
 	}
-	
+
 	/**
 	 * Create and add a enumeration in the gool ast.
 	 * @param 
@@ -491,10 +499,10 @@ public class HelperCppRecognizer {
 	 * 		: The name of the type of the parameter.
 	 */
 	public void createAndAddEnum(String name, List<Field> enumerators){
-		
+
 		// Create a classdef as an enum.
 		ClassDef toAdd = createEnumClassDef(name, enumerators);
-		
+
 		// Add the enum to the stack of classdef.
 		recognizer.goolClasses.put(toAdd.getType(), toAdd);
 	}
@@ -503,7 +511,7 @@ public class HelperCppRecognizer {
 	//////////////////////////////////
 	//////////////////////////////////
 	//// CREATE :
-	
+
 	/**
 	 * This method give a class name like "Class" 
 	 * from a string like "class.cpp".
@@ -515,7 +523,7 @@ public class HelperCppRecognizer {
 	public String createClassNameFromFilename(String path){
 		String filename = new File(path).getName();
 		String className = filename.split("\\.")[0];	
-		return className.substring(0, 1).toUpperCase() + className.substring(1) + "FileClass";
+		return className.substring(0, 1).toUpperCase() + className.substring(1);// + "FileClass";
 	}
 
 	/**
@@ -532,7 +540,7 @@ public class HelperCppRecognizer {
 		classdef.setType(type);
 		return classdef;
 	}
-	
+
 	/**
 	 * This method can create a classdef (as an enumeration), simply.
 	 * @param name
@@ -544,12 +552,12 @@ public class HelperCppRecognizer {
 	 * 		The new classdef as an enumeration.
 	 */
 	public ClassDef createEnumClassDef(String name, List<Field> enumerators){
-		
+
 		// Create the classdef with modifier PUBLIC.
 		ClassDef classdef = new ClassDef(Modifier.PUBLIC, name);
 		IType type  = new TypeClass(name);
 		classdef.setType(type);
-		
+
 		// Add field in the classdef, ie. add static field with initial value.
 		// Transformed, if it is necessary the initial value of fields.
 		//Expression init = new Constant(TypeInt.INSTANCE, "0");
@@ -569,15 +577,15 @@ public class HelperCppRecognizer {
 			// Change the field.
 			enumerator.setType(new TypeVar(name));
 			enumerator.setDefaultValue(new ClassNew(type));
-			
+
 			// Add the field in the class.
 			classdef.addField(enumerator);
 		}
-		
+
 		// Return the classdef.
 		return classdef;
 	}
-	
+
 	/**
 	 * This method can create a field, simply.
 	 * @param field
@@ -595,17 +603,17 @@ public class HelperCppRecognizer {
 	 */
 	public Field createField(IField field, Modifier visibility,
 			String fieldName, Expression init, String typeName){
-		
+
 		// Create the modifier of the field.
 		List<Modifier> listModifiers = new ArrayList<Modifier>();
 		listModifiers.add(visibility);
 		listModifiers.addAll(getModifierOfField(field));
-		
+
 		// Create the field.
 		return new Field(listModifiers, fieldName, 
 				convertTypeGool(field.getType(), typeName), init);
 	}
-	
+
 	/**
 	 * This method can create a field (as a global variable), simply.
 	 * @param field
@@ -622,17 +630,17 @@ public class HelperCppRecognizer {
 	public Field createField(IVariable field, String fieldName, 
 			Expression init, String typeName){
 		List<Modifier> listModifiers = new ArrayList<Modifier>();
-		
+
 		// Create the modifier of the field.
 		listModifiers.add(Modifier.PUBLIC);
 		listModifiers.add(Modifier.STATIC);
 		// TODO: GET MODIFIER UNKNOWN
-		
+
 		// Create the field.
 		return new Field(listModifiers, fieldName, 
 				convertTypeGool(field.getType(), typeName), init);
 	}
-	
+
 	/**
 	 * This method can create a variable, simply.
 	 * @param var
@@ -648,7 +656,7 @@ public class HelperCppRecognizer {
 	 */
 	public VarDeclaration createVariable(IVariable var, String varName, 
 			Expression init, String typeName){
-		
+
 		// Create the modifier of the variable.
 		List<Modifier> listModifiers = new ArrayList<Modifier>();
 		// TODO : GET MODIFIER UNKNOWN
@@ -656,14 +664,14 @@ public class HelperCppRecognizer {
 		// Create the variable.
 		VarDeclaration toReturn = new VarDeclaration(
 				convertTypeGool(var.getType(), typeName), varName);
-		
+
 		// Add the initial value.
 		toReturn.setInitialValue(init);
-		
+
 		// Return the variable.
 		return toReturn ;
 	}
-	
+
 	/**
 	 * This method can create a parameter of a method, simply.
 	 * @param param
@@ -678,18 +686,18 @@ public class HelperCppRecognizer {
 		// Create type of the parameter.
 		gool.ast.type.IType type = convertTypeGool(
 				param.getType(), typeName);
-				
+
 		// Create the parameter.
 		VarDeclaration toReturn = new VarDeclaration(
 				type, param.getName());
-		
+
 		// Treat the modifiers, of the parameter.
 		toReturn.addModifiers(getModifierOfParam(param));
-		
+
 		// Return the parameter.
 		return toReturn ;
 	}
-	
+
 	/**
 	 * This method can create a method for a classdef, simply.
 	 * @param method
@@ -700,11 +708,11 @@ public class HelperCppRecognizer {
 	 * 		The new method for a classdef.
 	 */
 	public Meth createMethod(ICPPMethod method, String typeName) {
-		
+
 		// Create type returned of the method.
 		gool.ast.type.IType type = convertTypeGool(
 				method.getType().getReturnType(), typeName);
-	
+
 		// Create the method.
 		Meth toReturn = new Meth(
 				type, method.getName());
@@ -718,7 +726,7 @@ public class HelperCppRecognizer {
 		// Return the method.
 		return toReturn ;
 	}
-	
+
 	/**
 	 * This method can create a constructor for a classdef, simply.
 	 * @param method
@@ -727,20 +735,20 @@ public class HelperCppRecognizer {
 	 * 		The new constructor for a classdef.
 	 */
 	public Constructor createConstructor(ICPPMethod method) {
-		
+
 		// Create the constructor.
 		Constructor toReturn = new Constructor();
-		
+
 		// Treat the modifiers, of the method.
 		// Set start with empty modifier.
 		toReturn.setModifiers(new ArrayList<Modifier>());
 		toReturn.addModifier(visibilityLabelToModifier(method.getVisibility()));
 		toReturn.addModifiers(getModifierOfMethod(method));
-		
+
 		// Return the constructor.
 		return toReturn ;
 	}
-	
+
 	/**
 	 * This method can create a method for a classdef, simply.
 	 * By default, the method is "PUBLIC" and "STATIC".
@@ -754,11 +762,11 @@ public class HelperCppRecognizer {
 		// Create type returned of the method.
 		gool.ast.type.IType type = convertTypeGool(
 				method.getType().getReturnType(), typeName);
-		
+
 		// Create the method.
 		Meth toReturn = new Meth(
 				type, method.getName());
-		
+
 		// Treat the modifiers, of the method
 		// Set start with empty modifier.
 		toReturn.setModifiers(new ArrayList<Modifier>());
@@ -769,20 +777,20 @@ public class HelperCppRecognizer {
 		// Return the method.
 		return toReturn ;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////   TOOLS   ///////////////////////////////////
-	
+
 
 	//////////////////////////////////
 	//////////////////////////////////
 	//// CHECKOR :
-	
+
 	/**
 	 * Checks if a function definition is the main of the program.
 	 * @param functionName
@@ -793,17 +801,21 @@ public class HelperCppRecognizer {
 	 * 		True if it is the main, otherwise, return false.
 	 */
 	public boolean isTheMainFunction(String functionName, org.eclipse.cdt.core.dom.ast.IType functionType){		
-		// Check the name of the function : 
-		if(functionName.compareTo("main") != 0)
+		// Check the name of the function :
+		if(!functionName.toLowerCase().equals("main")){
 			return false ;
+		}
 		// Check the parameter :
-		if(ASTTypeUtil.getType(functionType).toString().compareTo("int (int, char * *)") == 0)
-			return true ;
-		if(ASTTypeUtil.getType(functionType).toString().compareTo("int ()") == 0)
-			return true ;
-		return false ;
+//		if(ASTTypeUtil.getType(functionType).toString().compareTo("int (int, char * *)") == 0)
+//			return true ;
+//		if(ASTTypeUtil.getType(functionType).toString().compareTo("int ()") == 0)
+//			return true ;
+//		if(ASTTypeUtil.getType(functionType).toString().compareTo("int (void)") == 0)
+//			return true ;
+//		return false ;
+		return true;
 	}
-	
+
 	/**
 	 * Checks if a method definition is the constructor of a classdef.
 	 * @param method
@@ -817,7 +829,7 @@ public class HelperCppRecognizer {
 	public boolean isAConstructor(ICPPMethod method, ClassDef classdef){
 		return method.getName().compareTo(classdef.getName()) == 0 ;
 	}
-	
+
 	/**
 	 * Checks if an operator (binary) is the assign operator.
 	 * @param operator
@@ -829,7 +841,7 @@ public class HelperCppRecognizer {
 	public boolean isAssignOperator(int operator){
 		return operator == CPPASTBinaryExpression.op_assign ;
 	}
-	
+
 	/**
 	 * Checks if an operator (binary) is the assign binary operator
 	 * ie. the operator is '+=', '*=', '%=' , ...
@@ -851,12 +863,12 @@ public class HelperCppRecognizer {
 				|| operator == CPPASTBinaryExpression.op_shiftLeftAssign
 				|| operator == CPPASTBinaryExpression.op_shiftRightAssign ;
 	}
-	
+
 
 	//////////////////////////////////
 	//////////////////////////////////
 	//// GETOR :
-	
+
 	/**
 	 * Gets the class name of a transition unit.
 	 * @param tu
@@ -867,11 +879,11 @@ public class HelperCppRecognizer {
 	public Identifier getIdentifierOfTransitionUnit(IASTTranslationUnit tu){
 		// Gets the name of the class generated.
 		String className = createClassNameFromFilename(tu.getContainingFilename());
-		
+
 		// Return the Identifier of the class.
 		return new Identifier(new TypeClass(className), className);
 	}
-	
+
 	/**
 	 * This method is used to test if a class already exists,
 	 * and so to get his definition.
@@ -896,7 +908,7 @@ public class HelperCppRecognizer {
 		// The class definition doesn't exist.
 		return null ;
 	}
-	
+
 	/**
 	 * This method is used to test if a field already exists in a class,
 	 * and so to get his definition.
@@ -923,60 +935,60 @@ public class HelperCppRecognizer {
 		// The field definition doesn't exist.
 		return null ;
 	}
-	
-	
 
 
-	
+
+
+
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////// CONVERSIONS ///////////////////////////////////
-	
+
 	public String transformMethodMathcherInvocation(IASTExpression acesss, IASTName field){
 		String toReturn = "";
 		IBinding bind = field.resolveBinding();
 		org.eclipse.cdt.core.dom.ast.IType typeMeth = 
 				(bind instanceof ICPPMethod)? ((ICPPMethod)bind).getType() : null ; 
-		if(typeMeth != null){
-			toReturn+=ASTTypeUtil.getType(acesss.getExpressionType()) ;
-			toReturn+=".";
-			toReturn+=field.toString();
-			
-			String tmp = ASTTypeUtil.getType(typeMeth);
-			
-			String returnType = "";
-			String paramstype = "";
-			int i=0;
-			for(i=0; i < tmp.length() ; i++){
-				if(tmp.charAt(i) == ' '){
-					i++;
-					break ;
+				if(typeMeth != null){
+					toReturn+=ASTTypeUtil.getType(acesss.getExpressionType()) ;
+					toReturn+=".";
+					toReturn+=field.toString();
+
+					String tmp = ASTTypeUtil.getType(typeMeth);
+
+					String returnType = "";
+					String paramstype = "";
+					int i=0;
+					for(i=0; i < tmp.length() ; i++){
+						if(tmp.charAt(i) == ' '){
+							i++;
+							break ;
+						}
+						returnType+=tmp.charAt(i);
+					}
+					for(; i < tmp.length() ; i++){
+						if(tmp.charAt(i) != ' ')
+							paramstype+=tmp.charAt(i);
+					}
+					toReturn+=paramstype;
+					toReturn+=":";
+					toReturn+=returnType;
 				}
-				returnType+=tmp.charAt(i);
-			}
-			for(; i < tmp.length() ; i++){
-				if(tmp.charAt(i) != ' ')
-					paramstype+=tmp.charAt(i);
-			}
-			toReturn+=paramstype;
-			toReturn+=":";
-			toReturn+=returnType;
-		}
-		return toReturn ;
+				return toReturn ;
 	}
-	
+
 	public IType convertTypePrimitiveGool(org.eclipse.cdt.core.dom.ast.IType typeAst, 
 			String typeName, boolean typeUnknown){
 
 		String type = "" ;
-		
+
 		if(typeName == null)
 			type = ASTTypeUtil.getType(typeAst);
 		else
 			type = typeName;
-		
+
 		Log.d("<HelperCppRecognizer -- convertTypePrimitiveGool> type = <" + type + ">");
-		
+
 		if (type.compareTo("?") == 0) return new TypeUnknown("UNKNOWN");
 		if (type.compareTo("int") == 0) return TypeInt.INSTANCE;
 		if (type.compareTo("const int") == 0) return TypeInt.INSTANCE;
@@ -1003,17 +1015,17 @@ public class HelperCppRecognizer {
 		if (type.compareTo("const unsigned") == 0) return TypeInt.INSTANCE; /*unsigned -> int */ 
 		if (type.compareTo("const bool") == 0) return TypeBool.INSTANCE;
 		if (type.compareTo("bool") == 0) return TypeBool.INSTANCE;
-		
+
 		if(type.contains("*"))
 			return new TypeUnknown(type);
-		
+
 		if(typeUnknown && typeName == null)
 			return new TypeUnknown("UNKNOWN");
 		if(typeUnknown)
 			return new TypeUnknown(typeName);
-		
+
 		Log.w("<HelperCppRecognizer -- convertTypePrimitiveGool> Cannot recognize " + type);
-		
+
 		return new TypeVar(typeName);
 	}
 	/**
@@ -1045,7 +1057,7 @@ public class HelperCppRecognizer {
 			return new TypeGoolLibraryClass(className) ;
 		}	
 	}
-	
+
 	public String getPartNameTypeOfArray(String arrayType){
 		String toReturn = "" ;
 		for(int i = 0 ; i < arrayType.length() ; i++){
@@ -1055,12 +1067,12 @@ public class HelperCppRecognizer {
 		}
 		return toReturn;
 	}
-	
+
 	public IType convertArrayTypeGool(String type){
 		if (type == null)
 			return new TypeUnknown(type);
 		String typeElement = getPartNameTypeOfArray(type);
-		
+
 		if (typeElement.compareTo("int") == 0) return new gool.ast.type.TypeArray(TypeInt.INSTANCE);
 		if (typeElement.compareTo("void") == 0) return new gool.ast.type.TypeArray(TypeVoid.INSTANCE);
 		if (typeElement.compareTo("char") == 0) return new gool.ast.type.TypeArray(TypeChar.INSTANCE);
@@ -1073,7 +1085,7 @@ public class HelperCppRecognizer {
 		if (typeElement.compareTo("boolean") == 0) return new gool.ast.type.TypeArray(TypeBool.INSTANCE);
 		return new gool.ast.type.TypeArray(new TypeVar(typeElement));
 	}
-	
+
 
 	/**
 	 * This method can convert a representation of a visibility label CDT
@@ -1091,9 +1103,9 @@ public class HelperCppRecognizer {
 		default: return Modifier.PUBLIC ;
 		}
 	}
-	
 
-	
+
+
 	/**
 	 * Gets the list of modifiers associated at the definition
 	 * of an method in CDT.
@@ -1105,20 +1117,20 @@ public class HelperCppRecognizer {
 	public List<Modifier> getModifierOfMethod(ICPPMethod method){
 		List<Modifier> toReturn = new LinkedList<Modifier>();
 		if(method.isConstexpr() 
-		|| method.isFinal()) toReturn.add(Modifier.FINAL);
+				|| method.isFinal()) toReturn.add(Modifier.FINAL);
 		if(method.isOverride()) toReturn.add(Modifier.OVERRIDE);
 		if(method.isPureVirtual()
-		|| method.isVirtual()) toReturn.add(Modifier.VIRTUAL);
+				|| method.isVirtual()) toReturn.add(Modifier.VIRTUAL);
 		if(method.isStatic()) toReturn.add(Modifier.STATIC);
 		if(method.isAuto()
-		|| method.isDeleted()
-		/*|| method.isDestructor()*/
-		/*|| method.isInline()*/
-		|| method.isMutable()
-		|| method.isRegister()) toReturn.add(Modifier.NATIVE);
+				|| method.isDeleted()
+				/*|| method.isDestructor()*/
+				/*|| method.isInline()*/
+				|| method.isMutable()
+				|| method.isRegister()) toReturn.add(Modifier.NATIVE);
 		return toReturn ;
 	}
-	
+
 	/**
 	 * Gets the list of modifiers associated at the definition
 	 * of an function in CDT.
@@ -1131,21 +1143,21 @@ public class HelperCppRecognizer {
 		List<Modifier> toReturn = new LinkedList<Modifier>();
 		if(method.isStatic()) toReturn.add(Modifier.STATIC);
 		if(method.isAuto()
-		|| method.isInline()
-		|| method.isRegister()) toReturn.add(Modifier.NATIVE);
+				|| method.isInline()
+				|| method.isRegister()) toReturn.add(Modifier.NATIVE);
 		return toReturn ;
 	}
-	
+
 	public List<Modifier> getModifierOfField(IField field){
 		List<Modifier> toReturn = new LinkedList<Modifier>();
 		if(field.isAuto()
-		|| field.isRegister()
-		// || field.isExtern()
-		) toReturn.add(Modifier.NATIVE);
+				|| field.isRegister()
+				// || field.isExtern()
+				) toReturn.add(Modifier.NATIVE);
 		if(field.isStatic()) toReturn.add(Modifier.STATIC);
 		return toReturn ;
 	}
-	
+
 	/**
 	 * Gets the list of modifiers associated at the definition
 	 * of a parmeter of an method in CDT.
@@ -1158,15 +1170,15 @@ public class HelperCppRecognizer {
 		List<Modifier> toReturn = new LinkedList<Modifier>();
 		if(param.isStatic()) toReturn.add(Modifier.STATIC);
 		if(param.isAuto()
-		|| param.isRegister()) toReturn.add(Modifier.NATIVE);
+				|| param.isRegister()) toReturn.add(Modifier.NATIVE);
 		return toReturn ;
 	}
-	
+
 	public List<Modifier> getModifierDeclaration(IASTSimpleDeclSpecifier decSpec){
 		return new ArrayList<Modifier>();
 	}
-	
-	
+
+
 	public Operator convertBinaryOperator(int operator){
 		switch (operator) {
 		case CPPASTBinaryExpression.op_assign: return Operator.UNKNOWN; // assignment =
@@ -1205,7 +1217,7 @@ public class HelperCppRecognizer {
 		default: return Operator.UNKNOWN;
 		}
 	}
-	
+
 	public Operator convertUnaryOperator(int operator){
 		switch (operator) {
 		case CPPASTUnaryExpression.op_amper: return Operator.UNKNOWN; // Operator ampersand.
@@ -1265,7 +1277,7 @@ public class HelperCppRecognizer {
 		default: return "???";
 		}
 	}
-	
+
 	public String getSymboleUnaryOperator(int operator){
 		switch (operator) {
 		case CPPASTUnaryExpression.op_amper: return "op_amper"; // Operator ampersand.
@@ -1286,19 +1298,19 @@ public class HelperCppRecognizer {
 		default: return "???";
 		}
 	}
-	
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
 	public void addAnError(String owner, String code, String comment){
 		if(recognizer.methActive != null)
 			recognizer.methActive.addStatement(new ExpressionUnknown(TypeNone.INSTANCE, code));
@@ -1312,21 +1324,21 @@ public class HelperCppRecognizer {
 						new UnImplemented(code, comment));
 		}
 	}
-	
+
 	public void addAnError(String code, String comment){
 		if(recognizer.methActive != null)
 			recognizer.methActive.addStatement(new ExpressionUnknown(TypeNone.INSTANCE, code));
 		else
 			recognizer.stackClassActives.peek().addDependency(new UnImplemented(code, comment));
 	}
-	
+
 	public void createAndAddArrayParameter(IParameter param, List<Expression> dims){
 		if(recognizer.methActive != null)
 			recognizer.methActive.addParameter(createArrayParameter(param,dims));
 	}
-	
-	
-	
+
+
+
 	public VarDeclaration createArrayParameter(IParameter param, List<Expression> dims){
 		// Create the parameter.
 		VarDeclaration toReturn = new VarDeclaration(
@@ -1334,7 +1346,7 @@ public class HelperCppRecognizer {
 						param.getType().toString()), param.getName());		
 		// Treat the modifiers, of the parameter.
 		toReturn.addModifiers(getModifierOfParam(param));
-		
+
 		return toReturn ;
 	}
 	public void createAndAddArrayField(String owner, IField field, 
@@ -1349,10 +1361,10 @@ public class HelperCppRecognizer {
 			fieldtoAdd.setDefaultValue(init);
 		}			
 	}
-	
+
 	public VarDeclaration createAndAddArrayVariable(String owner, IVariable var,
 			Modifier visibility, String nameDec, Expression init, List<Expression> dims){
-		
+
 		if(recognizer.methActive == null){
 			// Add the field to the class active, ie. to the fileClass.
 			if(var.getOwner() == null) 
@@ -1366,7 +1378,7 @@ public class HelperCppRecognizer {
 	}
 
 
-	
+
 
 	public Field createArrayField(IField field, Modifier visibility, String fieldName, Expression init){
 		List<Modifier> listModifiers = new ArrayList<Modifier>();
@@ -1375,7 +1387,7 @@ public class HelperCppRecognizer {
 		return new Field(listModifiers, fieldName, 
 				convertArrayTypeGool(field.getType().toString()), init);
 	}
-	
+
 	public Field createArrayField(IVariable field, String fieldName, Expression init, List<Expression> dims){
 		List<Modifier> listModifiers = new ArrayList<Modifier>();
 		listModifiers.add(Modifier.PUBLIC);
@@ -1384,7 +1396,7 @@ public class HelperCppRecognizer {
 		return new Field(listModifiers, fieldName, 
 				convertArrayTypeGool(field.getType().toString()), init);
 	}
-	
+
 	public VarDeclaration createArrayVariable(IVariable var, String varName, Expression init, List<Expression> dims){
 		List<Modifier> listModifiers = new ArrayList<Modifier>();
 		//listModifiers.add(Modifier.PUBLIC);

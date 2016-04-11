@@ -124,5 +124,7 @@ public class GeneratorHelper {
 	public static String removePointer(IType type) {
 		return removePointer(type.toString());
 	}
+	
+	public static boolean generatingMainMethod = false;
 
 }

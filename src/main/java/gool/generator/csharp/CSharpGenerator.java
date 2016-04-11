@@ -38,6 +38,7 @@ import gool.ast.core.Operator;
 import gool.ast.core.Package;
 import gool.ast.core.ParentCall;
 import gool.ast.core.RecognizedDependency;
+import gool.ast.core.Return;
 import gool.ast.core.StringIsEmptyCall;
 import gool.ast.core.Throw;
 import gool.ast.core.ToStringCall;
@@ -503,6 +504,7 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(MainMeth mainMeth) {
 		Log.MethodIn(Thread.currentThread());
+		GeneratorHelper.generatingMainMethod = true;
 		return (String)Log.MethodOut(Thread.currentThread(), 
 				"public static void Main(string[] args)");
 	}
@@ -656,6 +658,15 @@ CodeGeneratorNoVelocity {
 		return (String)Log.MethodOut(Thread.currentThread(), null);
 	}
 
+	@Override
+	public String getCode(Return returnExpr) {
+		Log.MethodIn(Thread.currentThread());
+		if (!GeneratorHelper.generatingMainMethod)
+			return (String)Log.MethodOut(Thread.currentThread(),
+					String.format("return (%s)", returnExpr.getExpression()));
+		return (String)Log.MethodOut(Thread.currentThread(), "");
+	}
+	
 	public String getDependenciesCode(ClassDef cl){
 		String res = "";
 		Set<String> dependencies = GeneratorHelper.printDependencies(cl);
@@ -664,7 +675,7 @@ CodeGeneratorNoVelocity {
 		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
 		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies){
-				if (dependency.contains("unrecognized by GOOL")){
+				if (dependency.contains("/*")){
 					String incdep = String.format("%s", dependency);
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";

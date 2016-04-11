@@ -100,9 +100,11 @@ public class GOOLCompiler {
 			//Recognition step
 			ParseGOOL parser = null;
 			if (inputLanguage.equalsIgnoreCase("java")) {
+				System.out.println("---------------> java");
 				parser = new JavaParser();
 			}
 			else if(inputLanguage.equalsIgnoreCase("cpp")){
+				System.out.println("---------------> cpp");
 				parser = new CppParser();
 			}
 			else{

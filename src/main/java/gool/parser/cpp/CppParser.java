@@ -72,6 +72,7 @@ public class CppParser extends ParseGOOL {
 		for(Entry<String, String> entry : input.entrySet()){
 			FileContent fc = FileContent.create(entry.getKey(), 
 					entry.getValue().toCharArray());
+			//Log.d("<CppParser - parseGool> Code content = " + fc.toString());
 			IASTTranslationUnit tu = creatIASTTranslationUnit(fc);
 			// First step : indirect input usage case.
 			CppRecognizerImport visitImport = new CppRecognizerImport() ;

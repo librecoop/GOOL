@@ -35,7 +35,7 @@ public class SettingsPanel extends JFrame {
 	 * Serialization version number
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * The gui panel
 	 */
@@ -44,7 +44,7 @@ public class SettingsPanel extends JFrame {
 	 * Reference to the properties to edit
 	 */
 	private Properties properties;
-	
+
 	/**
 	 * Hash map containing the displayed properties 
 	 */
@@ -124,21 +124,23 @@ public class SettingsPanel extends JFrame {
 	 * Method called by pressing the 'ok' button
 	 */
 	private void saveAndClose() {
-		
+
 		for (Entry<String, JTextField> entry : textFields.entrySet()) {
 			properties.setProperty(entry.getKey(), entry.getValue().getText());
 		}
 		properties.list(System.out);
-		
+
 		OutputStream output = null;
 		try {
-
-			output = new FileOutputStream("src/main/resources/gool.properties");	
+			String fileName = ClassLoader.getSystemClassLoader().getResource("gool.properties").getFile();
+			output = new FileOutputStream(fileName);
 			// save properties file to project root folder
 			properties.store(output, null);
-
+			System.out.println(fileName);
 		} catch (IOException io) {
 			io.printStackTrace();
+		} catch (SecurityException se) {
+			se.printStackTrace();
 		} finally {
 			if (output != null) {
 				try {
@@ -149,7 +151,7 @@ public class SettingsPanel extends JFrame {
 			}
 
 		}
-	
+
 		close();
 	}
 
@@ -161,7 +163,7 @@ public class SettingsPanel extends JFrame {
 		this.dispose();
 		continueGoolCompiler();
 	}
-	
+
 	/**
 	 * After settings properties, this method launch the translation
 	 */

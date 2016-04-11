@@ -54,7 +54,7 @@ public final class TestHelperCpp {
 		Map<String, String> inputFiles = new HashMap<String, String>();
 		inputFiles.put(mainClassName, input);
 		Map<Platform, List<File>> outputFiles = gc.runGOOLCompiler(new CppParser(), 
-				platform, inputFiles);
+				platform, inputFiles, mainClassName);
 		return ExecutorHelper.compileAndRun(platform, outputFiles);
 	}
 

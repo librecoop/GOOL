@@ -245,14 +245,21 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 		Log.MethodIn(Thread.currentThread());
 		StringBuilder result = new StringBuilder();
 		for (Statement statement : block.getStatements()) {
-			result.append(statement);
-			if (!(statement instanceof Block))
-			{
-				if ((result.charAt(result.length()-1) != '}') ||
-						(statement instanceof VarDeclaration))
-					result.append(";");
-				result.append("\n");
+			String statementStr = statement.callGetCode();
+			if (!statementStr.isEmpty()){
+				result.append(statementStr);
+				Log.d("<CommonCodeGenerator - getCode(Block block)> statement : " + statementStr);
+				if (!(statement instanceof Block))
+				{
+					if ((result.charAt(result.length()-1) != '}') ||
+							(statement instanceof VarDeclaration))
+						result.append(";");
+					result.append("\n");
+				}
 			}
+		}
+		if (GeneratorHelper.generatingMainMethod){
+			GeneratorHelper.generatingMainMethod = false;
 		}
 		return (String)Log.MethodOut(Thread.currentThread(), result.toString());
 	}

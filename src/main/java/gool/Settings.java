@@ -36,7 +36,7 @@ public final class Settings {
 	private static Properties properties;
 
 	static {
-		load("gool/properties");
+		load(ClassLoader.getSystemClassLoader().getResource("gool.properties").getFile());
 	}
 
 	/**
@@ -66,7 +66,7 @@ public final class Settings {
 		}
 
 	}
-
+	
 	/**
 	 * Gets the value of an existing property in the "properties" file.
 	 * @param property 

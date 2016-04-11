@@ -903,6 +903,7 @@ CodeGeneratorNoVelocity {
 	@Override
 	public String getCode(MainMeth mainMeth) {
 		Log.MethodIn(Thread.currentThread());
+		GeneratorHelper.generatingMainMethod = true;
 		return (String)Log.MethodOut(Thread.currentThread(), "int main()");
 	}
 
@@ -935,7 +936,7 @@ CodeGeneratorNoVelocity {
 		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
 		if (!dependencies.isEmpty()) {
 			for (String dependency : dependencies){
-				if (dependency.contains("unrecognized by GOOL")){
+				if (dependency.contains("/*")){
 					String incdep = String.format("%s", dependency);
 					if (recogDependencies.indexOf(incdep) == -1)
 						res += incdep + "\n";

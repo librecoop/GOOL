@@ -171,7 +171,7 @@ public class GoolTestIsPrimary {
 		}
 	}
 	
-	@AfterClass
+	//@AfterClass
 	public static void clean(){
 		File dir = new File(Settings.get("java_out_dir"));
 		cleanDir(dir);

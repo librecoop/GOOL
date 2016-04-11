@@ -323,6 +323,7 @@ CodeGeneratorNoVelocity {
 
 	@Override
 	public String getCode(MainMeth mainMeth) {
+		GeneratorHelper.generatingMainMethod = true;
 		return "int main(int argc, const char * argv[])";
 	}
 
