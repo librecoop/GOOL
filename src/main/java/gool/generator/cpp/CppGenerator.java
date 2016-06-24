@@ -96,6 +96,7 @@ import logger.Log;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -115,7 +116,7 @@ CodeGeneratorNoVelocity {
 		return type.replaceAll("[\\s*]+$", "");
 	}
 
-	private Set<String> customDependencies = new HashSet<String>();
+	private Set<String> customDependencies = new LinkedHashSet<String>();
 
 	public void addCustomDependency(String dep) {
 		customDependencies.add(dep);
