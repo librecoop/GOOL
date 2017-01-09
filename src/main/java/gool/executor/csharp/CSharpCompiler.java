@@ -32,11 +32,8 @@ import java.util.Map;
 import logger.Log;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 public class CSharpCompiler extends SpecificCompiler {
-	private static Logger logger = Logger.getLogger(CSharpCompiler.class
-			.getName());
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
 

@@ -204,7 +204,7 @@ public class GOOLCompiler {
 		goolPort = GOOLCompiler.concreteToAbstractGool(parser, input);
 
 
-		if (outputLang.equalsIgnoreCase("cpp")) {
+		if (outputLang.equalsIgnoreCase("cpp") || outputLang.equalsIgnoreCase("c++")) {
 			plt = CppPlatform.getInstance();
 		}
 		else if(outputLang.equalsIgnoreCase("c#")){
@@ -216,6 +216,32 @@ public class GOOLCompiler {
 
 		//Generation
 		return GOOLCompiler.abstractGool2Target(goolPort, plt);
+	}
+	
+	/**
+	 * Launch the translation with input parameters. It does not print output
+	 * files but returns them within a map structure.
+	 * 
+	 * @param inputLang : input language
+	 * @param outputLang : output language
+	 * @param input : input code to translate
+	 */
+	public static Map<String, String> launchHTMLTranslation (String inputLang, String outputLang,
+			String input) throws Exception {
+		Log.d("======>launchHTMLTranslation: " + inputLang + " / " + outputLang);
+		Map<String, String> inputMap = new HashMap<String, String>();
+		String inputFileName = "Test.";
+		if (inputLang.equalsIgnoreCase("java")) {
+			inputFileName += "java";
+		}
+		else if(inputLang.equalsIgnoreCase("cpp") || inputLang.equalsIgnoreCase("c++")){
+			inputFileName += "cpp";
+		}
+		else{
+			throw new Exception("Unknown input language.");
+		}
+		inputMap.put(inputFileName, input);
+		return launchTranslation(inputLang, outputLang, inputMap);		
 	}
 
 	/**

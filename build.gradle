@@ -43,6 +43,8 @@ dependencies {
 	compile name: 'velocity-1.6.4-dep'
 	compile name: 'tools'
 	compile name: 'diffutils-1.2.1'
+	compile name: 'glassfish-embedded-all-4.1'
+	compile name: 'javaee-api-7.0'
 }
 
 uploadArchives {
@@ -90,4 +92,17 @@ sourceSets{
 			//exclude 'GoolTestCpp.java'			
 		}
 	}
+}
+
+task copieWEBINF (type: Copy) {
+	description = 'Copy WEB-INF folder into build for glassfish use.'
+	into 'build/WEB-INF'
+	from 'src/WEB-INF'
+}
+
+task serverRun (dependsOn: 'classes', type: JavaExec) {
+	copieWEBINF.execute()
+	description = 'Launch the server'
+	main = 'applicationsServeur.ServeurIntegre'
+	classpath = sourceSets.main.runtimeClasspath
 }

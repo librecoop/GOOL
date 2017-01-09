@@ -27,15 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import logger.Log;
 
 /**
  * Operating System command execution helper.
  */
 public final class Command {
-	private static Logger logger = Logger.getLogger(Command.class.getName());
-
 	private Command() {
 	}
 
@@ -69,31 +66,37 @@ public final class Command {
 			Map<String, String> env) {
 		try {
 			StringBuffer buffer = new StringBuffer();
-
+			int i=1;
+			Log.d("yo" + i++);
 			ProcessBuilder pb = new ProcessBuilder(params);
+			Log.d("yo" + i++);
 			pb.directory(workingDir);
-
+			Log.d("yo" + i++);
 			for (Entry<String, String> e : env.entrySet()) {
 				pb.environment().put(e.getKey(), e.getValue());
 			}
+			Log.d("yo" + i++);
+			for(String cmd : pb.command())
+				Log.d(cmd);
 			Process p = pb.redirectErrorStream(true).start();
-
+			Log.d("yo" + i++);
 			p.getOutputStream().close();
+			Log.d("yo" + i++);
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					p.getInputStream()));
-
+			Log.d("yo" + i++);
 			String line;
 			while ((line = in.readLine()) != null) {
 				buffer.append(line).append("\n");
 			}
-
+			Log.d("yo" + i++);
 			int retval = p.waitFor();
-
+			Log.d("yo" + i++);
 			if (retval != 0) {
 				throw new CommandException("The command execution returned "
 						+ retval + " as return value... !\n" + buffer);
 			}
-
+			Log.d("yo" + i++);
 			return buffer.toString();
 		} catch (IOException e) {
 			throw new CommandException(e);
