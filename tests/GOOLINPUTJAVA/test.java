@@ -1,33 +1,22 @@
-import java.lang.Math;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 
-public class test{
-	public static void main(String[] args){
-		try{
-			List<String> list = new ArrayList<String>();
-			List<String> list2 = new ArrayList<String>();
-			list.add("toto");
-			list.add("tata");
-			list2.add("toto");
-			list2.add("tata");
-			if(list.equals(list2)){
-				System.out.println("true");
-			}
-			else{
-				System.out.println("false");
-			}
-			list2.add("titi");
-			if(list.equals(list2)){
-				System.out.println("true");
-			}
-			else{
-				System.out.println("false");
-			}
-		}catch(Exception e){
-			System.out.println(e.toString());
+public class  test{
+
+	public static void printMap(Map mp) {
+		Iterator it = mp.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry)it.next();
+			System.out.println(pair.getKey() + " = " + pair.getValue());
+			it.remove(); // avoids a ConcurrentModificationException
 		}
-		System.out.println(Math.abs(-20.5));
-		
+	}
+
+	public static void  main ( String [] args ){
+		Map<Integer,Integer> m = new HashMap<Integer,Integer>();
+		for(int i=0; i<10; ++i)
+			m.put(i,2*i);
+		printMap(m);
 	}
 }
