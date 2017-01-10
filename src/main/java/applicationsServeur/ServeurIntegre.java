@@ -61,7 +61,7 @@ public class ServeurIntegre {
 		}
 	}
 
-	
+
 	/**
 	 * Methode qui demarre un serveur param&eacute;tr&eacute; en v&eacute;rifiant qu'il n'y ai pas une instance du serveur d&eacute;j&agrave; d&eacute;mar&eacute;e dans le contexte.
 	 * @return le serveur param&eacute;tr&eacute; et d&eacute;marr&eacute;
@@ -91,30 +91,49 @@ public class ServeurIntegre {
 	 * @throws Exception
 	 */
 	public static void main(String args[]) throws Exception {
-		
-		
-		
-		JFrame serveur = new IHMServeur();
-		
-		//lancement du serveur
-		final ServeurIntegre runner = new ServeurIntegre(2009).init().start();
-		
-		/*
-		 * Pour des raison de securité la croix de fermeture de la fenetre se voit associer un nouveau listenner
-		 * on s'assure de lancer la commande de fermeture du serveur intégré avant de lancer la fermeture du programme
-		 */
-		serveur.addWindowListener(new WindowAdapter() {
-			  public void windowClosing(WindowEvent we) {
-				  try {
-					//fermeture serveur
-					runner.stop();
-					
-					//fermeture programme
-					System.exit(0);
-				} catch (Exception e) {
-					System.out.println("ERROR: **Server can't safely stop.**");
+
+		String value = System.getProperty("X11");
+		System.out.println("X11 = " + value);
+
+		if (value.equals("true")){
+			JFrame serveur = new IHMServeur();
+
+			//lancement du serveur
+			final ServeurIntegre runner = new ServeurIntegre(2009).init().start();
+
+			/*
+			 * Pour des raison de securité la croix de fermeture de la fenetre se voit associer un nouveau listenner
+			 * on s'assure de lancer la commande de fermeture du serveur intégré avant de lancer la fermeture du programme
+			 */
+			serveur.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent we) {
+					try {
+						//fermeture serveur
+						runner.stop();
+
+						//fermeture programme
+						System.exit(0);
+					} catch (Exception e) {
+						System.out.println("ERROR: **Server can't safely stop.**");
+					}
 				}
-			}
-		});
+			});
+		}else{
+			//lancement du serveur
+			final ServeurIntegre runner = new ServeurIntegre(2009).init().start();
+			class ShutDownThread extends Thread {
+				public void run() {
+					System.out.println( "Server shutdown..." );
+					try {
+						runner.stop();
+					} catch (Exception e) {
+						System.out.println("ERROR: **Server can't safely stop.**");
+					} finally{
+						System.out.println( "Server shutdown complete." );
+					}
+				}
+			};
+			Runtime.getRuntime().addShutdownHook( new ShutDownThread() );
+		}
 	}	
 }

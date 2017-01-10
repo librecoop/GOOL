@@ -105,4 +105,13 @@ task serverRun (dependsOn: 'classes', type: JavaExec) {
 	description = 'Launch the server'
 	main = 'applicationsServeur.ServeurIntegre'
 	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs '-DX11=true'
+}
+
+task noX11ServerRun (dependsOn: 'classes', type: JavaExec) {
+	copieWEBINF.execute()
+	description = 'Launch the server'
+	main = 'applicationsServeur.ServeurIntegre'
+	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs '-DX11=false'
 }
