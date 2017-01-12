@@ -10,4 +10,4 @@ script: ./gradlew test
 
 branches:
     only:
-        - denis
+        - master
