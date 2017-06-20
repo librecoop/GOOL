@@ -1,6 +1,13 @@
 apply plugin: 'application'
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.7.201606060606" //checked at http://www.eclemma.org/jacoco/
+    reportsDir = file("$buildDir/customJacocoReportDir")
+    
+}
 
 applicationName = "gool"
 mainClassName = 'gool.GOOLCompiler'
@@ -115,3 +122,13 @@ task noX11ServerRun (dependsOn: 'classes', type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
 	jvmArgs '-DX11=false'
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+test.finalizedBy(jacocoTestReport)
