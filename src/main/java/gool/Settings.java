@@ -36,7 +36,7 @@ public final class Settings {
 	private static Properties properties;
 
 	static {
-		load(ClassLoader.getSystemClassLoader().getResource("gool.properties").getFile());
+		load(ClassLoader.getSystemClassLoader().getResource("gool/properties").getFile());
 	}
 
 	/**

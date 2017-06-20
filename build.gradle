@@ -92,14 +92,12 @@ sourceSets{
 		java {
 			srcDir 'src/main/java'
 		}
-		resources.srcDir file('src/main/resources')
 	}
 	test {
 		java {
 			srcDir 'src/test'
 			//exclude 'GoolTestCpp.java'			
 		}
-        resources.srcDir file('src/main/resources')
 	}
 }
 
