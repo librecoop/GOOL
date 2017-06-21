@@ -10,7 +10,7 @@ class GoolFileWriterForCPP{
 
 private:
 
-	GoolFileForCPP * f = NULL;
+	GoolFileForCPP * f;
 
 public:
 
