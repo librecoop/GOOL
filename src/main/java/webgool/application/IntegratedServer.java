@@ -1,4 +1,4 @@
-package applicationsServeur;
+package webgool.application;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.awt.event.WindowAdapter;
@@ -10,35 +10,35 @@ import javax.swing.JFrame;
 import org.glassfish.embeddable.*;
 
 
-import vue.IHMServeur;
+import webgool.view.HMIServer;
 
 /**
- * La classe ServeurIntegre.java est le point d'entr&eacute;e du programme.<br>
- * Cette classe int&eacute;gre un serveur blackfish, le parametre et le lance. C'est elle aussi qui se charge d'instancier le traducteur.
+ * IntegratedServer class is the entry point of webgool.<br>
+ * This class contains a GlassFish server instance that is parameterized and started. It also instantiates the gool translator.<br>
  * @author Charbel FOUREL
  * @version 0.1a
  * 
  */
-public class ServeurIntegre {
+public class IntegratedServer {
 
 	private int port;
 	private AtomicBoolean initialise = new AtomicBoolean();
 	private GlassFish glassfish;
 
 	/**
-	 * Constructeur de la classe avec d&eacute;finition du port
+	 * Constructor with port definition
 	 * @param port
 	 */
-	public ServeurIntegre(int port) {
+	public IntegratedServer(int port) {
 		this.port = port;
 	}
 
 	/**
-	 * Methode qui parametre un serveur int&eacute;gr&eacute; glassfish
-	 * @return Un serveur int&eacute;gr&eacute; configur&eacute;
+	 * Parameterized the GlassFish server.<br>
+	 * @return the IntegratedServer instance.<br>
 	 * @throws Exception
 	 */
-	public ServeurIntegre init() throws Exception{
+	public IntegratedServer init() throws Exception{
 		if ( initialise.get() ) {
 			throw new RuntimeException("Server already started.");
 		}
@@ -53,7 +53,7 @@ public class ServeurIntegre {
 	}
 
 	/**
-	 * Methode qui verifie la bonne initialisation du serveur
+	 * Check that the initialization has correctly be done.<br>
 	 */
 	private void check() {
 		if ( !initialise.get() ) {
@@ -63,11 +63,11 @@ public class ServeurIntegre {
 
 
 	/**
-	 * Methode qui demarre un serveur param&eacute;tr&eacute; en v&eacute;rifiant qu'il n'y ai pas une instance du serveur d&eacute;j&agrave; d&eacute;mar&eacute;e dans le contexte.
-	 * @return le serveur param&eacute;tr&eacute; et d&eacute;marr&eacute;
+	 * Starts the glassfish server. It first check that there is no server instance already executed.<br>
+	 * @return the IntegratedServer instance.<br>
 	 * @throws Exception
 	 */
-	public ServeurIntegre start() throws Exception{
+	public IntegratedServer start() throws Exception{
 		check();
 		glassfish.start();
 		glassfish.getDeployer().deploy(new File("build"));
@@ -75,18 +75,18 @@ public class ServeurIntegre {
 	}
 
 	/**
-	 * Methode qui arrete l'instance du serveur en cours de fonctionnement
-	 * @return le serveur arr&eacute;t&eacute;
+	 * Stops the current server instance.<br>
+	 * @return the stopped IntegratedServer instance.<br>
 	 * @throws Exception
 	 */
-	public ServeurIntegre stop() throws Exception{
+	public IntegratedServer stop() throws Exception{
 		check();
 		glassfish.stop();
 		return this;
 	}
 
 	/**
-	 * Entr&eacute;e du programme
+	 * webgool entry point
 	 * @param args
 	 * @throws Exception
 	 */
@@ -96,22 +96,16 @@ public class ServeurIntegre {
 		System.out.println("X11 = " + value);
 
 		if (value.equals("true")){
-			JFrame serveur = new IHMServeur();
+			JFrame serveur = new HMIServer();
 
-			//lancement du serveur
-			final ServeurIntegre runner = new ServeurIntegre(2009).init().start();
+			// server start
+			final IntegratedServer runner = new IntegratedServer(2009).init().start();
 
-			/*
-			 * Pour des raison de securité la croix de fermeture de la fenetre se voit associer un nouveau listenner
-			 * on s'assure de lancer la commande de fermeture du serveur intégré avant de lancer la fermeture du programme
-			 */
+			// For safety reason, the close cross of the window is associated with a new listener
 			serveur.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent we) {
 					try {
-						//fermeture serveur
 						runner.stop();
-
-						//fermeture programme
 						System.exit(0);
 					} catch (Exception e) {
 						System.out.println("ERROR: **Server can't safely stop.**");
@@ -119,8 +113,8 @@ public class ServeurIntegre {
 				}
 			});
 		}else{
-			//lancement du serveur
-			final ServeurIntegre runner = new ServeurIntegre(2009).init().start();
+			// server start
+			final IntegratedServer runner = new IntegratedServer(2009).init().start();
 			class ShutDownThread extends Thread {
 				public void run() {
 					System.out.println( "Server shutdown..." );

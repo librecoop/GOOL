@@ -181,7 +181,6 @@ public class GOOLCompiler {
 	 * @param outputLang : output language
 	 * @param input : input map of files to translate (name as key and code as value)
 	 */
-
 	public static Map<String, String> launchTranslation(String inputLang,
 			String outputLang, Map<String, String> input)
 					throws Exception {
@@ -189,23 +188,27 @@ public class GOOLCompiler {
 		ParseGOOL parser = null;
 		Collection<ClassDef> goolPort = null;
 		Platform plt = null;
-
 		if (inputLang.equalsIgnoreCase("java")) {
 			parser = new JavaParser();
 		}
-		/*else if(inputLang.equalsIgnoreCase("cpp")){
+		else if(inputLang.equalsIgnoreCase("cpp") || inputLang.equalsIgnoreCase("c++")){
 			parser = new CppParser();
-		}*/
+		}
 		else{
-			throw new Exception("Unknown input language.");
+			throw new Exception("Unknown input language2.");
 		}
 
 		//Recognition
 		goolPort = GOOLCompiler.concreteToAbstractGool(parser, input);
 
-
-		if (outputLang.equalsIgnoreCase("cpp") || outputLang.equalsIgnoreCase("c++")) {
+		if (outputLang.equalsIgnoreCase("java")) {
+			plt = JavaPlatform.getInstance();
+		}
+		else if (outputLang.equalsIgnoreCase("cpp") || outputLang.equalsIgnoreCase("c++")) {
 			plt = CppPlatform.getInstance();
+		}
+		else if(outputLang.equalsIgnoreCase("python")){
+			plt = PythonPlatform.getInstance();
 		}
 		else if(outputLang.equalsIgnoreCase("c#")){
 			plt = CSharpPlatform.getInstance();
@@ -238,7 +241,7 @@ public class GOOLCompiler {
 			inputFileName += "cpp";
 		}
 		else{
-			throw new Exception("Unknown input language.");
+			throw new Exception("Unknown input language1.");
 		}
 		inputMap.put(inputFileName, input);
 		return launchTranslation(inputLang, outputLang, inputMap);		

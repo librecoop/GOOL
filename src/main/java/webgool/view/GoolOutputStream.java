@@ -1,4 +1,4 @@
-package vue;
+package webgool.view;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -6,19 +6,19 @@ import java.io.OutputStream;
 import javax.swing.JTextArea;
 
 /**
- * La classe StreamOutPerso.java
+ * GoolOutputStream class
  * @author Charbel FOUREL
  * @version 0.1a
  * 
  */
-public class StreamOutPerso extends OutputStream {
+public class GoolOutputStream extends OutputStream {
 	private JTextArea textArea;
 
 	/**
-	 * Constructeur de la classe avec d&eacute;finition du TextArea qui recevra les sorties.
-	 * @param textArea le TextArea qui affichera les messages de sortie.
+	 * Class ctor with a text field definition which will receive the outputs.
+	 * @param textArea JTextArea that displays the output messages.
 	 */
-	public StreamOutPerso(JTextArea textArea) {
+	public GoolOutputStream(JTextArea textArea) {
 		this.textArea = textArea;
 	}
 
@@ -28,10 +28,10 @@ public class StreamOutPerso extends OutputStream {
 	@Override
 	public void write(int b) throws IOException {
 		
-		// redirection des donnees vers le textarea
+		// Data redirection to the textarea
         textArea.append(String.valueOf((char)b));
         
-        // on s'assure que le curseur du textarea soit toujours a la fin
+        // Set the cursor position at the end of the textarea
         textArea.setCaretPosition(textArea.getDocument().getLength());
 	}
 }

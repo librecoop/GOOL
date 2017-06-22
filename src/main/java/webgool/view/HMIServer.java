@@ -1,26 +1,20 @@
-package vue;
+package webgool.view;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
 /**
- * La classe IHMServeur.java
+ * HMIServer class
  * @author Charbel FOUREL
  * @version 0.1a
  * 
  */
-public class IHMServeur extends JFrame {
+public class HMIServer extends JFrame {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructeur de la classe
-	 */
-	public IHMServeur () {
+	public HMIServer () {
 		
 		super ();
 		
@@ -28,7 +22,7 @@ public class IHMServeur extends JFrame {
 		//this.setResizable(false);
 		this.setLocationRelativeTo(null);
 		this.setLayout(new BorderLayout());
-		this.add(new Panneau(), BorderLayout.CENTER);
+		this.add(new GoolPanel(), BorderLayout.CENTER);
 		this.setTitle("GOOL Translate Dedicated Server");
 		this.setVisible(true);
 		

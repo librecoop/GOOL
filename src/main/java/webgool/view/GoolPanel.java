@@ -1,31 +1,26 @@
-package vue;
+package webgool.view;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
 /**
- * La classe Panneau.java
+ * GoolPanel class
  * @author Charbel FOUREL
  * @version 0.1a
  * 
  */
-public class Panneau extends JPanel {
+public class GoolPanel extends JPanel {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructeur de la classe
-	 */
-	public Panneau() {
+	
+	public GoolPanel() {
 		
 		super();
 		
 		this.setLayout(new BorderLayout());
-		this.add(new PanneauDefilant(new ChampTxt()), BorderLayout.CENTER);
+		this.add(new GoolScrollPane(new TextField()), BorderLayout.CENTER);
 		this.setVisible(true);
 		
 	}

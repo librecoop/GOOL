@@ -1,29 +1,26 @@
-package vue;
+package webgool.view;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 /**
- * La classe PanneauDefilant.java
+ * GoolScrollPane class
  * @author Charbel FOUREL
  * @version 0.1a
  * 
  */
-public class PanneauDefilant extends JScrollPane {
+public class GoolScrollPane extends JScrollPane {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructeur de la classe avec d&eacute;finition du champ texte a int&eacute;grer au panneau defilant.
-	 * @param champ
+	 * Class ctor with a text field definition integrated in the scroll panel.
+	 * @param field
 	 */
-	public PanneauDefilant (JTextArea champ) {
+	public GoolScrollPane (JTextArea field) {
 		
-		super(champ);		
+		super(field);		
 		this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		this.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.setVisible(true);
