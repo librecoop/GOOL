@@ -69,7 +69,7 @@ b {
 
 @media all and (max-width:747px) {
 
-	#texteDescription {
+	#textDescription {
 		
 		margin: 0 0 0 0 !important;
 
@@ -94,7 +94,7 @@ b {
 
 	}
 
-	.vide {
+	.empty {
 
 		display:none;
 
@@ -109,7 +109,7 @@ ul {
 
 }
 
-/*Div contenant l'image du logo gool, Header*/
+/* Div with the Gool logo image, Header */
 #TitleHeader {
 
 	/*background-color:#F2F2F2;*/
@@ -118,7 +118,7 @@ ul {
 
 }
 
-/*Image du logo Gool*/
+/* Image of Gool logo */
 #LogoGool {
 
 	width:200px;
@@ -127,12 +127,12 @@ ul {
 
 }
 
-#langages {
-
-	float:right;
-	padding:10px;
-
+/* Image of LabEx logo */
+#LogoArch {
+    float:right;
+    padding:10px;
 }
+
 
 /*Logo HTML5*/
 #HTML5 {
@@ -142,7 +142,7 @@ ul {
 
 }
 
-/*div contenant le span de description*/
+/* div with description span */
 #description {
 
 	line-height: 30px;  	
@@ -155,8 +155,8 @@ ul {
 
 }
 
-/*span de description*/
-#texteDescription {
+/* text description span */
+#textDescription {
 	
 	vertical-align: middle;
 	line-height: normal;      
@@ -165,20 +165,17 @@ ul {
 	font-style:italic;	
 	
 }
-/*div contenant tout le part de l'interface non relative au header ou au footer*/
-#blocCentreur {
 
-	width:100%;	
-
+/* div with everything but header and footer relative parts */
+#centralBlock {
+	width:100%;
 }
 
-/*div contenant les div texte*/
-#champsTexte {
-	
-
+/*text div*/
+#textField {
 }
 
-/*classe des divs contenant les divs d'entrée sortie avec leurs outils*/
+/* IO div with their tools */
 .IO {
 	
 	height:350px;
@@ -190,15 +187,15 @@ ul {
 
 }
 
-/*classe des divs contenant les barres d'outils*/
-.barreOutils {
+/* tool bars div */
+.toolBar {
 
 	height:40px;
 
 }
 
-/*div contenant le champs texte d'entrée*/
-#entree {
+/* div with input text */
+#input {
 
 	padding:3px;
 	border-width:1px;
@@ -209,15 +206,15 @@ ul {
 	background-color:white;
 }
 
-/*comportement du div contenant le champ texte d'entrée sur un rollover*/
-/*generation d'un ombre interne*/
-#entree:hover {
+/* behavior of the div with input text on a rollover */
+/* generation of an internal shadow */
+#input:hover {
 
 	box-shadow: -1px 1px 5px 1px rgba(0, 0, 0, 0.3) inset;
 
 }
 
-/*parametres du bouton d'intervertion des options*/
+/* swap button options */
 #swap {
 	
 	border: 1px solid #AAAAAA;
@@ -234,22 +231,22 @@ ul {
 
 }
 
-/*parametres du bouton de traduction*/
-#traduire {
+/* translate button options */
+#translate {
 
 	margin-top:2px;	
 	float:right;
 
 }
 
-#traduire:hover {
+#translate:hover {
 
 	background-color:#457CD5
 
 }
 
-/*div contenant le champs texte de sortie*/
-#sortie {
+/* div with the output text */
+#output {
 	
 	border-radius:5px;
 	border-color:#6E6E6E;
@@ -261,20 +258,21 @@ ul {
 
 }
 
-/*champ texte de sortie*/
-#sortieTXT {
+/* text field of the output */
+#outputTXT {
 
 	color:black;	
 
 }
 
-.petitCont {
+.smallCont {
 
 	height:160px;	
 
 }
-/*div contenant le champ texte des messages d'erreur potentiels*/
-#erreurs {
+
+/* div with potential errors text field */
+#errors {
 		
 	padding:5px;
 	height:110px;
@@ -282,22 +280,22 @@ ul {
 
 }
 
-/*champs texte des erreurs*/
-#erreursTXT {
+/* errors text field */
+#errorsTXT {
 
 	height:100px;
 	color:red;	
 
 }
 
-/*span de titre des erreurs*/
-#titreErreurs {
+/* errors title span */
+#errorsTitle {
 
 	color:red;
 
 }
 
-/*image logo css w3c*/
+/* css w3c image logo */
 #CSS {
 
 	border:0;
@@ -306,7 +304,7 @@ ul {
 
 }
 
-/*parametres du div de footer*/
+/* footer div parameters */
 #footer {
 	
 	padding:10px;
@@ -318,14 +316,14 @@ ul {
 
 }
 
-/*parametres du div des copyright du footer*/
+/* footer copyright parameters */
 #copyright {
 
 	margin-bottom:10px;
 
 }
 
-/*gestion des onglets de la zone de sortie*/
+/* output tabs management */
 div.tabs {
 
 	position: relative;
@@ -377,11 +375,12 @@ div.tabs section span.spanTitre a {
 	color: inherit;
 	outline: 0 none;
 }
-/*div.tabs a:target section,*/
+
+/* div.tabs a:target section, */
 div.tabs section:target,
 div.tabs section:target span {
 
 	background-color: white;
 	z-index: 2;
 }
-/*fin de la gestion des onglets*/
+/* end of output tabs management */

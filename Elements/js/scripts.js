@@ -1,71 +1,63 @@
 var webSocket;
 var optionIn;
 var optionOut;
-var contenu;
-var erreurs;
-var champsEntree;
+var content;
+var errors;
+var inputField;
 
-//fonction qui intialise les variables relatives aux differents champs du client ainsi que le contenu de certains
+// Initialization of variables relative to the different client fields and their contents
 function initFields() {
 
-	optionIn = document.getElementById("langagesEntree");
-	optionOut = document.getElementById("langagesSortie");
-	contenu = document.getElementById("entreeTXT");	
-	erreurs = document.getElementById("erreursTXT");
+	optionIn = document.getElementById("inputLang");
+	optionOut = document.getElementById("outputLang");
+	content = document.getElementById("inputTXT");	
+	errors = document.getElementById("errorsTXT");
 
-	champsEntree = document.getElementById("entreeTXT");
-	champsEntree.value = "";
+	inputField = document.getElementById("inputTXT");
+	inputField.value = "";
 }
 
-//la seule fonction a appeler au niveau HTML
-function ouvrirSocket() {
-	
-	//on verifie la compatibilité du navigateur avec les websockets
+// The only function called by the HTML part
+function openSocket() {
+
+	// Check navigator compatibility with web sockets
 	if ("WebSocket" in window) {
 
-		//appel de la methode d'initialisation
+		// initialization
 		initFields();
 
-		//creation d'un socket vers le serveur
+		// socket to server creation
 		webSocket = new WebSocket("ws://localhost:2009/www/appli");
-	
+
 		/*
-		*Les Methodes socket.onX sont des listeners implémentés
-		*On associe des methodes JS en implementant les listeners
-		*
-		*Exemple: WebSocket.onopen
-		* = function (evenement) créé une fonction anonyme qui sera exécutée quant le socket detectera un message du serveur
-		* (evenement) correspond a l'objet transmis par le serveur en reponse, on peut acceder au contenu via evenement.data
-		*/
+		 * The socket.onX methods are implemented listeners
+		 * Functions are associated to the listeners at creation
+		 */
 
-		//ce qui se passe quand le client detecte une ouverture valide de socket
-		webSocket.onopen = function (evenement) {
-		
-			erreurs.value = "Connexion ouverte, vous pouvez traduire.";
-		
+		// What happens when the client receives a valid socket opening
+		webSocket.onopen = function (event) {
+			errors.value = "Server connection established, you can translate.";
 		};
-	
-		//ce qui se passe quand le client detecte un message entrant de la part du serveur
-		webSocket.onmessage = function (evenement) {
-				
-			var message = evenement.data;
 
+		// What happens when the client receives a input message from the server
+		webSocket.onmessage = function (event) {
+			var message = event.data;
 			var elements = message.split("§");		
 
 			/*
-			*Exemple de message serveur:
-			*@§contenu
-			*Le parser va creer un tableau qui contiendra
-			*elements [0] == identifiant de message (@ = message sortie ; 1 = message erreurs)
-			*elements [1] == contenu traité ou message d'erreur
-			*
-			*Selon l'identifiant message ou envoie le contenu soit vers la sortie soit vers les erreurs
-			*/
+			 * Server message example:
+			 * @§content
+			 * The parser will create a table with:
+			 * elements [0] == id of the message (@ = output message; 1 = error message)
+			 * elements [1] == processed content or error message
+			 *
+			 * Depending on the id, the message is sent to the output or to the error
+			 */
 
 			if (elements [0] === "@") {
 
-				var decalage = 2;
-				var container = document.getElementById('sortie');
+				var shift = 2;
+				var container = document.getElementById('output');
 
 				container.innerHTML = '';
 
@@ -78,28 +70,28 @@ function ouvrirSocket() {
 
 					var section = document.createElement('section');
 					section.setAttribute('id','tab' + i);
-				
-					var titre = document.createElement('span');
-					titre.style.left = decalage + 'px';
-					titre.innerHTML = elements[i]; 
-					titre.setAttribute('class','spanTitre');
 
-					var lienTitre = document.createElement('a');
-					lienTitre.setAttribute('href','#tab' + i);
+					var title = document.createElement('span');
+					title.style.left = shift + 'px';
+					title.innerHTML = elements[i]; 
+					title.setAttribute('class','spanTitre');
 
-					/*lienTitre.setAttribute('onclick','return false');*/
+					var titleLink = document.createElement('a');
+					titleLink.setAttribute('href','#tab' + i);
 
-					var txtAreaNouveau = document.createElement('pre');
+					/*titleLink.setAttribute('onclick','return false');*/
 
-					txtAreaNouveau.innerHTML = elements[i+1];
-					txtAreaNouveau.setAttribute('class', 'prettyprint');
+					var txtAreaNew = document.createElement('pre');
+
+					txtAreaNew.innerHTML = elements[i+1];
+					txtAreaNew.setAttribute('class', 'prettyprint');
 
 					article.appendChild(section);
-					section.appendChild(lienTitre);
-					lienTitre.appendChild(titre);
-					section.appendChild(txtAreaNouveau);
+					section.appendChild(titleLink);
+					titleLink.appendChild(title);
+					section.appendChild(txtAreaNew);
 
-					decalage += 82;
+					shift += 82;
 				}
 
 				prettyPrint();
@@ -108,65 +100,58 @@ function ouvrirSocket() {
 			}
 
 			if (elements [0] === "1") {
-	
-				erreurs.value = elements [1];
+
+				errors.value = elements [1];
 			}
 		};
 
-		//ce qui se passe quand le client detecte une fermeture du socket
+		// What happens when the client receives a socket closure
 		webSocket.onclose = function (evenement) {
-			erreurs.value = "Fermeture de la connnexion avec le serveur, vous ne pouvez pas traduire.";
-		
+			errors.value = "Server connection closed, you cannot translate.";
+
 		};
-	
-		//ce qui se passe quant une erreur a lieu au niveau du socket
+
+		// What happens when the client receives an error
 		webSocket.onerror = function (evenement) {
-			alert("Erreur de connexion avec le serveur: " + evenement.data);
-		
+			alert("Server connection error: " + evenement.data);
+
 		};
 
 	} else {
 
-		//si le navigateur ne supporte pas les websockets on informe l'utilisateur
-		var zoneAffichage = document.getElementById("blocCentreur");
-		var erreurTxt = document.createElement('span');
+		// If the navigator is unable to deal with web sockets
+		var displayArea = document.getElementById("centralBlock");
+		var errorTxt = document.createElement('span');
 		var bold = document.createElement('b');
-		bold.innerHTML = 'Votre navigateur ne prend pas en charge certaines fonctionnalités nécessaires à la bonne marche du programme !';
-		erreurTxt.appendChild(bold);
-		
-		zoneAffichage.innerHTML = '';
-		zoneAffichage.style.padding = '20px';
-		zoneAffichage.appendChild(erreurTxt);
+		bold.innerHTML = 'Your browser does not support the necessary technology for the program to properly run !';
+		errorTxt.appendChild(bold);
+
+		displayArea.innerHTML = '';
+		displayArea.style.padding = '20px';
+		displayArea.appendChild(errorTxt);
 
 	}
 
 }
 
-//fonction appelée par le bouton "traduire"
-//elle va recuperer le contenu du champ d'entrée et creer une chaine de characteres avec delimiteurs
-//la chaine créé est envoyée via le socket au serveur pour traitement.
-function envoyer() {
-	
-	if (contenu.value !== '') {
+// Function called by the translate button
+// It gets the content of the text field and creates a character chain with appropriate delimiters.
+// The chain is then sent to the server for process.
+function send() {
 
-		//on recupere le contenu du champ d'entrée et on y ajoute les delimiteurs avec les parametres
-		var texte = "@§" + "fr§" + optionIn.value + "§" + optionOut.value + "§" + contenu.value;
-	
-		//envoi de la chaine de characteres créée.
+	if (content.value !== '') {
+		var texte = "@§" + "fr§" + optionIn.value + "§" + optionOut.value + "§" + content.value;
 		webSocket.send(texte);
-
 	} else {
-
-		erreurs.value = "Veuillez renseigner le champ d'entrée";
-
+		errors.value = "Please, fill in the input langage field...";
 	}
 }
 
-//fonction qui gere l'intervertion des langages d'entree/sortie
+// Swap input and output languages
 function swap() {
 
 	var oIn = optionIn.value;
-	
+
 	optionIn.value = optionOut.value;
 	optionOut.value = oIn;
 
