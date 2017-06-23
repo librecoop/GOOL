@@ -45,7 +45,6 @@ public class Server {
 	 */
 	@OnMessage
 	public void onMessage(String message, Session session){
-
 		ByteArrayOutputStream consoleToString = new ByteArrayOutputStream();
 		PrintStream flux = new PrintStream(consoleToString);
 		System.setErr(flux);
@@ -86,51 +85,34 @@ public class Server {
 			 * elements [0] is the type of the message : @ for the translated content, 1 for the errors.
 			 * elements [1] is the translated content.
 			 */
-
-			// For a French user
-			if (elements [1].equals("fr")) {
-				try {
-					// translator call
-					tabResults = GOOLCompiler.launchHTMLTranslation(elements[2], elements[3], elements[4]);
-					// output message construction
-					for (Map.Entry<String, String> entry : tabResults.entrySet()) {
-						messageOut += "§" + entry.getKey() + "§" + entry.getValue();
-					}
-					session.getBasicRemote().sendText(messageOut); 
+			try {
+				// translator call
+				tabResults = GOOLCompiler.launchHTMLTranslation(elements[2], elements[3],
+						elements[4]);
+//				for(String str: tabResults.keySet()){
+//					System.out.println("########### " + str + " ###########");
+//					System.out.println(tabResults.get(str));
+//				}
+				// output message construction
+				for (Map.Entry<String, String> entry : tabResults.entrySet()) {
+					messageOut += "§" + entry.getKey() + "§" + entry.getValue();
+				}
+				session.getBasicRemote().sendText(messageOut); 
+				if(elements [1].equals("fr")){
 					messageErr = "Traitement correctement exécuté par le serveur";
-				} catch(Exception e) {
-					System.err.println(e);
-					messageErr = consoleToString.toString();
+				}else{
+					messageErr = "Server treatment properly executed";
 				}
-				try {
-					session.getBasicRemote().sendText("1§" + messageErr);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			} catch(Exception e) {
+				System.err.println(e);
+				messageErr = consoleToString.toString();
+			}
+			try {
+				session.getBasicRemote().sendText("1§" + messageErr);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
-			// For an English user
-			if (elements [1].equals("en")) {
-				try {
-					// translator call
-					tabResults = GOOLCompiler.launchHTMLTranslation(elements[2], elements[3],
-							elements[4]);
-					// output message construction
-					for (Map.Entry<String, String> entry : tabResults.entrySet()) {
-						messageOut += "§" + entry.getKey() + "§" + entry.getValue();
-					}
-					session.getBasicRemote().sendText(messageOut); 
-					messageErr = "Server treatment properly executed";
-				} catch(Exception e) {
-					System.err.println(e);
-					messageErr = consoleToString.toString();
-				}
-				try {
-					session.getBasicRemote().sendText("1§" + messageErr);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			// references set to null for the garbage collector
 			consoleToString = null;
 			flux = null;

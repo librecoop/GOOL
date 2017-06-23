@@ -41,10 +41,11 @@ function openSocket() {
 
 		// What happens when the client receives a input message from the server
 		webSocket.onmessage = function (event) {
-			var message = event.data;
+			var message = event.data.replace(/</g,"&lt").replace(/>/g,"&gt");
 			var elements = message.split("§");		
-
-			/*
+			//document.getElementById('debug').innerHTML += "<br>" + message;
+			
+			 /*
 			 * Server message example:
 			 * @§content
 			 * The parser will create a table with:
@@ -55,48 +56,41 @@ function openSocket() {
 			 */
 
 			if (elements [0] === "@") {
-
-				var shift = 2;
 				var container = document.getElementById('output');
 
 				container.innerHTML = '';
 
-				var article = document.createElement('div');
-				article.setAttribute('class','tabs');
+				var codeTab = document.createElement('div');
+				codeTab.setAttribute('class','tabs');
 
-				container.appendChild(article);
-
+				container.appendChild(codeTab);
+				
 				for (var i = 1; i < elements.length ; i+=2) {
-
-					var section = document.createElement('section');
-					section.setAttribute('id','tab' + i);
-
-					var title = document.createElement('span');
-					title.style.left = shift + 'px';
-					title.innerHTML = elements[i]; 
-					title.setAttribute('class','spanTitre');
-
-					var titleLink = document.createElement('a');
-					titleLink.setAttribute('href','#tab' + i);
-
-					/*titleLink.setAttribute('onclick','return false');*/
-
-					var txtAreaNew = document.createElement('pre');
-
-					txtAreaNew.innerHTML = elements[i+1];
-					txtAreaNew.setAttribute('class', 'prettyprint');
-
-					article.appendChild(section);
-					section.appendChild(titleLink);
-					titleLink.appendChild(title);
-					section.appendChild(txtAreaNew);
-
-					shift += 82;
+					var button = document.createElement('button');
+					button.setAttribute('class','tablinks');
+					button.setAttribute('onClick','openOutputTag(event, \"file#' + i + '\")');
+					button.innerHTML = elements[i];
+					codeTab.appendChild(button);
 				}
 
-				prettyPrint();
-				window.location.hash='#tab1';
+				for (var i = 1; i < elements.length ; i+=2) {
+					var codeContent = document.createElement('div');
+					codeContent.setAttribute('id','file#' + i);
+					codeContent.setAttribute('class','tabcontent');
+									
+					var title = document.createElement('h3');
+					title.innerHTML = elements[i]; 
+					
+					var content = document.createElement('pre');
+					content.innerHTML = elements[i+1].replace(/^\s*/, "");
+					content.setAttribute('class', 'prettyprint');
 
+					container.appendChild(codeContent);
+					codeContent.appendChild(title);
+					codeContent.appendChild(content);
+				}
+				openOutputTag(event, "file#1");
+				prettyPrint();
 			}
 
 			if (elements [0] === "1") {
@@ -140,7 +134,7 @@ function openSocket() {
 function send() {
 
 	if (content.value !== '') {
-		var texte = "@§" + "fr§" + optionIn.value + "§" + optionOut.value + "§" + content.value;
+		var texte = "@§" + "en§" + optionIn.value + "§" + optionOut.value + "§" + content.value;
 		webSocket.send(texte);
 	} else {
 		errors.value = "Please, fill in the input langage field...";
@@ -156,3 +150,24 @@ function swap() {
 	optionOut.value = oIn;
 
 }
+
+function openOutputTag(evt, tagName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tagName).style.display = "block";
+    evt.currentTarget.className += " active";
+} 
