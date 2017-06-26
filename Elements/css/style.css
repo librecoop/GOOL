@@ -329,27 +329,27 @@ ul {
 div.tab {
     overflow: hidden;
     border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    background-color: #4D90FE;
 }
 
 /* Style the buttons inside the tab */
-div.tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
+button.tablinks {
+    background-color: #4D90FE;
+    height:25px;
+    border-radius:3px;
+    border: 1px solid #457CD5;
+    background-color:#4D90FE;
+    color:white;
+    display:inline-block;
 }
 
 /* Change background color of buttons on hover */
-div.tab button:hover {
-    background-color: #d3d7cf;
+button.tablinks:hover {
+    background-color: #3465a4;
 }
 
 /* Create an active/current tablink class */
-div.tab button.active {
+button.tablinks.active {
     background-color: #204a87;
 }
 

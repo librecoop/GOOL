@@ -1,16 +1,10 @@
 package webgool.application;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
-
-import javax.swing.JFrame;
 
 import org.glassfish.embeddable.*;
 
-
-import webgool.view.HMIServer;
 
 /**
  * IntegratedServer class is the entry point of webgool.<br>
@@ -92,42 +86,20 @@ public class IntegratedServer {
 	 */
 	public static void main(String args[]) throws Exception {
 
-		String value = System.getProperty("X11");
-		System.out.println("X11 = " + value);
-
-		if (value.equals("true")){
-			JFrame serveur = new HMIServer();
-
-			// server start
-			final IntegratedServer runner = new IntegratedServer(2009).init().start();
-
-			// For safety reason, the close cross of the window is associated with a new listener
-			serveur.addWindowListener(new WindowAdapter() {
-				public void windowClosing(WindowEvent we) {
-					try {
-						runner.stop();
-						System.exit(0);
-					} catch (Exception e) {
-						System.out.println("ERROR: **Server can't safely stop.**");
-					}
+		// server start
+		final IntegratedServer runner = new IntegratedServer(2009).init().start();
+		class ShutDownThread extends Thread {
+			public void run() {
+				System.out.println( "Server shutdown..." );
+				try {
+					runner.stop();
+				} catch (Exception e) {
+					System.out.println("ERROR: **Server can't safely stop.**");
+				} finally{
+					System.out.println( "Server shutdown complete." );
 				}
-			});
-		}else{
-			// server start
-			final IntegratedServer runner = new IntegratedServer(2009).init().start();
-			class ShutDownThread extends Thread {
-				public void run() {
-					System.out.println( "Server shutdown..." );
-					try {
-						runner.stop();
-					} catch (Exception e) {
-						System.out.println("ERROR: **Server can't safely stop.**");
-					} finally{
-						System.out.println( "Server shutdown complete." );
-					}
-				}
-			};
-			Runtime.getRuntime().addShutdownHook( new ShutDownThread() );
-		}
+			}
+		};
+		Runtime.getRuntime().addShutdownHook( new ShutDownThread() );
 	}	
 }

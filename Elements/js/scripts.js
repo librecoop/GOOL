@@ -67,7 +67,10 @@ function openSocket() {
 				
 				for (var i = 1; i < elements.length ; i+=2) {
 					var button = document.createElement('button');
-					button.setAttribute('class','tablinks');
+					var className = 'tablinks';
+					if (i==1)
+						className += " active"
+					button.setAttribute('class', className);
 					button.setAttribute('onClick','openOutputTag(event, \"file#' + i + '\")');
 					button.innerHTML = elements[i];
 					codeTab.appendChild(button);
@@ -77,19 +80,26 @@ function openSocket() {
 					var codeContent = document.createElement('div');
 					codeContent.setAttribute('id','file#' + i);
 					codeContent.setAttribute('class','tabcontent');
-									
+					var style = "display: ";
+					if (i == 1)
+						style += "block";
+					else
+						style += "none";
+					codeContent.setAttribute('style',style);
+					
+					
 					var title = document.createElement('h3');
 					title.innerHTML = elements[i]; 
 					
 					var content = document.createElement('pre');
 					content.innerHTML = elements[i+1].replace(/^\s*/, "");
 					content.setAttribute('class', 'prettyprint');
-
+					
 					container.appendChild(codeContent);
 					codeContent.appendChild(title);
 					codeContent.appendChild(content);
 				}
-				openOutputTag(event, "file#1");
+				//openOutputTag(event, "file#1");				
 				prettyPrint();
 			}
 
@@ -151,6 +161,7 @@ function swap() {
 
 }
 
+// Show the active output tab that corresponds to an output file
 function openOutputTag(evt, tagName) {
     // Declare all variables
     var i, tabcontent, tablinks;
