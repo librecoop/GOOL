@@ -20,15 +20,18 @@ package gool.executor.objc;
 import gool.Settings;
 import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
+import logger.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 public class ObjcCompiler extends SpecificCompiler {
@@ -118,6 +121,16 @@ public class ObjcCompiler extends SpecificCompiler {
 		return Command.exec(getOutputDir(), params, env);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @TODO
+	 */
+	@Override
+	public List<String> compileAndRunWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+		return new ArrayList<String>(Arrays.asList("", ""));
+	}
+	
 	@Override
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)

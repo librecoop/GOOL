@@ -141,8 +141,8 @@ public class GOOLCompiler {
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			/**** ObjC ****/
 			// This target is not working for now
-//			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			//			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
+			//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 
 			//print files
 			printFiles(outputFiles);
@@ -157,11 +157,11 @@ public class GOOLCompiler {
 			Log.e(mess);
 		}
 	}
-	
+
 	public static String getLanguageExtension(Platform platform){
 		String lang = platform.getName();
 		if (lang.equalsIgnoreCase("java"))
-				return "java";
+			return "java";
 		if (lang.equalsIgnoreCase("CSHARP"))
 			return "cs";
 		if (lang.equalsIgnoreCase("CPP"))
@@ -220,7 +220,7 @@ public class GOOLCompiler {
 		//Generation
 		return GOOLCompiler.abstractGool2Target(goolPort, plt);
 	}
-	
+
 	/**
 	 * Launch the translation with input parameters. It does not print output
 	 * files but returns them within a map structure.
@@ -246,6 +246,37 @@ public class GOOLCompiler {
 		inputMap.put(inputFileName, input);
 		return launchTranslation(inputLang, outputLang, inputMap);		
 	}
+
+	/**
+	 * Launch the execution with input files. It does not print output
+	 * files but returns them within a map structure.
+	 * 
+	 * @param lang : execution language
+	 * @param input : input code files to execute (name : content)
+	 * @param mainFileName : name of the main class file
+	 * @return a list with two strings : standard output, standard error.
+	 */
+	public static List<String> launchHTMLExecution (String lang,
+			Map<String, String> input, String mainFileName) throws Exception {
+		
+		Log.d("======>launchHTMLExecution: " + lang );
+		
+		if (lang.equalsIgnoreCase("java")) {
+			return JavaPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "openjdk:8");
+		}
+		if(lang.equalsIgnoreCase("cpp") || lang.equalsIgnoreCase("c++")){
+			return CppPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "reaverproject/gcc-boost:5_1_0-1.60.0");
+		}
+		if(lang.equalsIgnoreCase("python")){
+			return PythonPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "python:3.5");
+		}
+		if(lang.equalsIgnoreCase("c#")  || lang.equalsIgnoreCase("cs")){
+			return CSharpPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "mono:latest");
+		}
+		
+		throw new Exception("Unknown input language1.");			
+	}
+
 
 	/**
 	 * Taking concrete Language into concrete Target is done in two steps: - we

@@ -245,6 +245,28 @@ ul {
 
 }
 
+/* execution button options */
+#advice{
+	color:#204a87;
+	/* float:right; */
+}
+
+#executeButton {
+	margin-top:2px;	
+/* 	float:right; */
+/* 	clear:right; */
+}
+
+#executeButton:hover {
+
+	background-color:#457CD5
+
+}
+
+#execute{
+	float:right;
+}
+
 /* div with the output text */
 #output {
 	
@@ -266,18 +288,22 @@ ul {
 
 }
 
+#errorsLinks{
+	padding-top:80px;	
+}
 
 .smallCont {
 
-	height:160px;	
+	height:300px;	
 
 }
+
 
 /* div with potential errors text field */
 #errors {
 		
 	padding:5px;
-	height:110px;
+	height:270px;
 	background-color:#F2F2F2;
 
 }
@@ -292,6 +318,55 @@ ul {
 
 /* errors title span */
 #errorsTitle {
+
+	color:red;
+
+}
+
+/* div with the execution outputs */
+#execOutputs {
+		
+	padding:5px;
+	height:110px;
+	background-color:#F2F2F2;
+
+}
+
+/* execution errors text field */
+#execOutputsTXT {
+
+	height:100px;
+	color:black;	
+
+}
+
+/* execution errors title span */
+#execOutputsTitle {
+
+	color:#6E6E6E;
+
+}
+
+
+/* div with the execution errors */
+#execErrors {
+		
+	padding:5px;
+	height:110px;
+	background-color:#F2F2F2;
+
+}
+
+/* execution errors text field */
+#execErrorsTXT {
+
+	height:100px;
+	color:red;	
+
+}
+
+/* execution errors title span */
+#execErrorsTitle {
 
 	color:red;
 

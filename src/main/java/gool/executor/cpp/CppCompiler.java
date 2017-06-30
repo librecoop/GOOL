@@ -86,31 +86,17 @@ public class CppCompiler extends SpecificCompiler {
 	 * note : the docker container must have the g++ compiler and the libboost-dev installed.
 	 */
 	@Override
-	public List<String> compileToExecutableWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+	public List<String> compileAndRunWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
 		if (files.isEmpty())
-			return new ArrayList();
-		String mainFileContent = "";
+			return new ArrayList<String>(Arrays.asList("", "No input files found."));
+		mainFileName = getMainFileName(files, mainFileName);
+		if (mainFileName == null){
+			return new ArrayList<String>(Arrays.asList("", "Bad main file name."));
+		}	
 		Iterator<Map.Entry<String, String>> it = files.entrySet().iterator();
-		if (mainFileName == null) {
-			Map.Entry<String, String> firstFile = it.next();
-			mainFileName = firstFile.getKey();
-			mainFileContent = firstFile.getValue();
-			it.remove();
-		}else{
-			for(;it.hasNext();){
-				Map.Entry<String, String> entry = it.next();
-				if(entry.getKey().equals(mainFileName)) {
-					mainFileContent = entry.getValue();
-			        it.remove();
-			    }
-			}
-		}		
-		Log.i("--->" + mainFileName);
 		// Define the docker run command :
 		String dockCommand = "docker run " + dockerImage + " /bin/bash -c '";
-		// add the main file
-		dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(mainFileContent) + "\" > " +mainFileName + " && ";
-		// add the other cpp files if some
+		// copy the files locally
 		for (;it.hasNext();) {
 			Map.Entry<String, String> entry = it.next();
 			dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(entry.getValue()) + "\" > " + entry.getKey() + " && ";
@@ -118,7 +104,6 @@ public class CppCompiler extends SpecificCompiler {
 
 		// The docker container must have the g++ compiler
 		dockCommand += "g++ " + mainFileName + " -I/usr/include/" + "&& ./a.out'";
-		System.out.println(dockCommand);
 		return Command.execDocker(dockCommand);
 	}
 

@@ -15,8 +15,12 @@ import org.apache.commons.lang.StringEscapeUtils;
 import gool.GOOLCompiler;
 import gool.executor.cpp.CppCompiler;
 import gool.executor.csharp.CSharpCompiler;
+import gool.executor.java.JavaCompiler;
+import gool.executor.python.PythonCompiler;
 import gool.generator.cpp.CppPlatform;
 import gool.generator.csharp.CSharpPlatform;
+import gool.generator.java.JavaPlatform;
+import gool.generator.python.PythonPlatform;
 
 
 public class MainTest {
@@ -47,7 +51,7 @@ public class MainTest {
 
 		String srcinput = new String();
 		try {
-			srcinput = readFile("/home/arrivault/Codes/GOOL_ALL/GOOL_Gitlab/tests/GOOLINPUTJAVA/HelloWorld.java");
+			srcinput = readFile("tests/GOOLINPUTJAVA/HelloWorld.java");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -138,21 +142,27 @@ public class MainTest {
 		//File fileinput = new File("/home/arrivault/Codes/GOOL_ALL/GOOL_Gitlab/tests/GOOLINPUTJAVA/HelloWorld.java");
 		
 		Map <String, String> input = new HashMap<String,String>();
-		input.put("HelloWorld.java", readFile("/home/arrivault/Codes/GOOL_ALL/GOOL_Gitlab/tests/GOOLINPUTJAVA/HelloWorld.java"));
+		input.put("HelloWorld.java", readFile("tests/GOOLINPUTJAVA/HelloWorld.java"));
 		
 		Map <String, String> result = null;		
 		
 		try {
 			//result = GOOLCompiler.launchTranslation("java", "cpp", input);
-			result = GOOLCompiler.launchTranslation("java", "cs", input);
+			//result = GOOLCompiler.launchTranslation("java", "cs", input);
+			//result = GOOLCompiler.launchTranslation("java", "java", input);
+			result = GOOLCompiler.launchTranslation("java", "python", input);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		//CppCompiler comp = (CppCompiler) CppPlatform.getInstance().getCompiler();
-		CSharpCompiler comp = (CSharpCompiler) CSharpPlatform.getInstance().getCompiler();
+		//CSharpCompiler comp = (CSharpCompiler) CSharpPlatform.getInstance().getCompiler();
+		//JavaCompiler comp = (JavaCompiler) JavaPlatform.getInstance().getCompiler();
+		PythonCompiler comp = (PythonCompiler) PythonPlatform.getInstance().getCompiler();
 		
 		//List<String> std = comp.compileToExecutableWithDocker(result, null, "reaverproject/gcc-boost:5_1_0-1.60.0");
-		List<String> std = comp.compileToExecutableWithDocker(result, null, "mono:latest");
+		//List<String> std = comp.compileToExecutableWithDocker(result, null, "mono:latest");
+		//List<String> std = comp.compileAndRunWithDocker(result, null, "openjdk:8");
+		List<String> std = comp.compileAndRunWithDocker(result, "HelloWorld.py", "python:3.5");
 		System.out.println("********************");
 		for(String s : std){
 			System.out.println(s);

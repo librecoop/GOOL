@@ -4,8 +4,9 @@ var optionOut;
 var content;
 var errors;
 var inputField;
+var mainClass;
 
-// Initialization of variables relative to the different client fields and their contents
+//Initialization of variables relative to the different client fields and their contents
 function initFields() {
 
 	optionIn = document.getElementById("inputLang");
@@ -15,9 +16,13 @@ function initFields() {
 
 	inputField = document.getElementById("inputTXT");
 	inputField.value = "";
+	execOutputs = document.getElementById("execOutputsTXT");	
+	execErrors = document.getElementById("execErrorsTXT");
+	document.getElementById('execDisplay').style.visibility='hidden';
+	document.getElementById('execute').style.visibility='hidden';
 }
 
-// The only function called by the HTML part
+//The only function called by the HTML part
 function openSocket() {
 
 	// Check navigator compatibility with web sockets
@@ -41,71 +46,95 @@ function openSocket() {
 
 		// What happens when the client receives a input message from the server
 		webSocket.onmessage = function (event) {
-			var message = event.data.replace(/</g,"&lt").replace(/>/g,"&gt");
-			var elements = message.split("§");		
+			var message = event.data;
 			//document.getElementById('debug').innerHTML += "<br>" + message;
-			
-			 /*
-			 * Server message example:
-			 * @§content
-			 * The parser will create a table with:
-			 * elements [0] == id of the message (@ = output message; 1 = error message)
-			 * elements [1] == processed content or error message
-			 *
-			 * Depending on the id, the message is sent to the output or to the error
-			 */
-
-			if (elements [0] === "@") {
-				var container = document.getElementById('output');
-
-				container.innerHTML = '';
-
-				var codeTab = document.createElement('div');
-				codeTab.setAttribute('class','tabs');
-
-				container.appendChild(codeTab);
-				
-				for (var i = 1; i < elements.length ; i+=2) {
-					var button = document.createElement('button');
-					var className = 'tablinks';
-					if (i==1)
-						className += " active"
-					button.setAttribute('class', className);
-					button.setAttribute('onClick','openOutputTag(event, \"file#' + i + '\")');
-					button.innerHTML = elements[i];
-					codeTab.appendChild(button);
+			if (message.startsWith("t")){
+				document.getElementById('execDisplay').style.visibility='visible';
+				var elements = message.split("§");
+				if (elements.length > 1){
+					//Display results fields
+					//document.getElementById('debug').innerHTML += "<br>" + elements[1];
+					var outRes = "";
+					for (var i=1; i<elements.length; i++){
+						outRes += elements [i] + "\n";
+					}
+					if (elements [0] === "t@") {						
+						execOutputs.value = outRes;
+					}
+					if (elements [0] === "t1") {
+						execErrors.value = outRes + "\n";;
+					}
 				}
-
-				for (var i = 1; i < elements.length ; i+=2) {
-					var codeContent = document.createElement('div');
-					codeContent.setAttribute('id','file#' + i);
-					codeContent.setAttribute('class','tabcontent');
-					var style = "display: ";
-					if (i == 1)
-						style += "block";
-					else
-						style += "none";
-					codeContent.setAttribute('style',style);
-					
-					
-					var title = document.createElement('h3');
-					title.innerHTML = elements[i]; 
-					
-					var content = document.createElement('pre');
-					content.innerHTML = elements[i+1].replace(/^\s*/, "");
-					content.setAttribute('class', 'prettyprint');
-					
-					container.appendChild(codeContent);
-					codeContent.appendChild(title);
-					codeContent.appendChild(content);
-				}
-				//openOutputTag(event, "file#1");				
-				prettyPrint();
 			}
+			else{
+				var message = message.replace(/</g,"&lt").replace(/>/g,"&gt");
+				var elements = message.split("§");		
+				//document.getElementById('debug').innerHTML += "<br>" + message;
 
-			if (elements [0] === "1") {
+				/*
+				 * Server message example:
+				 * @§content
+				 * The parser will create a table with:
+				 * elements [0] == id of the message (@ = output message; 1 = error message)
+				 * elements [1] == processed content or error message
+				 *
+				 * Depending on the id, the message is sent to the output or to the error
+				 */
 
-				errors.value = elements [1];
+				if (elements [0] === "@") {
+					var container = document.getElementById('output');
+
+					container.innerHTML = '';
+
+					var codeTab = document.createElement('div');
+					codeTab.setAttribute('class','tabs');
+
+					container.appendChild(codeTab);
+
+					for (var i = 1; i < elements.length ; i+=2) {
+						var button = document.createElement('button');
+						var className = 'tablinks';
+						if (i==1)
+							className += " active"
+								button.setAttribute('class', className);
+						button.setAttribute('onClick','openOutputTag(event, \"' + elements[i] + '\")');
+						button.innerHTML = elements[i];
+						codeTab.appendChild(button);
+					}
+
+					for (var i = 1; i < elements.length ; i+=2) {
+						var codeContent = document.createElement('div');
+						codeContent.setAttribute('id', elements[i]);
+						codeContent.setAttribute('class','tabcontent');
+						var style = "display: ";
+						if (i == 1){
+							style += "block";
+							mainClass = elements[i];
+						}
+						else
+							style += "none";
+						codeContent.setAttribute('style',style);
+
+
+						var title = document.createElement('h3');
+						title.innerHTML = elements[i];						
+
+						var content = document.createElement('pre');
+						content.innerHTML = elements[i+1].replace(/^\s*/, "");
+						content.setAttribute('class', 'prettyprint');
+
+						container.appendChild(codeContent);
+						codeContent.appendChild(title);
+						codeContent.appendChild(content);
+					}		
+					prettyPrint();
+					document.getElementById('execute').style.visibility='visible';
+				}
+
+				if (elements [0] === "1") {
+
+					errors.value = elements [1];
+				}
 			}
 		};
 
@@ -138,9 +167,9 @@ function openSocket() {
 
 }
 
-// Function called by the translate button
-// It gets the content of the text field and creates a character chain with appropriate delimiters.
-// The chain is then sent to the server for process.
+//Function called by the translate button
+//It gets the content of the text field and creates a character chain with appropriate delimiters.
+//The chain is then sent to the server for process.
 function send() {
 
 	if (content.value !== '') {
@@ -151,7 +180,7 @@ function send() {
 	}
 }
 
-// Swap input and output languages
+//Swap input and output languages
 function swap() {
 
 	var oIn = optionIn.value;
@@ -161,24 +190,33 @@ function swap() {
 
 }
 
-// Show the active output tab that corresponds to an output file
+//Show the active output tab that corresponds to an output file
 function openOutputTag(evt, tagName) {
-    // Declare all variables
-    var i, tabcontent, tablinks;
+	// Declare all variables
+	var i, tabcontent, tablinks;
 
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
+	// Get all elements with class="tabcontent" and hide them
+	tabcontent = document.getElementsByClassName("tabcontent");
+	for (i = 0; i < tabcontent.length; i++) {
+		tabcontent[i].style.display = "none";
+	}
 
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
+	// Get all elements with class="tablinks" and remove the class "active"
+	tablinks = document.getElementsByClassName("tablinks");
+	for (i = 0; i < tablinks.length; i++) {
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	}
 
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tagName).style.display = "block";
-    evt.currentTarget.className += " active";
+	// Show the current tab, and add an "active" class to the button that opened the tab
+	document.getElementById(tagName).style.display = "block";
+	mainClass = tagName;
+	evt.currentTarget.className += " active";
+	
 } 
+
+//Execute the output code
+function execute() {
+	document.getElementById('execDisplay').style.visibility='hidden';
+	var texte = "@§exec§" + mainClass;
+	webSocket.send(texte);
+}

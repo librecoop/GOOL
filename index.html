@@ -12,8 +12,7 @@
 <!--CSS of the site-->
 <link type="text/css" rel="stylesheet" href="Elements/css/style.css" />
 <!--CSS for Prettify-->
-<link href="Elements/css/prettify.css" type="text/css"
-	rel="stylesheet" />
+<link href="Elements/css/prettify.css" type="text/css" rel="stylesheet" />
 <!--JavaScript of the site-->
 <script src="Elements/js/scripts.js"></script>
 <!--JavaScript for Prettify-->
@@ -30,7 +29,7 @@
 		<span id="textDescription">General Object Oriented Languages
 			Translator</span>
 	</div>
-	<!-- <div id="debug"> debug </div> -->
+	<!-- 	<div id="debug"> debug </div> -->
 	<!--Main Block with evreything but the header, the description and the footer relative elements-->
 	<div id="centralBlock">
 		<div id="textField">
@@ -49,13 +48,14 @@
 					</form>
 					<button class="globalButton" id="translate" onclick="send();"
 						title="Translate input code">Translate</button>
-					<button class="globalButton" id="swap" onclick="swap();" title="Swap langages">⇆</button>
+					<button class="globalButton" id="swap" onclick="swap();"
+						title="Swap langages">⇆</button>
 				</div>
 				<div id="input">
 					<textarea id="inputTXT"
 						placeholder="Fill in with the code you want to translate..."
 						spellcheck="false" autofocus>
-						</textarea>
+					</textarea>
 				</div>
 			</div>
 			<!--This block contains all elements relative to gool output-->
@@ -72,59 +72,85 @@
 						</select>
 					</form>
 				</div>
-				<div id="output"></div>
+				<div id="output"></div>				
+				<div class="toolBar" id="execute">
+					<a id="advice">Please select the main class file before executing.</a>
+					<p><button class="globalButton" id="executeButton"
+							onclick="execute();" title="Execute output code">Execute</button></p>
+				</div>
 			</div>
 		</div>
 		<div id="errorsLinks">
 			<!--This block contains all elements relative to the error display-->
 			<div class="IO smallCont">
 				<div class="toolBar">
-					<span id="errorsTitle">Errors:</span>
+					<span id="errorsTitle">Translation errors:</span>
 				</div>
 				<div id="errors">
 					<textarea id="errorsTXT" readonly>
 						</textarea>
 				</div>
 			</div>
-			<div class="IO smallCont">
-				<div class="toolBar empty"></div>
-				<ul>
-					<li><b>GOOL</b> project's Github is accessible <a
-						target="_blank" href="https://github.com/librecoop/GOOL/wiki">here</a>.</li>
-					<li>A <b>GOOL</b> project slider is visible <a target="_blank"
-						href="https://www.dropbox.com/s/5xsrnu39w69rfmv/gool_icooolps.pdf">here</a>.
-					</li>
-					<li>An <b>ACM DL</b> publication about <b>GOOL</b> project is
-						freely available <a target="_blank"
-						href="http://pageperso.lif.univ-mrs.fr/~pablo.arrighi/GOOLpaper.pdf">here</a>.
-					</li>
-				</ul>
+			<div class="IO smallCont" id="execDisplay">
+				<div class="toolBar">
+					<span id="execOutputsTitle">Output execution output:</span>
+				</div>
+				<div id="execOutputs">
+					<textarea id="execOutputsTXT" readonly>
+					</textarea>
+				</div>
+				<div class="toolBar">
+					<span id="execErrorsTitle">Output execution errors:</span>
+				</div>
+				<div id="execErrors">
+					<textarea id="execErrorsTXT" readonly>
+					</textarea>
+				</div>
 			</div>
 		</div>
 	</div>
 	<!--Footer with copyrights, contact, HTML5 validation logo and CSS3 validation logo-->
 	<div id="footer">
+		<div id="goolLinks">
+			<ul>
+				<li><b>GOOL</b> project's Github is accessible <a
+					target="_blank" href="https://github.com/librecoop/GOOL/wiki">here</a>.</li>
+				<li>A <b>GOOL</b> project slider is visible <a target="_blank"
+					href="https://www.dropbox.com/s/5xsrnu39w69rfmv/gool_icooolps.pdf">here</a>.
+				</li>
+				<li>An <b>ACM DL</b> publication about <b>GOOL</b> project is
+					freely available <a target="_blank"
+					href="http://pageperso.lif.univ-mrs.fr/~pablo.arrighi/GOOLpaper.pdf">here</a>.
+				</li>
+			</ul>
+		</div>
 		<div id="copyright">
-		    <span>Copyright <a href="https://www.univ-amu.fr/">AMU</a> 2017 | Contact: <a href="http://pageperso.lif.univ-mrs.fr/~pablo.arrighi/">P. Arrighi</a></span>
+			<span>Copyright <a href="https://www.univ-amu.fr/">AMU</a>
+				2017 | Contact: <a
+				href="http://pageperso.lif.univ-mrs.fr/~pablo.arrighi/">P.
+					Arrighi</a></span>
 		</div>
 		<div>
-		    <a href="http://labex-archimede.univ-amu.fr/spip.php?1&lang=en" title="LabEx Archimede">
-            <img id="archlogo" src="Elements/Images/LogoArchimede.jpg" alt="LabEx Archimede" width="100">
-            </a>
+			<a href="http://labex-archimede.univ-amu.fr/spip.php?1&lang=en"
+				title="LabEx Archimede"> <img id="archlogo"
+				src="Elements/Images/LogoArchimede.jpg" alt="LabEx Archimede"
+				width="100">
+			</a>
 		</div>
 		<div>
-			<img id="HTML5" src="Elements/Images/HTML5.png" alt="HTML5">
-			<a href="http://jigsaw.w3.org/css-validator/check/referer"><img
-				id="CSS" src="Elements/Images/vcss.gif" alt="CSS Valide !" /></a>
-			<span>HTML5 Logo by <a href="http://www.w3.org/"><abbr
-					title="World Wide Web Consortium">W3C</abbr></a></span> 
-        </div>
-			
+			<img id="HTML5" src="Elements/Images/HTML5.png" alt="HTML5"> <a
+				href="http://jigsaw.w3.org/css-validator/check/referer"><img
+				id="CSS" src="Elements/Images/vcss.gif" alt="CSS Valide !" /></a> <span>HTML5
+				Logo by <a href="http://www.w3.org/"><abbr
+					title="World Wide Web Consortium">W3C</abbr></a>
+			</span>
+		</div>
+
 	</div>
 	<!-- The following js script does launch the socket initialization and the input and output fields -->
 	<script type="text/javascript">
 			openSocket();
-		</script>
+	</script>
 </body>
 </html>
 

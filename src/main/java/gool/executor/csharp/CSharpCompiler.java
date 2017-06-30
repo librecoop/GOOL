@@ -50,7 +50,7 @@ public class CSharpCompiler extends SpecificCompiler {
 		List<String> params = new ArrayList<String>();
 
 		String execFileName = "";
-		
+
 		if (mainFile == null) {
 			mainFile = files.get(0);
 			execFileName += mainFile.getName().replace(".cs", ".exe") + " ";
@@ -82,38 +82,25 @@ public class CSharpCompiler extends SpecificCompiler {
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * 
 	 * note : the docker container must have the mcs compiler installed.
 	 */
 	@Override
-	public List<String> compileToExecutableWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+	public List<String> compileAndRunWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
 		if (files.isEmpty())
-			return new ArrayList();
-		String mainFileContent = "";
+			return new ArrayList<String>(Arrays.asList("", "No input files found."));
+		mainFileName = getMainFileName(files, mainFileName);
+		if (mainFileName == null){
+			return new ArrayList<String>(Arrays.asList("", "Bad main file name."));
+		}
+
 		Iterator<Map.Entry<String, String>> it = files.entrySet().iterator();
-		if (mainFileName == null) {
-			Map.Entry<String, String> firstFile = it.next();
-			mainFileName = firstFile.getKey();
-			mainFileContent = firstFile.getValue();
-			it.remove();
-		}else{
-			for(;it.hasNext();){
-				Map.Entry<String, String> entry = it.next();
-				if(entry.getKey().equals(mainFileName)) {
-					mainFileContent = entry.getValue();
-			        it.remove();
-			    }
-			}
-		}		
-		Log.i("--->" + mainFileName);
 		// Define the docker run command :
 		String dockCommand = "docker run " + dockerImage + " /bin/bash -c '";
-		// add the main file
-		dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(mainFileContent) + "\" > " +mainFileName + " && ";
-		// add the other cpp files if some
+		// copy the files locally
 		for (;it.hasNext();) {
 			Map.Entry<String, String> entry = it.next();
 			dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(entry.getValue()) + "\" > " + entry.getKey() + " && ";
@@ -121,7 +108,6 @@ public class CSharpCompiler extends SpecificCompiler {
 
 		// The docker container must have the g++ compiler
 		dockCommand += " mcs -debug+ " + mainFileName + " && mono " + mainFileName.replace(".cs", ".exe") + "'";
-		System.out.println(dockCommand);
 		return Command.execDocker(dockCommand);
 	}
 

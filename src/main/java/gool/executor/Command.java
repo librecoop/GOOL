@@ -116,9 +116,9 @@ public final class Command {
 		Runtime runtime = Runtime.getRuntime();
 		final Process process;
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-	    PrintStream stdoutps = new PrintStream(stdout);
+	    final PrintStream stdoutps = new PrintStream(stdout);
 	    ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-	    PrintStream stderrps = new PrintStream(stderr);
+	    final PrintStream stderrps = new PrintStream(stderr);
 		try {
 			process = runtime.exec(new String [] {"/bin/bash","-c", command});
 			
