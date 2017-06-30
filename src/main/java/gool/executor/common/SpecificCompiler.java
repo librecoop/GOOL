@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -70,8 +71,23 @@ public abstract class SpecificCompiler {
 			List<File> classPath, List<String> args)
 			throws FileNotFoundException;
 
+	 
+	/**
+	 * compile files received as strings into a docker container build from the dockerImage name.
+	 * @param files : keys are the files names, values are the content.
+	 * @param mainFileName : if given it must be a key of files. If not the main file is supposed to be the first element of files.
+	 * @param dockerImage : the name of the docker image used for the container.
+	 * @return a list with two strings. The first one contains the standard output of the docker container.
+	 * The second one contains its standard error.
+	 */
+	public List<String> compileToExecutableWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+		return new ArrayList();
+	}
+	
 	public void compileUtils() {
 	}
+	
+	
 
 	/**
 	 * Writes the generated files into the output directory.

@@ -210,7 +210,7 @@ public class GOOLCompiler {
 		else if(outputLang.equalsIgnoreCase("python")){
 			plt = PythonPlatform.getInstance();
 		}
-		else if(outputLang.equalsIgnoreCase("c#")){
+		else if(outputLang.equalsIgnoreCase("c#")  || outputLang.equalsIgnoreCase("cs")){
 			plt = CSharpPlatform.getInstance();
 		}
 		else{

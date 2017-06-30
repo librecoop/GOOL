@@ -25,16 +25,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
 import logger.Log;
 
 public class CppCompiler extends SpecificCompiler {
 
 	@SuppressWarnings("unused")
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
-			.toUpperCase().contains("WINDOWS");
+	.toUpperCase().contains("WINDOWS");
 
 	public CppCompiler(File outputDir, List<File> deps) {
 		super(outputDir, deps);
@@ -43,7 +48,7 @@ public class CppCompiler extends SpecificCompiler {
 	@Override
 	public File compileToExecutable(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
-			throws FileNotFoundException {
+					throws FileNotFoundException {
 		List<String> params = new ArrayList<String>();
 		if (mainFile == null) {
 			mainFile = files.get(0);
@@ -73,6 +78,48 @@ public class CppCompiler extends SpecificCompiler {
 
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * note : the docker container must have the g++ compiler and the libboost-dev installed.
+	 */
+	@Override
+	public List<String> compileToExecutableWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+		if (files.isEmpty())
+			return new ArrayList();
+		String mainFileContent = "";
+		Iterator<Map.Entry<String, String>> it = files.entrySet().iterator();
+		if (mainFileName == null) {
+			Map.Entry<String, String> firstFile = it.next();
+			mainFileName = firstFile.getKey();
+			mainFileContent = firstFile.getValue();
+			it.remove();
+		}else{
+			for(;it.hasNext();){
+				Map.Entry<String, String> entry = it.next();
+				if(entry.getKey().equals(mainFileName)) {
+					mainFileContent = entry.getValue();
+			        it.remove();
+			    }
+			}
+		}		
+		Log.i("--->" + mainFileName);
+		// Define the docker run command :
+		String dockCommand = "docker run " + dockerImage + " /bin/bash -c '";
+		// add the main file
+		dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(mainFileContent) + "\" > " +mainFileName + " && ";
+		// add the other cpp files if some
+		for (;it.hasNext();) {
+			Map.Entry<String, String> entry = it.next();
+			dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(entry.getValue()) + "\" > " + entry.getKey() + " && ";
+		}
+
+		// The docker container must have the g++ compiler
+		dockCommand += "g++ " + mainFileName + " -I/usr/include/" + "&& ./a.out'";
+		System.out.println(dockCommand);
+		return Command.execDocker(dockCommand);
 	}
 
 	@Override

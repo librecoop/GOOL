@@ -26,11 +26,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import logger.Log;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class CSharpCompiler extends SpecificCompiler {
@@ -79,6 +81,48 @@ public class CSharpCompiler extends SpecificCompiler {
 		Log.d("-----------");
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * note : the docker container must have the mcs compiler installed.
+	 */
+	@Override
+	public List<String> compileToExecutableWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+		if (files.isEmpty())
+			return new ArrayList();
+		String mainFileContent = "";
+		Iterator<Map.Entry<String, String>> it = files.entrySet().iterator();
+		if (mainFileName == null) {
+			Map.Entry<String, String> firstFile = it.next();
+			mainFileName = firstFile.getKey();
+			mainFileContent = firstFile.getValue();
+			it.remove();
+		}else{
+			for(;it.hasNext();){
+				Map.Entry<String, String> entry = it.next();
+				if(entry.getKey().equals(mainFileName)) {
+					mainFileContent = entry.getValue();
+			        it.remove();
+			    }
+			}
+		}		
+		Log.i("--->" + mainFileName);
+		// Define the docker run command :
+		String dockCommand = "docker run " + dockerImage + " /bin/bash -c '";
+		// add the main file
+		dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(mainFileContent) + "\" > " +mainFileName + " && ";
+		// add the other cpp files if some
+		for (;it.hasNext();) {
+			Map.Entry<String, String> entry = it.next();
+			dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(entry.getValue()) + "\" > " + entry.getKey() + " && ";
+		}
+
+		// The docker container must have the g++ compiler
+		dockCommand += " mcs -debug+ " + mainFileName + " && mono " + mainFileName.replace(".cs", ".exe") + "'";
+		System.out.println(dockCommand);
+		return Command.execDocker(dockCommand);
 	}
 
 	@Override
