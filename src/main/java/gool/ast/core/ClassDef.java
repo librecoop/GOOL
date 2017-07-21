@@ -586,7 +586,7 @@ public class ClassDef extends Dependency {
 	/**
 	 * Determines if it is a gool library class.
 	 * @return
-	 * 		True if the it is a gool library class, else false.
+	 * 		True if it is a gool library class, else false.
 	 */
 	public boolean isGoolLibraryClass() {
 		return this.isGoolLibraryClass;
@@ -595,7 +595,7 @@ public class ClassDef extends Dependency {
 	/**
 	 * Determines if it is a redefinition of a gool library class.
 	 * @return
-	 * 		True if the it is a redefinition of a gool library class, else false.
+	 * 		True if it is a redefinition of a gool library class, else false.
 	 */
 	public boolean isGoolLibraryClassRedefinition() {
 		return isGoolLibraryClassRedefinition;

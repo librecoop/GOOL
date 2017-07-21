@@ -401,8 +401,12 @@ public class HelperCppRecognizer {
 			else
 				classdef.addMethod(toAdd);
 		}
-		else
-			recognizer.stackClassActives.peek().addMethod(toAdd);
+		else{
+			ClassDef classdef = recognizer.stackClassActives.peek();
+			Log.d("<HelperCppRecognizer - createAndAddMethod> method is added to classdef " + classdef.getName() + " with id " + System.identityHashCode(classdef));
+			classdef.addMethod(toAdd);
+		}
+			
 	}
 
 	/**
@@ -536,6 +540,7 @@ public class HelperCppRecognizer {
 	 */
 	public ClassDef createClassDef (String className) {
 		ClassDef classdef = new ClassDef(Modifier.PUBLIC, className);
+		Log.d("<HelperCppRecognizer : createClassDef> creation of classdef " + classdef.getName() + " with id " + System.identityHashCode(classdef));
 		IType type  = new TypeClass(className);
 		classdef.setType(type);
 		return classdef;
@@ -898,10 +903,14 @@ public class HelperCppRecognizer {
 			return null ;
 		// Visit and check all class definitions.
 		Iterator<ClassDef> it = recognizer.getGoolClasses().iterator();
-		while (it.hasNext()){
+		Log.d("<HelperCppRecognition - getClassDef> : comparison of " + className);
+		while (it.hasNext()){			
 			ClassDef tmp = it.next();
+			Log.d("<HelperCppRecognition - getClassDef> : comparison of " + className +
+					" with " + tmp.getName());
 			// The class definition exists.
 			if (tmp.getName().compareTo(className) == 0){
+				Log.d("<HelperCppRecognition - getClassDef> : they are the same.");
 				return tmp ;
 			}
 		}

@@ -15,7 +15,7 @@
  * in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gool;
+package gool.parser;
 
 import gool.ast.core.ClassDef;
 

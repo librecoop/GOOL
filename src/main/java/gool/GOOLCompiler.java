@@ -27,7 +27,10 @@ package gool;
 
 import gool.ast.core.ClassDef;
 import gool.ast.core.Dependency;
+import gool.ast.core.Field;
+import gool.ast.core.Meth;
 import gool.executor.ExecutorHelper;
+import gool.parser.ParseGOOL;
 import gool.parser.cpp.CppParser;
 import gool.parser.java.JavaParser;
 import gool.generator.GeneratorHelper;
@@ -63,6 +66,7 @@ public class GOOLCompiler {
 
 	/**
 	 * The main - parse input arguments and launch the translation
+	 * If "-gui" is found in the arguments, the GUI parameter setter is launched
 	 */
 	public static void main(String[] args) {
 		Boolean isGuiActive = false;
@@ -113,13 +117,23 @@ public class GOOLCompiler {
 
 			Collection<ClassDef> goolPort = GOOLCompiler.concreteToAbstractGool(parser,
 					filesToProcess);
-			Log.d("======== ClassDef found :");
+			Log.d("======== ClassDef(s) found :");
 			for(ClassDef cl : goolPort){
-				Log.d(String.format("=> %s  : isGoolLibraryClassRedefinition : %s",
-						cl.getName(), cl.isGoolLibraryClassRedefinition()));
+				Log.d(String.format("\n===> name : %s",cl.getName()));
+				Log.d(String.format("\n===> id : %s",System.identityHashCode(cl)));
+				Log.d(String.format("== isGoolLibraryClassRedefinition : %s",
+						cl.isGoolLibraryClassRedefinition()));
 				Log.d("== With deps :");
 				for(Dependency dep : cl.getDependencies()){
 					Log.d("==> " + dep.callGetCode());
+				}
+				Log.d("== With Fields :");
+				for(Field f : cl.getFields()){
+					Log.d("==> " + f.getName());
+				}
+				Log.d("== With Methods :");
+				for(Meth m : cl.getMethods()){
+					Log.d("==> " + m.getName());
 				}
 
 			}
@@ -158,6 +172,11 @@ public class GOOLCompiler {
 		}
 	}
 
+	/**
+	 * Get the input language from the Platform type
+	 * @param platform
+	 * @return String : input language
+	 */
 	public static String getLanguageExtension(Platform platform){
 		String lang = platform.getName();
 		if (lang.equalsIgnoreCase("java"))
@@ -223,7 +242,9 @@ public class GOOLCompiler {
 
 	/**
 	 * Launch the translation with input parameters. It does not print output
-	 * files but returns them within a map structure.
+	 * files but returns them within a map structure. This method is used by the
+	 * web java server. It gives names to the input files that are not provided
+	 * through the HTML webgool client.
 	 * 
 	 * @param inputLang : input language
 	 * @param outputLang : output language
@@ -233,7 +254,7 @@ public class GOOLCompiler {
 			String input) throws Exception {
 		Log.d("======>launchHTMLTranslation: " + inputLang + " / " + outputLang);
 		Map<String, String> inputMap = new HashMap<String, String>();
-		String inputFileName = "Test.";
+		String inputFileName = findFileName(input) + ".";
 		if (inputLang.equalsIgnoreCase("java")) {
 			inputFileName += "java";
 		}
@@ -249,7 +270,8 @@ public class GOOLCompiler {
 
 	/**
 	 * Launch the execution with input files. It does not print output
-	 * files but returns them within a map structure.
+	 * files but returns them within a map structure. This method is used by the
+	 * web java server. It launches the executions in specific docker containers.
 	 * 
 	 * @param lang : execution language
 	 * @param input : input code files to execute (name : content)
@@ -277,11 +299,25 @@ public class GOOLCompiler {
 		throw new Exception("Unknown input language1.");			
 	}
 
+	/**
+	 * Find the name of the first class declaration in a source code to deduced a missing filename 
+	 * @param input : source code
+	 * @return deduced file name. "Test" if no class has been found.
+	 */
+	private static String findFileName(String input){
+		int begInd = input.indexOf("class ");
+		if (begInd == -1)
+			return "Test";
+		String inputTmp = input.substring(begInd + 6);
+		int endInd = inputTmp.indexOf('{');
+		return inputTmp.substring(0, endInd).trim();
+	}
 
 	/**
+	 * Translate a map of input files in the output language.
 	 * Taking concrete Language into concrete Target is done in two steps: - we
 	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
-	 * GOOL into concrete Target. 
+	 * GOOL into concrete Target.
 	 * 
 	 * @param parserIn
 	 * 			  : the Parser of the source language (It extends ParseGOOL)
@@ -304,6 +340,7 @@ public class GOOLCompiler {
 	}
 
 	/**
+	 * Translate a map of input files in the output language. The main class is specified.
 	 * Taking concrete Language into concrete Target is done in two steps: - we
 	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
 	 * GOOL into concrete Target.
