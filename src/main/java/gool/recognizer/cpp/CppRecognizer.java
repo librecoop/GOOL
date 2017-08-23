@@ -404,9 +404,11 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Create class.
 		ClassDef unitaryClass = helper.getClassDef(className);
 
-		// The class is added to goolClasses.
-		unitaryClass = helper.createClassDef(className);
-		goolClasses.put(unitaryClass.getType(),unitaryClass);
+		// The class is added to goolClasses if it does not exist.
+		if (unitaryClass == null){
+			unitaryClass = helper.createClassDef(className);
+			goolClasses.put(unitaryClass.getType(),unitaryClass);
+		}
 
 		// Add to stack active.
 		stackClassActives.push(unitaryClass);
@@ -1083,11 +1085,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 		if(expAccess instanceof FieldAccess){
 			meth = new Meth(type,((FieldAccess)expAccess).getMember());
 			target = ((FieldAccess)expAccess).getTarget();
+			Log.d("<CppRecognizer - visit(ASTCppFunctionCallExpression...)> Case FieldAccess: " + meth.getName());
 		}
 		// Case : function.
 		else if(expAccess instanceof Identifier){
 			meth = new Meth(type,((Identifier)expAccess).getName());
 			target = helper.getIdentifierOfTransitionUnit(exp.getTranslationUnit());
+			Log.d("<CppRecognizer - visit(ASTCppFunctionCallExpression...)> Case Identifier: " + meth.getName());
 		}
 		// Error return the expression.
 		else
@@ -1096,7 +1100,10 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Gets the parameters lists of the invocation.
 		List<Expression> params = helper.visitExpressionsParameters(
 				Arrays.copyOfRange(exp.getChildren(), 1, exp.getChildren().length), this, data) ;
-
+		
+		for(Expression p : params){
+			Log.d("<CppRecognizer - visit(ASTCppFunctionCallExpression...)> Parameter : " + p.getType().getName());
+		}
 		// Create the method invocation.
 		MethCall toReturn = MethCall.create(type, target, meth, null);
 		toReturn.addParameters(params);

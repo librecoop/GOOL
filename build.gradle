@@ -1,6 +1,13 @@
 apply plugin: 'application'
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.7.201606060606" //checked at http://www.eclemma.org/jacoco/
+    reportsDir = file("$buildDir/customJacocoReportDir")
+    
+}
 
 applicationName = "gool"
 mainClassName = 'gool.GOOLCompiler'
@@ -43,6 +50,8 @@ dependencies {
 	compile name: 'velocity-1.6.4-dep'
 	compile name: 'tools'
 	compile name: 'diffutils-1.2.1'
+	compile name: 'glassfish-embedded-all-4.1'
+	compile name: 'javaee-api-7.0'
 }
 
 uploadArchives {
@@ -91,3 +100,26 @@ sourceSets{
 		}
 	}
 }
+
+task copieWEBINF (type: Copy) {
+	description = 'Copy WEB-INF folder into build for glassfish use.'
+	into 'build/WEB-INF'
+	from 'src/WEB-INF'
+}
+
+task serverRun (dependsOn: 'classes', type: JavaExec) {
+	copieWEBINF.execute()
+	description = 'Launch the server'
+	main = 'webgool.application.IntegratedServer'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+test.finalizedBy(jacocoTestReport)

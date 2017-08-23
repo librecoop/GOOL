@@ -22,7 +22,10 @@ import gool.ast.core.ClassMain;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -68,10 +71,34 @@ public abstract class SpecificCompiler {
 
 	public abstract File compileToExecutable(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
-			throws FileNotFoundException;
+					throws FileNotFoundException;
+
+
+	protected String getMainFileName(Map<String,String> files, String mainFileName){
+		if (files.isEmpty())
+			return null;
+		if (mainFileName == null) {
+			Map.Entry<String, String> firstFile = files.entrySet().iterator().next();
+			return firstFile.getKey();
+		}
+		if (files.keySet().contains(mainFileName))
+			return mainFileName;
+		return null;
+	}
+	/**
+	 * compile files received as strings into a docker container build from the dockerImage name.
+	 * @param files : keys are the files names, values are the content.
+	 * @param mainFileName : if given it must be a key of files. If not the main file is supposed to be the first element of files.
+	 * @param dockerImage : the name of the docker image used for the container.
+	 * @return a list with two strings. The first one contains the standard output of the docker container.
+	 * The second one contains its standard error.
+	 */
+	public abstract List<String> compileAndRunWithDocker(Map<String,String> files, String mainFileName, String dockerImage);
 
 	public void compileUtils() {
 	}
+
+
 
 	/**
 	 * Writes the generated files into the output directory.
@@ -143,6 +170,6 @@ public abstract class SpecificCompiler {
 
 	public abstract File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
-			throws FileNotFoundException;
+					throws FileNotFoundException;
 
 }

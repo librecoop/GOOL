@@ -26,17 +26,16 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import logger.Log;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 public class CSharpCompiler extends SpecificCompiler {
-	private static Logger logger = Logger.getLogger(CSharpCompiler.class
-			.getName());
 	private static final boolean IS_WINDOWS = System.getProperty("os.name")
 			.toUpperCase().contains("WINDOWS");
 
@@ -51,7 +50,7 @@ public class CSharpCompiler extends SpecificCompiler {
 		List<String> params = new ArrayList<String>();
 
 		String execFileName = "";
-		
+
 		if (mainFile == null) {
 			mainFile = files.get(0);
 			execFileName += mainFile.getName().replace(".cs", ".exe") + " ";
@@ -82,6 +81,34 @@ public class CSharpCompiler extends SpecificCompiler {
 		Log.d("-----------");
 		Command.exec(getOutputDir(), params);
 		return new File(getOutputDir(), execFileName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * note : the docker container must have the mcs compiler installed.
+	 */
+	@Override
+	public List<String> compileAndRunWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+		if (files.isEmpty())
+			return new ArrayList<String>(Arrays.asList("", "No input files found."));
+		mainFileName = getMainFileName(files, mainFileName);
+		if (mainFileName == null){
+			return new ArrayList<String>(Arrays.asList("", "Bad main file name."));
+		}
+
+		Iterator<Map.Entry<String, String>> it = files.entrySet().iterator();
+		// Define the docker run command :
+		String dockCommand = "docker run " + dockerImage + " /bin/bash -c '";
+		// copy the files locally
+		for (;it.hasNext();) {
+			Map.Entry<String, String> entry = it.next();
+			dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(entry.getValue()) + "\" > " + entry.getKey() + " && ";
+		}
+
+		// The docker container must have the g++ compiler
+		dockCommand += " mcs -debug+ " + mainFileName + " && mono " + mainFileName.replace(".cs", ".exe") + "'";
+		return Command.execDocker(dockCommand);
 	}
 
 	@Override

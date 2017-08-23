@@ -18,24 +18,25 @@
 package gool.executor;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import logger.Log;
 
 /**
  * Operating System command execution helper.
  */
 public final class Command {
-	private static Logger logger = Logger.getLogger(Command.class.getName());
-
 	private Command() {
 	}
 
@@ -69,18 +70,22 @@ public final class Command {
 			Map<String, String> env) {
 		try {
 			StringBuffer buffer = new StringBuffer();
-
+			Log.d("<gool.executor - exec> Entering");
 			ProcessBuilder pb = new ProcessBuilder(params);
+			Log.d("<gool.executor - exec> ProcessBuilder initialized");
 			pb.directory(workingDir);
-
+			Log.d("<gool.executor - exec> Working directory = " + workingDir.getAbsolutePath());
 			for (Entry<String, String> e : env.entrySet()) {
 				pb.environment().put(e.getKey(), e.getValue());
 			}
+
+			for(String cmd : pb.command())
+				Log.d("<gool.executor - exec> " + cmd);
 			Process p = pb.redirectErrorStream(true).start();
 
 			p.getOutputStream().close();
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
 			String line;
 			while ((line = in.readLine()) != null) {
@@ -93,12 +98,79 @@ public final class Command {
 				throw new CommandException("The command execution returned "
 						+ retval + " as return value... !\n" + buffer);
 			}
-
+			Log.d("<gool.executor - exec> Closure");
 			return buffer.toString();
 		} catch (IOException e) {
 			throw new CommandException(e);
 		} catch (InterruptedException e) {
 			throw new CommandException("It seems the process was killed", e);
 		}
+	}
+
+	/**
+	 * Execute the one command line build for docker.
+	 * @param command line
+	 * @return a list with two strings. The first one corresponds to the standard output and the second one to the standard error.
+	 */
+	public static List<String> execDocker(String command) {
+		Runtime runtime = Runtime.getRuntime();
+		final Process process;
+		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+	    final PrintStream stdoutps = new PrintStream(stdout);
+	    ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+	    final PrintStream stderrps = new PrintStream(stderr);
+		try {
+			process = runtime.exec(new String [] {"/bin/bash","-c", command});
+			
+			// Std output redirection
+			new Thread() {
+				public void run() {
+					try {
+						BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+						String line = "";
+						try {
+							while((line = reader.readLine()) != null) {
+								stdoutps.println(line);
+								//System.out.println(line);
+							}
+						} finally {
+							reader.close();
+						}
+					} catch(IOException ioe) {
+						ioe.printStackTrace();
+					}
+				}
+			}.start();
+
+			// Std error redirection
+			new Thread() {
+				public void run() {
+					try {
+						BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+						String line = "";
+						try {
+							while((line = reader.readLine()) != null) {
+								stderrps.println(line);
+								//System.err.println(line);
+							}
+
+						} finally {
+							reader.close();
+						}
+					} catch(IOException ioe) {
+						ioe.printStackTrace();
+					}
+				}
+			}.start();
+		} catch (Exception e) {
+			throw new CommandException(e);
+		}
+		try {
+			process.waitFor();
+		} catch (InterruptedException e) {
+			throw new CommandException("The docker command execution failed\n", e);
+		}
+		return Arrays.asList(new String(stdout.toByteArray(), StandardCharsets.UTF_8),
+				new String(stderr.toByteArray(), StandardCharsets.UTF_8));
 	}
 }

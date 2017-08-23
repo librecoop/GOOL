@@ -9,8 +9,8 @@ class GoolBufferedWriterForCPP{
 
 private:
 
-	GoolFileWriterForCPP * writer = NULL;
-	FILE* file = NULL ;
+	GoolFileWriterForCPP * writer;
+	FILE* file;
 
 public:
 

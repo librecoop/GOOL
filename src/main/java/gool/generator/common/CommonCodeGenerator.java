@@ -29,6 +29,7 @@ import gool.ast.core.Comment;
 import gool.ast.core.CompoundAssign;
 import gool.ast.core.Constant;
 import gool.ast.core.Constructor;
+import gool.ast.core.Expression;
 import gool.ast.core.ExpressionUnknown;
 import gool.ast.core.Field;
 import gool.ast.core.FieldAccess;
@@ -46,7 +47,6 @@ import gool.ast.core.Modifier;
 import gool.ast.core.NewInstance;
 import gool.ast.core.Operator;
 import gool.ast.core.Package;
-import gool.ast.core.RecognizedDependency;
 import gool.ast.core.Return;
 import gool.ast.core.Statement;
 import gool.ast.core.StringIsEmptyCall;
@@ -76,18 +76,16 @@ import gool.ast.type.TypeUnknown;
 import gool.ast.type.TypeVar;
 import gool.ast.type.TypeVoid;
 import gool.generator.GeneratorHelper;
-import gool.recognizer.common.RecognizerMatcher;
 import logger.Log;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hamcrest.core.IsInstanceOf;
+
 
 /**
  * Basic code generator. It does what is common to the code generation of all
@@ -518,9 +516,20 @@ public abstract class CommonCodeGenerator implements CodeGenerator {
 				target=target.substring(0, target.lastIndexOf(".")+1)+methodName;
 		}
 		Log.d("<CommonCodeGenerator - getCode(MethCall)> target " + target);
+		List<Expression> params = methodCall.getParameters();
+		Iterator<Expression> it = params.iterator();
+		while(it.hasNext()){
+			Expression next = it.next();
+			if(next == null){
+				it.remove();
+			}
+			else if(next.callGetCode().isEmpty()){
+				it.remove();
+			}
+		}
 		return (String)Log.MethodOut(Thread.currentThread(),
 				String.format("%s(%s)", target,
-						StringUtils.join(methodCall.getParameters(), ", ")));
+						StringUtils.join(params, ", ")));
 	}
 
 	@Override

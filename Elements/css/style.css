@@ -1,0 +1,438 @@
+html {
+
+	font-family:"Arial";	
+
+}
+
+body {	
+
+	margin:0px;
+
+}
+
+label {
+	
+	color:#6E6E6E;
+
+}
+
+form {
+
+	margin-top:2px;
+	display:inline-block;
+
+}
+
+.globalButton {
+
+	height:25px;
+	border-radius:3px;
+	border: 1px solid #457CD5;
+	background-color:#4D90FE;
+	color:white;
+	display:inline-block;
+
+
+}
+
+textarea {	
+	
+	background-color:transparent;
+	border:none;
+	resize:none;
+	width:100%;
+	height:300px;
+	white-space:pre;
+
+}
+
+li {
+
+	color:#6E6E6E;
+	padding-bottom:10px;	
+
+}
+
+b {
+
+	color:black;
+
+}
+
+@media all and (max-width: 970px) {
+	li {
+		
+		padding-bottom:0px;	
+
+	}
+}
+
+@media all and (max-width:747px) {
+
+	#textDescription {
+		
+		margin: 0 0 0 0 !important;
+
+	}	
+
+	#TitleHeader {
+
+		text-align: center;
+
+	}
+
+	#description {
+
+		text-align: center;
+
+	}
+
+
+	.IO {
+	
+		width:96% !important;
+
+	}
+
+	.empty {
+
+		display:none;
+
+	}
+
+
+}
+ul {
+
+	margin-left:-20px;
+	vertical-align:bottom;
+
+}
+
+/* Div with the Gool logo image, Header */
+#TitleHeader {
+
+	/*background-color:#F2F2F2;*/
+	min-height:62px;
+	min-width:370px;
+
+}
+
+/* Image of Gool logo */
+#LogoGool {
+
+	width:200px;
+	height:76px;
+	padding:10px;
+
+}
+
+/* Image of LabEx logo */
+#LogoArch {
+    float:right;
+    padding:10px;
+}
+
+
+/*Logo HTML5*/
+#HTML5 {
+
+	width:30px;
+	height:30px;	
+
+}
+
+/* div with description span */
+#description {
+
+	line-height: 30px;  	
+	min-height:30px;
+	/*border-bottom-width:1px;
+	border-bottom-style:solid;		
+	border-bottom-color:#F2F2F2;*/
+	min-width:370px;
+	background-color: #67a0ff;	
+
+}
+
+/* text description span */
+#textDescription {
+	
+	vertical-align: middle;
+	line-height: normal;      
+	margin: 0px 0px 0px 15px;
+	color:white;	
+	font-style:italic;	
+	
+}
+
+/* div with everything but header and footer relative parts */
+#centralBlock {
+	width:100%;
+}
+
+/*text div*/
+#textField {
+}
+
+/* IO div with their tools */
+.IO {
+	
+	height:350px;
+	display:inline-block;
+	width:47%;
+	min-width:350px;	
+	margin:10px;
+	vertical-align:top;
+
+}
+
+/* tool bars div */
+.toolBar {
+
+	height:40px;
+
+}
+
+/* div with input text */
+#input {
+
+	padding:3px;
+	border-width:1px;
+	border-style:solid;	
+	border-radius:5px;
+	border-color:#6E6E6E;
+	height:300px;
+	background-color:white;
+}
+
+/* behavior of the div with input text on a rollover */
+/* generation of an internal shadow */
+#input:hover {
+
+	box-shadow: -1px 1px 5px 1px rgba(0, 0, 0, 0.3) inset;
+
+}
+
+/* swap button options */
+#swap {
+	
+	border: 1px solid #AAAAAA;
+	margin-top:2px;
+	float:right;
+	margin-right: 10px;
+	background-color:#BDBDBD;
+	color:black;
+}
+
+#swap:hover {
+
+	background-color:#AAAAAA
+
+}
+
+/* translate button options */
+#translate {
+
+	margin-top:2px;	
+	float:right;
+
+}
+
+#translate:hover {
+
+	background-color:#457CD5
+
+}
+
+/* execution button options */
+#advice{
+	color:#204a87;
+	/* float:right; */
+}
+
+#executeButton {
+	margin-top:2px;	
+/* 	float:right; */
+/* 	clear:right; */
+}
+
+#executeButton:hover {
+
+	background-color:#457CD5
+
+}
+
+#execute{
+	float:right;
+}
+
+/* div with the output text */
+#output {
+	
+	border-radius:5px;
+	border-color:#6E6E6E;
+	border-width:1px;
+	border-style:solid;	
+	padding:3px;
+	height:300px;
+	overflow:auto;
+
+}
+
+/* behavior of the div with output text on a rollover */
+/* generation of an internal shadow */
+#output:hover {
+
+    box-shadow: -1px 1px 5px 1px rgba(0, 0, 0, 0.3) inset;
+
+}
+
+#errorsLinks{
+	padding-top:80px;	
+}
+
+.smallCont {
+
+	height:300px;	
+
+}
+
+
+/* div with potential errors text field */
+#errors {
+		
+	padding:5px;
+	height:270px;
+	background-color:#F2F2F2;
+
+}
+
+/* errors text field */
+#errorsTXT {
+
+	height:100px;
+	color:red;	
+
+}
+
+/* errors title span */
+#errorsTitle {
+
+	color:red;
+
+}
+
+/* div with the execution outputs */
+#execOutputs {
+		
+	padding:5px;
+	height:110px;
+	background-color:#F2F2F2;
+
+}
+
+/* execution errors text field */
+#execOutputsTXT {
+
+	height:100px;
+	color:black;	
+
+}
+
+/* execution errors title span */
+#execOutputsTitle {
+
+	color:#6E6E6E;
+
+}
+
+
+/* div with the execution errors */
+#execErrors {
+		
+	padding:5px;
+	height:110px;
+	background-color:#F2F2F2;
+
+}
+
+/* execution errors text field */
+#execErrorsTXT {
+
+	height:100px;
+	color:red;	
+
+}
+
+/* execution errors title span */
+#execErrorsTitle {
+
+	color:red;
+
+}
+
+/* css w3c image logo */
+#CSS {
+
+	border:0;
+	width:88px;
+	height:31px;
+
+}
+
+/* footer div parameters */
+#footer {
+	
+	padding:10px;
+	border-top-width:1px;
+	border-top-style:solid;		
+	border-top-color:#F2F2F2;
+	text-align:center;
+	color:#6E6E6E;
+
+}
+
+/* footer copyright parameters */
+#copyright {
+
+	margin-bottom:10px;
+
+}
+
+/* output tab style */
+div.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #4D90FE;
+}
+
+/* Style the buttons inside the tab */
+button.tablinks {
+    background-color: #4D90FE;
+    height:25px;
+    border-radius:3px;
+    border: 1px solid #457CD5;
+    background-color:#4D90FE;
+    color:white;
+    display:inline-block;
+}
+
+/* Change background color of buttons on hover */
+button.tablinks:hover {
+    background-color: #3465a4;
+}
+
+/* Create an active/current tablink class */
+button.tablinks.active {
+    background-color: #204a87;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+/* end of output tab style */

@@ -10,7 +10,7 @@ class GoolFileReaderForCPP{
 
 private:
 
-	GoolFileForCPP * f = NULL;
+	GoolFileForCPP * f;
 
 public:
 

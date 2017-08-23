@@ -1,8 +1,8 @@
 package gool.parser.cpp;
 
-import gool.ParseGOOL;
 import gool.Settings;
 import gool.ast.core.ClassDef;
+import gool.parser.ParseGOOL;
 import gool.recognizer.cpp.CppRecognizer;
 import gool.recognizer.cpp.CppRecognizerImport;
 import gool.recognizer.cpp.ast.ASTCppNode;
@@ -45,7 +45,7 @@ public class CppParser extends ParseGOOL {
 	 * 		The GOOL AST associated to the transition units.
 	 * @throws Exception
 	 */
-	public static Collection<ClassDef> parseGool(
+	private static Collection<ClassDef> parseGool(
 			Collection<IASTTranslationUnit> translationUnits,
 			List<File> dependencies, CppRecognizer visitor) throws Exception {
 		if (visitor == null) {
@@ -122,7 +122,7 @@ public class CppParser extends ParseGOOL {
 	 * 		A transition unit about the input string.
 	 * @throws Exception
 	 */
-	public static IASTTranslationUnit creatIASTTranslationUnit(FileContent fc)
+	private static IASTTranslationUnit creatIASTTranslationUnit(FileContent fc)
 			throws Exception {
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
 		String[] includeSearchPaths = Settings.get("cpp_in_libraries").split(" ");

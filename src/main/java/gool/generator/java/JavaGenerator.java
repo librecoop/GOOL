@@ -28,6 +28,7 @@ import gool.ast.core.EnhancedForLoop;
 import gool.ast.core.EqualsCall;
 import gool.ast.core.Field;
 import gool.ast.core.Finally;
+import gool.ast.core.InitCall;
 import gool.ast.core.MainMeth;
 import gool.ast.core.MemberSelect;
 import gool.ast.core.Meth;
@@ -469,9 +470,15 @@ CodeGeneratorNoVelocity {
 				body += formatIndented("%-1%s;\n\n", meth.getHeader());
 			} else {
 				if (meth.isConstructor()) {
+					List<InitCall> incl = ((Constructor) meth).getInitCalls();
+					if (incl.isEmpty()){
+						body += formatIndented("%-1%s {\n%-2%s}\n\n", 
+								meth.getHeader(), meth.getBlock());
+					}else{
 					body += formatIndented("%-1%s {\n%-2%s;%2%-1}\n\n", 
 							meth.getHeader(), ((Constructor) meth)
 							.getInitCalls().get(0), meth.getBlock());
+					}
 				} else {
 					body += formatIndented("%-1%s {%2%-1}\n\n",
 							meth.getHeader(), meth.getBlock());

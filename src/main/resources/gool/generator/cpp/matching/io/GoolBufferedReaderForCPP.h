@@ -8,7 +8,7 @@
 
 class GoolBufferedReaderForCPP  {
 		private:
-				FILE* file = NULL ;
+				FILE* file;
 
 		public:
 				GoolBufferedReaderForCPP(GoolFileReaderForCPP * reader );

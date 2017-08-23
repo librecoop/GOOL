@@ -27,7 +27,10 @@ package gool;
 
 import gool.ast.core.ClassDef;
 import gool.ast.core.Dependency;
+import gool.ast.core.Field;
+import gool.ast.core.Meth;
 import gool.executor.ExecutorHelper;
+import gool.parser.ParseGOOL;
 import gool.parser.cpp.CppParser;
 import gool.parser.java.JavaParser;
 import gool.generator.GeneratorHelper;
@@ -63,6 +66,7 @@ public class GOOLCompiler {
 
 	/**
 	 * The main - parse input arguments and launch the translation
+	 * If "-gui" is found in the arguments, the GUI parameter setter is launched
 	 */
 	public static void main(String[] args) {
 		Boolean isGuiActive = false;
@@ -113,13 +117,23 @@ public class GOOLCompiler {
 
 			Collection<ClassDef> goolPort = GOOLCompiler.concreteToAbstractGool(parser,
 					filesToProcess);
-			Log.d("======== ClassDef found :");
+			Log.d("======== ClassDef(s) found :");
 			for(ClassDef cl : goolPort){
-				Log.d(String.format("=> %s  : isGoolLibraryClassRedefinition : %s",
-						cl.getName(), cl.isGoolLibraryClassRedefinition()));
+				Log.d(String.format("\n===> name : %s",cl.getName()));
+				Log.d(String.format("\n===> id : %s",System.identityHashCode(cl)));
+				Log.d(String.format("== isGoolLibraryClassRedefinition : %s",
+						cl.isGoolLibraryClassRedefinition()));
 				Log.d("== With deps :");
 				for(Dependency dep : cl.getDependencies()){
 					Log.d("==> " + dep.callGetCode());
+				}
+				Log.d("== With Fields :");
+				for(Field f : cl.getFields()){
+					Log.d("==> " + f.getName());
+				}
+				Log.d("== With Methods :");
+				for(Meth m : cl.getMethods()){
+					Log.d("==> " + m.getName());
 				}
 
 			}
@@ -141,8 +155,8 @@ public class GOOLCompiler {
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			/**** ObjC ****/
 			// This target is not working for now
-//			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
-//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			//			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
+			//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
 
 			//print files
 			printFiles(outputFiles);
@@ -157,11 +171,16 @@ public class GOOLCompiler {
 			Log.e(mess);
 		}
 	}
-	
+
+	/**
+	 * Get the input language from the Platform type
+	 * @param platform
+	 * @return String : input language
+	 */
 	public static String getLanguageExtension(Platform platform){
 		String lang = platform.getName();
 		if (lang.equalsIgnoreCase("java"))
-				return "java";
+			return "java";
 		if (lang.equalsIgnoreCase("CSHARP"))
 			return "cs";
 		if (lang.equalsIgnoreCase("CPP"))
@@ -181,7 +200,6 @@ public class GOOLCompiler {
 	 * @param outputLang : output language
 	 * @param input : input map of files to translate (name as key and code as value)
 	 */
-
 	public static Map<String, String> launchTranslation(String inputLang,
 			String outputLang, Map<String, String> input)
 					throws Exception {
@@ -189,25 +207,29 @@ public class GOOLCompiler {
 		ParseGOOL parser = null;
 		Collection<ClassDef> goolPort = null;
 		Platform plt = null;
-
 		if (inputLang.equalsIgnoreCase("java")) {
 			parser = new JavaParser();
 		}
-		/*else if(inputLang.equalsIgnoreCase("cpp")){
+		else if(inputLang.equalsIgnoreCase("cpp") || inputLang.equalsIgnoreCase("c++")){
 			parser = new CppParser();
-		}*/
+		}
 		else{
-			throw new Exception("Unknown input language.");
+			throw new Exception("Unknown input language2.");
 		}
 
 		//Recognition
 		goolPort = GOOLCompiler.concreteToAbstractGool(parser, input);
 
-
-		if (outputLang.equalsIgnoreCase("cpp")) {
+		if (outputLang.equalsIgnoreCase("java")) {
+			plt = JavaPlatform.getInstance();
+		}
+		else if (outputLang.equalsIgnoreCase("cpp") || outputLang.equalsIgnoreCase("c++")) {
 			plt = CppPlatform.getInstance();
 		}
-		else if(outputLang.equalsIgnoreCase("c#")){
+		else if(outputLang.equalsIgnoreCase("python")){
+			plt = PythonPlatform.getInstance();
+		}
+		else if(outputLang.equalsIgnoreCase("c#")  || outputLang.equalsIgnoreCase("cs")){
 			plt = CSharpPlatform.getInstance();
 		}
 		else{
@@ -219,9 +241,83 @@ public class GOOLCompiler {
 	}
 
 	/**
+	 * Launch the translation with input parameters. It does not print output
+	 * files but returns them within a map structure. This method is used by the
+	 * web java server. It gives names to the input files that are not provided
+	 * through the HTML webgool client.
+	 * 
+	 * @param inputLang : input language
+	 * @param outputLang : output language
+	 * @param input : input code to translate
+	 */
+	public static Map<String, String> launchHTMLTranslation (String inputLang, String outputLang,
+			String input) throws Exception {
+		Log.d("======>launchHTMLTranslation: " + inputLang + " / " + outputLang);
+		Map<String, String> inputMap = new HashMap<String, String>();
+		String inputFileName = findFileName(input) + ".";
+		if (inputLang.equalsIgnoreCase("java")) {
+			inputFileName += "java";
+		}
+		else if(inputLang.equalsIgnoreCase("cpp") || inputLang.equalsIgnoreCase("c++")){
+			inputFileName += "cpp";
+		}
+		else{
+			throw new Exception("Unknown input language1.");
+		}
+		inputMap.put(inputFileName, input);
+		return launchTranslation(inputLang, outputLang, inputMap);		
+	}
+
+	/**
+	 * Launch the execution with input files. It does not print output
+	 * files but returns them within a map structure. This method is used by the
+	 * web java server. It launches the executions in specific docker containers.
+	 * 
+	 * @param lang : execution language
+	 * @param input : input code files to execute (name : content)
+	 * @param mainFileName : name of the main class file
+	 * @return a list with two strings : standard output, standard error.
+	 */
+	public static List<String> launchHTMLExecution (String lang,
+			Map<String, String> input, String mainFileName) throws Exception {
+		
+		Log.d("======>launchHTMLExecution: " + lang );
+		
+		if (lang.equalsIgnoreCase("java")) {
+			return JavaPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "openjdk:8");
+		}
+		if(lang.equalsIgnoreCase("cpp") || lang.equalsIgnoreCase("c++")){
+			return CppPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "reaverproject/gcc-boost:5_1_0-1.60.0");
+		}
+		if(lang.equalsIgnoreCase("python")){
+			return PythonPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "python:3.5");
+		}
+		if(lang.equalsIgnoreCase("c#")  || lang.equalsIgnoreCase("cs")){
+			return CSharpPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "mono:latest");
+		}
+		
+		throw new Exception("Unknown input language1.");			
+	}
+
+	/**
+	 * Find the name of the first class declaration in a source code to deduced a missing filename 
+	 * @param input : source code
+	 * @return deduced file name. "Test" if no class has been found.
+	 */
+	private static String findFileName(String input){
+		int begInd = input.indexOf("class ");
+		if (begInd == -1)
+			return "Test";
+		String inputTmp = input.substring(begInd + 6);
+		int endInd = inputTmp.indexOf('{');
+		return inputTmp.substring(0, endInd).trim();
+	}
+
+	/**
+	 * Translate a map of input files in the output language.
 	 * Taking concrete Language into concrete Target is done in two steps: - we
 	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
-	 * GOOL into concrete Target. 
+	 * GOOL into concrete Target.
 	 * 
 	 * @param parserIn
 	 * 			  : the Parser of the source language (It extends ParseGOOL)
@@ -244,6 +340,7 @@ public class GOOLCompiler {
 	}
 
 	/**
+	 * Translate a map of input files in the output language. The main class is specified.
 	 * Taking concrete Language into concrete Target is done in two steps: - we
 	 * parse the concrete Language into abstract GOOL; - we flatten the abstract
 	 * GOOL into concrete Target.

@@ -132,7 +132,7 @@ public class SettingsPanel extends JFrame {
 
 		OutputStream output = null;
 		try {
-			String fileName = ClassLoader.getSystemClassLoader().getResource("gool.properties").getFile();
+			String fileName = ClassLoader.getSystemClassLoader().getResource("gool/properties").getFile();
 			output = new FileOutputStream(fileName);
 			// save properties file to project root folder
 			properties.store(output, null);

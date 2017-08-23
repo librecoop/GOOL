@@ -487,6 +487,7 @@ CodeGeneratorNoVelocity {
 				&& ((binaryOp.getLeft().getType() instanceof TypeDecimal) || 
 						(binaryOp.getRight().getType() instanceof TypeDecimal))) 
 		{
+			addCustomDependency("cmath");
 			return (String)Log.MethodOut(Thread.currentThread(), 
 					String.format("std::fmod(%s,%s)", left,	right));
 		}

@@ -19,12 +19,17 @@ package gool.executor.java;
 
 import gool.executor.Command;
 import gool.executor.common.SpecificCompiler;
+import logger.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class JavaCompiler extends SpecificCompiler {
@@ -36,7 +41,7 @@ public class JavaCompiler extends SpecificCompiler {
 	@Override
 	public File compileToExecutable(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
-			throws FileNotFoundException {
+					throws FileNotFoundException {
 		List<String> params = new ArrayList<String>();
 		params.add("javac");
 
@@ -62,10 +67,38 @@ public class JavaCompiler extends SpecificCompiler {
 				".class")));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * note : the docker container must have a java VM installed.
+	 */
+	@Override
+	public List<String> compileAndRunWithDocker(Map<String,String> files, String mainFileName, String dockerImage){
+		if (files.isEmpty())
+			return new ArrayList<String>(Arrays.asList("", "No input files found."));
+		mainFileName = getMainFileName(files, mainFileName);
+		if (mainFileName == null){
+			return new ArrayList<String>(Arrays.asList("", "Bad main file name."));
+		}
+
+		Iterator<Map.Entry<String, String>> it = files.entrySet().iterator();
+		// Define the docker run command :
+		String dockCommand = "docker run " + dockerImage + " /bin/bash -c '";
+		// copy the files locally
+		for (;it.hasNext();) {
+			Map.Entry<String, String> entry = it.next();
+			dockCommand += "echo -e \"" + StringEscapeUtils.escapeJava(entry.getValue()) + "\" > " + entry.getKey() + " && ";
+		}
+
+		// The docker container must have the g++ compiler
+		dockCommand += " javac " + mainFileName + " && java " + mainFileName.replace(".java", "") + "'";
+		return Command.execDocker(dockCommand);
+	}
+
 	@Override
 	public File compileToObjectFile(List<File> files, File mainFile,
 			List<File> classPath, List<String> args)
-			throws FileNotFoundException {
+					throws FileNotFoundException {
 		return compileToExecutable(files, mainFile, classPath, args);
 	}
 
