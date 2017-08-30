@@ -1,8 +1,6 @@
 package gool.recognizer.common;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -11,6 +9,7 @@ import gool.ast.core.ClassDef;
 import gool.ast.core.Modifier;
 import gool.ast.core.Package;
 import gool.ast.core.RecognizedDependency;
+import logger.Log;
 
 public class GoolLibraryClassAstBuilder {
 
@@ -40,19 +39,21 @@ public class GoolLibraryClassAstBuilder {
 				goolClass.lastIndexOf("."))));
 
 		ArrayList<String> goolClassDependencies = new ArrayList<String>();
-		
-		if(new File(getPathOfDefinitionFile(goolClass)).exists())
-		try {
-			InputStream ips = new FileInputStream(
-					getPathOfDefinitionFile(goolClass));
-			InputStreamReader ipsr = new InputStreamReader(ips);
-			BufferedReader br = new BufferedReader(ipsr);
-			String line;
-			while ((line = br.readLine()) != null) {
-				line = removeSpaces(line);
-				if (!isCommentLine(line)) {
-					if (line.startsWith("[field]")) {
-						/*
+		Log.d("<GoolLibraryClassAstBuild - buildGoolClass> Gool Class : " + goolClass);
+		String goolClassPath = getPathOfDefinitionFile(goolClass);
+		Log.d("<GoolLibraryClassAstBuild - buildGoolClass> Gool Class Path : " + goolClassPath);
+		if(isGoolClass(goolClassPath)){
+			Log.d("<GoolLibraryClassAstBuild - buildGoolClass> exists.");
+			try {
+				InputStream ips = ClassLoader.getSystemResourceAsStream(goolClassPath);
+				InputStreamReader ipsr = new InputStreamReader(ips);
+				BufferedReader br = new BufferedReader(ipsr);
+				String line;
+				while ((line = br.readLine()) != null) {
+					line = removeSpaces(line);
+					if (!isCommentLine(line)) {
+						if (line.startsWith("[field]")) {
+							/*
 						String fieldName = line.substring(
 								line.lastIndexOf("]") + 1, line.indexOf(":"));
 						String fieldTypeName = line
@@ -60,14 +61,14 @@ public class GoolLibraryClassAstBuilder {
 						IType fieldType = typeNameToNode(fieldTypeName);
 						GoolClassAST.addField(new Field(Modifier.PRIVATE,
 								fieldName, fieldType));
-						*/
-					} else {
-						if (line.startsWith("[method]")
-								|| line.startsWith("[constructor]")) {
-							// GoolMethodImplementation goolMethod = new
-							// GoolMethodImplementation(goolClass,
-							// line.substring(line.lastIndexOf("]")+1));
-							/*
+							 */
+						} else {
+							if (line.startsWith("[method]")
+									|| line.startsWith("[constructor]")) {
+								// GoolMethodImplementation goolMethod = new
+								// GoolMethodImplementation(goolClass,
+								// line.substring(line.lastIndexOf("]")+1));
+								/*
 							IType returnType;
 							String methodName;
 							if (line.startsWith("[constructor]")) {
@@ -85,30 +86,33 @@ public class GoolLibraryClassAstBuilder {
 									returnType, Modifier.PUBLIC, methodName,
 									goolClass, line.substring(line
 											.lastIndexOf("]") + 1));
-							*/
-							/*
-							 * List<String> parameterTypes =
-							 * Arrays.asList(line.substring
-							 * (line.indexOf("(")+1,line
-							 * .indexOf(")")).split(",")); for(String
-							 * parameterType : parameterTypes)
-							 * goolMethod.addParam
-							 */
+								 */
+								/*
+								 * List<String> parameterTypes =
+								 * Arrays.asList(line.substring
+								 * (line.indexOf("(")+1,line
+								 * .indexOf(")")).split(",")); for(String
+								 * parameterType : parameterTypes)
+								 * goolMethod.addParam
+								 */
 
-							//goolMethod.setClassDef(GoolClassAST);
-							//GoolClassAST.addMethod(goolMethod);
-						} else {
-							if (line.startsWith("[dependency]")) {
-								goolClassDependencies.add(line.substring(line
-										.indexOf("]") + 1));
+								//goolMethod.setClassDef(GoolClassAST);
+								//GoolClassAST.addMethod(goolMethod);
+							} else {
+								if (line.startsWith("[dependency]")) {
+									String depname = line.substring(line.indexOf("]") + 1);
+									goolClassDependencies.add(depname);
+									Log.d("<GoolLibraryClassAstBuild - buildGoolClass> Adding class dependency : "
+											+ depname);
+								}
 							}
 						}
 					}
 				}
+				br.close();
+			} catch (Exception e) {
+				Log.w(e);
 			}
-			br.close();
-		} catch (Exception e) {
-			System.out.println(e.toString());
 		}
 		AlreadyBuiltClassNames.add(goolClass);
 		AlreadyBuiltAsts.add(GoolClassAST);
@@ -138,7 +142,9 @@ public class GoolLibraryClassAstBuilder {
 	}*/
 
 	static private boolean isGoolClass(String goolClass) {
-		return new File(getPathOfDefinitionFile(goolClass)).exists();
+		if (ClassLoader.getSystemResource(goolClass) == null)
+			return false;
+		return true;
 	}
 
 	/*
@@ -150,8 +156,8 @@ public class GoolLibraryClassAstBuilder {
 		goolPackageName = goolPackageName.replace('.', '/');
 		String goolShortClassName = goolClass.substring(goolClass
 				.lastIndexOf(".") + 1);
-		return "src/gool/library/" + goolPackageName + "/"
-				+ goolShortClassName;
+		return "gool/library/" + goolPackageName + "/"
+		+ goolShortClassName;
 	}
 
 	static private String removeSpaces(String line) {

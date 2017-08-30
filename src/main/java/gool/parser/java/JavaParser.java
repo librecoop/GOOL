@@ -106,7 +106,7 @@ public class JavaParser extends ParseGOOL {
 		 */
 		Iterable<? extends Element> elts = task.analyze();
 		for (Element elt : elts){
-			System.out.println(elt.toString());
+			Log.d("<JavaParser - parseGool> " + elt.toString());
 		}
 		Trees typetrees = Trees.instance(task);
 

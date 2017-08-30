@@ -42,6 +42,7 @@ import gool.generator.csharp.CSharpPlatform;
 import gool.generator.java.JavaPlatform;
 import gool.generator.objc.ObjcPlatform;
 import gool.generator.python.PythonPlatform;
+import gool.generator.xml.XmlPlatform;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,6 +50,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -70,7 +72,6 @@ public class GOOLCompiler {
 	 */
 	public static void main(String[] args) {
 		Boolean isGuiActive = false;
-		Log.DEBUG_LOG = true;
 		for(int i = 0; i < args.length; i++){
 			if(args[i].equalsIgnoreCase("-gui"))
 				isGuiActive = true;
@@ -104,11 +105,11 @@ public class GOOLCompiler {
 			//Recognition step
 			ParseGOOL parser = null;
 			if (inputLanguage.equalsIgnoreCase("java")) {
-				System.out.println("---------------> java");
+				//System.out.println("---------------> java");
 				parser = new JavaParser();
 			}
 			else if(inputLanguage.equalsIgnoreCase("cpp")){
-				System.out.println("---------------> cpp");
+				//System.out.println("---------------> cpp");
 				parser = new CppParser();
 			}
 			else{
@@ -153,22 +154,21 @@ public class GOOLCompiler {
 			/**** Python ****/
 			plt = PythonPlatform.getInstance(filesToExclude, Settings.get("python_out_dir"));
 			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			/**** Xml ****/
+			// Use this target to see the GOOL translation
+			//plt = XmlPlatform.getInstance(filesToExclude, Settings.get("xml_out_dir"));
+			//outputFiles.putAll(abstractGool2Target(goolPort, plt));
 			/**** ObjC ****/
 			// This target is not working for now
-			//			plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
-			//			outputFiles.putAll(abstractGool2Target(goolPort, plt));
+			// plt = ObjcPlatform.getInstance(filesToExclude, Settings.get("objc_out_dir"));
+			// outputFiles.putAll(abstractGool2Target(goolPort, plt));
 
 			//print files
 			printFiles(outputFiles);
 
 		}
 		catch (Exception e) {
-			String mess = e.toString();
-			mess += "\n";
-			for(StackTraceElement se : e.getStackTrace()){
-				mess += se.toString() + "\n";
-			}
-			Log.e(mess);
+			Log.e(e);
 		}
 	}
 
@@ -189,6 +189,8 @@ public class GOOLCompiler {
 			return "py";
 		if (lang.equalsIgnoreCase("objc"))
 			return "m";
+		if (lang.equalsIgnoreCase("XML"))
+			return "xml";
 		return "";
 	}
 
@@ -231,6 +233,12 @@ public class GOOLCompiler {
 		}
 		else if(outputLang.equalsIgnoreCase("c#")  || outputLang.equalsIgnoreCase("cs")){
 			plt = CSharpPlatform.getInstance();
+		}
+		else if(outputLang.equalsIgnoreCase("objc")){
+			plt = ObjcPlatform.getInstance();
+		}
+		else if(outputLang.equalsIgnoreCase("xml")){
+			plt = XmlPlatform.getInstance();
 		}
 		else{
 			throw new Exception("Unknown output language.");
@@ -294,6 +302,12 @@ public class GOOLCompiler {
 		}
 		if(lang.equalsIgnoreCase("c#")  || lang.equalsIgnoreCase("cs")){
 			return CSharpPlatform.getInstance().getCompiler().compileAndRunWithDocker(input, mainFileName, "mono:latest");
+		}
+		if(lang.equalsIgnoreCase("objc")){
+			return new ArrayList<String>(Arrays.asList("", "No compiler available."));
+		}
+		if(lang.equalsIgnoreCase("xml")){
+			return new ArrayList<String>(Arrays.asList("", "No compiler available."));
 		}
 		
 		throw new Exception("Unknown input language1.");			

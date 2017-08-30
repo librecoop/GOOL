@@ -90,6 +90,7 @@ import gool.ast.core.Catch;
 import gool.ast.core.ClassDef;
 import gool.ast.core.ClassNew;
 import gool.ast.core.Constant;
+import gool.ast.core.RecognizedDependency;
 //import gool.ast.core.CustomDependency;
 import gool.ast.core.Dec;
 import gool.ast.core.Expression;
@@ -232,6 +233,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 	@Override
 	public Object visit(ASTCppTranslationUnit node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTTranslationUnit tu = node.getNode() ;
 
 		// Create an new class with the name of the file.
@@ -264,18 +266,18 @@ public class CppRecognizer implements IVisitorASTCpp {
 
 		// Drop from stack active.
 		stackClassActives.pop();
-
-		return null;
+		return Log.MethodOut(Thread.currentThread(),null);
 	}
 
 
 	@Override
 	public Object visit(ASTCppIncludeStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTPreprocessorIncludeStatement inc = node.getNode();
 
 		// Visit the named include.
 		String dependencyString = helper.visitName(inc.getName(), this, data);
-
+		Log.d("<CppRecognizer - visit(ASTCppIncludeStatement...)> " + dependencyString);
 		// Check this library.
 		if (!RecognizerMatcher.matchImport(dependencyString)) {
 			if(! dependencyString.contains("iostream")){
@@ -283,26 +285,28 @@ public class CppRecognizer implements IVisitorASTCpp {
 				.addDependency(new UnrecognizedDependency(dependencyString));
 			}
 		}
-		/*else{ 
-			stackClassActives.peek()
-			.addDependency(new RecognizedDependency(dependencyString));
-		}*/
+//		else{ 
+//			stackClassActives.peek()
+//			.addDependency(new RecognizedDependency(dependencyString));
+//		}
 
-		return null  ;
+		return Log.MethodOut(Thread.currentThread(),null);
 	}
 
 	@Override
 	public Object visit(ASTCppDeclaration node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTDeclaration dec = node.getNode();
 
 		// Add an error because unrecognized.
 		helper.addAnError(dec.getRawSignature(), "This declaration");
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(),null);
 	}
 
 	@Override
 	public Object visit(ASTCppSimpleDeclaration node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTSimpleDeclaration dec = node.getNode();
 
 		// Visit the declaration specifier.
@@ -319,11 +323,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 		context.nameSpec = null ;
 
 		// Return declarations.
-		return decs;
+		return Log.MethodOut(Thread.currentThread(), decs);
 	}
 
 	@Override
 	public Object visit(ASTCppFunctionDefinition node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTFunctionDefinition dec = node.getNode() ;
 
 		// Gets the context.
@@ -374,28 +379,31 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// And of the function.
 		methActive = null ;
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(),null);
 	}
 
 	@Override
 	public Object visit(ASTCppVisibilityLabel node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		ICPPASTVisibilityLabel decSpec = node.getNode() ;
 
 		// Update the visibility label.
 		((Context)data).visibility = helper.visibilityLabelToModifier(decSpec.getVisibility());
 
 		// Return the conversion of the visibility label.
-		return ((Context)data).visibility ;
+		return Log.MethodOut(Thread.currentThread(),((Context)data).visibility);
 	}
 
 	@Override
 	public Object visit(ASTCppDeclSpecifier node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		// Unused.
-		return null;
+		return Log.MethodOut(Thread.currentThread(),null);
 	}
 
 	@Override
 	public Object visit(ASTCppCompositeTypeSpecifier node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTCompositeTypeSpecifier decSpec = node.getNode() ;
 
 		// Get the name of the composite type.
@@ -427,33 +435,36 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Drop from stack active.
 		stackClassActives.pop();
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(),null);
 	}
 
 	@Override
 	public Object visit(ASTCppSimpleDeclSpecifier node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTSimpleDeclSpecifier decSpec = node.getNode() ;
 
 		// Gets the list of modifier (isLong, isImaginary, isVolatile ...)
 		List<Modifier> toReturn = helper.getModifierDeclaration(decSpec);
 
 		// Return the list of modifier associated.
-		return toReturn;
+		return Log.MethodOut(Thread.currentThread(), toReturn);
 	}
 
 	@Override
 	public Object visit(ASTCppNamedTypeSpecifier node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTNamedTypeSpecifier decSpec = node.getNode() ;
 
 		// Get and add to the context, the name of the specifier.
 		Context context = (Context) data ;
 		context.nameSpec = helper.visitName(decSpec.getName(), this, data);
 
-		return null; 
+		return Log.MethodOut(Thread.currentThread(), null); 
 	}
 
 	@Override
 	public Object visit(ASTCppEnumerationSpecifier node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTEnumerationSpecifier decSpec = node.getNode();
 
 		// Gets the name of the enumeration.
@@ -466,11 +477,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Create and add the enumeration in the gool ast.
 		helper.createAndAddEnum(name, enumerators);
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppEnumerator node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTEnumerationSpecifier.IASTEnumerator enumerator = node.getNode();
 
 		// Gets the name of the enumerator.
@@ -485,11 +497,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 		toReturn.addModifier(Modifier.STATIC);
 
 		// Return the enumerator, as a field.
-		return toReturn;
+		return Log.MethodOut(Thread.currentThread(), toReturn);
 	}
 
 	@Override
 	public Object visit(ASTCppBaseSpecifier node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		ICPPASTBaseSpecifier baseSpecifier = node.getNode();
 
 		boolean correct = false ;
@@ -521,11 +534,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 						new UnImplemented(baseSpecifier.getRawSignature(), "Multiple inheritance (and Unknown type)"));
 		}
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppDeclarator node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTDeclarator decl = node.getNode();
 
 		// Gets the context.
@@ -572,7 +586,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 							(IVariable)bind, visibility, nameDec, 
 							init, context.nameSpec);
 			if(var != null)
-				return var ;		
+				return Log.MethodOut(Thread.currentThread(), var);		
 		}
 		// Case unrecognized (generate an error).
 		else if(!(bind instanceof IFunction)){
@@ -581,11 +595,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 					"Undefined declarator");
 		}
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppArrayDeclarator node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTArrayDeclarator decl = node.getNode();
 
 		// Get the visibility label.
@@ -625,7 +640,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 			VarDeclaration var = helper.createAndAddArrayVariable(
 					bind.getOwner().toString(), (IVariable)bind, visibility, nameDec, init, dims);
 			if(var != null)
-				return var ;		
+				return Log.MethodOut(Thread.currentThread(), var);		
 		}
 		// Case unrecognized (generate an error).
 		else if(!(bind instanceof IFunction)){
@@ -638,17 +653,19 @@ public class CppRecognizer implements IVisitorASTCpp {
 			methActive.getClassDef().addDependency(
 					new UnImplemented(po.getRawSignature(), "Pointer operator"));
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppFieldDeclarator node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		// Unused.
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppFunctionDeclarator node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTFunctionDeclarator decl = node.getNode();
 
 		// Visit the parameters, if exist.
@@ -666,29 +683,33 @@ public class CppRecognizer implements IVisitorASTCpp {
 			VarDeclaration var = new VarDeclaration(
 					new TypeClass(((Context)data).nameSpec), name);
 			var.setInitialValue(new ClassNew(new TypeClass(((Context)data).nameSpec)));
-			return var ;
+			return Log.MethodOut(Thread.currentThread(), var);
 		}
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppName node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTName name = node.getNode();
 		// Return the name.
-		return name.toString();
+		return Log.MethodOut(Thread.currentThread(), name.toString());
 	}
 
 	@Override
 	public Object visit(ASTCppStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTStatement stmt = node.getNode();
 
 		// Error statement (generate error).
-		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature()) ;
+		return Log.MethodOut(Thread.currentThread(), 
+				new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature()));
 	}
 
 	@Override
 	public Object visit(ASTCppCompoundStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTCompoundStatement stmts = node.getNode();
 
 		// Create a block and add statements.
@@ -700,11 +721,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 		}
 
 		// Return the block of statements.
-		return toReturn;
+		return Log.MethodOut(Thread.currentThread(), toReturn);
 	}
 
 	@Override
 	public Object visit(ASTCppDeclarationStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTDeclarationStatement stmt = node.getNode();
 
 		// Get the list of declarations.
@@ -715,43 +737,49 @@ public class CppRecognizer implements IVisitorASTCpp {
 			Block toReturn = new Block();
 			for(Dec decToAdd : decs)
 				toReturn.addStatement(decToAdd);
-			return toReturn ;
+			return Log.MethodOut(Thread.currentThread(), toReturn);
 		}
 		if(decs.size() == 1)
 			// Case : one declaration.
-			return decs.get(0);
+			return Log.MethodOut(Thread.currentThread(), decs.get(0));
 		// Case : no declaration.
-		return null ;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppDefaultStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTDefaultStatement stmt = node.getNode();
 
 		// Unimplemented in GOOL (generate an error).
-		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature());
+		return Log.MethodOut(Thread.currentThread(), 
+				new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature()));
 	}
 
 	@Override
 	public Object visit(ASTCppDoStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTDoStatement stmt = node.getNode();
 
 		// Unimplemented in GOOL (generate an error).
-		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature());
+		return Log.MethodOut(Thread.currentThread(), 
+				new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature()));
 	}
 
 	@Override
 	public Object visit(ASTCppExpressionStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTExpressionStatement stmt = node.getNode();
 
 		// Visit the expression as a statement.
 		Statement exp = helper.visitExpressionStatement(stmt.getExpression(),this,data);
 
-		return exp ;
+		return Log.MethodOut(Thread.currentThread(), exp);
 	}
 
 	@Override
 	public Object visit(ASTCppForStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTForStatement stmt = node.getNode();
 
 		// Get the initializer (for(initializer;;)).
@@ -770,11 +798,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 		if(body == null) body = new Block();
 
 		// Return a for statement.
-		return new For(init, cond, iter, body);
+		return Log.MethodOut(Thread.currentThread(), new For(init, cond, iter, body));
 	}
 
 	@Override
 	public Object visit(ASTCppIfStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTIfStatement stmt = node.getNode();
 
 		// Get the condition (if(condition){}else{}).
@@ -787,22 +816,24 @@ public class CppRecognizer implements IVisitorASTCpp {
 		Statement elseC = helper.visitStatement(stmt.getElseClause(), this, data);
 
 		// Return a if statement.
-		return new If(cond, thenC, elseC);
+		return Log.MethodOut(Thread.currentThread(), new If(cond, thenC, elseC));
 	}
 
 	@Override
 	public Object visit(ASTCppReturnStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTReturnStatement stmt = node.getNode();
 
 		// Get the expression returned (return expression).
 		Expression ret = helper.visitExpression(stmt.getReturnValue(), this, data);
 
 		// Return a return statement.
-		return new Return(ret);
+		return Log.MethodOut(Thread.currentThread(), new Return(ret));
 	}
 
 	@Override
 	public Object visit(ASTCppWhileStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTWhileStatement stmt = node.getNode();
 
 		// Get the condition (while(condition){}).
@@ -812,19 +843,22 @@ public class CppRecognizer implements IVisitorASTCpp {
 		Statement body = helper.visitStatement(stmt.getBody(), this, data);
 
 		// Return a while statement.
-		return new While(cond, body);
+		return Log.MethodOut(Thread.currentThread(), new While(cond, body));
 	}
 
 	@Override
 	public Object visit(ASTCppSwitchStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTSwitchStatement stmt = node.getNode();
 
 		// Unimplemented in GOOL (generate an error).
-		return new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature());
+		return Log.MethodOut(Thread.currentThread(), 
+				new ExpressionUnknown(TypeNone.INSTANCE, stmt.getRawSignature()));
 	}
 
 	@Override
 	public Object visit(ASTCppTryBlockStatement node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		ICPPASTTryBlockStatement stmt = node.getNode();
 
 		// Visit the block try.
@@ -846,11 +880,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 		}
 
 		// Return the new try catch finally statement.
-		return new Try(catches, (Block) tryStmt, new Block());
+		return Log.MethodOut(Thread.currentThread(), 
+				new Try(catches, (Block) tryStmt, new Block()));
 	}
 
 	@Override
 	public Object visit(ASTCppCatchHandler node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		ICPPASTCatchHandler stmt = node.getNode();
 
 		// Gets the parameters of the cath.
@@ -865,8 +901,8 @@ public class CppRecognizer implements IVisitorASTCpp {
 		if(parameters.size() == 0){
 			// 0 parameter, in the catch.
 			// Return UKNOWN Catch.
-			return new Catch(new VarDeclaration(
-					new TypeUnknown("UNKNOWN"), "UNKNOWN"), (Block) catchStmt);
+			return Log.MethodOut(Thread.currentThread(), new Catch(new VarDeclaration(
+					new TypeUnknown("UNKNOWN"), "UNKNOWN"), (Block) catchStmt));
 		}
 		else if(parameters.size() > 1){
 			// Error, just one parameter possible.
@@ -877,20 +913,23 @@ public class CppRecognizer implements IVisitorASTCpp {
 		}
 
 		// Return the catch statement.
-		return new Catch(parameters.get(0), (Block) catchStmt);
+		return Log.MethodOut(Thread.currentThread(), new Catch(parameters.get(0), (Block) catchStmt));
 	}
 
 
 	@Override
 	public Object visit(ASTCppExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTExpression exp = node.getNode();
 
 		// Unimplemented in GOOL (generate an error).
-		return new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature());
+		return Log.MethodOut(Thread.currentThread(), 
+				new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature()));
 	}
 
 	@Override
 	public Object visit(ASTCppArraySubscriptExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTArraySubscriptExpression exp = node.getNode();
 
 		// Gets the dims access.
@@ -901,11 +940,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 		Expression expArray = helper.visitExpression(exp.getArrayExpression(), this, data);
 
 		// Return a array access.
-		return new ArrayAccess(expArray, expsArray.get(1));
+		return Log.MethodOut(Thread.currentThread(), 
+				new ArrayAccess(expArray, expsArray.get(1)));
 	}
 
 	@Override
 	public Object visit(ASTCppBinaryExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTBinaryExpression binExp = node.getNode();
 		// Case : is the assign operator.
 		if(helper.isAssignOperator(binExp.getOperator())){
@@ -916,7 +957,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 			Expression exp2 = helper.visitExpression(binExp.getOperand2(), this, data);
 
 			// Return a assign.
-			return new Assign(exp1, exp2);
+			return Log.MethodOut(Thread.currentThread(), new Assign(exp1, exp2));
 		}
 		// Case : is a binary assign operator('+=','*=',...).
 		else if(helper.isBinaryAssignOperator(binExp.getOperator())){
@@ -938,7 +979,8 @@ public class CppRecognizer implements IVisitorASTCpp {
 			Expression exp2 = helper.visitExpression(binExp.getOperand2(), this, data);
 
 			// Return a assign.
-			return new Assign(exp1, new BinaryOperation(op, exp1, exp2, type, symbol));
+			return Log.MethodOut(Thread.currentThread(), 
+					new Assign(exp1, new BinaryOperation(op, exp1, exp2, type, symbol)));
 		}
 		// Case : is an other binary operator.
 		else{
@@ -974,10 +1016,10 @@ public class CppRecognizer implements IVisitorASTCpp {
 					if(exp2Code.compareTo("std::endl") == 0){
 						sysPrint.setEndofline(true);
 					}
-//					sysPrint.getParameters().set(0,
-//							new BinaryOperation(Operator.PLUS, sysPrint.getParameters().get(0), 
-//									exp2, TypeString.INSTANCE, "+"));
-					return sysPrint;
+					//					sysPrint.getParameters().set(0,
+					//							new BinaryOperation(Operator.PLUS, sysPrint.getParameters().get(0), 
+					//									exp2, TypeString.INSTANCE, "+"));
+					return Log.MethodOut(Thread.currentThread(), sysPrint);
 				}
 				// Case : create SystemOutPrintCall.
 				else if(exp1Code.compareTo("std::cout") == 0){
@@ -989,17 +1031,19 @@ public class CppRecognizer implements IVisitorASTCpp {
 					}
 					Log.d("<CppRecognizer -- visit(ASTCppBinaryExpression node, Object data)> exp2 type : " + exp2.getType().toString());
 					target.addParameter(exp2) ;
-					return target ;
+					return Log.MethodOut(Thread.currentThread(), target);
 				}
 			}
 
 			// Return a binary expression.
-			return new BinaryOperation(op, exp1, exp2, type, symbol);
+			return Log.MethodOut(Thread.currentThread(),
+					new BinaryOperation(op, exp1, exp2, type, symbol));
 		}
 	}
 
 	@Override
 	public Object visit(ASTCppCastExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTCastExpression expCast = node.getNode();
 
 		// Gets the context.
@@ -1012,27 +1056,32 @@ public class CppRecognizer implements IVisitorASTCpp {
 		Expression exp = helper.visitExpression(expCast.getOperand(), this, data);
 
 		// Return a cast expression.
-		return new CastExpression(targetType, exp);
+		return Log.MethodOut(Thread.currentThread(), new CastExpression(targetType, exp));
 	}
 
 	@Override
 	public Object visit(ASTCppConditionalExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTConditionalExpression exp = node.getNode();
 
 		// Unimplemented in GOOL (generate an error).
-		return new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature());
+		return Log.MethodOut(Thread.currentThread(),
+				new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature()));
 	}
 
 	@Override
 	public Object visit(ASTCppExpressionList node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTExpressionList exp = node.getNode();
 
 		// Unimplemented in GOOL (generate an error).
-		return new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature());
+		return Log.MethodOut(Thread.currentThread(),
+				new ExpressionUnknown(TypeNone.INSTANCE, exp.getRawSignature()));
 	}
 
 	@Override
 	public Object visit(ASTCppFieldReference node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTFieldReference exp = node.getNode();
 
 		// Gets the context.
@@ -1057,11 +1106,13 @@ public class CppRecognizer implements IVisitorASTCpp {
 		}
 
 		// Return a field access.
-		return new FieldAccess(type, target, member);
+		return Log.MethodOut(Thread.currentThread(),
+				new FieldAccess(type, target, member));
 	}
 
 	@Override
 	public Object visit(ASTCppFunctionCallExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTFunctionCallExpression exp = node.getNode();
 
 		// Gets the context.
@@ -1095,12 +1146,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 		}
 		// Error return the expression.
 		else
-			return expAccess ;
+			return Log.MethodOut(Thread.currentThread(), expAccess);
 
 		// Gets the parameters lists of the invocation.
 		List<Expression> params = helper.visitExpressionsParameters(
 				Arrays.copyOfRange(exp.getChildren(), 1, exp.getChildren().length), this, data) ;
-		
+
 		for(Expression p : params){
 			Log.d("<CppRecognizer - visit(ASTCppFunctionCallExpression...)> Parameter : " + p.getType().getName());
 		}
@@ -1115,11 +1166,12 @@ public class CppRecognizer implements IVisitorASTCpp {
 		}
 
 		// Return a method invocation.
-		return toReturn;
+		return Log.MethodOut(Thread.currentThread(), toReturn);
 	}
 
 	@Override
 	public Object visit(ASTCppIdExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTIdExpression exp = node.getNode();
 
 		// Gets the context.
@@ -1139,19 +1191,20 @@ public class CppRecognizer implements IVisitorASTCpp {
 				IVariable var = (IVariable) bind ;
 				if(var.getOwner() == null){
 					// Return static field access of the transitionUnit class.
-					return new FieldAccess(type, 
+					return Log.MethodOut(Thread.currentThread(), new FieldAccess(type, 
 							helper.getIdentifierOfTransitionUnit(exp.getTranslationUnit()), 
-							name);
+							name));
 				}
 			}
 		}
 
 		// Return a identifier.
-		return new Identifier(type, name);
+		return Log.MethodOut(Thread.currentThread(), new Identifier(type, name));
 	}
 
 	@Override
 	public Object visit(ASTCppLiteralExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTLiteralExpression exp = node.getNode();
 
 		// Gets the context.
@@ -1160,8 +1213,8 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Case the expression is a this.
 		if(exp.getRawSignature().toString().compareTo("this") == 0){
 			// Return the this expression.
-			return new This(helper.convertTypeGool(
-					exp.getExpressionType(), context.nameSpec));
+			return Log.MethodOut(Thread.currentThread(), new This(helper.convertTypeGool(
+					exp.getExpressionType(), context.nameSpec)));
 		}
 		IType type = helper.convertTypeGool(exp.getExpressionType(), context.nameSpec);
 		String code = exp.getRawSignature().toString();
@@ -1169,15 +1222,16 @@ public class CppRecognizer implements IVisitorASTCpp {
 			//Remove quotes
 			code = code.substring(code.indexOf("\"")+1,code.lastIndexOf("\""));
 		}
-		
+
 		Log.d(String.format("<CppRecognizer - visit(ASTCppLiteralExpression)> expression <%s> with type %s",
 				code, type));
 		// Return a constant expression.
-		return new Constant(type, code);
+		return Log.MethodOut(Thread.currentThread(), new Constant(type, code));
 	}
 
 	@Override
 	public Object visit(ASTCppUnaryExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTUnaryExpression unExp = node.getNode();
 
 		// Gets the context.
@@ -1197,21 +1251,23 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Case : it is a throw.
 		if(symbol.compareTo("throw") == 0){
 			// Return a throw expression.
-			return new Throw(exp);
+			return Log.MethodOut(Thread.currentThread(), new Throw(exp));
 		}
 
 		// Return a unary expression. 
-		return new UnaryOperation(op, exp, type, symbol);
+		return Log.MethodOut(Thread.currentThread(), new UnaryOperation(op, exp, type, symbol));
 	}
 
 	@Override
 	public Object visit(ASTCppInitializer node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		// TODO Auto-generated method stub
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	@Override
 	public Object visit(ASTCppInitializerExpression node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTEqualsInitializer init = node.getNode();
 
 		// Gets the initializer expression.
@@ -1219,19 +1275,22 @@ public class CppRecognizer implements IVisitorASTCpp {
 				(IASTExpression) init.getChildren()[0], this, data);
 
 		// Return a expression for an initializer.
-		return exp;
+		return Log.MethodOut(Thread.currentThread(), exp);
 	}
 
 	@Override
 	public Object visit(ASTCppConstructorInitializer node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		ICPPASTConstructorInitializer init = node.getNode();
 
 		// Visit expressions if exists and return a classNew.
-		return helper.visitExpressions(init.getChildren(), this, data);
+		return Log.MethodOut(Thread.currentThread(),
+				helper.visitExpressions(init.getChildren(), this, data));
 	}
 
 	@Override
 	public Object visit(ASTCppParameterDeclaration node, Object data) {
+		Log.MethodIn(Thread.currentThread());
 		IASTParameterDeclaration dec = node.getNode();
 
 		// Visit the declaration specifier of the parameter.
@@ -1240,7 +1299,7 @@ public class CppRecognizer implements IVisitorASTCpp {
 		// Visit the declarator of the parameter.
 		helper.visitDeclarator(dec.getDeclarator(), this, data);
 
-		return null;
+		return Log.MethodOut(Thread.currentThread(), null);
 	}
 
 	private class Context {

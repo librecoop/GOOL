@@ -72,9 +72,9 @@ public class Server {
 				String mainClass = elements[2];
 				try{
 					List<String> stdout = GOOLCompiler.launchHTMLExecution(outputlang, tabResults, mainClass);
-					for (String st : stdout){
-						System.out.println("DEBUG : " + st);
-					}
+//					for (String st : stdout){
+//						System.out.println("DEBUG : " + st);
+//					}
 					messageOut += "§" + stdout.get(0);
 					messageErr += "§" + stdout.get(1);
 					session.getBasicRemote().sendText(messageOut);

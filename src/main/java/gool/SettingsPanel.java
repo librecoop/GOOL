@@ -136,7 +136,7 @@ public class SettingsPanel extends JFrame {
 			output = new FileOutputStream(fileName);
 			// save properties file to project root folder
 			properties.store(output, null);
-			System.out.println(fileName);
+			//System.out.println(fileName);
 		} catch (IOException io) {
 			io.printStackTrace();
 		} catch (SecurityException se) {

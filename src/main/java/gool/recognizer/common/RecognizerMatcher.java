@@ -402,7 +402,7 @@ public class RecognizerMatcher {
 				sourceFile.close();
 			}
 		} catch (IOException e){
-			e.printStackTrace();
+			Log.e(e);
 			return false; // Erreur
 		}
 

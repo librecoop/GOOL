@@ -12,14 +12,13 @@ import org.ini4j.Ini;
 public class Log {
 
 	private static int compt = 0;
-	static public Boolean DEBUG_LOG = true;
 
 	// The instance
 	private static final Log log = new Log();
 
 	// Levels possible
 	public enum Level {
-		ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+		ALL, DEBUG, INFO, WARN, ERROR
 	}
 
 	// List of printers
@@ -85,15 +84,10 @@ public class Log {
 		}
 	}
 
-	// Print a trace message
-	public static void t(String message) {
-		print(Level.TRACE, Color.DARK_GRAY, message);
-	}
-
+	
 	// Print a debug message
 	public static void d(String message) {
-		if (DEBUG_LOG)
-			print(Level.DEBUG, Color.GREEN, message);
+		print(Level.DEBUG, Color.GREEN, message);
 	}
 
 	// Print a information message
@@ -116,22 +110,19 @@ public class Log {
 		print(Level.ERROR, Color.RED, message);
 	}
 
-	// Print an error message
+	// Print an error exception
 	public static void e(Exception e) {
 		print(Level.ERROR, Color.RED, e);
 	}
 
-	// Print a fatal message
-	public static void f(String message) {
-		print(Level.FATAL, Color.MAGENTA, message);
-	}
-
+	// The print method for all the messages
 	private static void print(Level lv, Color c, String message) {
 		for (Printer p : log.printers) {
 			p.print(lv, message, c);
 		}
 	}
 
+	// The print method for all the exceptions
 	private static void print(Level lv, Color c, Exception e) {
 		for (Printer p : log.printers) {
 			p.printErr(lv, e, c);
@@ -181,26 +172,30 @@ public class Log {
 		compt++;
 		String mess = ">" + compt;
 		mess += String.format("%" + compt + "s", "").replace(' ', '-');
-		Log.d(mess + " " + th.getStackTrace()[2].toString()
-				+ " | " + th.getStackTrace()[3].toString());
+		mess = mess + " " + th.getStackTrace()[2].toString() + " | " + th.getStackTrace()[3].toString();
+		//System.out.println(mess);
+		Log.d(mess);
 	}
 
 	public static void MethodOut(Thread th) {
 		String mess = "<" + compt;
 		mess += String.format("%" + compt + "s", "").replace(' ', '-');
-		Log.d(mess + " " + th.getStackTrace()[2].toString()
-				+ " | " + th.getStackTrace()[3].toString() + " - Bye !");
-		if (compt > 1)
+		mess = mess + " " + th.getStackTrace()[2].toString()
+				+ " | " + th.getStackTrace()[3].toString() + " - Bye !";
+		//System.out.println(mess);
+		Log.d(mess);
+		if (compt > 0)
 			compt--;
 	}
 
 	public static Object MethodOut(Thread th, Object retarg) {
 		String mess = "<" + compt;
 		mess += String.format("%" + compt + "s", "").replace(' ', '-');
-		Log.d(mess + " " + th.getStackTrace()[2].toString()
-				+ " | " + th.getStackTrace()[3].toString() + " - Bye !");
-
-		if (compt > 1)
+		mess = mess + " " + th.getStackTrace()[2].toString()
+				+ " | " + th.getStackTrace()[3].toString() + " - Bye !";
+		//System.out.println(mess);
+		Log.d(mess);
+		if (compt > 0)
 			compt--;
 		return retarg;
 	}

@@ -20,6 +20,7 @@ public class PrinterFile extends Printer {
 			try {
 				fstreams.add(new FileWriter(output, false));
 			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -38,6 +39,7 @@ public class PrinterFile extends Printer {
 					fstream.write(message + "\n");
 					fstream.flush();
 				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}

@@ -95,8 +95,7 @@ sourceSets{
 	}
 	test {
 		java {
-			srcDir 'src/test'
-			//exclude 'GoolTestCpp.java'			
+			srcDir 'src/test'		
 		}
 	}
 }
