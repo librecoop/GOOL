@@ -130,7 +130,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(list.contains(\"toto\")){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\");}"
-										+ "}catch(Exception e){System.out.println(e.toString())}",
+										+ "}catch(Exception e){System.out.println(e.toString());}",
 										MAIN_CLASS_NAME);
 		String expected = "true" + "true";
 		compareResultsDifferentPlatforms(input, expected);
@@ -161,7 +161,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\");}"
-										+ "}catch(Exception e){System.out.println(e.toString())}",
+										+ "}catch(Exception e){System.out.println(e.toString());}",
 										MAIN_CLASS_NAME);
 		String expected = "true" + "true";
 		compareResultsDifferentPlatforms(input, expected);
@@ -192,7 +192,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(\"tata\" == list.get(0)){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){System.out.println(e.toString())}",
+										+ "}catch(Exception e){System.out.println(e.toString());}",
 										MAIN_CLASS_NAME);
 		String expected = "true" + "true";
 		compareResultsDifferentPlatforms(input, expected);
@@ -228,7 +228,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){System.out.println(e.toString())}",
+										+ "}catch(Exception e){System.out.println(e.toString());}",
 										MAIN_CLASS_NAME);
 		String expected = "true" + "true" + "true";
 
@@ -266,7 +266,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(list1.equals(list2)){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){System.out.println(e.toString())}",
+										+ "}catch(Exception e){System.out.println(e.toString());}",
 										MAIN_CLASS_NAME);
 		String expected = "true" + "false";
 		compareResultsDifferentPlatforms(input, expected);
@@ -297,7 +297,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(1 == list1.indexOf(\"tata\")){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){System.out.println(e.toString())}",
+										+ "}catch(Exception e){System.out.println(e.toString());}",
 										MAIN_CLASS_NAME);
 		String expected = "true";
 		compareResultsDifferentPlatforms(input, expected);
@@ -331,7 +331,7 @@ public class GoolTestTypeListToVectorCpp {
 
 										"if(list.isEmpty()){ System.out.println(\"true\"); }"
 										+ "else{ System.out.println(\"false\"); }"
-										+ "}catch(Exception e){System.out.println(e.toString())}",
+										+ "}catch(Exception e){System.out.println(e.toString());}",
 										MAIN_CLASS_NAME);
 		String expected = "true" + "true";
 		compareResultsDifferentPlatforms(input, expected);
