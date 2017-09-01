@@ -328,7 +328,7 @@ public class GoolTestJava {
 						"public void printr()  {System.out.println(2 + 2);}",
 						"Printer", "");
 		String expected = "4";
-		System.out.println(input);
+		//System.out.println(input);
 		compareResultsDifferentPlatforms(input, expected);
 	}
 

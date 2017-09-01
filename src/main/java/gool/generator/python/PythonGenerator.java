@@ -110,6 +110,7 @@ import gool.generator.common.GeneratorMatcher;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1202,8 +1203,10 @@ CodeGeneratorNoVelocity {
 		dependencies.addAll(getCustomDependencies());
 		clearCustomDependencies();
 		String recogDependencies = GeneratorHelper.printRecognizedDependencies(cl);
-		if (!dependencies.isEmpty()) {
-			for (String dependency : dependencies){
+		List<String> sortedDependencies = new ArrayList<String>(dependencies);
+		Collections.sort(sortedDependencies);
+		if (!sortedDependencies.isEmpty()) {
+			for (String dependency : sortedDependencies){
 				if (dependency.contains("/*")){
 					String incdep = dependency.replace("/*", "#");
 					incdep = incdep.replace("*/", "");

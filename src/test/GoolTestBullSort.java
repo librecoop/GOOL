@@ -116,8 +116,8 @@ public class GoolTestBullSort {
 
 	@Test
 	public void TriBullTest() throws Exception {
-		String input = "public class  testBullSort{"
-				+"public void  TriBulle(int table[]) {"
+		String input = TestHelperJava.surroundWithClass(
+				"public void  TriBulle(int table[]) {"
 					+"int  n=3;"
 					+"for ( int i=n; i>=1; i-- ){"
 						+"for ( int j=1; j<=i; j++ ){" 
@@ -133,7 +133,8 @@ public class GoolTestBullSort {
 					+"table[0]=9;table[1]=23;table[2]=2;table[3]=34;"
 				    +"testBullSort app=new testBullSort();"
 					+"app.TriBulle(table);"
-				    +"app.Impression(table);}}";
+				    +"app.Impression(table);}",
+					MAIN_CLASS_NAME, "");
 			
 		
 		String expected = "2"+"9"+"23"+"34";

@@ -123,8 +123,8 @@ public class GoolTestQuickSort {
 	
 	@Test
 	public void isPrimary() throws Exception {
-		String input = "public class testQuickSort {"
-				+ "public static void main(String[] args) {"
+		String input = TestHelperJava.surroundWithClass(
+				"public static void main(String[] args) {"
 				+ "testQuickSort test = new testQuickSort();"
 				+ "int A[] = {4,1,6,8,5,2,7};"
 				+ "int lengthA = 7;"
@@ -146,7 +146,8 @@ public class GoolTestQuickSort {
 				+ "int pivot_index = partition(A, f, l);"
 				+ "Quicksort(A, f, pivot_index);"
 				+ "Quicksort(A, pivot_index+1, l);"
-				+ "return A;}}";
+				+ "return A;}",
+				MAIN_CLASS_NAME, "");
 		String expected = "1"+"2"+"4"+"5"+"6"+"7"+"8";
 		//excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());

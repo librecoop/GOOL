@@ -123,14 +123,15 @@ public class GoolTestPGCD {
 	
 	@Test
 	public void pgcd() throws Exception {
-		String input = "public class testPGCD {"
-				+ "public static void main(String[] args) {"
+		String input = TestHelperJava.surroundWithClass(
+				"public static void main(String[] args) {"
 				+ "testPGCD test = new testPGCD();"
 				+ "System.out.println(test.pgcd(18,30));}"
 				+ "public int pgcd(int a,int b) {"
 				+ "int r = a;"
 				+ "while (r!=0)  {r = a%b; a=b; b=r;}"
-				+ "return(a);}}";
+				+ "return(a);}",
+				MAIN_CLASS_NAME, "");
 		String expected = "6";
 		compareResultsDifferentPlatforms(input, expected);
 	}

@@ -117,8 +117,8 @@ public class GoolTestEchangeValues {
 	
 	@Test
 	public void echangeValues() throws Exception {
-		String input = "public class testEchangeValues {"
-				+ "public static void main(String[] args) {"
+		String input = TestHelperJava.surroundWithClass(
+				"public static void main(String[] args) {"
 				+ "testEchangeValues test = new testEchangeValues();"
 				+ "int a = 2; int b = 3;"
 				+ "System.out.println(test.echangeValues(a,b));}"
@@ -128,7 +128,8 @@ public class GoolTestEchangeValues {
 				+ "tempo = a;"
 				+ "a = b;"
 				+ "b = tempo;"
-				+ "return a-b;}}";
+				+ "return a-b;}",
+				MAIN_CLASS_NAME, "");
 		String expected = "1";
 		compareResultsDifferentPlatforms(input, expected);
 	}

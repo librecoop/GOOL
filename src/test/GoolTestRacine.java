@@ -123,12 +123,13 @@ public class GoolTestRacine {
 
 	@Test
 	public void racine() throws Exception {
-		String input = "public class testRacine {"
-				+ "public static void main(String[] args) {"
+		String input = TestHelperJava.surroundWithClass(
+				"public static void main(String[] args) {"
 				+ "testRacine test = new testRacine();"
 				+ "System.out.println(test.racine(49));}"
 				+ "public double racine(int a){"
-				+ "return Math.sqrt(a);}}";
+				+ "return Math.sqrt(a);}",
+				MAIN_CLASS_NAME, "");
 		String expected = "7.0";
 		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());

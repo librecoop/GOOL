@@ -123,8 +123,8 @@ public class GoolTestPPCM {
 	
 	@Test
 	public void ppcm() throws Exception {
-		String input = "public class testPPCM {"
-				+ "public static void main(String[] args) {"
+		String input = TestHelperJava.surroundWithClass(
+				"public static void main(String[] args) {"
 				+ "testPPCM test = new testPPCM();"
 				+ "System.out.println(test.ppcm(18,30));}"
 				+ "public int ppcm (int a, int b) {"
@@ -136,7 +136,8 @@ public class GoolTestPPCM {
 				+ "b = Reste;"
 				+ "Reste = a%b;}"
 				+ "PPCM = Produit/b;"
-				+ "return PPCM;}}";
+				+ "return PPCM;}",
+				MAIN_CLASS_NAME, "");
 		String expected = "90";
 		compareResultsDifferentPlatforms(input, expected);
 	}

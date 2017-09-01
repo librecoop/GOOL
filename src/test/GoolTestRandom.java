@@ -131,12 +131,13 @@ public class GoolTestRandom {
 	
 	@Test
 	public void racine() throws Exception {
-		String input = "public class testRandom {"
-				+ "public static void main(String[] args) {"
+		String input = TestHelperJava.surroundWithClass(
+				"public static void main(String[] args) {"
 				+ "testRandom test = new testRandom();"
 				+ "System.out.println(test.generationNombreAleatoire() != test.generationNombreAleatoire());}"
 				+ "public double generationNombreAleatoire(){"
-				+ "return Math.random();}}";
+				+ "return Math.random();}",
+				MAIN_CLASS_NAME, "");
 		String expected = "true";
 		excludePlatformForThisTest((Platform) CSharpPlatform.getInstance());
 		excludePlatformForThisTest((Platform) CppPlatform.getInstance());
