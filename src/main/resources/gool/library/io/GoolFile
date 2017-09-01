@@ -1,0 +1,15 @@
+# This file may contain declarations related to GOOL library fields, GOOL library methods or dependencies between GOOL classes.
+# At this day, only [dependency] annotations are parsed within this file.
+# They may be used to express dependencies between GOOL library classes.
+
+# Dependencies with other GOOL library classes
+
+
+# Definition of constructors & methods
+# (the following lines are not parsed at the current stage of the project, so they may as well be omitted)
+
+#	[constructor] GoolFile(TypeString)
+#	[method] createNewFile () : TypeBool
+#	[method] exists () : TypeBool
+#	[method] deleteFile () : TypeBool
+

@@ -1,0 +1,153 @@
+apply plugin: 'application'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.7.201606060606" //checked at http://www.eclemma.org/jacoco/
+    reportsDir = file("$buildDir/customJacocoReportDir")
+    
+}
+
+applicationName = "gool"
+mainClassName = 'gool.GOOLCompiler'
+
+sourceCompatibility = 1.7
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gool_Revisited',
+                   'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+		dirs 'lib'
+		dirs "${System.properties['java.home']}/../lib"
+	}
+}
+
+dependencies {
+    // compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    // testCompile group: 'junit', name: 'junit', version: '4.+'
+    compile name: 'com.ibm.icu_50.1.1.v201304230130'
+	compile name: 'commons-lang-2.5'
+	compile name: 'hamcrest-all-1.3'
+	compile name: 'ini4j-0.5.2-SNAPSHOT'
+	testCompile name: 'junit-4.11'
+	compile name: 'log4j-1.2.15'
+	compile name: 'org.eclipse.cdt.core_5.5.0.201309180223'
+	compile name: 'org.eclipse.core.contenttype_3.4.200.v20130326-1255'
+	compile name: 'org.eclipse.core.jobs_3.5.300.v20130429-1813'
+	compile name: 'org.eclipse.core.resources_3.8.101.v20130717-0806'
+	compile name: 'org.eclipse.core.runtime_3.9.0.v20130326-1255'
+	compile name: 'org.eclipse.equinox.common_3.6.200.v20130402-1505'
+	compile name: 'org.eclipse.equinox.preferences_3.5.100.v20130422-1538'
+	compile name: 'org.eclipse.equinox.registry_3.5.301.v20130717-1549'
+	compile name: 'org.eclipse.osgi_3.9.1.v20130814-1242'
+	compile name: 'velocity-1.6.4-dep'
+	compile name: 'tools'
+	compile name: 'diffutils-1.2.1'
+	compile name: 'glassfish-embedded-all-4.1'
+	compile name: 'javaee-api-7.0'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+allprojects {
+	tasks.withType(JavaCompile) {
+		options.debug = true
+		options.compilerArgs = ['-Xlint:all']
+		options.warnings = false
+	}
+}
+//gradle run '-PappProp=-gui' for gui interface
+run {
+	standardInput = System.in 
+	if(project.hasProperty("appProp")){
+        args appProp
+    }
+    if (System.getProperty('DEBUG', 'false') == 'true') {
+        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5006'
+    }
+}
+
+test {
+	systemProperties 'property': 'value'
+//	if (System.getProperty('DEBUG', 'false') == 'true') {
+//        jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
+//    }
+}
+
+sourceSets{
+	main {
+		java {
+			srcDir 'src/main/java'
+		}
+	}
+	test {
+		java {
+			srcDir 'src/test'		
+		}
+	}
+}
+
+tasks.withType(Test) {
+    testLogging {
+        // set options for log level LIFECYCLE
+        events "passed", "skipped", "failed", "standardOut"
+        showExceptions true
+        exceptionFormat "full"
+        showCauses true
+        showStackTraces true
+		outputs.upToDateWhen {false}
+        
+        // set options for log level DEBUG and INFO
+        debug {
+            events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+            exceptionFormat "full"
+        }
+        info.events = debug.events
+        info.exceptionFormat = debug.exceptionFormat
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
+
+task copieWEBINF (type: Copy) {
+	description = 'Copy WEB-INF folder into build for glassfish use.'
+	into 'build/WEB-INF'
+	from 'src/WEB-INF'
+}
+
+task serverRun (dependsOn: 'classes', type: JavaExec) {
+	copieWEBINF.execute()
+	description = 'Launch the server'
+	main = 'webgool.application.IntegratedServer'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+test.finalizedBy(jacocoTestReport)

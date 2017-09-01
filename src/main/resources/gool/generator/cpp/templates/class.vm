@@ -1,0 +1,48 @@
+## Copyright 2010 Pablo Arrighi, Alex Concha, Miguel Lezama for version 1.
+## Copyright 2013 Pablo Arrighi, Miguel Lezama, Kevin Mazet for version 2.    
+##
+## This file is part of GOOL.
+## 
+## GOOL is free software: you can redistribute it and/or modify it under the terms of the GNU
+## General Public License as published by the Free Software Foundation, version 3.
+##
+## GOOL is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+## even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+## See the GNU General Public License version 3 for more details.
+## 
+## You should have received a copy of the GNU General Public License along with GOOL,
+## in the file COPYING.txt.  If not, see <http://www.gnu.org/licenses/>.
+##
+## Velocity template for writing out classes in C++
+#parse($macros)
+
+\#include <boost/any.hpp>
+\#include <boost/lexical_cast.hpp>
+//using boost::any_cast;
+
+#includescond ($Helper.printDependencies($class) $Helper.printRecognizedDependencies($class))
+$Helper.printRecognizedDependencies($class)
+
+\#include "${class.Name}.h"
+
+#foreach( $field in $class.Fields )
+#if($field.DefaultValue)
+$field.Type$class.Name::$field.Name = $field.DefaultValue;
+#end
+#end
+
+#foreach( $method in $class.Methods )
+#if($method.isGoolMethodImplementation())
+$method
+#else
+$method.Header#if($class.isInterface() || $method.isAbstract() );
+#else
+{
+$method.Block
+#if ( $class.isMainClass())
+return 0;
+#end
+}
+#end
+#end
+#end
